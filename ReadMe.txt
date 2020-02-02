@@ -14,6 +14,7 @@ My modifications include the following:
 3. Disabled mouse click level up of click damage.
 4. Adjusted pixel locations due to a UI update in a recent patch.
 5. Added a loop to spam ultimates as part of do early leveling to summon Dembo.
+6. Adjusted the mouse auto click location to approximately line up with connection error pop ups.
 
 Known Issues:
 
