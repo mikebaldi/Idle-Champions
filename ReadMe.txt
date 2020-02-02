@@ -5,7 +5,7 @@ by Bootch
 version: 191020 (10/20/19)
 original script by Hikibla 
 
-I have no training in programing, scripting, coding, etc. I made these modifications through trial and error. They may not work for you and they may do things unintended. Use this script at your own risk. I make no promises or gaurantees that it will work as intended.
+I have no training in programing, scripting, coding, etc. I made these modifications through trial and error. They may not work for you. Use this script at your own risk. I make no promises or gaurantees that it will work as intended.
 
 My modifications include the following:
 
