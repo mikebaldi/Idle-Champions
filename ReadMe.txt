@@ -15,7 +15,8 @@ My modifications include the following:
 4. Adjusted pixel locations due to a UI update in a recent patch.
 5. Added a loop to spam ultimates as part of do early leveling to summon Dembo.
 6. Adjusted the mouse auto click location to approximately line up with connection error pop ups.
-7. Disabled familiar placement from placing familiars, instead it loops saved formation 3 times.
+7. Disabled familiar placement from placing familiars, instead it loops saved formation 2 times.
+8. Revamped do early leveling to only level up speed champions and in a specific order. Adjusts for patrons. Ignores early leveling champ settings in the settings file, but does use the champ specialization settings in the champ file.
 
 Known Issues:
 
