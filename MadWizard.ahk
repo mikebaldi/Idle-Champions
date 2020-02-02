@@ -1089,20 +1089,23 @@ Loop_GemRuns()
 			Loop, 9		
 			{
 				Send, %A_Index%
-			}		
+			}
+			
+			sleep, 100
+			Send, %gFormation%
 		}
 		
 		;get wave number 1-5
 		nWaveNumber := Mod(nLevel_Number, 5) 
 		
-		;Max Click Damage on 1st Level of each wave up till L100 - Disabled to avoid mouse click dragging click damage familiar to ultimates
+		;Max Click Damage on 1st Level of each wave up to L100 - Disabled to avoid mouse click dragging click damage familiar to ultimates
 		;if (nWaveNumber = 1 and nLevel_Number < 101) 
 		;{
 			;LevelUp(0)
 		;}
 		
 		;note boss levels will be nWaveNumber = 0
-		if (nWaveNumber and nLevel_Number <= gStopChampLeveling)
+		if (nWaveNumber and nLevel_Number and <= gStopChampLeveling and nLevel_Number != 1)
 		{
 			AutoLevelChamps(nLevel_Number)
 			Send, %gFormation%
