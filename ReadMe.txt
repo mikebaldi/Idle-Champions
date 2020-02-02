@@ -1,22 +1,27 @@
-Re-written/Modified by: mikebaldi
+Mad Wizard Gem Farming Script
+revised by mikebaldi
+version: 200202 (2/2/20)
+by Bootch
+version: 191020 (10/20/19)
+original script by Hikibla 
 
-This script is a modified version by Bootch. https://github.com/bootch-ds/Idle-Champs
+I have no training in programing, scripting, coding, etc. I made these modifications through trial and error. They may not work for you and they may do things unintended. Use this script at your own risk. I make no promises or gaurantees that it will work as intended.
 
-I have no training in programing, scripting, coding, etc. I made these modifications through trial and error. They may not work for you and they may do things unintended. If you use them, please monitor a few runs to ensure things are working properly.
+My modifications include the following:
 
-I will provide a better update on the modifications when I have time, but here is a short list that may not be comprehensive:
+1. Added a global variable to adjust F-Key level up delay. This can be adjusted in the settings file.
+2. Added a global variable to enable or disabled z14 ultimates. This can be adjusted in the settings file. 
+3. Disabled mouse click level up of click damage.
+4. Adjusted pixel locations due to a UI update in a recent patch.
+5. Added a loop to spam ultimates as part of do early leveling to summon Dembo.
 
-1. Must use F key leveling.
-2. Must have familiars set via Saved Formation 1, the script will not manually place them.
-3. Must include a familiar on click damage, the script will not level up click damage anymore.
-4. The script does not spam ultimates on Z14.
-5. The script spams ultimates as part of early leveling to get Havilar's imp Dembo on the field. This ultimate has a very quick cooldown, so if you spend a significant time doing early leveling (10 seconds maybe) then it may cause you to lose Dembo. I hope to fix this in the future, along with other early leveling issues I have.
-6. Some tweaks were made to pixel locations due to a recent patch. Some were not tweaked so some functions may not work.
-7. Some users can't get this script to work. I don't know why.
+Known Issues:
 
-Use this script at your own risk. I make no promises or gaurantees that it will work as intended.
+1. Mouse click leveling of champions does not work.
+2. Some users cannot get the script to do anything once the adventure begins.
+3. Ultimate loop to summon Dembo does not appear to always work.
 
-The below is the original ReadMe.txt
+The following is the original ReadMe.txt
 
 
 original script was written by Hikibla but  numerous functions and code have evolved since then
