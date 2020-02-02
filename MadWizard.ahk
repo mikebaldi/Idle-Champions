@@ -1,5 +1,7 @@
 #SingleInstance force
 ;Mad Wizard Gem Farming Script
+;revised by mikebaldi
+;version: 200202 (2/2/20)
 ;by Bootch
 ;version: 191020 (10/20/19)
 ;original script by Hikibla 
@@ -1082,7 +1084,12 @@ Loop_GemRuns()
 			sleep, 100
 			
 			;SPECIAL LEVELING ON z1
-			DoEarlyLeveling()			
+			DoEarlyLeveling()
+
+			Loop, 9		
+			{
+				Send, %A_Index%
+			}		
 		}
 		
 		;get wave number 1-5
@@ -1163,20 +1170,13 @@ Loop_GemRuns()
 	{
 		;spam ults for Levels 14/64/...
 		nSpecial_Level := Mod(nLevel_Number, 50) 
-		if (nSpecial_Level = 14)
+		if (nSpecial_Level = 14 and gDoZ14Ultimates = 1)
 		{
 			sleep, 500
-			;Loop, 9	;run single loop of just ultimates 2-4
-			;Loop, 1		
-			;{
-			;	;Send, %A_Index%
-			;	Send, 2
-			;	Sleep, 100
-			;	Send, 3
-			;	Sleep, 100
-			;	Send, 4
-			;	Sleep, 100
-			;}
+			Loop, 9		
+			{
+				Send, %A_Index%
+			}
 		}		
 	}
 	
@@ -1398,11 +1398,6 @@ Loop_GemRuns()
 			if (nEarlyLevelVal > 0)
 			{
 				LevelUp(A_Index, nEarlyLevelVal)
-				Send 1
-				Send 2
-				Send 3
-				Send 4
-				Send 5
 			}
 		}
 		return
@@ -1490,7 +1485,7 @@ Loop_GemRuns()
 		Loop, %num_clicks%
 		{
 			Send {F%champ_number%}
-			sleep, 50		;modified 25 to 50
+			sleep, %gFKeySleep%		;modified to global variable that can be adjusted in settings
 		}
 		
 		;check if special window open

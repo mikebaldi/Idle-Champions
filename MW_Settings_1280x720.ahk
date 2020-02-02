@@ -3,6 +3,10 @@
 ;Having Title Bar turned off will create a shift in the Y values and Script wont be able find several Locations (Jadisero)
 ;values may not match if running game full screen
 
+;revised by mikebaldi
+;version: 200202 (2/2/20)
+;original by Bootch
+
 ;----------------------------
 ;	User Settings
 ;	various settings to allow the user to Customize how the Script behaves
@@ -36,8 +40,10 @@
 	;		MouseClick Leveling -- Limits Formation to Champs 1-8 
 	;		F-Key Leveling -- can use Champs 1-11 to include Champ 12 see below		
 	global gLevelingMethod 			:= "F" 	;Values: M or F (set to M to use mouse while leveling or F to use Function keys)
-	global gStopChampLeveling		:= 13	;script will stop leveling Champs after this Zone
+	global gFKeySleep			:= 100	;Increase if F-Key leveling is not registering every press
+	global gStopChampLeveling		:= 3	;script will stop leveling Champs after this Zone
 	global gAllowF12_Leveling 		:= 0	;Values: 1 or 0 <-- default 1	
+	global gDoZ14Ultimates			:= 0	;Set to 1 to spam ultimates on z1
 		;----------------------
 		;CRITICAL WARNING: if using F-keys and leveling Slot 12 unless addressed this will SPAM Screenshots
 		;	To Enable F12 Leveling:
@@ -78,16 +84,16 @@
 	;				global Champ3 	:= -1		;cele
 	;					the Champ in Slot 3 would not be added to leveled up early
 	;----------------------------
-	global Champ1	:= 13			
+	global Champ1	:= "9|-1|9"			
 	global Champ2	:= -1
 	global Champ3	:= -1
-	global Champ4	:= 20
+	global Champ4	:= 16
 	global Champ5	:= -1
-	global Champ6	:= 25				
-	global Champ7	:= 6			
+	global Champ6	:= 18				
+	global Champ7	:= 4			
 	global Champ8	:= -1
 	global Champ9	:= -1
-	global Champ10	:= 16
+	global Champ10	:= "13|13|-1"
 	global Champ11	:= -1
 	global Champ12	:= -1
 	
