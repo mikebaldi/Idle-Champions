@@ -1686,10 +1686,12 @@ Loop_GemRuns()
 {
 	DoFamiliars(fam_count)
 	{
-		Send Q
+		loop, 2
+		{
+		Send, %gFormation%
 		sleep, 100
-		Send Q
-		sleep, 100
+		}
+
 		;if (fam_count > 6)
 		;{
 		;	fam_count := 6
