@@ -2,6 +2,8 @@
 ;Mad Wizard Gem Farming Script
 ;revised by mikebaldi
 ;version: 200202 (2/2/20)
+;this version is a work in progress to optimize for maximum speed.
+
 ;by Bootch
 ;version: 191020 (10/20/19)
 ;original script by Hikibla 
@@ -1085,11 +1087,6 @@ Loop_GemRuns()
 			
 			;SPECIAL LEVELING ON z1
 			DoEarlyLeveling()
-
-			Loop, 9		
-			{
-				Send, %A_Index%
-			}
 			
 			sleep, 100
 			Send, %gFormation%
@@ -1385,24 +1382,63 @@ Loop_GemRuns()
 	
 	DoEarlyLeveling()
 	{
-		MaxChampNumber := 9
-		if (gLevelingMethod = "F")
+		if(gCurrentPatron = "NP")
 		{
-			MaxChampNumber := 12
-			if (gAllowF12_Leveling = 1)
+			LevelUp_FKey(6, 20)	;Level Shandie to specialization
+			LevelUp_FKey(10, 15)	;Level Havilar to Fiendish Resolve
+			LevelUp_FKey(4, 16)	;level Sentry to specialization
+			LevelUp_FKey(1, 9)	;level Deekin to Story of Doom
+			LevelUp_FKey(7, 4)	;level Minsc to Boastful
+			
+			Loop, 5			;spam ultimates to summon Dembo
 			{
-				MaxChampNumber := 13
-			}			
+				Send, %A_Index%
+				sleep, 10
+			}
+			
 		}
 		
-		loop, %MaxChampNumber%
-		{	
-			nEarlyLevelVal := GetChampEarlyLeveling(A_Index)
-			if (nEarlyLevelVal > 0)
+		if(gCurrentPatron = "M")
+		{
+			LevelUp_FKey(6, 20)	;Level Shandie to specialization
+			LevelUp_FKey(10, 15)	;Level Havilar to Fiendish Resolve
+			LevelUp_FKey(4, 16)	;level Sentry to specialization
+			LevelUp_FKey(1, 1)	;level Bruenor once
+			LevelUp_FKey(7, 4)	;level Minsc to Boastful
+			
+			Loop, 5			;spam ultimates to summon Dembo
 			{
-				LevelUp(A_Index, nEarlyLevelVal)
+				Send, %A_Index%
+				sleep, 10
 			}
 		}
+			
+		if(gCurrentPatron = "V")
+		{
+			LevelUp_FKey(6, 20)	;Level Shandie to specialization
+			LevelUp_FKey(4, 16)	;level Sentry to specialization
+			LevelUp_FKey(1, 9)	;level Deekin to Story of Doom
+			LevelUp_FKey(7, 4)	;level Minsc to Boastful
+		}
+			
+	;	MaxChampNumber := 9
+	;	if (gLevelingMethod = "F")
+	;;	{
+	;		MaxChampNumber := 12
+	;		if (gAllowF12_Leveling = 1)
+	;		{
+	;			MaxChampNumber := 13
+	;		}			
+	;	}
+	;	
+	;	loop, %MaxChampNumber%
+	;	{	
+	;		nEarlyLevelVal := GetChampEarlyLeveling(A_Index)
+	;		if (nEarlyLevelVal > 0)
+	;		{
+	;			LevelUp(A_Index, nEarlyLevelVal)
+	;		}
+	;	}
 		return
 	}
 	
