@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Mad Wizard Gem Farming Script
 ;revised by mikebaldi
-;version: 200202 (2/2/20)
+;version: 200209 (2/9/20)
 ;this version is a work in progress to optimize for maximum speed.
 
 ;by Bootch
@@ -474,19 +474,20 @@ GetWindowSettings()
 		gSpecialWindowClose.Color_1 := special_window_close_C	
 		
 		gSpecialWindowSearch := {}
-		gSpecialWindowSearch.StartX		:= special_window_L
+		gSpecialWindowSearch.StartX	:= special_window_L
 		gSpecialWindowSearch.StartY 	:= special_window_T
-		gSpecialWindowSearch.EndX 		:= gWindowSettings.Width
-		gSpecialWindowSearch.EndY 		:= special_window_B
+		gSpecialWindowSearch.EndX 	:= gWindowSettings.Width
+		gSpecialWindowSearch.EndY 	:= special_window_B
 		gSpecialWindowSearch.Color_1 	:= special_window_C
 		gSpecialWindowSearch.Spacing 	:= special_window_spacing
 		
-		oPixReset_Complete := {}
-		oPixReset_Complete.StartX 	:= reset_complete_L
-		oPixReset_Complete.EndX 	:= reset_complete_R
-		oPixReset_Complete.StartY 	:= reset_complete_T
-		oPixReset_Complete.EndY 	:= reset_complete_B
-		oPixReset_Complete.Color_1 	:= reset_complete_C
+		;modified to take advantage of skip button
+  		oPixReset_Continue := {}
+  		oPixReset_Continue.StartX	:= reset_continue_x - 10
+  		oPixReset_Continue.EndX     	:= 0
+		oPixReset_Continue.StartY     	:= reset_continue_y - 10
+		oPixReset_Continue.EndY     	:= 0
+ 		oPixReset_Continue.Color_1     	:= reset_continue_c1
 		oPixReset_Complete.Color_2 	:= reset_complete_C2
 		
 		oPixReset_Continue := {}
@@ -955,7 +956,7 @@ Loop_GemRuns()
 			
 		;Ensure AutoProgress off to minimize issues with Specialization Windows getting stuck open
 		;NOTE: spamming Send, {Right} to manage level progression
-		EnableAutoProgress()
+		;EnableAutoProgress()	;disabled to use only during special level 1
 		
 		;Place the Set Number Familiars
 		DoFamiliars(gFamiliarCount)
@@ -1061,6 +1062,9 @@ Loop_GemRuns()
 		;new run Level 1
 		if (nLevel_Number = 1)
 		{
+			;disable autoprogress to avoid specialization issues
+			Send, g
+			
 			;ensure roster is scrolled to left (should be for new run)			
 			ScrollRosterLeft()
 			
@@ -1081,15 +1085,14 @@ Loop_GemRuns()
 				;ToolTip, % "Failed to find the Click Damage Button", 50, 300, 10
 				return 0			
 			}
-			
-			Send, %gFormation%
-			sleep, 100
-			
+				
 			;SPECIAL LEVELING ON z1
 			DoEarlyLeveling()
 			
+			;re-enable autoprogress
 			sleep, 100
-			Send, %gFormation%
+			Send, g
+
 		}
 		
 		;get wave number 1-5
@@ -1255,11 +1258,33 @@ Loop_GemRuns()
 			ClickPixel(oClickPixel)		
 		}
 		
-		if (bFound and WaitForPixel(oPixReset_Continue))
-		{
-			bFound := 2
-			ClickPixel(oPixReset_Continue)	
-		}
+		nX_Middle := gWindowSettings.Width / 2
+      		ctr := 0
+      		while (bFound = 1 and ctr < 5)
+      		{
+      		;default 4 times a second for 1 minute (240 times over 1 minute)
+        		if (WaitForFindPixel(oPixReset_Continue, outX, outY))
+        		{
+      				if (outX < nX_Middle)                
+      				{
+        				bFound := 2
+            				bFound_Continue = 1
+        			}                
+      			oClickPixel := {}
+      			oClickPixel.X := outX + 15
+      			oClickPixel.Y := outY + 15                    
+                    
+      			ClickPixel(oClickPixel)    
+      			sleep, 500
+    			}
+    		ctr := ctr + 1
+      		}        
+		
+		;if (bFound and WaitForPixel(oPixReset_Continue))
+		;{
+		;	bFound := 2
+		;	ClickPixel(oPixReset_Continue)	
+		;}
 		return bFound
 	}
 
@@ -1903,6 +1928,8 @@ Loop_GemRuns()
 		bFound := 0
 		
 		PixelSearch, foundX, foundY,  nStartX, nStartY, nEndX, nEndY, oPixel.Color_1, , Fast|RGB
+		;added to take advantage of skip button
+		PixelSearch, foundX, foundY,  nStartX, nStartY, nEndX, nEndY, oPixel.Color_1, 5, Fast|RGB
 		if (ErrorLevel = 1)
 		{
 			;MsgBox, Error 1
