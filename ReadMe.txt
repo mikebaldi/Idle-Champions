@@ -1,6 +1,6 @@
 Mad Wizard Gem Farming Script
 
-Original script was written by Bootch (https://github.com/bootch-ds/Idle-Champs), modified to utilize Briv, Havilar, and read from memory. Memory reading functions from wrapper by Kalamity (https://github.com/Kalamity/classMemory_
+Original script was written by Bootch (https://github.com/bootch-ds/Idle-Champs), modified to utilize Briv, Havilar, and read from memory. Memory reading functions from wrapper by Kalamity (https://github.com/Kalamity/classMemory_)
 
 Re-written/Modified by: MikeBaldi1980
 Current Version: None
