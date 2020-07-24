@@ -10,7 +10,7 @@ global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 
 ;This is how we find our way in memory to the data we want. Updating the game may require updating the values stored in these variables.
 global pointerBaseLN 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Level Number Pointer Base
-global arrayPointerOffsetsLN 		:= [0x100, 0xE0C, 0x18, 0xC, 0x2C, 0xC, 0x94]			;Level Number Pointer Ofsets
+global arrayPointerOffsetsLN 		:= [0x2A8, 0xAA8, 0x28, 0x18, 0xC, 0xA8, 0x98]			;Level Number Pointer Ofsets
 global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Steelbones Stacks Pointer Base
 global arrayPointerOffsetsSB 		:= [0x2A8, 0xD48]						;Steelbones Stacks Pointer Offsets
 global pointerBaseHL 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0039FC60	;Havilar's Current Level Pointer Base
