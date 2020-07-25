@@ -245,7 +245,7 @@ FarmBrivStacks()
 
 	ctr := 0
 
-	while (gSBStacks < gSBStacksMax AND ctr < timer)
+	while (gSBStacks < gSBStacksMax AND ctr < gSBTimeMax)
 	{
 		SafetyCheck()
 		gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
