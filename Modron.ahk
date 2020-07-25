@@ -133,7 +133,7 @@ SummonDembo()
 			DirectedInput("8")
 			Sleep 250
 		}
-		UpdateToolTip()
+		;UpdateToolTip()
 
 	}
 }
@@ -189,7 +189,8 @@ WaitForResults()
         
 		UpdateToolTip()
 
-        	if (gLevel_Number = 1) 
+        	;if (gLevel_Number = 1) 
+		if (gHaviLevel = 0)
 		{
 
 			dtStart := A_Now
@@ -254,7 +255,6 @@ FarmBrivStacks()
 	}
 
 	ctr := 0
-	timer := 120000 ;back up timer in case script can no longe rread SB stack count from memory.
 
 	while (gSBStacks < gSBStacksMax AND ctr < timer)
 	{
@@ -266,11 +266,10 @@ FarmBrivStacks()
 		ctr := ctr + 500
 	}
 
-	Loop, 3
-	{
-		DirectedInput("q")
-		Sleep 250
-	}
+	;Loop, 3
+	;{
+	;	DirectedInput("q")
+	;}
 		
 	while (Not gLevel_Number Or gLevel_Number > 1)
 	{
@@ -278,7 +277,6 @@ FarmBrivStacks()
 		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
 		Sleep 250
 		DirectedInput("{Right}")
-		Sleep 250
 		DirectedInput("q")
 	}
 }
