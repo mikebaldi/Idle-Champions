@@ -122,19 +122,8 @@ SummonDembo()
 	loop 3 
 	{
 		DirectedInput("{F10}")
-		Sleep 250
-		if (gLevel_Number = 1) 
-		{
-			DirectedInput("1")
-			Sleep 250
-		}
-		else
-		{
-			DirectedInput("8")
-			Sleep 250
-		}
-		;UpdateToolTip()
-
+		DirectedInput("1")
+		DirectedInput("8")
 	}
 }
 
