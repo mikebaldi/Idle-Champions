@@ -255,19 +255,19 @@ FarmBrivStacks()
 		ctr := ctr + 500
 	}
 
-	;Loop, 3
-	;{
-	;	DirectedInput("q")
-	;}
-		
-	while (Not gLevel_Number Or gLevel_Number > 1)
+	Loop, 3
 	{
-		SafetyCheck()
-		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-		Sleep 250
-		DirectedInput("{Right}")
 		DirectedInput("q")
 	}
+		
+	;while (Not gLevel_Number Or gLevel_Number > 1)
+	;{
+	;	SafetyCheck()
+	;	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
+	;	Sleep 250
+	;	DirectedInput("{Right}")
+	;	DirectedInput("q")
+	;}
 }
 
 
