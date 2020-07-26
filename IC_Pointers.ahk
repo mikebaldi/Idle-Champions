@@ -13,8 +13,8 @@ global pointerBaseLN 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039
 global arrayPointerOffsetsLN 		:= [0x2A8, 0xAA8, 0x28, 0x18, 0xC, 0xA8, 0x98]			;Level Number Pointer Ofsets
 global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Steelbones Stacks Pointer Base
 global arrayPointerOffsetsSB 		:= [0x2A8, 0xD48]						;Steelbones Stacks Pointer Offsets
-global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Steelbones Stacks Pointer Base
-global arrayPointerOffsetsHS 		:= [0x2A8, 0xD4C]						;Steelbones Stacks Pointer Offsets
+global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Haste Stacks Pointer Base
+global arrayPointerOffsetsHS 		:= [0x2A8, 0xD4C]						;Haste Stacks Pointer Offsets
 global pointerBaseHL 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0039FC60	;Havilar's Current Level Pointer Base
 global arrayPointerOffsetsHL 		:= [0x2A8, 0xAA8, 0x8, 0x10, 0xC, 0x38C, 0x168]			;Havilar's Current Level Pointer Ofsets
 	
