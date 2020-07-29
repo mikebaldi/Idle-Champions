@@ -1,3 +1,4 @@
+;pointer base and offsets for SB and HS no longer working as of version 338
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
 ;date of script: 7/12/2020
 
