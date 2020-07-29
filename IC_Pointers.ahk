@@ -1,5 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 7/12/2020
+;date of script: 7/29/2020
+;IC v338
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
