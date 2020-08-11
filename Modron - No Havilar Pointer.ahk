@@ -1,8 +1,8 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 200718 (7/18/20)
-;lots of functions sourced from many different people. thanks for all the help.
+;version: 200810 (8/10/20)
+;lots of code sourced from many different people. thanks for all the help.
 
 SetWorkingDir, %A_ScriptDir%
 
