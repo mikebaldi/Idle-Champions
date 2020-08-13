@@ -321,8 +321,7 @@ FarmBrivStacks()
 	while (gSBStacks < gSBStacksMax AND ctr < gSBTimeMax)
 	{
 		SafetyCheck()
-		;gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-		if (gLevel_Number =< AreaLow) 
+		if (gLevel_Number <= AreaLow) 
 		{
         		DirectedInput("{Right}")
 			ctr := ctr + ScriptSpeed
