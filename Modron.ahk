@@ -1,13 +1,24 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 200718 (7/18/20)
-;lots of functions sourced from many different people. thanks for all the help.
+;version: 200829 (8/29/20)
+;put together with the help from many different people. thanks for all the help.
+
+;----------------------------
+;	User Settings
+;	various settings to allow the user to Customize how the Script behaves
+;----------------------------			
+
+global ScriptSpeed := 100	    ;sets the delay after a directinput, ms
+global gSBStacksMax := 1300	    ;target Steelbones stack count for Briv to farm
+global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
+global AreaLow := 475 		    ;last level before you start farming Steelbones stacks for Briv
+global TimeBetweenResets := 2   ;in hours
+global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
+;Set of FKeys to be spammed as part of initial leveling
+global gFKeys := "{F1}{F3}{F4}{F5}{F6}{F7}{F8}{F10}{F12}"
 
 SetWorkingDir, %A_ScriptDir%
-
-;modify variables in this file
-#include Modron_Configuration.ahk
 
 ;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
 #include classMemory.ahk
@@ -25,42 +36,35 @@ if (_ClassMemory.__Class != "_ClassMemory")
 Global RunCount := 0, FailedCount := 0
 global gTotal_RunCount	:= 0
 global gTotal_Bosses 	:= 0
-global gprevBosses	:=
-global gLoopBosses	:=
+global gprevBosses	    :=
+global gLoopBosses	    :=
 global dtPrevRunTime 	:= "00:00:00"
+global dtPrev           :=      ;used to calc dtPrevRunTime
 global dtLoopStartTime 	:= "00:00:00"
-global dtStartTime 	:= "00:00:00"
+global dtStartTime 	    := "00:00:00"
 global gTotal_RunTime 	:= "00:00:00"
-global gLevel_Number 	:= 	;used to store current level
-global gprevLevel 	:= 	;used for tracking boss kills
-global gSBStacks 	:=	;used to store current Steelbones stack count
-global gHasteStacks 	:=	;used to store current Haste stack count
-global gHaviLevel	:=	;used to store Havilar's current level from memory
-global gHaviPrevLevel	:=	;used to compare Havilar's previous level to current level
-global gBrivStacked	:= 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
-global gLoop		:=	;variable to store what loop currently in
-global gdebug		:= 1	
+global gLevel_Number 	:= 	    ;used to store current level
+global gprevLevel 	    := 	    ;used for tracking boss kills
+global gSBStacks 	    :=	    ;used to store current Steelbones stack count
+global gHasteStacks 	:=	    ;used to store current Haste stack count
+global gBrivStacked	    := 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
+global gLoop		    :=	    ;variable to store what loop the script is currently in
+global ElapsedTime      :=      ;variable used to count time in while loops
+global gdebug		    := 1	;displays (1) or hides (0) the debug portion of the tooltip
+global gPrevLevelTime	:=	
+global timeSinceLastRestart := A_TickCount
 
 
 LoadTooltip()
 
-;click while keys are held down
-$F1::
-    While GetKeyState("F1", "P") {
-        MouseClick
-        Sleep 0
-    }
-return
-
 ;start Modron gem runs
 $F2::
-    	dtStartTime := A_Now
+    dtStartTime := A_Now
 	dtLoopStartTime := A_Now
-    	loop 
+    loop 
 	{
-        	;dtLastRunTime := A_Now
-        	WaitForResults()
-    	}
+        WaitForResults()
+    }
 return
 
 ;Debug
@@ -73,22 +77,49 @@ $F5::
 	{
 		gdebug :=1
 	}
-	
 return
 
 ;Reload the script
 $F9::
-    if RunCount > 0
-        DataOut()
     Reload
 return
 
 ;kills the script
 $F10::ExitApp
 
+;+50 levels to Target Level
+#IfWinActive Idle Champions
+~Up::
+{
+	AreaLow += 50
+	return
+}
+
+;-50 levels to Target Level
+#IfWinActive Idle Champions
+~Down::
+{
+	AreaLow -= 50
+	return
+}
+
+;+1000 Stacks to Target Stealbones Stacks
+#IfWinActive Idle Champions
+^~Up::
+{
+	gSBStacksMax += 1000
+	return
+}
+
+;-1000 Stacks to Target Stealbones Stacks
+#IfWinActive Idle Champions
+^~Down::
+{
+	gSBStacksMax -= 1000
+	return
+}
+
 $`::Pause
-
-
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
@@ -100,45 +131,84 @@ RefreshPointers()
 	idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 }
 
-SafetyCheck(Skip := False) {
-    While(Not WinExist("ahk_exe IdleDragons.exe")) {
+SafetyCheck(Skip := False) 
+{
+    While(Not WinExist("ahk_exe IdleDragons.exe")) 
+    {
         Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
-	Sleep 5000
-	RefreshPointers()
-	Sleep 5000
-	SummonDembo()
-	++FailedCount
+	    Sleep 10000
+	    RefreshPointers()
+	    Sleep 5000
+		timeSinceLastRestart := A_TickCount
+	    SummonDembo()
+	    ++FailedCount
     }
-    if Not Skip {
+    if Not Skip 
+    {
         WinActivate, ahk_exe IdleDragons.exe
     }
 }
 
-SummonDembo()
+DoLevel1()
 {
-	gHaviLevel := idle.read(pointerBaseHL, "Int", arrayPointerOffsetsHL*)
-	gHaviPrevLevel := gHaviLevel
-	ctr := 0
-	timer := 30000 ;how long the script will check if it can level Havilar
-	while (gHaviLevel = gHaviPrevLevel AND ctr < timer)
+	;set start of run variables
+	dtStart := A_Now
+	dtLoopStartTime := A_Now
+	dtPrevRunTime := DateTimeDiff(dtPrev, dtStart)				
+	dtPrev := dtStart
+	gBrivStacked := 1
+	gPrevLevel := 1
+
+	gLoop := "DoLevel1"
+	UpdateToolTip()
+	
+	;spam fkey leveling during level 1
+	While(gLevel_Number = 1)
 	{
-		DirectedInput("{F10}")
-		Sleep 250
-		gHaviLevel := idle.read(pointerBaseHL, "Int", arrayPointerOffsetsHL*)
-		Sleep 250
-		ctr := ctr + 500
-		gLoop := "SummonDembo"
-		UpdateToolTip()
+		DirectedInput(gFKeys)
+		DirectedInput("{Right}")
+		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
 	}
-	loop 3 
+
+	;to keep boss tracker accurate
+	UpdateToolTip()
+
+	SummonDembo()
+
+	gLoop := "DoLevel1Finish"
+	UpdateToolTip()
+	Sleep 250
+
+	;spam 30 more fkey loops to ensure everyone leveled up
+	loop 30
 	{
-		DirectedInput("{F10}")
-		DirectedInput("1")
-		DirectedInput("8")
+		DirectedInput(gFKeys)
 	}
 }
 
-DirectedInput(s) {
+Close() 
+{
+	PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+
+}
+
+SummonDembo()
+{
+	gLoop := "SummonDembo"
+	UpdateToolTip()
+
+	;spam send 2 through 8 for 4 seconds to summon Dembo
+	StartTime := A_TickCount
+    ElapsedTime := 0
+	while (ElapsedTime < gDembo)
+	{
+		DirectedInput("2345678")
+        ElapsedTime := A_TickCount - StartTime
+	}
+}
+
+DirectedInput(s) 
+{
 	SafetyCheck(True)
 	ControlFocus,, ahk_exe IdleDragons.exe
 	ControlSend,, {Blind}%s%, ahk_exe IdleDragons.exe
@@ -147,33 +217,66 @@ DirectedInput(s) {
 
 UpdateToolTip()
 {
+	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
+	gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
+	gHasteStacks := idle.read(pointerBaseHS, "Int", arrayPointerOffsetsHS*)
+
+	gprevBosses := Floor(gprevLevel / 5)
+	gLoopBosses := Floor(gLevel_Number / 5)
+
+	if (gLoopBosses > gprevBosses)
+	{
+		count := gLoopBosses - gprevBosses
+		gTotal_Bosses := gTotal_Bosses + count
+		gprevLevel := gLevel_Number
+		gPrevLevelTime := A_TickCount
+	}
+
+	if (gLevel_Number > gprevLevel)
+	{
+		gprevLevel := gLevel_Number
+		gPrevLevelTime := A_TickCount
+	}
+
 	dtNow := A_Now
 	dtCurrentRunTime := DateTimeDiff(dtLoopStartTime, dtNow)
+	dtCurrentLevelTime := (A_TickCount-gPrevLevelTime)/1000
+
+	;if time on current level exceeds 30 seconds, g is sent twice. May fix issue with boss levels stopping autoprogress and send right
+	if (dtCurrentLevelTime > 30 AND gLoop != "FarmBrivStacks")
+	{
+		DirectedInput("g")
+		sleep 250
+		DirectedInput("g")
+	}
 
 	gTotal_RunTime := DateTimeDiffS(dtStartTime, dtNow) / 3600
 
 	bossesPhr := gTotal_Bosses / gTotal_RunTime
 
 	sToolTip := "Current Level: " gLevel_Number
-	sToolTip := sToolTip "`nTarget Level: " AreaLow
-	sToolTip := sToolTip "`nCurrent Run Time: " dtCurrentRunTime
-	sToolTip := sToolTip "`nTotal Run Time (hr): " Round(gTotal_Runtime, 2)	
-	sToolTip := sToolTip "`nTotal Run Count: " gTotal_RunCount
-	sToolTip := sToolTip "`nTotal B/hr: " Round(bossesPhr, 2)
-	sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
+    sToolTip := sToolTip "`nTarget Level: " AreaLow
+    sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
 	sToolTip := sToolTip "`nTarget SB Stacks: " gSBStacksMax
-	sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
-	sToolTip := sToolTip "`nTotal Restarts: " FailedCount
+    sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
+	sToolTip := sToolTip "`nCurrent Run Time: " dtCurrentRunTime
+	sToolTip := sToolTip "`nPrevious Run Time: " dtPrevRunTime
+	sToolTip := sToolTip "`nTotal Run Count: " gTotal_RunCount
+	sToolTip := sToolTip "`nTotal Run Time (hr): " Round(gTotal_Runtime, 2)	
+	sToolTip := sToolTip "`nTotal B/hr: " Round(bossesPhr, 2)
+	sToolTip := sToolTip "`nDebug (F5 to toggle)"
+	
 	if (gdebug = 1)
 	{
-		sToolTip := sToolTip "`nDebug (F5 to toggle)"
-		sToolTip := sToolTip "`nHavi Level: " gHaviLevel
+		sToolTip := sToolTip "`nTotal Restarts: " FailedCount
 		sToolTip := sToolTip "`nLoop: " gLoop
+        sToolTip := sToolTip "`nElapsedTime: " ElapsedTime
 		sToolTip := sToolTip "`nBriv Stacked: " gBrivStacked
 		sToolTip := sToolTip "`nPrev Lvl: " gprevLevel
 		sToolTip := sToolTip "`nPrev Bosses: " gprevBosses
 		sToolTip := sToolTip "`nLoop Bosses: " gLoopBosses
 		sToolTip := sToolTip "`nTotal Bosses: " gTotal_Bosses
+		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
 	}
 
 	ToolTip, % sToolTip, 25, 250, 1
@@ -183,69 +286,34 @@ UpdateToolTip()
 WaitForResults() 
 {  
 	RefreshPointers()
-	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-	gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
-	
+
 	;for tracking boss kills
+	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
 	gprevLevel := gLevel_Number
+	gPrevLevelTime := A_Now
+
+	TimeBetweenResets := TimeBetweenResets * 60 * 60 * 1000
+	timeSinceLastRestart := A_TickCount
 
 	UpdateToolTip()
     
 	loop 
 	{
-        	;simple click incase of fire
-        	SafetyCheck()
-       	 	MouseClick, L, 650, 450, 2
-
-		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-		gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
-		gHasteStacks := idle.read(pointerBaseHS, "Int", arrayPointerOffsetsHS*)
-		gHaviLevel := idle.read(pointerBaseHL, "Int", arrayPointerOffsetsHL*)
-        	
 		gLoop := "Main"
-		UpdateToolTip()
+        UpdateToolTip()
+        DirectedInput("{q}")
 
-        	;if (gLevel_Number = 1) 
-		if (gHaviLevel = 0)
+        if (gLevel_Number = 1) 
 		{
-
-			dtStart := A_Now
-			dtLoopStartTime := A_Now
-			dtPrevRunTime := DateTimeDiff(dtPrev, dtStart)		
-			UpdateToolTip()		
-			dtPrev := dtStart			
-			Sleep 1000
-
-			SummonDembo()
-			Sleep 250
-
-			gprevLevel := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-
-			;level up everyone
-			loop 40 
+			DoLevel1()	
+			if (TimeBetweenResets > 0 and (A_TickCount - timeSinceLastRestart) > TimeBetweenResets) 
 			{
-				DirectedInput("{F1}{F2}{F4}{F5}{F6}{F7}{F8}{F10}{F12}")
-			}
+				Close()
+			}	
+        }
 
-			gprevLevel := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-			Sleep 250
-			gBrivStacked := 1
-			Sleep 500
-			gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-			Sleep 500		
-        	}
 
-		gprevBosses := Floor(gprevLevel / 5)
-		gLoopBosses := Floor(gLevel_Number / 5)
-
-		if (gLoopBosses > gprevBosses)
-		{
-			count := gLoopBosses - gprevBosses
-			gTotal_Bosses := gTotal_Bosses + count
-			gprevLevel := gLevel_Number
-		}
-
-        	if (gBrivStacked And gLevel_Number > AreaLow) 
+        if (gBrivStacked And gLevel_Number > AreaLow) 
 		{
 			FarmBrivStacks()
 			Sleep 250
@@ -254,9 +322,11 @@ WaitForResults()
 			Sleep 250
 			UpdateToolTip()
 		}
-
-        	DirectedInput("{Right}")
-    	}
+		
+        MouseClick, L, 650, 450, 2
+        DirectedInput("{Right}")
+		MouseClick, L, 650, 450, 2
+    }
 }
 
 FarmBrivStacks()
@@ -267,37 +337,36 @@ FarmBrivStacks()
 		DirectedInput("w")
 	}
 
-	ctr := 0
+	AreaLowBoss := AreaLow + 4
 
-	while (gSBStacks < gSBStacksMax AND ctr < gSBTimeMax)
+	while (gLevel_Number > AreaLowBoss)
+	{
+		DirectedInput("{Left}")
+		UpdateToolTip()
+	}
+
+    StartTime := A_TickCount
+	ElapsedTime := 0
+
+	while (gSBStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
 	{
 		SafetyCheck()
+		
+        if (gLevel_Number <= AreaLow) 
+		{
         	DirectedInput("{Right}")
-		gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
-		Sleep 250
+		}
+
 		gLoop := "FarmBrivStacks"
 		UpdateToolTip()
-		Sleep 250
-		ctr := ctr + 500 + ScriptSpeed
+		Sleep 1000
+		ElapsedTime := A_TickCount - StartTime
 	}
 
 	Loop, 3
 	{
 		DirectedInput("q")
 	}
-}
-
-
-DataOut() {
-    FormatTime, currentDateTime,, MM/dd/yyyy HH:mm:ss
-    dtNow := A_Now
-    toWallRunTime := DateTimeDiff(dtStartTime, dtLastRunTime)
-    lastRunTime := DateTimeDiff(dtLastRunTime, dtNow)
-    totBosses := Floor(AreaLow / 5) * RunCount
-    currentPatron := NpVariant ? "NP" : MirtVariant ? "Mirt" : VajraVariant ? "Vajra" : StrahdVariant ? "Strahd" : "How?"
-    areaStopped = 0 ;InputBox, areaStopped, Area Stopped, Generaly stop on areas ending in`nz1 thru z4`nz6 thru z9
-    ;meant for Google Sheets/Excel/Open Office
-    FileAppend,%currentDateTime%`t%AreaLow%`t%toWallRunTime%`t%lastRunTime%`t%RunCount%`t%totBosses%`t%currentPatron%`t%FailedCount%`t%areaStopped%`n, MadWizard-Bosses.txt
 }
 
 { ;time HELPERS
@@ -378,11 +447,7 @@ DataOut() {
         SetTimer, RemoveToolTip, -5000
         return
     }
-    LoopedTooltip(variants, currentRunTime) {
-        ToolTip, % "NpMiVaSt: " variants "`nMins since start: " currentRunTime, 50, 200, 2
-        SetTimer, RemoveToolTip, -1000
-        return
-    }
+
     RemoveToolTip:
         ToolTip
     return
