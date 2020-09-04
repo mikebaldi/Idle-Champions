@@ -16,7 +16,3 @@ global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039F
 global arrayPointerOffsetsSB 		:= [0x2A8, 0xD50]						;Steelbones Stacks Pointer Offsets
 global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Steelbones Stacks Pointer Base
 global arrayPointerOffsetsHS 		:= [0x2A8, 0xD54]						;Steelbones Stacks Pointer Offsets
-
-;thanks to TehPuppy for finding this one. Not currently used in any of my scripts and untested by me.
-global pointerBaseCO                 := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60    ;Omin's current Contractual Obligation Gold Buff Pointer Base
-global arrayPointerOffsetsCO         := [0x150, 0xD38, 0x1B4, 0x1B4, 0x18, 0x10, 0x38]                ;Omin's current CO offsets
