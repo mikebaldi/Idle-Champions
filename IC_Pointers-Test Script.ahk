@@ -29,11 +29,6 @@ if !isObject(idle)
 ;The pointer base and offsets we are testing
 #Include IC_Pointers.ahk
 
-;Coordinate Mode Settings
-CoordMode, Pixel, Client
-CoordMode, Mouse, Client
-CoordMode, ToolTip, Client
-
 ;Tool Tip Pop Up
 UpdateToolTip()
 return
@@ -59,12 +54,10 @@ return
 		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
 		gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
 		gHasteStacks := idle.read(pointerBaseHS, "Int", arrayPointerOffsetsHS*)
-		gHaviLevel := idle.read(pointerBaseHL, "Int", arrayPointerOffsetsHL*)
 
 		sToolTip := "F9 to Reload`nCurrent Level: "gLevel_Number
 		sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
 		sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
-		sToolTip := sToolTip "`nHavi Level: " gHaviLevel
 
 		ToolTip, % sToolTip, 25, 475, 1
 	}
