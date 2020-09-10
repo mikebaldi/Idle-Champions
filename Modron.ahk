@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 200829 (8/29/20)
+;version: 200910 (9/10/20)
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -10,10 +10,10 @@
 ;----------------------------			
 
 global ScriptSpeed := 100	    ;sets the delay after a directinput, ms
-global gSBStacksMax := 1300	    ;target Steelbones stack count for Briv to farm
+global gSBStacksMax := 1200	    ;target Steelbones stack count for Briv to farm
 global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 475 		    ;last level before you start farming Steelbones stacks for Briv
-global TimeBetweenResets := 2   ;in hours
+global TimeBetweenResets := 4   ;units = hours. set to 0 to disable.
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
 ;Set of FKeys to be spammed as part of initial leveling
 global gFKeys := "{F1}{F3}{F4}{F5}{F6}{F7}{F8}{F10}{F12}"
@@ -33,37 +33,52 @@ if (_ClassMemory.__Class != "_ClassMemory")
 ;pointer addresses and offsets
 #include IC_Pointers.ahk
 
-Global RunCount := 0, FailedCount := 0
+global ResetCount 		:= 0
 global gTotal_RunCount	:= 0
 global gTotal_Bosses 	:= 0
 global gprevBosses	    :=
 global gLoopBosses	    :=
-global dtPrevRunTime 	:= "00:00:00"
-global dtPrev           :=      ;used to calc dtPrevRunTime
-global dtLoopStartTime 	:= "00:00:00"
-global dtStartTime 	    := "00:00:00"
-global gTotal_RunTime 	:= "00:00:00"
+global dtPrevRunTime 	:= 
+global dtSlowRuntTime	:= 		
+global dtFastRuntTime	:= 100	
+global dtLoopStartTime 	:= 		;used to calc current runt ime
+global dtStartTime 	    := 
 global gLevel_Number 	:= 	    ;used to store current level
 global gprevLevel 	    := 	    ;used for tracking boss kills
 global gSBStacks 	    :=	    ;used to store current Steelbones stack count
 global gHasteStacks 	:=	    ;used to store current Haste stack count
 global gBrivStacked	    := 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
 global gLoop		    :=	    ;variable to store what loop the script is currently in
-global ElapsedTime      :=      ;variable used to count time in while loops
-global gdebug		    := 1	;displays (1) or hides (0) the debug portion of the tooltip
+global ElapsedTime      :=      ;variable used to track time in while loops
+global gdebug		    := 0	;displays (1) or hides (0) the debug tooltip
+global gStats1			:= 1	;displays (1) or hides (0) the Stats 1 tooltip
+global gStats2			:= 1	;displays (1) or hides (0) the Stats 2 tooltip
 global gPrevLevelTime	:=	
-global timeSinceLastRestart := A_TickCount
+global dtPrevRestart 	:= A_TickCount
+;variables to store final memory addresses
+global addressLN        :=
+global addressSB        :=
+global addressHS        :=
+global gErrors			:= 0	;counts how many times ErrorLevel triggered GetAddress()
 
-
-LoadTooltip()
+	sToolTip := "Hotkeys"
+    sToolTip := sToolTip "`nF2: Start Gem Farm Loop"
+	sToolTip := sToolTip "`nF5: Toggle Debug"
+	sToolTip := sToolTip "`nF6: Toggle Stats 1"
+	sToolTip := sToolTip "`nF7: Toggle Stats 2"
+	sToolTip := sToolTip "`nF9: Reload Script"
+	sToolTip := sToolTip "`nF10: Close Script"
+	sToolTip := sToolTip "`nUp/Down: AreaLow +/- 50"
+	sToolTip := sToolTip "`nCTRL+Up/Down: Target SB Stacks +/- 1000"
+    ToolTip, % sToolTip, 15, 233, 1
 
 ;start Modron gem runs
 $F2::
-    dtStartTime := A_Now
-	dtLoopStartTime := A_Now
+    dtStartTime := A_TickCount
+	dtLoopStartTime := A_TickCount
     loop 
 	{
-        WaitForResults()
+        GemFarm()
     }
 return
 
@@ -76,6 +91,30 @@ $F5::
 	else
 	{
 		gdebug :=1
+	}
+return
+
+;Stats 1
+$F6::
+	if (gStats1 = 1)
+	{
+		gStats1 := 0
+	}
+	else
+	{
+		gStats1 :=1
+	}
+return
+
+;Stats 2
+$F7::
+	if (gStats2 = 1)
+	{
+		gStats2 := 0
+	}
+	else
+	{
+		gStats2 :=1
 	}
 return
 
@@ -131,6 +170,14 @@ RefreshPointers()
 	idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 }
 
+;loads final memory address of pointer to reduce overhead
+GetAddress()
+{
+    addressLN := idle.getAddressFromOffsets(pointerBaseLN, arrayPointerOffsetsLN*)
+    addressSB := idle.getAddressFromOffsets(pointerBaseSB, arrayPointerOffsetsSB*)
+    addressHS := idle.getAddressFromOffsets(pointerBaseHS, arrayPointerOffsetsHS*)
+}
+
 SafetyCheck(Skip := False) 
 {
     While(Not WinExist("ahk_exe IdleDragons.exe")) 
@@ -139,9 +186,11 @@ SafetyCheck(Skip := False)
 	    Sleep 10000
 	    RefreshPointers()
 	    Sleep 5000
-		timeSinceLastRestart := A_TickCount
+		GetAddress()
+		Sleep 5000
+		dtPrevRestart := A_TickCount
 	    SummonDembo()
-	    ++FailedCount
+	    ++ResetCount
     }
     if Not Skip 
     {
@@ -149,25 +198,47 @@ SafetyCheck(Skip := False)
     }
 }
 
-DoLevel1()
+LevelUp()
 {
-	;set start of run variables
-	dtStart := A_Now
-	dtLoopStartTime := A_Now
-	dtPrevRunTime := DateTimeDiff(dtPrev, dtStart)				
-	dtPrev := dtStart
+	;set start of loop variables
+	if (gTotal_RunCount)
+	{
+		dtPrevRunTime := (A_TickCount - dtLoopStartTime) / 60000
+		if (dtSlowRuntTime < dtPrevRunTime)
+		{
+			dtSlowRuntTime := round(dtPrevRunTime, 2)
+		}
+		if (dtFastRuntTime > dtPrevRunTime)
+		{
+			dtFastRuntTime := round(dtPrevRunTime, 2)
+		}	
+	}
+		
+	dtLoopStartTime := A_TickCount
 	gBrivStacked := 1
-	gPrevLevel := 1
 
-	gLoop := "DoLevel1"
+	;check memory is reading correct level and continue to try and reload memory address for 3 minutes
+	gLevel_Number := idle.read(addressLN, "Int")
+	StartTime := A_TickCount
+    ElapsedTime := 0
+	while (gLevel_Number = "" AND ElapsedTime < 180000)
+	{
+		GetAddress()
+		ElapsedTime := A_TickCount - StartTime
+		gLevel_Number := idle.read(addressLN, "Int")
+	}
+
+	gPrevLevel := gLevel_Number
+
+	gLoop := "LevelUp"
 	UpdateToolTip()
 	
 	;spam fkey leveling during level 1
-	While(gLevel_Number = 1)
+	While(gLevel_Number = gPrevLevel)
 	{
 		DirectedInput(gFKeys)
 		DirectedInput("{Right}")
-		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
+		gLevel_Number := idle.read(addressLN, "Int")
 	}
 
 	;to keep boss tracker accurate
@@ -175,7 +246,7 @@ DoLevel1()
 
 	SummonDembo()
 
-	gLoop := "DoLevel1Finish"
+	gLoop := "LevelUpFinish"
 	UpdateToolTip()
 	Sleep 250
 
@@ -184,12 +255,6 @@ DoLevel1()
 	{
 		DirectedInput(gFKeys)
 	}
-}
-
-Close() 
-{
-	PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-
 }
 
 SummonDembo()
@@ -217,10 +282,24 @@ DirectedInput(s)
 
 UpdateToolTip()
 {
-	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
-	gSBStacks := idle.read(pointerBaseSB, "Int", arrayPointerOffsetsSB*)
-	gHasteStacks := idle.read(pointerBaseHS, "Int", arrayPointerOffsetsHS*)
-
+	gLevel_Number := idle.read(addressLN, "Int")
+	if (gLevel_Number = "")
+	{
+		GetAddress()
+		++gErrors
+	}
+	gSBStacks := idle.read(addressSB, "Int")
+	if (gSBStacks = "")
+	{
+		GetAddress()
+		++gErrors
+	}
+	gHasteStacks := idle.read(addressHS, "Int")
+	if (gHasteStacks = "")
+	{
+		GetAddress()
+		++gErrors
+	}
 	gprevBosses := Floor(gprevLevel / 5)
 	gLoopBosses := Floor(gLevel_Number / 5)
 
@@ -238,9 +317,8 @@ UpdateToolTip()
 		gPrevLevelTime := A_TickCount
 	}
 
-	dtNow := A_Now
-	dtCurrentRunTime := DateTimeDiff(dtLoopStartTime, dtNow)
-	dtCurrentLevelTime := (A_TickCount-gPrevLevelTime)/1000
+	dtCurrentRunTime := (A_TickCount - dtLoopStartTime) / 60000
+	dtCurrentLevelTime := (A_TickCount - gPrevLevelTime)/1000
 
 	;if time on current level exceeds 30 seconds, g is sent twice. May fix issue with boss levels stopping autoprogress and send right
 	if (dtCurrentLevelTime > 30 AND gLoop != "FarmBrivStacks")
@@ -250,25 +328,58 @@ UpdateToolTip()
 		DirectedInput("g")
 	}
 
-	gTotal_RunTime := DateTimeDiffS(dtStartTime, dtNow) / 3600
+	;if time on current level exceeds 240 seconds, the game is restarted.
+	if (dtCurrentLevelTime > 240 AND gLoop != "FarmBrivStacks")
+	{
+		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+		While(WinExist("ahk_exe IdleDragons.exe")) 
+		{
+			sleep 1000
+		}
+		SafetyCheck()
+		LevelUp()
+	}
+
+	gTotal_RunTime := (A_TickCount - dtStartTime) / 3600000
 
 	bossesPhr := gTotal_Bosses / gTotal_RunTime
 
-	sToolTip := "Current Level: " gLevel_Number
-    sToolTip := sToolTip "`nTarget Level: " AreaLow
-    sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
-	sToolTip := sToolTip "`nTarget SB Stacks: " gSBStacksMax
-    sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
-	sToolTip := sToolTip "`nCurrent Run Time: " dtCurrentRunTime
-	sToolTip := sToolTip "`nPrevious Run Time: " dtPrevRunTime
-	sToolTip := sToolTip "`nTotal Run Count: " gTotal_RunCount
-	sToolTip := sToolTip "`nTotal Run Time (hr): " Round(gTotal_Runtime, 2)	
-	sToolTip := sToolTip "`nTotal B/hr: " Round(bossesPhr, 2)
-	sToolTip := sToolTip "`nDebug (F5 to toggle)"
-	
-	if (gdebug = 1)
+	if (gStats1)
 	{
-		sToolTip := sToolTip "`nTotal Restarts: " FailedCount
+		sToolTip := "Stats 1 (F6 to toggle)"
+		sToolTip := sToolTip "`nCurrent Level: " gLevel_Number
+    	sToolTip := sToolTip "`nTarget Level: " AreaLow
+    	sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
+		sToolTip := sToolTip "`nTarget SB Stacks: " gSBStacksMax
+    	sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
+		sToolTip := sToolTip "`nCurrent Run Time: " Round(dtCurrentRunTime, 2)
+		ToolTip, % sToolTip, 355, 35, 1
+	}
+	else
+	{
+		Tooltip ,,,,1
+	}
+
+	if (gStats2)
+	{
+		sToolTip := "Stats 2 (F7 to toggle)"
+		sToolTip := sToolTip "`nPrevious Run Time: " Round(dtPrevRunTime, 2)
+		sToolTip := sToolTip "`nFastest Run Time " dtFastRuntTime
+		sToolTip := sToolTip "`nSlowest Run Time: " dtSlowRuntTime
+		sToolTip := sToolTip "`nTotal Run Count: " gTotal_RunCount
+		sToolTip := sToolTip "`nTotal Run Time (hr): " Round(gTotal_Runtime, 2)	
+		sToolTip := sToolTip "`nTotal B/hr: " Round(bossesPhr, 2)
+		ToolTip, % sToolTip, 525, 35, 2
+	}
+	else
+	{
+		Tooltip ,,,,2
+	}
+
+	if (gdebug)
+	{
+		sToolTip := "Debug (F5 to toggle)"
+		sToolTip := sToolTip "`nTotal Restarts: " ResetCount
 		sToolTip := sToolTip "`nLoop: " gLoop
         sToolTip := sToolTip "`nElapsedTime: " ElapsedTime
 		sToolTip := sToolTip "`nBriv Stacked: " gBrivStacked
@@ -277,23 +388,29 @@ UpdateToolTip()
 		sToolTip := sToolTip "`nLoop Bosses: " gLoopBosses
 		sToolTip := sToolTip "`nTotal Bosses: " gTotal_Bosses
 		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
+		sToolTip := sToolTip "`nGet Address Triggers: " gErrors
+		ToolTip, % sToolTip, 15, 233, 3
+	}
+	else
+	{
+		Tooltip ,,,,3
 	}
 
-	ToolTip, % sToolTip, 25, 250, 1
-
+	
 }
 
-WaitForResults() 
+GemFarm() 
 {  
 	RefreshPointers()
-
+	GetAddress()
+	
 	;for tracking boss kills
-	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
+	gLevel_Number := idle.read(addressLN, "Int")
 	gprevLevel := gLevel_Number
-	gPrevLevelTime := A_Now
+	gPrevLevelTime := A_TickCount
 
 	TimeBetweenResets := TimeBetweenResets * 60 * 60 * 1000
-	timeSinceLastRestart := A_TickCount
+	dtPrevRestart := A_TickCount
 
 	UpdateToolTip()
     
@@ -305,17 +422,55 @@ WaitForResults()
 
         if (gLevel_Number = 1) 
 		{
-			DoLevel1()	
-			if (TimeBetweenResets > 0 and (A_TickCount - timeSinceLastRestart) > TimeBetweenResets) 
+			LevelUp()
+			
+			;check if time between reset has exceeded and restart the game if so	
+			if (TimeBetweenResets > 0 and (A_TickCount - dtPrevRestart) > TimeBetweenResets) 
 			{
-				Close()
+				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 			}	
         }
 
 
         if (gBrivStacked And gLevel_Number > AreaLow) 
 		{
-			FarmBrivStacks()
+			;===
+			Loop, 3
+			{
+				DirectedInput("w")
+			}
+
+			AreaLowBoss := AreaLow + 4
+
+			while (gLevel_Number > AreaLowBoss)
+			{
+				DirectedInput("{Left}")
+				UpdateToolTip()
+			}
+
+    		StartTime := A_TickCount
+			ElapsedTime := 0
+
+			while (gSBStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
+			{
+				SafetyCheck()
+		
+        		if (gLevel_Number <= AreaLow) 
+				{
+        			DirectedInput("{Right}")
+				}
+
+				gLoop := "FarmBrivStacks"
+				UpdateToolTip()
+				Sleep 1000
+				ElapsedTime := A_TickCount - StartTime
+			}
+
+			Loop, 3
+			{
+				DirectedInput("q")
+			}
+			
 			Sleep 250
 			gBrivStacked := 0
 			++gTotal_RunCount
@@ -327,128 +482,4 @@ WaitForResults()
         DirectedInput("{Right}")
 		MouseClick, L, 650, 450, 2
     }
-}
-
-FarmBrivStacks()
-{
-
-	Loop, 3
-	{
-		DirectedInput("w")
-	}
-
-	AreaLowBoss := AreaLow + 4
-
-	while (gLevel_Number > AreaLowBoss)
-	{
-		DirectedInput("{Left}")
-		UpdateToolTip()
-	}
-
-    StartTime := A_TickCount
-	ElapsedTime := 0
-
-	while (gSBStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
-	{
-		SafetyCheck()
-		
-        if (gLevel_Number <= AreaLow) 
-		{
-        	DirectedInput("{Right}")
-		}
-
-		gLoop := "FarmBrivStacks"
-		UpdateToolTip()
-		Sleep 1000
-		ElapsedTime := A_TickCount - StartTime
-	}
-
-	Loop, 3
-	{
-		DirectedInput("q")
-	}
-}
-
-{ ;time HELPERS
-    ;return String HH:mm:ss of the timespan
-    DateTimeDiff(dtStart, dtEnd) {
-        dtResult := dtEnd
-        
-        EnvSub, dtResult, dtStart, Seconds
-        
-        return TimeResult(dtResult)
-    }
-
-    DateTimeDiffS(dtStart, dtEnd) {
-        dtResult := dtEnd
-        
-        EnvSub, dtResult, dtStart, Seconds
-        
-        return dtResult
-    }
-    
-    
-    ;might use later
-    TimeSpanAverage(ts1, nCount) {
-        time_parts1 := StrSplit(ts1, ":")
-        t1_seconds := (((time_parts1[1] * 60) + time_parts1[2]) * 60) + time_parts1[3]
-        if (!nCount) {
-            return "00:00:00"
-        }
-        return TimeResult(t1_seconds / nCount)
-    }
-    
-    TimeResult(dtResult) {
-        nSeconds := Floor(Mod(dtResult, 60))
-        nMinutes := Floor(dtResult / 60)
-        nHours := Floor(nMinutes / 60)
-        nMinutes := Mod(nMinutes, 60)
-        
-        sResult := (StrLen(nHours) = 1 ? "0" : "") nHours ":" (StrLen(nMinutes) = 1 ? "0" : "") nMinutes ":" (StrLen(nSeconds) = 1 ? "0" : "") nSeconds
-        
-        return sResult
-    }
-    
-    MinuteTimeDiff(dtStart, dtEnd) {
-        dtResult := dtEnd
-        EnvSub, dtResult, dtStart, Seconds
-        nSeconds := Floor(Mod(dtResult, 60))
-        nMinutes := Floor(dtResult / 60)
-        nHours := Floor(nMinutes / 60)
-        nMinutes := Mod(nMinutes, 60)
-        
-        return (nMinutes + (nHours * 60) + (nSeconds / 60))
-    }
-
-	TimeSpanAdd(ts1, ts2)
-	{
-		time_parts1 := StrSplit(ts1, ":")
-		time_parts2 := StrSplit(ts2, ":")
-		
-		t1_seconds := (((time_parts1[1] * 60) + time_parts1[2]) * 60) + time_parts1[3]
-		t2_seconds := (((time_parts2[1] * 60) + time_parts2[2]) * 60) + time_parts2[3]
-		
-		dtResult := t1_seconds + t2_seconds
-		
-		nSeconds := Mod(dtResult, 60)
-		nMinutes := Floor(dtResult / 60)
-		nHours := Floor(nMinutes / 60)
-		nMinutes := Mod(nMinutes, 60)
-		
-		sResult := (StrLen(nHours) = 1 ? "0" : "") nHours ":" (StrLen(nMinutes) = 1 ? "0" : "") nMinutes ":" (StrLen(nSeconds) = 1 ? "0" : "") nSeconds
-		
-		return sResult
-	}
-}
-
-{ ;tooltips
-    LoadTooltip() {
-        ToolTip, % "Shortcuts`nF2: Run MW`nF9: Reload`nF10: Kill the script`nThere are others", 50, 250, 1
-        SetTimer, RemoveToolTip, -5000
-        return
-    }
-
-    RemoveToolTip:
-        ToolTip
-    return
 }
