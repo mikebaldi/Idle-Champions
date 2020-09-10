@@ -7,15 +7,17 @@ Features:
 4. Will input 'g' twice if stuck on a level for 30 seconds or longer.
 5. Will close and restart game if stuck on a level for 240 seconds or longer.
 6. Will close and restart game after a set amount of time.
-7. Various statistics displayed as a tooltip that can be toggled on or off.
+7. Various statistics and variables displayed as tooltips that can be toggled on or off.
+8. Restarts the game after crashing.
 
 How to use:
 1. Download Modron.AHK, classMemor.AHK, and IC_Pointers.AHK to the same folder.
 2. Adjust User Settings in Modron.AHK
 3. Run script Modron.AHK
 4. Set your Modron core and 'q' formation to your speed team.
-5. Set your Modron core to reset on the boss after the zones you farm Briv stacks. E.g. if you want to farm stacks on z26-29 reset on z30.
-6. Load adventure.
-7. Press F2 to start. If F2 is pressed after level 1 you may need to manually level champions for the first run.
+5. Set your 'w' formation to your Briv stack farming team.
+6. Set your Modron core to reset on the boss after the zones you farm Briv stacks. E.g. if you want to farm stacks on z26-29 reset on z30.
+7. Load adventure.
+8. Press F2 to start. If F2 is pressed after level 1 you may need to manually level champions for the first run.
 
 If you find anything working not as intended, please look for me in #scripting channel of the official Idlen Champions discord. Thanks.
