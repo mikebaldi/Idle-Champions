@@ -328,19 +328,6 @@ UpdateToolTip()
 		DirectedInput("g")
 	}
 
-	;if time on current level exceeds 240 seconds, the game is restarted.
-	if (dtCurrentLevelTime > 240 AND gLoop != "FarmBrivStacks")
-	{
-		gPrevLevelTime := A_TickCount
-		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-		While(WinExist("ahk_exe IdleDragons.exe")) 
-		{
-			sleep 1000
-		}
-		SafetyCheck()
-		LevelUp()
-	}
-
 	gTotal_RunTime := (A_TickCount - dtStartTime) / 3600000
 
 	bossesPhr := gTotal_Bosses / gTotal_RunTime
