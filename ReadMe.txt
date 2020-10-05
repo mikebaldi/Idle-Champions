@@ -9,6 +9,7 @@ Features:
 6. Will close and restart game after a set amount of time.
 7. Various statistics and variables displayed as tooltips that can be toggled on or off.
 8. Restarts the game after crashing.
+9. Will restart during Briv stackign to trigger 'catch up mechanic' for Offline Progress.
 
 How to use:
 1. Download Modron.AHK, classMemor.AHK, and IC_Pointers.AHK to the same folder.
