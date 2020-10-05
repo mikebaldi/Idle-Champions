@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 200910 (9/10/20)
+;version: 200906 (9/6/20)
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -15,6 +15,7 @@ global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 475 		    ;last level before you start farming Steelbones stacks for Briv
 global TimeBetweenResets := 4   ;units = hours. set to 0 to disable.
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
+global gStackRestart := 1		;toggle to restart during Briv Stacking
 ;Set of FKeys to be spammed as part of initial leveling
 global gFKeys := "{F1}{F3}{F4}{F5}{F6}{F7}{F8}{F10}{F12}"
 
@@ -35,31 +36,39 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 global ResetCount 		:= 0
 global gTotal_RunCount	:= 0
-global gTotal_Bosses 	:= 0
-global gprevBosses	    :=
-global gLoopBosses	    :=
-global dtPrevRunTime 	:= 
-global dtSlowRuntTime	:= 		
-global dtFastRuntTime	:= 100	
-global dtLoopStartTime 	:= 		;used to calc current runt ime
-global dtStartTime 	    := 
-global gLevel_Number 	:= 	    ;used to store current level
-global gprevLevel 	    := 	    ;used for tracking boss kills
-global gSBStacks 	    :=	    ;used to store current Steelbones stack count
-global gHasteStacks 	:=	    ;used to store current Haste stack count
-global gBrivStacked	    := 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
+global BrivStacks		:=		;variable to track total SB and Haste stacks, less 48
+global gNotBrivStacked	:= 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
 global gLoop		    :=	    ;variable to store what loop the script is currently in
-global ElapsedTime      :=      ;variable used to track time in while loops
 global gdebug		    := 0	;displays (1) or hides (0) the debug tooltip
 global gStats1			:= 1	;displays (1) or hides (0) the Stats 1 tooltip
 global gStats2			:= 1	;displays (1) or hides (0) the Stats 2 tooltip
+global gErrors			:= 0	;counts how many times ErrorLevel triggered GetAddress()
+
+;globals used to count bosses killed
+global gTotal_Bosses 	:= 0
+global gprevBosses	    :=
+global gLoopBosses	    :=
+global gprevLevel 	    := 	  
+
+;globals for various timers
+global gPrevRunTime 	:= 
+global gSlowRuntTime	:= 		
+global gFastRuntTime	:= 100	
+global gRunStartTime 	:= 		;used to calc current runt ime
+global gStartTime 	    := 
+global ElapsedTime      :=      ;variable used to track time in while loops
 global gPrevLevelTime	:=	
-global dtPrevRestart 	:= A_TickCount
-;variables to store final memory addresses
+global gPrevRestart 	:= A_TickCount
+
+;globals used for memory reading
+global gLevel_Number 	:= 	    ;used to store current level
+global gSBStacks 	    :=	    ;used to store current Steelbones stack count
+global gHasteStacks 	:=	    ;used to store current Haste stack count
 global addressLN        :=
 global addressSB        :=
 global addressHS        :=
-global gErrors			:= 0	;counts how many times ErrorLevel triggered GetAddress()
+
+
 
 	sToolTip := "Hotkeys"
     sToolTip := sToolTip "`nF2: Start Gem Farm Loop"
@@ -74,8 +83,8 @@ global gErrors			:= 0	;counts how many times ErrorLevel triggered GetAddress()
 
 ;start Modron gem runs
 $F2::
-    dtStartTime := A_TickCount
-	dtLoopStartTime := A_TickCount
+    gStartTime := A_TickCount
+	gRunStartTime := A_TickCount
     loop 
 	{
         GemFarm()
@@ -165,7 +174,7 @@ $`::Pause
 ;Also, if the target process is running as admin, then the script will also require admin rights!
 ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
 ;hProcessCopy is an optional variable in which the opened handled is stored. 
-RefreshPointers()
+OpenProcess()
 {
 	idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 }
@@ -184,12 +193,13 @@ SafetyCheck(Skip := False)
     {
         Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
 	    Sleep 10000
-	    RefreshPointers()
+	    OpenProcess()
 	    Sleep 5000
 		GetAddress()
 		Sleep 5000
-		dtPrevRestart := A_TickCount
-	    SummonDembo()
+		gPrevRestart := A_TickCount
+		gPrevLevelTime := A_TickCount
+	    ;SummonDembo()
 	    ++ResetCount
     }
     if Not Skip 
@@ -203,19 +213,19 @@ LevelUp()
 	;set start of loop variables
 	if (gTotal_RunCount)
 	{
-		dtPrevRunTime := (A_TickCount - dtLoopStartTime) / 60000
-		if (dtSlowRuntTime < dtPrevRunTime)
+		gPrevRunTime := (A_TickCount - gRunStartTime) / 60000
+		if (gSlowRuntTime < gPrevRunTime)
 		{
-			dtSlowRuntTime := round(dtPrevRunTime, 2)
+			gSlowRuntTime := round(gPrevRunTime, 2)
 		}
-		if (dtFastRuntTime > dtPrevRunTime)
+		if (gFastRuntTime > gPrevRunTime)
 		{
-			dtFastRuntTime := round(dtPrevRunTime, 2)
+			gFastRuntTime := round(gPrevRunTime, 2)
 		}	
 	}
 		
-	dtLoopStartTime := A_TickCount
-	gBrivStacked := 1
+	gRunStartTime := A_TickCount
+	gNotBrivStacked := 1
 
 	;check memory is reading correct level and continue to try and reload memory address for 3 minutes
 	gLevel_Number := idle.read(addressLN, "Int")
@@ -317,7 +327,7 @@ UpdateToolTip()
 		gPrevLevelTime := A_TickCount
 	}
 
-	dtCurrentRunTime := (A_TickCount - dtLoopStartTime) / 60000
+	dtCurrentRunTime := (A_TickCount - gRunStartTime) / 60000
 	dtCurrentLevelTime := (A_TickCount - gPrevLevelTime)/1000
 
 	;if time on current level exceeds 30 seconds, g is sent twice. May fix issue with boss levels stopping autoprogress and send right
@@ -328,9 +338,21 @@ UpdateToolTip()
 		DirectedInput("g")
 	}
 
-	gTotal_RunTime := (A_TickCount - dtStartTime) / 3600000
+	;if time on current level exceeds 240 seconds, the game is restarted.
+	if (dtCurrentLevelTime > 240 AND gLoop != "FarmBrivStacks")
+	{
+		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+		While(WinExist("ahk_exe IdleDragons.exe")) 
+		{
+			sleep 1000
+		}
+		SafetyCheck()
+		LevelUp()
+	}
 
-	bossesPhr := gTotal_Bosses / gTotal_RunTime
+	dtTotalTime := (A_TickCount - gStartTime) / 3600000
+
+	bossesPhr := gTotal_Bosses / dtTotalTime
 
 	if (gStats1)
 	{
@@ -351,11 +373,11 @@ UpdateToolTip()
 	if (gStats2)
 	{
 		sToolTip := "Stats 2 (F7 to toggle)"
-		sToolTip := sToolTip "`nPrevious Run Time: " Round(dtPrevRunTime, 2)
-		sToolTip := sToolTip "`nFastest Run Time " dtFastRuntTime
-		sToolTip := sToolTip "`nSlowest Run Time: " dtSlowRuntTime
+		sToolTip := sToolTip "`nPrevious Run Time: " Round(gPrevRunTime, 2)
+		sToolTip := sToolTip "`nFastest Run Time " gFastRuntTime
+		sToolTip := sToolTip "`nSlowest Run Time: " gSlowRuntTime
 		sToolTip := sToolTip "`nTotal Run Count: " gTotal_RunCount
-		sToolTip := sToolTip "`nTotal Run Time (hr): " Round(gTotal_Runtime, 2)	
+		sToolTip := sToolTip "`nTotal Run Time (hr): " Round(dtTotalTime, 2)	
 		sToolTip := sToolTip "`nTotal B/hr: " Round(bossesPhr, 2)
 		ToolTip, % sToolTip, 525, 35, 2
 	}
@@ -370,13 +392,14 @@ UpdateToolTip()
 		sToolTip := sToolTip "`nTotal Restarts: " ResetCount
 		sToolTip := sToolTip "`nLoop: " gLoop
         sToolTip := sToolTip "`nElapsedTime: " ElapsedTime
-		sToolTip := sToolTip "`nBriv Stacked: " gBrivStacked
+		sToolTip := sToolTip "`nBriv Stacked: " gNotBrivStacked
 		sToolTip := sToolTip "`nPrev Lvl: " gprevLevel
 		sToolTip := sToolTip "`nPrev Bosses: " gprevBosses
 		sToolTip := sToolTip "`nLoop Bosses: " gLoopBosses
 		sToolTip := sToolTip "`nTotal Bosses: " gTotal_Bosses
 		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
 		sToolTip := sToolTip "`nGet Address Triggers: " gErrors
+		sToolTip := sToolTip "`nBrivStacks: " BrivStacks
 		ToolTip, % sToolTip, 15, 233, 3
 	}
 	else
@@ -389,7 +412,7 @@ UpdateToolTip()
 
 GemFarm() 
 {  
-	RefreshPointers()
+	OpenProcess()
 	GetAddress()
 	
 	;for tracking boss kills
@@ -398,7 +421,7 @@ GemFarm()
 	gPrevLevelTime := A_TickCount
 
 	TimeBetweenResets := TimeBetweenResets * 60 * 60 * 1000
-	dtPrevRestart := A_TickCount
+	gPrevRestart := A_TickCount
 
 	UpdateToolTip()
     
@@ -413,20 +436,36 @@ GemFarm()
 			LevelUp()
 			
 			;check if time between reset has exceeded and restart the game if so	
-			if (TimeBetweenResets > 0 and (A_TickCount - dtPrevRestart) > TimeBetweenResets) 
+			if (TimeBetweenResets > 0 and (A_TickCount - gPrevRestart) > TimeBetweenResets) 
 			{
 				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 			}	
         }
 
+		BrivStacks := gSBStacks + gHasteStacks - 48
 
-        if (gBrivStacked And gLevel_Number > AreaLow) 
+        ;if (gNotBrivStacked And gLevel_Number > AreaLow) 
+		if (BrivStacks < gSBStacksMax AND gLevel_Number > AreaLow)
 		{
-			;===
 			Loop, 3
 			{
 				DirectedInput("w")
 			}
+
+			if (gStackRestart) 
+			{
+				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+				StartTime := A_TickCount
+				ElapsedTime := 0
+				While(WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000) 
+				{
+					Sleep 1000
+					ElapsedTime := A_TickCount - StartTime
+				}
+				Sleep 12000
+			}	
+
+			SafetyCheck()
 
 			AreaLowBoss := AreaLow + 4
 
@@ -436,10 +475,12 @@ GemFarm()
 				UpdateToolTip()
 			}
 
+			BrivStacks := gSBStacks + gHasteStacks - 48
+
     		StartTime := A_TickCount
 			ElapsedTime := 0
 
-			while (gSBStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
+			while (BrivStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
 			{
 				SafetyCheck()
 		
@@ -450,6 +491,7 @@ GemFarm()
 
 				gLoop := "FarmBrivStacks"
 				UpdateToolTip()
+				BrivStacks := gSBStacks + gHasteStacks - 48
 				Sleep 1000
 				ElapsedTime := A_TickCount - StartTime
 			}
@@ -460,7 +502,8 @@ GemFarm()
 			}
 			
 			Sleep 250
-			gBrivStacked := 0
+			gNotBrivStacked := 0
+			gPrevLevelTime := A_TickCount
 			++gTotal_RunCount
 			Sleep 250
 			UpdateToolTip()
