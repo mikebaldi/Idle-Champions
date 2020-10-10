@@ -310,6 +310,12 @@ UpdateToolTip()
 		GetAddress()
 		++gErrors
 	}
+
+	if !isObject(calc) 
+    {
+		OpenProcess()
+	}
+
 	gprevBosses := Floor(gprevLevel / 5)
 	gLoopBosses := Floor(gLevel_Number / 5)
 
@@ -452,6 +458,14 @@ GemFarm()
 				DirectedInput("w")
 			}
 
+			AreaLowBoss := AreaLow + 4
+
+			while (gLevel_Number > AreaLowBoss)
+			{
+				DirectedInput("{Left}")
+				UpdateToolTip()
+			}
+
 			if (gStackRestart) 
 			{
 				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
@@ -466,14 +480,6 @@ GemFarm()
 			}	
 
 			SafetyCheck()
-
-			AreaLowBoss := AreaLow + 4
-
-			while (gLevel_Number > AreaLowBoss)
-			{
-				DirectedInput("{Left}")
-				UpdateToolTip()
-			}
 
 			BrivStacks := gSBStacks + gHasteStacks - 48
 
