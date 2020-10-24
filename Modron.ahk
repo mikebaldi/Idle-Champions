@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 200906 (9/6/20)
+;version: 201011 (10/11/20)
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -10,14 +10,15 @@
 ;----------------------------			
 
 global ScriptSpeed := 100	    ;sets the delay after a directinput, ms
-global gSBStacksMax := 1200	    ;target Steelbones stack count for Briv to farm
+global gSBStacksMax := 1500	    ;target Steelbones stack count for Briv to farm note: 1200 for 475
 global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
-global AreaLow := 475 		    ;last level before you start farming Steelbones stacks for Briv
+global AreaLow := 525 		    ;last level before you start farming Steelbones stacks for Briv
 global TimeBetweenResets := 4   ;units = hours. set to 0 to disable.
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
 global gStackRestart := 1		;toggle to restart during Briv Stacking
+global gAvoidBosses :=1			;toggle to avoid boss levels for quad skip
 ;Set of FKeys to be spammed as part of initial leveling
-global gFKeys := "{F1}{F3}{F4}{F5}{F6}{F7}{F8}{F10}{F12}"
+global gFKeys := "{F1}{F2}{F4}{F5}{F6}{F7}{F9}{F10}{F12}"
 
 SetWorkingDir, %A_ScriptDir%
 
@@ -187,7 +188,7 @@ GetAddress()
     addressHS := idle.getAddressFromOffsets(pointerBaseHS, arrayPointerOffsetsHS*)
 }
 
-SafetyCheck(Skip := False) 
+SafetyCheck(Skip := True) 
 {
     While(Not WinExist("ahk_exe IdleDragons.exe")) 
     {
@@ -196,7 +197,7 @@ SafetyCheck(Skip := False)
 	    OpenProcess()
 	    Sleep 5000
 		GetAddress()
-		Sleep 5000
+		;Sleep 5000
 		gPrevRestart := A_TickCount
 		gPrevLevelTime := A_TickCount
 	    ;SummonDembo()
@@ -311,7 +312,7 @@ UpdateToolTip()
 		++gErrors
 	}
 
-	if !isObject(calc) 
+	if !isObject(idle) 
     {
 		OpenProcess()
 	}
@@ -344,8 +345,8 @@ UpdateToolTip()
 		DirectedInput("g")
 	}
 
-	;if time on current level exceeds 240 seconds, the game is restarted.
-	if (dtCurrentLevelTime > 240 AND gLoop != "FarmBrivStacks")
+	;if time on current level exceeds 60 seconds, the game is restarted.
+	if (dtCurrentLevelTime > 60 AND gLoop != "FarmBrivStacks")
 	{
 		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 		While(WinExist("ahk_exe IdleDragons.exe")) 
@@ -435,7 +436,12 @@ GemFarm()
 	{
 		gLoop := "Main"
         UpdateToolTip()
-        DirectedInput("{q}")
+		if (mod(gLevel_Number, 5))
+        	DirectedInput("q")
+		else if(gAvoidBosses)
+			DirectedInput("e")
+		else
+			DirectedInput("q")
 
         if (gLevel_Number = 1) 
 		{
@@ -468,6 +474,9 @@ GemFarm()
 
 			if (gStackRestart) 
 			{
+				gloop := "StackRestart"
+				UpdateToolTip()
+				Sleep 1000
 				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 				StartTime := A_TickCount
 				ElapsedTime := 0
@@ -477,9 +486,8 @@ GemFarm()
 					ElapsedTime := A_TickCount - StartTime
 				}
 				Sleep 12000
+				SafetyCheck()
 			}	
-
-			SafetyCheck()
 
 			BrivStacks := gSBStacks + gHasteStacks - 48
 
@@ -488,7 +496,7 @@ GemFarm()
 
 			while (BrivStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
 			{
-				SafetyCheck()
+				DirectedInput("w")
 		
         		if (gLevel_Number <= AreaLow) 
 				{
@@ -515,8 +523,8 @@ GemFarm()
 			UpdateToolTip()
 		}
 		
-        MouseClick, L, 650, 450, 2
+        ;MouseClick, L, 650, 450, 2
         DirectedInput("{Right}")
-		MouseClick, L, 650, 450, 2
+		;MouseClick, L, 650, 450, 2
     }
 }
