@@ -1,24 +1,30 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 201011 (10/11/20)
+;version: 201027 (10/27/20)
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
 ;	User Settings
 ;	various settings to allow the user to Customize how the Script behaves
 ;----------------------------			
-
 global ScriptSpeed := 100	    ;sets the delay after a directinput, ms
 global gSBStacksMax := 1500	    ;target Steelbones stack count for Briv to farm note: 1200 for 475
 global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 525 		    ;last level before you start farming Steelbones stacks for Briv
-global TimeBetweenResets := 4   ;units = hours. set to 0 to disable.
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
-global gStackRestart := 1		;toggle to restart during Briv Stacking
 global gAvoidBosses :=1			;toggle to avoid boss levels for quad skip
+
 ;Set of FKeys to be spammed as part of initial leveling
-global gFKeys := "{F1}{F2}{F4}{F5}{F6}{F7}{F9}{F10}{F12}"
+global gFKeys := "{F1}{F4}{F5}{F6}{F7}{F9}{F10}{F12}"
+
+;variables to consider changing if restarts are causing issues
+global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
+global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointers into memory
+global gStackRestart := 1		;toggle to restart during Briv Stacking. Consider setting to 0 if restart issues persist.
+global TimeBetweenResets := 4   ;units = hours. set to 0 to disable. Consider setting to 0 if restart issues persist.
+
+;end of user settings
 
 SetWorkingDir, %A_ScriptDir%
 
@@ -65,11 +71,10 @@ global gPrevRestart 	:= A_TickCount
 global gLevel_Number 	:= 	    ;used to store current level
 global gSBStacks 	    :=	    ;used to store current Steelbones stack count
 global gHasteStacks 	:=	    ;used to store current Haste stack count
-global addressLN        :=
-global addressSB        :=
-global addressHS        :=
-
-
+global addressLN        :=		;variable used to store final memory address
+global addressSB        :=		;variable used to store final memory address
+global addressHS        :=		;variable used to store final memory address
+global hProcessCopy		:=		;hProcessCopy is an optional variable in which the opened handled is stored.
 
 	sToolTip := "Hotkeys"
     sToolTip := sToolTip "`nF2: Start Gem Farm Loop"
@@ -193,11 +198,10 @@ SafetyCheck(Skip := True)
     While(Not WinExist("ahk_exe IdleDragons.exe")) 
     {
         Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
-	    Sleep 10000
+	    Sleep gOpenProcess
 	    OpenProcess()
-	    Sleep 5000
+	    Sleep gGetAddress
 		GetAddress()
-		;Sleep 5000
 		gPrevRestart := A_TickCount
 		gPrevLevelTime := A_TickCount
 	    ;SummonDembo()
@@ -234,6 +238,7 @@ LevelUp()
     ElapsedTime := 0
 	while (gLevel_Number = "" AND ElapsedTime < 180000)
 	{
+		OpenProcess()
 		GetAddress()
 		ElapsedTime := A_TickCount - StartTime
 		gLevel_Number := idle.read(addressLN, "Int")
@@ -296,26 +301,29 @@ UpdateToolTip()
 	gLevel_Number := idle.read(addressLN, "Int")
 	if (gLevel_Number = "")
 	{
+		OpenProcess()
 		GetAddress()
 		++gErrors
 	}
 	gSBStacks := idle.read(addressSB, "Int")
 	if (gSBStacks = "")
 	{
+		OpenProcess()
 		GetAddress()
 		++gErrors
 	}
 	gHasteStacks := idle.read(addressHS, "Int")
 	if (gHasteStacks = "")
 	{
+		OpenProcess()
 		GetAddress()
 		++gErrors
 	}
 
-	if !isObject(idle) 
-    {
-		OpenProcess()
-	}
+	;if (hProcessCopy = 0 or hProcessCopy = "")
+    ;{
+	;	OpenProcess()
+	;}
 
 	gprevBosses := Floor(gprevLevel / 5)
 	gLoopBosses := Floor(gLevel_Number / 5)
@@ -407,6 +415,7 @@ UpdateToolTip()
 		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
 		sToolTip := sToolTip "`nGet Address Triggers: " gErrors
 		sToolTip := sToolTip "`nBrivStacks: " BrivStacks
+		sToolTip := sToolTip "`nhProcessCopy: " hProcessCopy
 		ToolTip, % sToolTip, 15, 233, 3
 	}
 	else
