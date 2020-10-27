@@ -5,8 +5,8 @@ Features:
 2. Attempts to summon Dembo after completing level 1 or restarting after a crash or reset.
 3. Briv stack farming at end of run.
 4. Will input 'g' twice if stuck on a level for 30 seconds or longer.
-5. Will close and restart game if stuck on a level for 240 seconds or longer.
-6. Will close and restart game after a set amount of time.
+5. Will close and restart game if stuck on a level for 60 seconds or longer.
+6. Will close and restart game after a set amount of time passes without a crash or restart.
 7. Various statistics and variables displayed as tooltips that can be toggled on or off.
 8. Restarts the game after crashing.
 9. Will restart during Briv stackign to trigger 'catch up mechanic' for Offline Progress.
