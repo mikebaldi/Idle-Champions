@@ -17,7 +17,7 @@ How to use:
 3. Run script Modron.AHK
 4. Set your Modron core and 'q' formation to your speed team.
 5. Set your 'w' formation to your Briv stack farming team.
-6. Set your Modron core to reset on the boss after the zones you farm Briv stacks. E.g. if you want to farm stacks on z26-29 reset on z30.
+6. Set your Modron core to reset on the boss after the zones you farm Briv stacks. E.g. if you want to farm stacks on z26-29 reset on z30. For quad skip, consider z31 reset. For added reliability, consider setting AreaLow to z21.
 7. Load adventure.
 8. Press F2 to start. If F2 is pressed after level 1 you may need to manually level champions for the first run.
 9. If you are using the avoid bosses toggle, set 'e' formation to match your speed team minus Briv.
