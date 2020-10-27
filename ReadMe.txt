@@ -20,5 +20,7 @@ How to use:
 6. Set your Modron core to reset on the boss after the zones you farm Briv stacks. E.g. if you want to farm stacks on z26-29 reset on z30.
 7. Load adventure.
 8. Press F2 to start. If F2 is pressed after level 1 you may need to manually level champions for the first run.
+9. If you are using the avoid bosses toggle, set 'e' formation to match your speed team minus Briv.
+10. If you are having issues after the script restarts the game consider increasing the Open Process and Get Address variables under the restart section of user settings. If problems persist, consider disabling restarting by setting the restarting variables to 0.
 
 If you find anything working not as intended, please look for me in #scripting channel of the official Idlen Champions discord. Thanks.
