@@ -16,3 +16,5 @@ global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039F
 global arrayPointerOffsetsSB 		:= [0x2A8, 0xD50]						;Steelbones Stacks Pointer Offsets
 global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Steelbones Stacks Pointer Base
 global arrayPointerOffsetsHS 		:= [0x2A8, 0xD54]						;Steelbones Stacks Pointer Offsets
+global pointerBaseMRL			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x039FC60	;Modron Reset Level Pointer Base
+global arrayPointerOffsetsMRL 		:= [0x2A8, 0xAA8, 0x78, 0x24, 0x34, 0x10, 0x70]						;Modron Reset Level Pointer Offsets
