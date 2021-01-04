@@ -173,7 +173,10 @@ $F10::ExitApp
 	return
 }
 
-$`::Pause
+$`::
+Pause
+gPrevLevelTime := A_TickCount
+return
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
