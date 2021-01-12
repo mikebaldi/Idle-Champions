@@ -1,6 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 12/19/20
-;IC Version 1.26.1 (v367) 12/17/2020 2:50:15 pm
+;date of script: 1/11/21
+;IC Version 1.28.1 (v368) 1/11/2021 9:17:48AM
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
@@ -10,12 +10,9 @@
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 
 ;This is how we find our way in memory to the data we want. Updating the game may require updating the values stored in these variables.
-global pointerBaseLN 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x03A1C68	;Level Number Pointer Base
-global arrayPointerOffsetsLN 		:= [0x150, 0x558, 0x8, 0x2C8, 0x14, 0x37C]			;Level Number Pointer Ofsets
-global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x03A1C68	;Steelbones Stacks Pointer Base
-global arrayPointerOffsetsSB 		:= [0x2A8, 0xD50]						;Steelbones Stacks Pointer Offsets
-global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x03A1C68	;Haste Stacks Pointer Base
-global arrayPointerOffsetsHS 		:= [0x2A8, 0xD54]						;Haste Stacks Pointer Offsets
-;MRL not updated with v362
-;global pointerBaseMRL			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x03A1C68	;Modron Reset Level Pointer Base
-;global arrayPointerOffsetsMRL 		:= [0x2A8, 0xAA8, 0x78, 0x24, 0x34, 0x10, 0x70]						;Modron Reset Level Pointer Offsets
+global pointerBaseLN 			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0497DE8 	;Level Number Pointer Base
+global arrayPointerOffsetsLN 		:= [0x150, 0x580, 0x238, 0x10, 0x20, 0x40, 0x114] 		;Level Number Pointer Ofsets
+global pointerBaseSB			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0497DE8	;Steelbones Stacks Pointer Base
+global arrayPointerOffsetsSB 		:= [0x150, 0x838, 0x2E0]					;Steelbones Stacks Pointer Offsets
+global pointerBaseHS			:= idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0497DE8 	;Haste Stacks Pointer Base
+global arrayPointerOffsetsHS 		:= [0x150, 0x838, 0x2E4]					;Haste Stacks Pointer Offsets
