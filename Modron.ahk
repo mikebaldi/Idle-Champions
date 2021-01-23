@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;version: 201027 (10/27/20)
+;date of script 1/23/21
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -9,14 +9,20 @@
 ;	various settings to allow the user to Customize how the Script behaves
 ;----------------------------			
 global ScriptSpeed := 100	    ;sets the delay after a directinput, ms
-global gSBStacksMax := 1500	    ;target Steelbones stack count for Briv to farm note: 1200 for 475
+global gSBStacksMax := 2500	    ;target Steelbones stack count for Briv to farm note: 1200 for 475
 global gSBTimeMax := 300000 	;maximum time Briv will farm Steelbones stacks, ms
-global AreaLow := 525 		    ;last level before you start farming Steelbones stacks for Briv
+global AreaLow := 575 		    ;last level before you start farming Steelbones stacks for Briv
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
-global gAvoidBosses :=1			;toggle to avoid boss levels for quad skip
+global gAvoidBosses := 1			;toggle to avoid boss levels for quad skip
+global gContinuedLeveling := 30 ;the script will continue to send Fkeys on levels less than this variable
+global gClickLeveling := 1		;toggle to level click damage with hotkey `
+global gBrivSwap := 1			;will attempt to swap Briv when final quest item is earned to skip his transition animation
 
-;Set of FKeys to be spammed as part of initial leveling
-global gFKeys := "{F1}{F4}{F5}{F6}{F7}{F9}{F10}{F12}"
+;Set of FKeys to be spammed as part of initial leveling.
+global gFKeys := "``{F1}{F4}{F5}{F6}{F7}{F10}{F12}"
+
+;Set of FKeys to be spammed as part of continued leveling
+global gFKeysCont := "{F4}{F5}"
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
@@ -25,6 +31,8 @@ global gStackRestart := 1		;toggle to restart during Briv Stacking. Consider set
 global TimeBetweenResets := 4   ;units = hours. set to 0 to disable. Consider setting to 0 if restart issues persist.
 
 ;end of user settings
+
+;#EscapeChar \ ;Change escape character to backslashe instead of the default accent (`)
 
 SetWorkingDir, %A_ScriptDir%
 
@@ -71,6 +79,7 @@ global gPrevRestart 	:= A_TickCount
 global gLevel_Number 	:= 	    ;used to store current level
 global gSBStacks 	    :=	    ;used to store current Steelbones stack count
 global gHasteStacks 	:=	    ;used to store current Haste stack count
+global gQuestRemaining	:=		;used to store quest item count remaining to be found on current level
 global addressLN        :=		;variable used to store final memory address
 global addressSB        :=		;variable used to store final memory address
 global addressHS        :=		;variable used to store final memory address
@@ -96,6 +105,12 @@ $F2::
         GemFarm()
     }
 return
+
+$F3::
+	gPrevLevelTime := A_TickCount
+return
+
+
 
 ;Debug
 $F5::
@@ -188,14 +203,6 @@ OpenProcess()
 	idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 }
 
-;loads final memory address of pointer to reduce overhead
-GetAddress()
-{
-    addressLN := idle.getAddressFromOffsets(pointerBaseLN, arrayPointerOffsetsLN*)
-    addressSB := idle.getAddressFromOffsets(pointerBaseSB, arrayPointerOffsetsSB*)
-    addressHS := idle.getAddressFromOffsets(pointerBaseHS, arrayPointerOffsetsHS*)
-}
-
 SafetyCheck(Skip := True) 
 {
     While(Not WinExist("ahk_exe IdleDragons.exe")) 
@@ -203,8 +210,8 @@ SafetyCheck(Skip := True)
         Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
 	    Sleep gOpenProcess
 	    OpenProcess()
-	    Sleep gGetAddress
-		GetAddress()
+	    ;Sleep gGetAddress
+		;GetAddress()
 		gPrevRestart := A_TickCount
 		gPrevLevelTime := A_TickCount
 	    ;SummonDembo()
@@ -236,15 +243,15 @@ LevelUp()
 	gNotBrivStacked := 1
 
 	;check memory is reading correct level and continue to try and reload memory address for 3 minutes
-	gLevel_Number := idle.read(addressLN, "Int")
+	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
 	StartTime := A_TickCount
     ElapsedTime := 0
 	while (gLevel_Number = "" AND ElapsedTime < 180000)
 	{
 		OpenProcess()
-		GetAddress()
+		;GetAddress()
 		ElapsedTime := A_TickCount - StartTime
-		gLevel_Number := idle.read(addressLN, "Int")
+		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
 	}
 
 	gPrevLevel := gLevel_Number
@@ -257,7 +264,11 @@ LevelUp()
 	{
 		DirectedInput(gFKeys)
 		DirectedInput("{Right}")
-		gLevel_Number := idle.read(addressLN, "Int")
+		;If (gClickLeveling)
+		;{
+		;	DirectedInput("``")
+		;}
+		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
 	}
 
 	;to keep boss tracker accurate
@@ -273,6 +284,10 @@ LevelUp()
 	loop 30
 	{
 		DirectedInput(gFKeys)
+		;If (gClickLeveling)
+		;{
+		;	DirectedInput("``")
+		;}
 	}
 }
 
@@ -301,32 +316,16 @@ DirectedInput(s)
 
 UpdateToolTip()
 {
-	gLevel_Number := idle.read(addressLN, "Int")
-	if (gLevel_Number = "")
+	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*)
+	gSBStacks := Floor(idle.read(pointerBaseSB, "Double", arrayPointerOffsetsSB*))
+	gHasteStacks := Floor(idle.read(pointerbaseHS, "Double", arrayPointerOffsetsHS*))
+	gQuestRemaining := idle.read(pointerBaseQR, "Int", arrayPointerOffsetsQR*)
+	if (gLevel_Number = "" or gSBStacks = "" or gHasteStacks = "" or gQuestRemaining = "")
 	{
 		OpenProcess()
-		GetAddress()
+		;GetAddress()
 		++gErrors
 	}
-	gSBStacks := idle.read(addressSB, "Int")
-	if (gSBStacks = "")
-	{
-		OpenProcess()
-		GetAddress()
-		++gErrors
-	}
-	gHasteStacks := idle.read(addressHS, "Int")
-	if (gHasteStacks = "")
-	{
-		OpenProcess()
-		GetAddress()
-		++gErrors
-	}
-
-	;if (hProcessCopy = 0 or hProcessCopy = "")
-    ;{
-	;	OpenProcess()
-	;}
 
 	gprevBosses := Floor(gprevLevel / 5)
 	gLoopBosses := Floor(gLevel_Number / 5)
@@ -349,15 +348,15 @@ UpdateToolTip()
 	dtCurrentLevelTime := (A_TickCount - gPrevLevelTime)/1000
 
 	;if time on current level exceeds 30 seconds, g is sent twice. May fix issue with boss levels stopping autoprogress and send right
-	if (dtCurrentLevelTime > 30 AND gLoop != "FarmBrivStacks")
-	{
-		DirectedInput("g")
-		sleep 250
-		DirectedInput("g")
-	}
+	;if (dtCurrentLevelTime > 30 AND gLoop != "FarmBrivStacks")
+	;{
+	;	DirectedInput("g")
+	;	sleep 250
+	;	DirectedInput("g")
+	;}
 
 	;if time on current level exceeds 60 seconds, the game is restarted.
-	if (dtCurrentLevelTime > 60 AND gLoop != "FarmBrivStacks")
+	if (dtCurrentLevelTime > 120 AND gLoop != "FarmBrivStacks")
 	{
 		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 		While(WinExist("ahk_exe IdleDragons.exe")) 
@@ -418,7 +417,7 @@ UpdateToolTip()
 		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
 		sToolTip := sToolTip "`nGet Address Triggers: " gErrors
 		sToolTip := sToolTip "`nBrivStacks: " BrivStacks
-		sToolTip := sToolTip "`nhProcessCopy: " hProcessCopy
+		sToolTip := sToolTip "`nQuestRemaining: " gQuestRemaining
 		ToolTip, % sToolTip, 15, 233, 3
 	}
 	else
@@ -432,10 +431,10 @@ UpdateToolTip()
 GemFarm() 
 {  
 	OpenProcess()
-	GetAddress()
+	;GetAddress()
 	
 	;for tracking boss kills
-	gLevel_Number := idle.read(addressLN, "Int")
+	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
 	gprevLevel := gLevel_Number
 	gPrevLevelTime := A_TickCount
 
@@ -448,12 +447,17 @@ GemFarm()
 	{
 		gLoop := "Main"
         UpdateToolTip()
-		if (mod(gLevel_Number, 5))
-        	DirectedInput("q")
-		else if(gAvoidBosses)
-			DirectedInput("e")
-		else
+		if (gLevel_Number)
+		{
+			if (mod(gLevel_Number, 5) AND gQuestRemaining)
 			DirectedInput("q")
+			else if (gBrivSwap AND NOT gQuestRemaining)
+			DirectedInput("e")
+			else if (gAvoidBosses)
+			DirectedInput("e")
+		}
+		else
+		DirectedInput("q")
 
         if (gLevel_Number = 1) 
 		{
@@ -468,8 +472,7 @@ GemFarm()
 
 		BrivStacks := gSBStacks + gHasteStacks - 48
 
-        ;if (gNotBrivStacked And gLevel_Number > AreaLow) 
-		if (BrivStacks < gSBStacksMax AND gLevel_Number > AreaLow)
+		if (gNotBrivStacked AND BrivStacks < gSBStacksMax AND gLevel_Number > AreaLow)
 		{
 			Loop, 3
 			{
@@ -535,8 +538,14 @@ GemFarm()
 			UpdateToolTip()
 		}
 		
-        ;MouseClick, L, 650, 450, 2
         DirectedInput("{Right}")
-		;MouseClick, L, 650, 450, 2
+		If (gClickLeveling)
+		{
+			DirectedInput("``")
+		}
+		if (gContinuedLeveling > gLevel_Number AND gLevel_Number)
+		{
+			DirectedInput(gFKeysCont)
+		}
     }
 }
