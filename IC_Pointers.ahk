@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 1/22/21
+;date of script: 1/23/21
 ;IC Version 1.29.3 (v370) 1/21/2021
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -14,7 +14,9 @@ global pointerBaseLN := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C
 global arrayPointerOffsetsLN := [0x2A8, 0xAA8, 0x4C, 0xCC, 0x1EC, 0x50, 0x28, 0x90, 0x228, 0x28] ;Level Number Pointer Ofsets
 global pointerBaseQR := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C68 ;Quest Remaining Pointer Base
 global arrayPointerOffsetsQR := [0x2A8, 0xAA8, 0x4C, 0xCC, 0x1EC, 0x50, 0x28, 0x90, 0x228, 0x30] ;Quest Remaining Pointer Ofsets
+global pointerBaseAP := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C68 ;Auto Progress Toggle Pointer Base (1 On, 0 Off)
+global arrayPointerOffsetsAP := [0x2A8, 0xAA8, 0x4C, 0xCC, 0x1EC, 0x50, 0x28, 0x90, 0x200, 0x23A] ;Auto Progress Toggle Pointer Ofsets
 global pointerBaseSB := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574 ;Steelbones Stacks Pointer Base
 global arrayPointerOffsetsSB := [0x658, 0xA0, 0x2C, 0x234, 0x3C8, 0x50, 0x18, 0x58] ;Steelbones Stacks Pointer Offsets
 global pointerBaseHS := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574 ;Haste Stacks Pointer Base
-global arrayPointerOffsetsHS := [0x658, 0xA0, 0x2C, 0x234, 0x31C, 0x90, 0x18, 0x58] ;Haste Stacks Pointer Offsets
+global arrayPointerOffsetsHS := [0x658, 0xA0, 0x2C, 0x234, 0x31C, 0x10, 0x18, 0x58] ;Haste Stacks Pointer Offsets
