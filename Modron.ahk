@@ -202,6 +202,14 @@ OpenProcess()
 {
 	idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy) 
 }
+;need to copy pointer base values from pointer file to here
+GetAddress()
+{
+	pointerBaseLN := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C68 ;Level Number Pointer Base
+	pointerBaseQR := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C68 ;Quest Remaining Pointer Base
+	pointerBaseSB := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
+	pointerBaseHS := idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
+}
 
 SafetyCheck(Skip := True) 
 {
@@ -210,8 +218,8 @@ SafetyCheck(Skip := True)
         Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
 	    Sleep gOpenProcess
 	    OpenProcess()
-	    ;Sleep gGetAddress
-		;GetAddress()
+	    Sleep gGetAddress
+		GetAddress()
 		gPrevRestart := A_TickCount
 		gPrevLevelTime := A_TickCount
 	    ;SummonDembo()
@@ -249,7 +257,7 @@ LevelUp()
 	while (gLevel_Number = "" AND ElapsedTime < 180000)
 	{
 		OpenProcess()
-		;GetAddress()
+		GetAddress()
 		ElapsedTime := A_TickCount - StartTime
 		gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
 	}
@@ -323,7 +331,7 @@ UpdateToolTip()
 	if (gLevel_Number = "" or gSBStacks = "" or gHasteStacks = "" or gQuestRemaining = "")
 	{
 		OpenProcess()
-		;GetAddress()
+		GetAddress()
 		++gErrors
 	}
 
@@ -431,7 +439,7 @@ UpdateToolTip()
 GemFarm() 
 {  
 	OpenProcess()
-	;GetAddress()
+	GetAddress()
 	
 	;for tracking boss kills
 	gLevel_Number := idle.read(pointerBaseLN, "Int", arrayPointerOffsetsLN*) ;current level
