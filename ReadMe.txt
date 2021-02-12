@@ -1,7 +1,9 @@
 Warning: This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
+NOTE: SCRIPT NO LONGER ATTEMPTS TO READ SB, HASTE, OR DASH TIME AND RELIES ON THE GAME CONTROLLER STRUCTURE FOR ALL MEMORY READS, AND THUS ONLY NEEDING ONE POINTER.
+
 Features:
-1.	Fkey leveling of champions beginning on level 1. Shandie must be leveled first and Briv Second.
+1.	Fkey leveling of champions beginning on level 1.
 2.	Continued Fkey leveling of champions beyond level 1.
 3.	Click damage leveling. Must include `` as part of initial Fkey leveling.
 4.	Summon Dembo as part of the initial leveling.
@@ -21,5 +23,6 @@ How to use:
 8.	Load adventure.
 9.	Press F2 to start. If F2 is pressed after level 1 you may need to manually level champions for the first run.
 10.	If you are having issues after the script restarts the game consider increasing the Open Process and Get Address variables under the restart section of user settings. If problems persist, consider disabling restarting by setting the restarting variables to 0.
+
 If you find anything working not as intended, please look for me in #scripting channel of the official Idlen Champions discord. Thanks.
 
