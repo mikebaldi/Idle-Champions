@@ -282,7 +282,7 @@ LevelUp()
 	else
 	{
 		gLoop := "StandardLvling"
-		UpdateToolTip
+		UpdateToolTip()
 		While(gLevel_Number = gPrevLevel)
 		{
 			DirectedInput(gFKeys)
