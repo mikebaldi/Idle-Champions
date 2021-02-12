@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;2/1/21
+;2/12/21
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -9,8 +9,7 @@
 ;	various settings to allow the user to Customize how the Script behaves
 ;----------------------------			
 global ScriptSpeed := 100	    ;sets the delay after a directedinput, ms
-global gSBStacksMax := 2500	    ;target Steelbones stack count for Briv to farm note: 1200 for 475
-global gSBTimeMax := 0 			;maximum time Briv will farm Steelbones stacks, ms
+global gSBTimeMax := 160000		;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 571 		    ;last level before you start farming Steelbones stacks for Briv
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
 global gAvoidBosses := 1		;toggle to avoid boss levels for quad skip
@@ -53,7 +52,6 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 global ResetCount 		:= 0
 global gTotal_RunCount	:= 0
-global BrivStacks		:=		;variable to track total SB and Haste stacks, less 48
 global gNotBrivStacked	:= 1	;check for Briv stacked for when current level and sb stacks don't reset together and script falls back into stack farming loop
 global gLoop		    :=	    ;variable to store what loop the script is currently in
 global gdebug		    := 0	;displays (1) or hides (0) the debug tooltip
@@ -79,11 +77,8 @@ global gPrevRestart 	:= A_TickCount
 
 ;globals used for memory reading
 global gLevel_Number 	:= 	    ;used to store current level
-global gSBStacks 	    :=	    ;used to store current Steelbones stack count
-global gHasteStacks 	:=	    ;used to store current Haste stack count
 global gQuestRemaining	:=		;used to store quest item count remaining to be found on current level
 global gAutoProgress	:=		;used to store bool for auto progress
-global gDashTime		:=		;used to store Dash count
 global gTrans			:=		;used to store transition state
 global gTime			:=		;used to store game speed multiplier
 
@@ -248,59 +243,46 @@ LevelUp()
 
 	gLoop := "LevelUp"
 	UpdateToolTip()
-	
-	;spam fkey leveling during level 1
-	;gDashTime := idle.read(pointerBaseDashTime, "Double", arrayPointerOffsetsDashTime*)
-	;gAutoProgress := idle.read(pointerBaseAP, "Int", arrayPointerOffsetsAP*)
 
-
-		StartTime := A_TickCount
-		ElapsedTime := 0
-		while (gQuestRemaining AND gQuestRemaining > 24 AND ElapsedTime < 60000)
-		{
-			gloop := "LoadingLvl1"
-			UpdateToolTip()
-			Sleep, 100
-			ElapsedTime := A_TickCount - StartTime
-		}
-		directedinput("g")
-		loop 30
-		DirectedInput("{F6}")
-		loop 30
-		DirectedInput("{F5}")
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	while (gQuestRemaining AND gQuestRemaining > 24 AND ElapsedTime < 60000)
+	{
+		gloop := "LoadingLvl1"
+		UpdateToolTip()
+		Sleep, 100
+		ElapsedTime := A_TickCount - StartTime
+	}
 
 	if (gDashSleepToggle)
 	{
-		StartTime := A_TickCount
-		ElapsedTime := 0
-		while (ElapsedTime < 2000)
-		{
-			gloop := "WaitfoDashCheck"
-			Sleep, 100
-			ElapsedTime := A_TickCount - StartTime
-		}
+		gloop := "Puase4DashWait"
+		UpdateToolTip()
+		directedinput("g")
+
+		DashSleep := 60000/gTime
+		ults := 1
 	
-		;if (gDashTime AND gDashSleepToggle)
-		;{
-			StartTime := A_TickCount
-			ElapsedTime := 0
-			While (gDashTime < 60 AND ElapsedTime < 60000)
+		While (ElapsedTime < DashSleep)
+		{
+			gloop := "WaitingForDash"
+			DirectedInput(gFKeys)
+			ElapsedTime := A_TickCount - StartTime
+			UpdateToolTip()
+			if (ults AND glapsedTime > DashSleep - 2000)
 			{
-				gloop := "WaitingForDash"
-				DirectedInput(gFKeys)
-				ElapsedTime := A_TickCount - StartTime
-				UpdateToolTip()
+				directedinput("23456789")
+				ults := 0
 			}
-		;}
+		}
 		gloop := "DashDone"
 		UpdateToolTip()
-		DirectedInput("23456789")
-		Sleep, 250
 		DirectedInput("g")
 	}
 	else
 	{
-		DirectedInput("g")
+		gLoop := "StandardLvling"
+		UpdateToolTip
 		While(gLevel_Number = gPrevLevel)
 		{
 			DirectedInput(gFKeys)
@@ -344,12 +326,7 @@ UpdateToolTip()
 	gTrans := idle.read(Controller, "Int", arrayPointerOffsetsTransitioning*)
 	gTime := idle.read(Controller, "Float", arrayPointerOffsetsTimeScaleMultiplier*)
 
-	gSBStacks := Floor(idle.read(pointerBaseSB, "Double", arrayPointerOffsetsSB*))
-	gHasteStacks := Floor(idle.read(pointerbaseHS, "Double", arrayPointerOffsetsHS*))
-	
-	gDashTime := idle.read(pointerBaseDashTime, "Double", arrayPointerOffsetsDashTime*)
-
-	if (gLevel_Number = "" or gSBStacks = "" or gHasteStacks = "" or gQuestRemaining = "")
+	if (gLevel_Number = "")
 	{
 		OpenProcess()
 		ModuleBaseAddress()
@@ -405,9 +382,6 @@ UpdateToolTip()
 		sToolTip := "Stats 1 (F6 to toggle)"
 		sToolTip := sToolTip "`nCurrent Level: " gLevel_Number
     	sToolTip := sToolTip "`nTarget Level: " AreaLow
-    	sToolTip := sToolTip "`nCurrent SB Stacks: " gSBStacks 
-		sToolTip := sToolTip "`nTarget SB Stacks: " gSBStacksMax
-    	sToolTip := sToolTip "`nCurrent Haste Stacks: " gHasteStacks 
 		sToolTip := sToolTip "`nCurrent Run Time: " Round(dtCurrentRunTime, 2)
 		ToolTip, % sToolTip, 355, 35, 1
 	}
@@ -445,10 +419,8 @@ UpdateToolTip()
 		sToolTip := sToolTip "`nTotal Bosses: " gTotal_Bosses
 		sToolTip := sToolTip "`nCurrent Level Time: " Round(dtCurrentLevelTime, 2)
 		sToolTip := sToolTip "`nGet Address Triggers: " gErrors
-		sToolTip := sToolTip "`nBrivStacks: " BrivStacks
 		sToolTip := sToolTip "`nQuestRemaining: " gQuestRemaining
 		sToolTip := sToolTip "`nDash Sleep Toggle: " gDashSleepToggle
-		sToolTip := sToolTip "`nDash Time: " gDashTime
 		sToolTip := sToolTip "`nTransitioning: " gTrans
 		sToolTip := sToolTip "`nTime Scale Multi: " gTime
 		ToolTip, % sToolTip, 15, 233, 3
@@ -525,7 +497,7 @@ GemFarm()
 
 		BrivStacks := gSBStacks + gHasteStacks - 48
 
-		if (gNotBrivStacked AND BrivStacks < gSBStacksMax AND gLevel_Number > AreaLow)
+		if (gNotBrivStacked AND gLevel_Number > AreaLow)
 		{
 			Loop, 3
 			{
@@ -556,27 +528,24 @@ GemFarm()
 				}
 				Sleep 12000
 				SafetyCheck()
-			}	
-
-			BrivStacks := gSBStacks + gHasteStacks - 48
-
-    		StartTime := A_TickCount
-			ElapsedTime := 0
-
-			while (BrivStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
+			}
+			else
 			{
-				DirectedInput("w")
-		
-        		if (gLevel_Number <= AreaLow) 
-				{
-        			DirectedInput("{Right}")
-				}
-
+				StartTime := A_TickCount
+				ElapsedTime := 0
 				gLoop := "FarmBrivStacks"
-				UpdateToolTip()
-				BrivStacks := gSBStacks + gHasteStacks - 48
-				Sleep 1000
-				ElapsedTime := A_TickCount - StartTime
+				while (ElapsedTime < gSBTimeMax)
+				{
+					DirectedInput("w")
+		
+        			if (gLevel_Number <= AreaLow) 
+					{
+        				DirectedInput("{Right}")
+					}
+					Sleep 1000
+					ElapsedTime := A_TickCount - StartTime
+					UpdateToolTip()
+				}
 			}
 
 			Loop, 3
