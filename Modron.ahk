@@ -269,7 +269,8 @@ LevelUp()
 			DirectedInput(gFKeys)
 			ElapsedTime := A_TickCount - StartTime
 			UpdateToolTip()
-			if (ults AND glapsedTime > DashSleep - 2000)
+			UltSleep := DashSleep - 2000
+			if (ults AND ElapsedTime > UltSleep)
 			{
 				directedinput("23456789")
 				ults := 0
