@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;2/12/21
+;2/16/21
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -11,7 +11,8 @@
 global ScriptSpeed := 100	    ;sets the delay after a directedinput, ms
 global gSBTimeMax := 160000		;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 571 		    ;last level before you start farming Steelbones stacks for Briv
-global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo
+global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo, set to 0 if using familiars and x100 leveling
+global gSummonDembo := "1" 		;set to "1" if not using familiars on champions. set to "23456789" if using familiars on champions.
 global gAvoidBosses := 1		;toggle to avoid boss levels for quad skip
 global gContinuedLeveling := 50 ;the script will continue to send Fkeys on levels less than this variable
 global gClickLeveling := 1		;toggle to level click damage with hotkey `
@@ -19,7 +20,7 @@ global gBrivSwap := 1			;will attempt to swap Briv when final quest item is earn
 global gBrivSwapSleep := 1000	;how long the script will sleep before swapping Briv back in, 1000 seems good for no pots.
 global gDashSleepToggle := 1	;wait on level 1 for Dash to start, 1=true, 0=false
 
-;Set of FKeys to be spammed as part of initial leveling. Must Include `` if using gClickLeveling
+;Set of FKeys to be spammed as part of initial leveling. Must Include `` if using gClickLeveling, set to 0 to disable FKey leveling
 global gFKeys := "``{F1}{F4}{F5}{F6}{F7}{F10}{F12}"
 
 ;Set of FKeys to be spammed as part of continued leveling
@@ -284,13 +285,28 @@ LevelUp()
 	{
 		gLoop := "StandardLvling"
 		UpdateToolTip()
-		While(gLevel_Number = gPrevLevel)
+		if gDembo
 		{
-			DirectedInput(gFKeys)
-			DirectedInput("{Right}")
-			UpdateToolTip()
+			loop, 5
+			{
+				DirectedInput("{F10}")
+			}
+			loop, 2
+			{
+				DirectedInput(gSummonDembo)
+			}
 		}
-		SummonDembo()
+		gLoop := "StandardLvling"
+		UpdateToolTip()
+		if gFKeys
+		{
+			loop, 30
+			{
+				DirectedInput(gFKeys)
+				DirectedInput("{Right}")
+				UpdateToolTip()
+			}
+		}
 	}
 	;to keep boss tracker accurate
 	UpdateToolTip()
