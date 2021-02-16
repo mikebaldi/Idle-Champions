@@ -458,7 +458,7 @@ GemFarm()
 		{
 			if (mod(gLevel_Number, 5) AND gQuestRemaining > 0)
 			DirectedInput("q")
-			else if (gBrivSwap AND gQuestRemaining = 0)
+			else if (gBrivSwap AND gQuestRemaining = 0 AND gTrans)
 			{
 				if (zone != 1 AND zone < 22 OR zone > 25)
 				DirectedInput("e")
