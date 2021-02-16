@@ -324,7 +324,7 @@ UpdateToolTip()
 	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
 	gLevel_Number := idle.read(Controller, "Int", arrayPointerOffsetsLevel*)
 	gQuestRemaining := idle.read(Controller, "Int", arrayPointerOffsetsQR*)
-	gTrans := idle.read(Controller, "Int", arrayPointerOffsetsTransitioning*)
+	gTrans := idle.read(Controller, "Char", arrayPointerOffsetsTransitioning*)
 	gTime := idle.read(Controller, "Float", arrayPointerOffsetsTimeScaleMultiplier*)
 
 	if (gLevel_Number = "")
