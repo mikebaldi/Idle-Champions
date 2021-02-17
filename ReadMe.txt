@@ -1,6 +1,6 @@
 Warning: This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
-NOTE: SCRIPT NO LONGER ATTEMPTS TO READ SB, HASTE, OR DASH TIME AND RELIES ON THE GAME CONTROLLER STRUCTURE FOR ALL MEMORY READS, AND THUS ONLY NEEDING ONE POINTER.
+NOTE: Haste and SB stacks are back and still just one pointer needed.
 
 Features:
 1.	Fkey leveling of champions beginning on level 1.
