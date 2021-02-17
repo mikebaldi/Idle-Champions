@@ -1,6 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 2/12/21
-;IC Version v372?
+;date of script: 2/16/21
+;IC Version v373
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 ;Game Controller
@@ -14,6 +14,10 @@ global arrayPointerOffsetsQR := [0x18, 0x14, 0x30]
 global arrayPointerOffsetsTransitioning := [0x20, 0x1C]
 ;Time Scale Multiplier
 global arrayPointerOffsetsTimeScaleMultiplier := [0x8, 0xE8]
+;Steelbones Stacks
+global arrayPointerOffsetsSB := [0x50, 0x18, 0x2B0]
+;Haste Stacks
+global arrayPointerOffsetsHaste := [0x50, 0x18, 0x2B4]
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
