@@ -9,6 +9,7 @@
 ;	various settings to allow the user to Customize how the Script behaves
 ;----------------------------			
 global ScriptSpeed := 100	    ;sets the delay after a directedinput, ms
+global gSBStacksMax := 2500		;how many SB stacks the script will try and farm
 global gSBTimeMax := 160000		;maximum time Briv will farm Steelbones stacks, ms
 global AreaLow := 571 		    ;last level before you start farming Steelbones stacks for Briv
 global gDembo := 2000           ;time in milliseconds that script will repeatedly try and summon Dembo, set to 0 if using familiars and x100 leveling
@@ -82,6 +83,8 @@ global gQuestRemaining	:=		;used to store quest item count remaining to be found
 global gAutoProgress	:=		;used to store bool for auto progress
 global gTrans			:=		;used to store transition state
 global gTime			:=		;used to store game speed multiplier
+global gSBStacks		:=		;used to store Steelbones stack count
+global gHasteStacks		:=		;used to store Haste stack count
 
 	sToolTip := "Hotkeys"
     sToolTip := sToolTip "`nF2: Start Gem Farm Loop"
@@ -342,6 +345,8 @@ UpdateToolTip()
 	gQuestRemaining := idle.read(Controller, "Int", arrayPointerOffsetsQR*)
 	gTrans := idle.read(Controller, "Char", arrayPointerOffsetsTransitioning*)
 	gTime := idle.read(Controller, "Float", arrayPointerOffsetsTimeScaleMultiplier*)
+	gSBStacks := idle.read(Controller, "Int", arrayPointerOffsetsSB*)
+	gHasteStacks := idle.read(Controller "Int", arrayPointeroffsetsHS*)
 
 	if (gLevel_Number = "")
 	{
@@ -399,6 +404,9 @@ UpdateToolTip()
 		sToolTip := "Stats 1 (F6 to toggle)"
 		sToolTip := sToolTip "`nCurrent Level: " gLevel_Number
     	sToolTip := sToolTip "`nTarget Level: " AreaLow
+		sToolTip := sToolTip "`nSB Stacks: " gSBStacks
+		sToolTip := sToolTip "`nSB Stacks Max: " gSBStacksMax
+		sToolTip := sToolTip "`nHaste Stacks: " gHasteStacks
 		sToolTip := sToolTip "`nCurrent Run Time: " Round(dtCurrentRunTime, 2)
 		ToolTip, % sToolTip, 355, 35, 1
 	}
@@ -512,9 +520,7 @@ GemFarm()
 			}	
         }
 
-		BrivStacks := gSBStacks + gHasteStacks - 48
-
-		if (gNotBrivStacked AND gLevel_Number > AreaLow)
+		if (gNotBrivStacked AND gLevel_Number > AreaLow AND gSBStacks < gSBStacksMax)
 		{
 			Loop, 3
 			{
@@ -546,12 +552,12 @@ GemFarm()
 				Sleep 12000
 				SafetyCheck()
 			}
-			else
+			if (gSBStacks < gSBStacksMax)
 			{
 				StartTime := A_TickCount
 				ElapsedTime := 0
 				gLoop := "FarmBrivStacks"
-				while (ElapsedTime < gSBTimeMax)
+				while (gSBStacks < gSBStacksMax AND ElapsedTime < gSBTimeMax)
 				{
 					DirectedInput("w")
 		
