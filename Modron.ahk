@@ -346,7 +346,7 @@ UpdateToolTip()
 	gTrans := idle.read(Controller, "Char", arrayPointerOffsetsTransitioning*)
 	gTime := idle.read(Controller, "Float", arrayPointerOffsetsTimeScaleMultiplier*)
 	gSBStacks := idle.read(Controller, "Int", arrayPointerOffsetsSB*)
-	gHasteStacks := idle.read(Controller "Int", arrayPointeroffsetsHS*)
+	gHasteStacks := idle.read(Controller, "Int", arrayPointeroffsetsHS*)
 
 	if (gLevel_Number = "")
 	{
