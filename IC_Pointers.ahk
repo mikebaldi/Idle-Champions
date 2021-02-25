@@ -1,6 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 2/16/21
-;IC Version 1.31.2 v373
+;date of script: 2/24/21
+;IC Version v373/v374
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 ;Game Controller
@@ -15,7 +15,7 @@ global arrayPointerOffsetsTransitioning := [0x20, 0x1C]
 ;Time Scale Multiplier
 global arrayPointerOffsetsTimeScaleMultiplier := [0x8, 0xE8]
 ;Shandie's Level (Slot 4: center of diamond)
-global arrayPointerOffsetsShandieLvl := [0x14, 0xC, 0x8, 0x20, 0x14, 0x188] ;change between 188/190 190 is most current patch.
+global arrayPointerOffsetsShandieLvl := [0x14, 0xC, 0x8, 0x20, 0x14, 0x188]
 global arrayPointerOffsetsShandieLvl0 := [0x14, 0xC, 0x8, 0x10, 0x14, 0x190]
 global arrayPointerOffsetsShandieLvl1 := [0x14, 0xC, 0x8, 0x14, 0x14, 0x190]
 global arrayPointerOffsetsShandieLvl2 := [0x14, 0xC, 0x8, 0x18, 0x14, 0x190]
