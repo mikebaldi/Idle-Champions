@@ -6,3 +6,6 @@ Instructions for ModronGUI.AHK:
 1. Download ModronGUI.AHK, IC_Pointers.AHK, and classMemory.AHK to the same folder.
 2. Right click ModronGUI.AHK and select run.
 3. Read all of and follow the instructions on the 'Read First' tab.
+
+Notes:
+1. Script requires Shandie to be used in your save slot 1 and 3 formations function properly.
