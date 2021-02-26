@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-;2/24/21
+global ScriptDate := "2/26/21"
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -80,7 +80,7 @@ Gui, MyWindow:Add, Button, x415 y+100 w60 gReload_Clicked, `Reload
 Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
 Gui, Tab, Read First
 Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y30, Gem Farm, 2/24/21
+Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Save your speed formation in formation save slot 1.
@@ -91,17 +91,17 @@ Gui, MyWindow:Add, Text, x15 y+2, 5. `Click the save button to save your setting
 Gui, MyWindow:Add, Text, x15 y+2, 6. Load into zone 1 of an adventure to farm gems.
 Gui, MyWindow:Add, Text, x15 y+2, 7. Press the run button to start farming gems.
 Gui, MyWindow:Add, Text, x15 y+10, Notes:
-Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause Chotkey (``) to adjust settings after a run starts.
+Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause hotkey (``) to adjust settings after a run starts.
 Gui, MyWindow:Add, Text, x15 y+2, 2. Don't forget to unpause after saving your settings.
-Gui, MyWindow:Add, Text, x15 y+2, 3. Recommended SB stack level is:
+Gui, MyWindow:Add, Text, x15 y+2, 3. First run is ignored for stats, in case it is a partial run.
+Gui, MyWindow:Add, Text, x15 y+2, 4. Recommended SB stack level is:
 Gui, MyWindow:Add, Text, x15 y+2, Modron Reset Level - [2 * (Briv Skip Amount + 1)]
 Gui, MyWindow:Add, Text, x15 y+2, Then, adjust to avoid stacking on boss zones.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
 Gui, MyWindow:Add, Text, x15 y+10, Untested Features:
-Gui, MyWindow:Add, Text, x15 y+2, 1. 0 length Dash wait time.
-Gui, MyWindow:Add, Text, x15 y+2, 2. Using Hew's ult mid run.
-Gui, MyWindow:Add, Text, x15 y+2, 3. Continued leveling.
+Gui, MyWindow:Add, Text, x15 y+2, 1. Using Hew's ult throughout a run.
+
 Gui, Tab, Settings
 Gui, MyWindow:Add, Text, x15 y30 w120, Seats to level with Fkeys:
 Loop, 12
@@ -152,7 +152,7 @@ Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Current `Run `Time:
 Gui, MyWindow:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Time:
 Gui, MyWindow:Add, Text, vdtTotalTimeID x+2 w50, % dtTotalTime
-Gui, MyWindow:Add, Text, x15 y+10, Stats updated at the end of a run:
+Gui, MyWindow:Add, Text, x15 y+10, Stats updated once per run:
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Count:
 Gui, MyWindow:Add, Text, vgTotal_RunCountID x+2 w50, % gTotal_RunCount
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Previous `Run `Time:
@@ -359,6 +359,8 @@ LevelUp()
 		Loop, 20
 		{
 			DirectedInput(gFKeys)
+			if (gClickLeveling)
+			directedinput("``")
 		}
 	}
 	if gUlts
@@ -542,6 +544,12 @@ StackFarm()
 
 UpdateStartLoopStats()
 {
+	if (gTotal_RunCount = 0)
+	{
+		gStartTime := A_TickCount
+		gCoreXPStart := ReadCoreXP()
+		GuiControl, MyWindow:, gCoreXPStartID, % gCoreXPStart
+	}
 	if (gTotal_RunCount)
 	{
 		gPrevRunTime := round((A_TickCount - gRunStartTime) / 60000, 2)
@@ -559,11 +567,12 @@ UpdateStartLoopStats()
 		dtTotalTime := (A_TickCount - gStartTime) / 3600000
 		gAvgRunTime := Round((dtTotalTime / gTotal_RunCount) * 60, 2)
 		GuiControl, MyWindow:, gAvgRunTimeID, % gAvgRunTime
+		dtTotalTime := (A_TickCount - gStartTime) / 3600000
+		TotalBosses := (ReadCoreXP() - gCoreXPStart) / 5
+		gbossesPhr := Round(TotalBosses / dtTotalTime, 2)
+		GuiControl, MyWindow:, gbossesPhrID, % gbossesPhr
+		GuiControl, MyWindow:, gTotal_RunCountID, % gTotal_RunCount
 	}
-	dtTotalTime := (A_TickCount - gStartTime) / 3600000
-	TotalBosses := (ReadCoreXP() - gCoreXPStart) / 5
-	gbossesPhr := Round(TotalBosses / dtTotalTime, 2)
-	GuiControl, MyWindow:, gbossesPhrID, % gbossesPhr
 	gRunStartTime := A_TickCount
 	gPrevLevel := gLevel_Number
     GuiControl, MyWindow:, gPrevLevelID, % gPrevLevel
@@ -591,8 +600,6 @@ GemFarm()
 	
 	gprevLevel := CurrentLevel()
 	gPrevLevelTime := A_TickCount
-	gCoreXPStart := ReadCoreXP()
-	GuiControl, MyWindow:, gCoreXPStartID, % gCoreXPStart
 
 	loop 
 	{
@@ -607,8 +614,9 @@ GemFarm()
 			;Double check if Shandie has been leveled. Odd bug on stack farming that thinks they are on level 1 and gets stuck in LevelUP()
 			DirectedInput("q")
 			if !ShandieLvl()
-			UpdateStartLoopStats()
 			LoadingZone()
+			UpdateStartLoopStats()
+			++gTotal_RunCount
 			directedinput("g")
 			LevelUp()
         }
@@ -630,8 +638,6 @@ GemFarm()
 			else if (StackRead() < gSBTargetStacks)
 			StackFarm()
 			gPrevLevelTime := A_TickCount
-			++gTotal_RunCount
-			GuiControl, MyWindow:, gTotal_RunCountID, % gTotal_RunCount
 			DirectedInput("g")
 		}
 		
