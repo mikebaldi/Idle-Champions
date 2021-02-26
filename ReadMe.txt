@@ -8,4 +8,10 @@ Instructions for ModronGUI.AHK:
 3. Read all of and follow the instructions on the 'Read First' tab.
 
 Notes:
-1. Script requires Shandie to be used in your save slot 1 and 3 formations function properly.
+1. Script requires Shandie to be used in your save slot 1 formation to function properly.
+2. Script can be used outside of Grand Tour Campaign, but Shandie's location will have to be interpolated. Upper right most position in the formation corresponds to Slot 0. Numbering proceeds down the column from top to bottom, then through the formation from left to right. For example Grand Tour:
+    3
+  6    1
+8   4     0
+  7    2
+    5
