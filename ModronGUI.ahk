@@ -83,7 +83,7 @@ Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
-Gui, MyWindow:Add, Text, x15 y+2, 1. Save your speed formation in formation save slot 1.
+Gui, MyWindow:Add, Text, x15 y+2, 1. Save your speed formation in formation save slot 1, must include Shandie.
 Gui, MyWindow:Add, Text, x15 y+2, 2. Save your stack farming formation in formation save slot 2.
 Gui, MyWindow:Add, Text, x15 y+2, 3. Save your speed formation without Briv, Hew, and Melf in formation save slot 3.
 Gui, MyWindow:Add, Text, x15 y+2, 4. Adjust the settings on the settings tab.
