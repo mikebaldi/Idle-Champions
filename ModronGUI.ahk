@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "2/26/21"
+global ScriptDate := "2/27/21"
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -478,6 +478,10 @@ SetFormation()
 			UpdateStatTimers()
 		}
 		DirectedInput("q")
+	}
+	else if (gAvoidBosses and !Mod(CurrentLevel(), 5))
+	{
+		DirectedInput("e")
 	}
 	else
 	DirectedInput("q")
