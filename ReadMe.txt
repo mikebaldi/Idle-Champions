@@ -6,7 +6,7 @@ Instructions for ModronGUI.AHK:
 1. Download and install AutoHotkey: https://www.autohotkey.com/
 2. Download ModronGUI.AHK, IC_Pointers.AHK, and classMemory.AHK to the same folder.
 3. Scan all downloaded files with trusted antivirus software.
-4. Right click ModronGUI.AHK and select run.
+4. Right click ModronGUI.AHK and select run script.
 5. Read and follow the instructions on the 'Read First' tab.
 
 Recommended Additional Steps:
