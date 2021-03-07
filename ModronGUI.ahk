@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "2/27/21"
+global ScriptDate := "3/7/21"
 ;put together with the help from many different people. thanks for all the help.
 
 ;----------------------------
@@ -11,18 +11,18 @@ global ScriptDate := "2/27/21"
 global ScriptSpeed := 100	    ;sets the delay after a directedinput, ms
 global gSBTargetStacks := 1500	;how many SB stacks the script will try and farm
 global gSBTimeMax := 120000		;maximum time Briv will farm Steelbones stacks, ms
-global gAreaLow := 330 		    ;last level before you start farming Steelbones stacks for Briv
-global gAvoidBosses := 1		;toggle to avoid boss levels for quad skip
-global gContinuedLeveling := 50 ;the script will continue to send Fkeys on levels less than this variable
+global gAreaLow := 230 		    ;last level before you start farming Steelbones stacks for Briv
+global gAvoidBosses := 0		;toggle to avoid boss levels for quad skip
+global gContinuedLeveling := 1	;the script will continue to send Fkeys on levels less than this variable
 global gClickLeveling := 1		;toggle to level click damage with hotkey `
 global gBrivSwap := 1			;will attempt to swap Briv when final quest item is earned to skip his transition animation
 global gDashSleepTime := 60000	
 global gUlts := 1				;use ults after waiting for Dash
 global gStackRestart := 1		;toggle to restart during Briv Stacking. Consider setting to 0 if restart issues persist.
-global gHewUlt := 6				;Hew's Ult to spam
+global gHewUlt := 5				;Hew's Ult to spam
 
 ;Adjust to automatically check seats to be leveled with Fkeys
-global gSeatToggle := [1,0,0,1,1,1,0,1,0,1,0,1]
+global gSeatToggle := [1,0,0,1,1,1,0,1,0,1,0,0]
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
@@ -57,6 +57,7 @@ global gStartTime 	    :=
 global gPrevLevelTime	:=	
 global gPrevRestart 	:=
 global gprevLevel 	    :=
+global dtCurrentLevelTime :=
 
 ;globals used for memory reading
 global gLevel_Number 	:= 	    ;used to store current level
@@ -83,24 +84,30 @@ Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
-Gui, MyWindow:Add, Text, x15 y+2, 1. Save your speed formation in formation save slot 1, must include Shandie.
-Gui, MyWindow:Add, Text, x15 y+2, 2. Save your stack farming formation in formation save slot 2.
-Gui, MyWindow:Add, Text, x15 y+2, 3. Save your speed formation without Briv, Hew, and Melf in formation save slot 3.
+Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie and at least one familiar on the field.
+Gui, MyWindow:Add, Text, x15 y+2 w10, 2.
+Gui, MyWindow:Add, Text, x+2 w370, Save your stack farming formation in formation save slot 2, in game `hotkey "W". Don't include any familiars on the field.
+Gui, MyWindow:Add, Text, x15 y+2 w10, 3.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game `hotkey "E".
 Gui, MyWindow:Add, Text, x15 y+2, 4. Adjust the settings on the settings tab.
 Gui, MyWindow:Add, Text, x15 y+2, 5. `Click the save button to save your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 6. Load into zone 1 of an adventure to farm gems.
 Gui, MyWindow:Add, Text, x15 y+2, 7. Press the run button to start farming gems.
 Gui, MyWindow:Add, Text, x15 y+10, Notes:
-Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause hotkey (``) to adjust settings after a run starts.
+Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause hotkey, ``, to adjust settings after a run starts.
 Gui, MyWindow:Add, Text, x15 y+2, 2. Don't forget to unpause after saving your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 3. First run is ignored for stats, in case it is a partial run.
-Gui, MyWindow:Add, Text, x15 y+2, 4. Recommended SB stack level is:
-Gui, MyWindow:Add, Text, x15 y+2, Modron Reset Level - [2 * (Briv Skip Amount + 1)]
-Gui, MyWindow:Add, Text, x15 y+2, Then, adjust to avoid stacking on boss zones.
+Gui, MyWindow:Add, Text, x15 y+2, 4. Settings must be adjusted each time the script is loaded.
+Gui, MyWindow:Add, Text, x15 y+2, 5. Recommended SB stack level is:
+Gui, MyWindow:Add, Text, x15 y+2 w10,
+Gui, MyWindow:Add, Text, x+2, Modron Reset Level - [2 * (Briv Skip Amount + 1)]
+Gui, MyWindow:Add, Text, x15 y+2 w10,
+Gui, MyWindow:Add, Text, x+2, Then adjust to avoid stacking on boss zones.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
-Gui, MyWindow:Add, Text, x15 y+10, Untested Features:
-Gui, MyWindow:Add, Text, x15 y+2, 1. Using Hew's ult throughout a run.
+Gui, MyWindow:Add, Text, x15 y+2 w10, 2. 
+Gui, MyWindow:Add, Text, x+2 w370, Using Hew's ult throughout a run with Briv swapping can result in Havi's ult being triggered instead. Consider removing Havi from formation save slot 3, in game `hotkey "E".
 
 Gui, Tab, Settings
 Gui, MyWindow:Add, Text, x15 y30 w120, Seats to level with Fkeys:
@@ -126,7 +133,7 @@ Gui, MyWindow:Add, Edit, vNewDashSleepTime x15 y+10 w50, % gDashSleepTime
 Gui, MyWindow:Add, Text, x+5, Wait `up to this long `on zone `1 for Dash
 Gui, MyWindow:Add, Edit, vNewHewUlt x15 y+10 w50, % gHewUlt
 Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key, set to 0 to disable
-Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after Dash
+Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after intial champion leveling
 Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' formation to avoid Briv's jump animation
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
@@ -217,6 +224,8 @@ Gui, MyWindow:Add, Text, x15 y+2, dtCurrentLevelTime:
 Gui, MyWindow:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
 Gui, MyWindow:Add, Text, x15 y+2, ResetCount:
 Gui, MyWindow:Add, Text, vResetCountID x+2 w200, % ResetCount
+Gui, MyWindow:Add, Text, x15 y+2, ModResetting:
+Gui, MyWindow:add, Text, vModResettingID x+2 w50,
 
 Gui, MyWindow:Show
 
@@ -341,11 +350,11 @@ LevelUp()
 
     gTime := TimeScaleMulti()
     DashSpeed := gTime * 1.5
-    gDashSleepTime := gDashSleepTime / gTime
+    sleepy := gDashSleepTime / gTime
     StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Dash Wait
-	While (TimeScaleMulti() < DashSpeed AND ElapsedTime < gDashSleepTime)
+	While (TimeScaleMulti() < DashSpeed AND ElapsedTime < sleepy)
 	{
 		DirectedInput(gFKeys)
 		DirectedInput("q")
@@ -412,7 +421,7 @@ ShandieLvl()
 {
 
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    gShandieLvl := idle.read(Controller, "Int", arrayPointerOffsetsShandieLvl%gShandieSlot%*)
+    gShandieLvl := idle.read(Controller, "Int", arrayPointerOffsetsShandieLvl*)
     GuiControl, MyWindow:, gShandieLvlID, % gShandieLvl
 	return gShandieLvl
 }
@@ -452,9 +461,29 @@ ReadCoreXP()
 	return gCoreXP
 }
 
-SetFormation()
+Resetting()
 {
-	if (!QuestRemaining() AND Transitioning() AND gBrivSwap)
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    ModResetting := idle.read(Controller, "Char", arrayPointerOffsetsResetting*)
+    GuiControl, MyWindow:, ModResettingID, % ModResetting
+	return ModResetting
+}
+
+ChampionLvlbySlot(slot)
+{
+	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    level := idle.read(Controller, "Int", arrayPointerOffsetsSlotLvl%slot%*)
+    ;GuiControl, MyWindow:, ChampLvlSlot%slot%ID, % Level
+	return level
+}
+
+SetFormation(gLevel_Number)
+{
+	if (gAvoidBosses and !Mod(gLevel_Number, 5))
+	{
+		DirectedInput("e")
+	}
+	else if (!QuestRemaining() AND Transitioning() AND gBrivSwap)
 	{
 		DirectedInput("e")
 		StartTime := A_TickCount
@@ -479,10 +508,6 @@ SetFormation()
 		}
 		DirectedInput("q")
 	}
-	else if (gAvoidBosses and !Mod(CurrentLevel(), 5))
-	{
-		DirectedInput("e")
-	}
 	else
 	DirectedInput("q")
 }
@@ -492,10 +517,18 @@ LoadingZone()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Zone
-    ShandieLvl()
-	while (!ShandieLvl() AND ElapsedTime < 60000)
+	while (!ChampionLvlbySlot(gShandieSlot) AND ElapsedTime < 180000)
 	{
 		DirectedInput("q{F6}")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	StartTime := A_TickCount
+	ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Confirming Zone Load
+	while (ChampionLvlbySlot(gShandieSlot) AND ElapsedTime < 180000)
+	{
+		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -588,6 +621,8 @@ UpdateStatTimers()
 	GuiControl, MyWindow:, dtCurrentRunTimeID, % dtCurrentRunTime
 	dtTotalTime := Round((A_TickCount - gStartTime) / 3600000, 2)
 	GuiControl, MyWindow:, dtTotalTimeID, % dtTotalTime
+	dtCurrentLevelTime := Round((A_TickCount - gPrevLevelTime) / 1000, 2)
+	GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime	
 }
 
 UpdateElapsedTime(StartTime)
@@ -610,17 +645,11 @@ GemFarm()
         GuiControl, MyWindow:, gLoopID, Main `Loop
 		gLevel_Number := CurrentLevel()
 		
-		SetFormation()
+		SetFormation(gLevel_Number)
 
-		if (gLevel_Number = 1 AND !ShandieLvl())
+		if (ShandieLvl() < 120)
 		{
-			gprevLevel := gLevel_Number
-			;Double check if Shandie has been leveled. Odd bug on stack farming that thinks they are on level 1 and gets stuck in LevelUP()
-			DirectedInput("q")
-			if !ShandieLvl()
 			LoadingZone()
-			UpdateStartLoopStats()
-			++gTotal_RunCount
 			directedinput("g")
 			LevelUp()
         }
@@ -659,35 +688,72 @@ GemFarm()
 			DirectedInput(gHewUlt)
 		}
 
-		if (gLevel_Number > gprevLevel)
+		if (Resetting())
 		{
-			gprevLevel := gLevel_Number
-			GuiControl, MyWindow:, gprevLevelID, % gprevLevel
+			ModronReset()
+			LoadingZone()
+			UpdateStartLoopStats()
+			++gTotal_RunCount
+			directedinput("g")
+			LevelUp()
 			gPrevLevelTime := A_TickCount
+			gprevLevel := CurrentLevel()
 		}
 
+		CheckifStuck(gLevel_Number)
 		UpdateStatTimers()
+    }
+}
 
-		;if time on current level exceeds 60 seconds, the game is restarted.
-		dtCurrentLevelTime := Round((A_TickCount - gPrevLevelTime) / 1000, 2)
-		GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime
-		if (dtCurrentLevelTime > 60)
+CheckifStuck(gLevel_Number)
+{
+	if (gLevel_Number != gprevLevel)
+	{
+		gprevLevel := gLevel_Number
+		GuiControl, MyWindow:, gprevLevelID, % gprevLevel
+		gPrevLevelTime := A_TickCount
+	}
+	
+	dtCurrentLevelTime := Round((A_TickCount - gPrevLevelTime) / 1000, 2)
+	GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime		
+	if (dtCurrentLevelTime > 60)
+	{
+		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+		sleep 2000
+		GuiControl, MyWindow:, gloopID, Closing IC Stuck
+		StartTime := A_TickCount
+		ElapsedTime := 0
+		While (WinExist("ahk_exe IdleDragons.exe")) 
 		{
 			PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-			sleep 2000
-			GuiControl, MyWindow:, gloopID, Closing IC Stuck
-			StartTime := A_TickCount
-			ElapsedTime := 0
-			While (WinExist("ahk_exe IdleDragons.exe")) 
-			{
-				PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-				sleep 1000
-				ElapsedTime := UpdateElapsedTime(StartTime)
-				UpdateStatTimers()
-			}
-			SafetyCheck()
-			LoadingZone()
-			gPrevLevelTime := A_TickCount
+			sleep 1000
+			ElapsedTime := UpdateElapsedTime(StartTime)
+			UpdateStatTimers()
 		}
-    }
+		SafetyCheck()
+		LoadingZone()
+		gPrevLevelTime := A_TickCount
+	}
+}
+
+ModronReset()
+{
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Modron Reset
+	while (Resetting() AND ElapsedTime < 300000)
+	{
+		Sleep, 250
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Resetting to z1
+	while (CurrentLevel() != 1 AND ElapsedTime < 300000)
+	{
+		Sleep, 250
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
 }
