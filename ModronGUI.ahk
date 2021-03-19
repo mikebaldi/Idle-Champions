@@ -1,35 +1,93 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/7/21"
+global ScriptDate := "3/19/21"
 ;put together with the help from many different people. thanks for all the help.
+SetWorkingDir, %A_ScriptDir%
+CoordMode, Mouse, Client
 
-;----------------------------
-;	User Settings
-;	various settings to autopopulate settings tab
-;----------------------------			
-global ScriptSpeed := 100	    ;sets the delay after a directedinput, ms
-global gSBTargetStacks := 1500	;how many SB stacks the script will try and farm
-global gSBTimeMax := 120000		;maximum time Briv will farm Steelbones stacks, ms
-global gAreaLow := 230 		    ;last level before you start farming Steelbones stacks for Briv
-global gAvoidBosses := 0		;toggle to avoid boss levels for quad skip
-global gContinuedLeveling := 1	;the script will continue to send Fkeys on levels less than this variable
-global gClickLeveling := 1		;toggle to level click damage with hotkey `
-global gBrivSwap := 1			;will attempt to swap Briv when final quest item is earned to skip his transition animation
-global gDashSleepTime := 60000	
-global gUlts := 1				;use ults after waiting for Dash
-global gStackRestart := 1		;toggle to restart during Briv Stacking. Consider setting to 0 if restart issues persist.
-global gHewUlt := 5				;Hew's Ult to spam
-
-;Adjust to automatically check seats to be leveled with Fkeys
-global gSeatToggle := [1,0,0,1,1,1,0,1,0,1,0,0]
+;Thanks ThePuppy for the ini code
+;==================
+;Load user settings
+;==================
+;Champions to level with Fkeys
+global gFKeys := 
+loop, 12
+{
+	IniRead, Seat%A_Index%Toggle, UserSettings.ini, Section1, Seat%A_Index%Toggle
+	if (Seat%A_Index%Toggle)
+	{
+		gFKeys = %gFKeys%{F%A_Index%}
+	}
+}
+global gSeatToggle := [Seat1Toggle,Seat2Toggle,Seat3Toggle,Seat4Toggle,Seat5Toggle,Seat6Toggle,Seat7Toggle,Seat8Toggle,Seat9Toggle,Seat10Toggle,Seat11Toggle,Seat12Toggle]
+;Continued leveling stop zone
+IniRead, ContinuedLeveling, UserSettings.ini, Section1, ContinuedLeveling
+global gContinuedLeveling := ContinuedLeveling
+;Farm SB stacks after this zone
+IniRead, AreaLow, UserSettings.ini, Section1, AreaLow
+global gAreaLow := AreaLow
+;Lowest zone SB stacks can be farmed on
+IniRead, MinStackZone, UserSettings.ini, Section1, MinStackZone
+global gMinStackZone := MinStackZone
+;Target Haste stacks
+IniRead, SBTargetStacks, UserSettings.ini, Section1, SBTargetStacks
+global gSBTargetStacks := SBTargetStacks
+;SB stack max time
+IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax
+global gSBTimeMax := SBTimeMax
+;Dash wait max time
+IniRead, DashSleepTime, UserSettings.ini, Section1, DashSleepTime
+global gDashSleepTime := DashSleepTime
+;Hew's ult key
+IniRead, HewUlt, UserSettings.ini, Section1, HewUlt
+global gHewUlt := HewUlt
+;spam ults after initial leveling
+IniRead, Ults, UserSettings.ini, Section1, Ults
+global gUlts := Ults
+;Briv swap to avoid animation
+IniRead, BrivSwap, UserSettings.ini, Section1, BrivSwap
+global gBrivSwap := BrivSwap
+;Briv swap to avoid bosses
+IniRead, AvoidBosses, UserSettings.ini, Section1, AvoidBosses
+global gAvoidBosses := AvoidBosses
+;Click damage toggle
+IniRead, ClickLeveling, UserSettings.ini, Section1, ClickLeveling
+global gClickLeveling := ClickLeveling
+;Stack restart toggle
+IniRead, StackRestart, UserSettings.ini, Section1, StackRestart
+global gStackRestart := StackRestart
+;Stack fail recovery toggle
+IniRead, StackFailRecovery, UserSettings.ini, Section1, StackFailRecovery
+global gStackFailRecovery := StackFailRecovery
+;Shandie's position in formation
+slot := 0
+global gShandieSlot := 
+loop, 9
+{
+	IniRead, ShandieRadio%slot%, UserSettings.ini, Section1, ShandieRadio%slot%
+	if (ShandieRadio%slot%)
+	gShandieSlot := slot
+	++slot
+}
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
 global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
 ;end of user settings
 
-SetWorkingDir, %A_ScriptDir%
+;global variables used for server calls
+global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
+global ActiveInstance :=
+global InstanceID :=
+global UserID :=
+global UserHash := ""
+global InstanceID :=
+global ActiveInstance :=
+global advtoload :=
+
+;class and methods for parsing JSON (User details sent back from a server call)
+#include JSON.ahk
 
 ;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
 #include classMemory.ahk
@@ -42,11 +100,10 @@ if (_ClassMemory.__Class != "_ClassMemory")
 }
 
 ;pointer addresses and offsets
-#include IC_Pointers.ahk
+#include IC_MemoryFunctions.ahk
 
-;globals used to count bosses killed
-global gbossesPhr		:=
-global gCoreXPStart		:=
+;class and methods for parsing JSON
+#include JSON.ahk
 
 ;globals for various timers
 global gSlowRunTime		:= 		
@@ -59,19 +116,21 @@ global gPrevRestart 	:=
 global gprevLevel 	    :=
 global dtCurrentLevelTime :=
 
-;globals used for memory reading
-global gLevel_Number 	:= 	    ;used to store current level
-global gQuestRemaining	:=		;used to store quest item count remaining to be found on current level
-global gTrans			:=		;used to store transition state
-global gTime			:=		;used to store game speed multiplier
-global gStackCountSB	:=		;used to store Steelbones stack count
-global gStackCountH		:=		;used to store Haste stack count
-global gShandieLvl		:=		;used to store Shandie Level
-global gCoreXP			:=		;used to store Modron Core XP value
+;globals for server calls
+global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
+global ActiveInstance :=
+global InstanceID :=
+global UserID :=
+global UserHash := ""
+global advtoload :=
 
-global gShandieSlot		:=
-global gFKeys 			:=
+;globals for reset tracking
+global gFailedStacking := 0
+global gFailedStackConv := 0
 global ResetCount		:= 0
+;globals used for stat tracking
+global gGemStart		:=
+global gCoreXPStart		:=
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -80,12 +139,14 @@ Gui, MyWindow:Add, Button, x415 y+50 w60 gRun_Clicked, `Run
 Gui, MyWindow:Add, Button, x415 y+100 w60 gReload_Clicked, `Reload
 Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
 Gui, Tab, Read First
+
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
+
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
 Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
-Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie and at least one familiar on the field.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie, Briv at the very front of the formation, and at least one familiar on the field.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2.
 Gui, MyWindow:Add, Text, x+2 w370, Save your stack farming formation in formation save slot 2, in game `hotkey "W". Don't include any familiars on the field or any champions in the formation slot Shandie is in as part of formation save slot 1.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 3.
@@ -98,16 +159,28 @@ Gui, MyWindow:Add, Text, x15 y+10, Notes:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause hotkey, ``, to adjust settings after a run starts.
 Gui, MyWindow:Add, Text, x15 y+2, 2. Don't forget to unpause after saving your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 3. First run is ignored for stats, in case it is a partial run.
-Gui, MyWindow:Add, Text, x15 y+2, 4. Settings must be adjusted each time the script is loaded.
+Gui, MyWindow:Add, Text, x15 y+2, 4. Settings should now save to and load from UserSettings.ini file.
 Gui, MyWindow:Add, Text, x15 y+2, 5. Recommended SB stack level is:
 Gui, MyWindow:Add, Text, x15 y+2 w10,
 Gui, MyWindow:Add, Text, x+2, Modron Reset Level - [2 * (Briv Skip Amount + 1)]
 Gui, MyWindow:Add, Text, x15 y+2 w10,
 Gui, MyWindow:Add, Text, x+2, Then adjust to avoid stacking on boss zones.
+Gui, MyWindow:Add, Text, x15 y+2 w10, 6.
+Gui, MyWindow:Add, Text, x+2 w370, Script will activate and focus the game window for manual resets.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 7.
+Gui, MyWIndow:Add, Text, x+2 w370, Script communicates directly with Idle Champions play servers to recover from a failed Briv stack on the previous run and for when Modron resets to the World Map.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 8.
+Gui, MyWIndow:Add, Text, x+2 w370, Script reads system memory.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 9.
+Gui, MyWIndow:Add, Text, x+2 w370, The script does not work without Shandie.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 10.
+Gui, MyWIndow:Add, Text, x+2 w370, Disable manual resets to recover from failed Briv stacking when running event free plays.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2. 
 Gui, MyWindow:Add, Text, x+2 w370, Using Hew's ult throughout a run with Briv swapping can result in Havi's ult being triggered instead. Consider removing Havi from formation save slot 3, in game `hotkey "E".
+Gui, MyWindow:Add, Text, x15 y+2, 3. 
+Gui, MyWindow:Add, Text, x+2 w370, Script will re-enter the level up function as long as Shandie is below level 230.
 
 Gui, Tab, Settings
 Gui, MyWindow:Add, Text, x15 y30 w120, Seats to level with Fkeys:
@@ -127,10 +200,14 @@ Gui, MyWindow:Add, Edit, vNewContinuedLeveling x15 y+10 w50, % gContinuedLevelin
 Gui, MyWindow:Add, Text, x+5, Continue using Fkey leveling until this zone
 Gui, MyWindow:Add, Edit, vNewgAreaLow x15 y+10 w50, % gAreaLow
 Gui, MyWindow:Add, Text, x+5, Farm SB stacks AFTER this zone
+Gui, MyWindow:Add, Edit, vNewgMinStackZone x15 y+10 w50, % gMinStackZone
+Gui, MyWindow:Add, Text, x+5, Minimum zone you can farm SB stacks on
 Gui, MyWindow:Add, Edit, vNewSBTargetStacks x15 y+10 w50, % gSBTargetStacks
 Gui, MyWindow:Add, Text, x+5, Target Haste stacks for next run
+Gui, MyWindow:Add, Edit, vNewgSBTimeMax x15 y+10 w50, % gSBTimeMax
+Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will spend farming SB stacks
 Gui, MyWindow:Add, Edit, vNewDashSleepTime x15 y+10 w50, % gDashSleepTime
-Gui, MyWindow:Add, Text, x+5, Wait `up to this long `on zone `1 for Dash
+Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will wait for Dash
 Gui, MyWindow:Add, Edit, vNewHewUlt x15 y+10 w50, % gHewUlt
 Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key, set to 0 to disable
 Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after intial champion leveling
@@ -138,16 +215,17 @@ Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' 
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
 Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
+Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Text, x15 y+5, Shandie's position in formation:
-Gui, MyWindow:Add, Radio, x45 y+5 vShandieRadio3
-Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio6
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio1
-Gui, MyWindow:Add, Radio, x15 y+1 vShandieRadio8
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio4 checked%ShandieRadio4%
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio0
-Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio7
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio2
-Gui, MyWindow:Add, Radio, x45 y+1 vShandieRadio5
+Gui, MyWindow:Add, Radio, x45 y+5 vShandieRadio3 Checked%ShandieRadio3%
+Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio6 Checked%ShandieRadio6%
+Gui, MyWindow:Add, Radio, x+1 vShandieRadio1 Checked%ShandieRadio1%
+Gui, MyWindow:Add, Radio, x15 y+1 vShandieRadio8 Checked%ShandieRadio8%
+Gui, MyWindow:Add, Radio, x+1 vShandieRadio4 Checked%ShandieRadio4%
+Gui, MyWindow:Add, Radio, x+1 vShandieRadio0 Checked%ShandieRadio0%
+Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio7 Checked%ShandieRadio7%
+Gui, MyWindow:Add, Radio, x+1 vShandieRadio2 Checked%ShandieRadio2%
+Gui, MyWindow:Add, Radio, x45 y+1 vShandieRadio5 Checked%ShandieRadio5%
 
 statTabTxtWidth := 
 Gui, Tab, Stats
@@ -159,7 +237,9 @@ Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Current `Run `Time:
 Gui, MyWindow:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Time:
 Gui, MyWindow:Add, Text, vdtTotalTimeID x+2 w50, % dtTotalTime
+Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+10, Stats updated once per run:
+Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Count:
 Gui, MyWindow:Add, Text, vgTotal_RunCountID x+2 w50, % gTotal_RunCount
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Previous `Run `Time:
@@ -170,18 +250,62 @@ Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Slowest `Run `Time:
 Gui, MyWindow:Add, Text, vgSlowRunTimeID x+2 w50, % gSlowRunTime		
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Avg. `Run `Time:
 Gui, MyWindow:Add, Text, vgAvgRunTimeID x+2 w50, % gAvgRunTime
-Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Bosses per hour:
+Gui, MyWindow:Font, cBlue w700
+Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Bosses per hour:
 Gui, MyWindow:Add, Text, vgbossesPhrID x+2 w50, % gbossesPhr
-Gui, MyWindow:Font, w400
+Gui, MyWindow:Font, cGreen
+Gui, MyWINdow:Add, Text, x15 y+10, Total Gems:
+Gui, MyWindow:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
+Gui, MyWINdow:Add, Text, x15 y+2, Gems per hour:
+Gui, MyWindow:Add, Text, vGemsPhrID x+2 w50, % GemsPhr
+Gui, MyWindow:Font, cDefault w400
 
 Gui, Tab, Debug
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y33, `Loop: 
 Gui, MyWindow:Add, Text, vgLoopID x+2 w200, Not Started
+Gui, MyWindow:Add, Text, x15 y+15, Timers:
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+2, ElapsedTime:
 Gui, MyWindow:Add, Text, vElapsedTimeID x+2 w200, % ElapsedTime
+Gui, MyWindow:Add, Text, x15 y+2, dtCurrentLevelTime:
+Gui, MyWindow:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
+Gui, MyWindow:Font, w700
+Gui, MyWindow:Add, Text, x15 y+15, Memory Reads: 
+Gui, MyWindow:Font, w400
+Gui, MyWindow:Add, Text, x15 y+2, ReadCurrentZone: 
+Gui, MyWindow:Add, Text, vReadCurrentZoneID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadGems: 
+Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadQuestRemaining: 
+Gui, MyWindow:Add, Text, vReadQuestRemainingID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadTimeScaleMultiplier: 
+Gui, MyWindow:Add, Text, vReadTimeScaleMultiplierID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadTransitioning: 
+Gui, MyWindow:Add, Text, vReadTransitioningID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadSBStacks: 
+Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadHasteStacks: 
+Gui, MyWindow:Add, Text, vReadHasteStacksID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadCoreXP: 
+Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadResettting: 
+Gui, MyWindow:Add, Text, vReadResetttingID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadUserID: 
+Gui, MyWindow:Add, Text, vReadUserIDID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadUserHash: 
+Gui, MyWindow:Add, Text, vReadUserHashID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadScreenWidth: 
+Gui, MyWindow:Add, Text, vReadScreenWidthID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadScreenHeight: 
+Gui, MyWindow:Add, Text, vReadScreenHeightID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, ReadChampLvlBySlot: 
+Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+2, gShandieLvl:
+Gui, MyWindow:Add, Text, vgShandieLvlID x+2 w200, % gShandieLvl
+Gui, MyWindow:Font, w700
+Gui, MyWindow:Add, Text, x15 y+15, Settings and Other Variables: 
+Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+2, gFKeys:
 Gui, MyWindow:Add, Text, vgFKeysID x+2 w300, % gFKeys
 Gui, MyWindow:Add, Text, x15 y+2, gAreaLow:
@@ -190,6 +314,8 @@ Gui, MyWindow:Add, Text, x15 y+2, gSBTargetStacks:
 Gui, MyWindow:Add, Text, vgSBTargetStacksID x+2 w200, % gSBTargetStacks
 Gui, MyWindow:Add, Text, x15 y+2, gDashSleepTime:
 Gui, MyWindow:Add, Text, vDashSleepTimeID x+2 w200, % gDashSleepTime
+Gui, MyWindow:Add, Text, x15 y+2, NewDashSleep:
+Gui, MyWindow:Add, Text, vNewDashSleepID x+2 w200, % NewDashSleep
 Gui, MyWindow:Add, Text, x15 y+2, gContinuedLeveling:
 Gui, MyWindow:Add, Text, vgContinuedLevelingID x+2 w200, % gContinuedLeveling
 Gui, MyWindow:Add, Text, x15 y+2, gUlts:
@@ -202,30 +328,18 @@ Gui, MyWindow:Add, Text, x15 y+2, gClickLeveling:
 Gui, MyWindow:Add, Text, vgClickLevelingID x+2 w200, % gClickLeveling
 Gui, MyWindow:Add, Text, x15 y+2, gStackRestart:
 Gui, MyWindow:Add, Text, vgStackRestartID x+2 w200, % gStackRestart
+Gui, MyWindow:Add, Text, x15 y+2, gStackFailRecovery:
+Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
 Gui, MyWindow:Add, Text, x15 y+2, gShandieSlot:
 Gui, MyWindow:Add, Text, vgShandieSlotID x+2 w200, % gShandieSlot
-Gui, MyWindow:Add, Text, x15 y+2, gLevel_Number:
-Gui, MyWindow:Add, Text, vgLevel_NumberID x+2 w200, % gLevel_Number
-Gui, MyWindow:Add, Text, x15 y+2, gQuestRemaining:
-Gui, MyWindow:Add, Text, vgQuestRemainingID x+2 w200, % gQuestRemaining
-Gui, MyWindow:Add, Text, x15 y+2, gTrans:
-Gui, MyWindow:Add, Text, vgTransID x+2 w200, % gTrans
-Gui, MyWindow:Add, Text, x15 y+2, gTime:
-Gui, MyWindow:Add, Text, vgTimeID x+2 w200, % gTime
-Gui, MyWindow:Add, Text, x15 y+2, gShandieLvl:
-Gui, MyWindow:Add, Text, vgShandieLvlID x+2 w200, % gShandieLvl
-Gui, MyWindow:Add, Text, x15 y+2, gCoreXP:
-Gui, MyWindow:Add, Text, vgCoreXPID x+2 w200, % gCoreXP
-Gui, MyWindow:Add, Text, x15 y+2, gCoreXPStart:
-Gui, MyWindow:Add, Text, vgCoreXPStartID x+2 w200, % gCoreXPStart
 Gui, MyWindow:Add, Text, x15 y+2, gHewUlt:
 Gui, MyWindow:Add, Text, vgHewUltID x+2 w200, % gHewUlt
-Gui, MyWindow:Add, Text, x15 y+2, dtCurrentLevelTime:
-Gui, MyWindow:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
 Gui, MyWindow:Add, Text, x15 y+2, ResetCount:
 Gui, MyWindow:Add, Text, vResetCountID x+2 w200, % ResetCount
-Gui, MyWindow:Add, Text, x15 y+2, ModResetting:
-Gui, MyWindow:add, Text, vModResettingID x+2 w50,
+Gui, MyWindow:Add, Text, x15 y+2, gFailedStackConv:
+Gui, MyWindow:Add, Text, vgFailedStackConvID x+2 w200, % gFailedStackConv
+Gui, MyWindow:Add, Text, x15 y+2, gFailedStacking:
+Gui, MyWindow:Add, Text, vgFailedStackingID x+2 w200, % gFailedStacking
 
 Gui, MyWindow:Show
 
@@ -235,6 +349,8 @@ Save_Clicked:
 	Loop, 12
 	{
 		gSeatToggle[A_Index] := CheckboxSeat%A_Index%
+		var := CheckboxSeat%A_Index%
+		IniWrite, %var%, UserSettings.ini, Section1, Seat%A_Index%Toggle
 	}
 	gFKeys :=
 	Loop, 12
@@ -242,40 +358,56 @@ Save_Clicked:
 		if (gSeatToggle[A_Index])
 		{
 			gFKeys = %gFKeys%{F%A_Index%}
+			IniWrite, 1, UserSettings.ini, Section1, Seat%A_Index%Toggle
 		}
+		Else
+		IniWrite, 0, UserSettings.ini, Section1, Seat%A_Index%Toggle
 	}
-	GuiControl, MyWindow:, gFKeysID, % gFKeys
-	if ShandieRadio0
+	GuiControl, MyWindow:, gFkeysID, % gFKeys
+	slot := 0
+	loop, 9
 	{
-		gShandieSlot := 0
-	}
-	else
-	{
-		loop, 8
+		if (ShandieRadio%slot%)
 		{
-			if (ShandieRadio%A_Index%)
-			{
-				gShandieSlot := A_Index
-				Break
-			}
+			gShandieSlot := slot
+			IniWrite, 1, UserSettings.ini, Section1, ShandieRadio%slot%
 		}
+		Else
+		IniWrite, 0, UserSettings.ini, Section1, ShandieRadio%slot%
+		++slot	
 	}
 	GuiControl, MyWindow:, gShandieSlotID, % gShandieSlot
 	gAreaLow := NewgAreaLow
 	GuiControl, MyWindow:, gAreaLowID, % gAreaLow
+	IniWrite, %gAreaLow%, UserSettings.ini, Section1, AreaLow
+	gMinStackZone := NewgMinStackZone
+	IniWrite, %gMinStackZone%, Usersettings.ini, Section1, MinStackZone
 	gSBTargetStacks := NewSBTargetStacks
 	GuiControl, MyWindow:, gSBTargetStacksID, % gSBTargetStacks
+	IniWrite, %gSBTargetStacks%, UserSettings.ini, Section1, SBTargetStacks
+	gSBTimeMax := NewgSBTimeMax
+	IniWrite, %gSBTimeMax%, Usersettings.ini, Section1, SBTimeMax
 	gDashSleepTime := NewDashSleepTime
 	GuiControl, MyWindow:, DashSleepTimeID, % gDashSleepTime
+	IniWrite, %gDashSleepTime%, UserSettings.ini, Section1, DashSleepTime
 	gContinuedLeveling := NewContinuedLeveling
 	GuiControl, MyWindow:, gContinuedLevelingID, % gContinuedLeveling
+	IniWrite, %gContinuedLeveling%, UserSettings.ini, Section1, ContinuedLeveling
 	gHewUlt := NewHewUlt
 	GuiControl, MyWindow:, gHewUltID, % gHewUlt
+	IniWrite, %gHewUlt%, UserSettings.ini, Section1, HewUlt
 	GuiControl, MyWindow:, gUltsID, % gUlts
+	IniWrite, %gUlts%, UserSettings.ini, Section1, Ults
 	GuiControl, MyWindow:, gBrivSwapID, % gBrivSwap
+	IniWrite, %gBrivSwap%, UserSettings.ini, Section1, BrivSwap
 	GuiControl, MyWindow:, gAvoidBossesID, % gAvoidBosses
+	IniWrite, %gAvoidBosses%, UserSettings.ini, Section1, AvoidBosses
 	GuiControl, MyWindow:, gClickLevelingID, % gClickLeveling
+	IniWrite, %gClickLeveling%, UserSettings.ini, Section1, ClickLeveling
 	GuiControl, MyWindow:, gStackRestartID, % gStackRestart
+	IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
+	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
+	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
 	return
 }
 
@@ -332,8 +464,31 @@ SafetyCheck()
 		ModuleBaseAddress()
 	    ++ResetCount
         GuiControl, MyWindow:, ResetCountID, % ResetCount
+		LoadingZone()
 		gPrevLevelTime := A_TickCount
     }
+}
+
+CloseIC()
+{
+    PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Saving and Closing IC
+	While (WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000) 
+	{
+        Sleep 100
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+    While (WinExist("ahk_exe IdleDragons.exe")) 
+	{
+        GuiControl, MyWindow:, gloopID, Forcing IC Close
+		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
+		sleep 1000
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
 }
 
 LevelUp()
@@ -341,20 +496,49 @@ LevelUp()
 	StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Leveling Shandie
-	while (ShandieLvl() < 120 AND ElapsedTime < 5000)
+	while (ReadChampLvlBySlot(1,,gShandieSlot) < 120 AND ElapsedTime < 5000)
     {
 	    DirectedInput("q{F6}")
         ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
     }
-
-    gTime := TimeScaleMulti()
-    DashSpeed := gTime * 1.5
-    sleepy := gDashSleepTime / gTime
     StartTime := A_TickCount
-	ElapsedTime := 0
-    GuiControl, MyWindow:, gloopID, Dash Wait
-	While (TimeScaleMulti() < DashSpeed AND ElapsedTime < sleepy)
+    ElapsedTime := 0
+    gTime := ReadTimeScaleMultiplier(1)
+	if (gTime < 1)
+	gTime := 1
+    DashSpeed := gTime * 1.4
+    modDashSleep := gDashSleepTime / gTime
+	if (modDashSleep < 1)
+	modDashSleep := gDashSleepTime
+	GuiControl, MyWindow:, NewDashSleepID, % modDashSleep
+	GuiControl, MyWindow:, gloopID, Leveling Briv
+    while (ReadChampLvlBySlot(1,,0) < 100 AND ElapsedTime < 5000)
+    {
+        DirectedInput("q{F5}")
+        ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+    }
+    gStackCountH := ReadHasteStacks(1)
+	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
+	gStackCountSB := ReadSBStacks(1)
+	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
+	stacks := gStackCountSB + gStackCountH
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gStackFailRecovery)
+    {
+        EndAdventure()
+		CloseIC()
+		if (GetUserDetails() = -1)
+        {
+            LoadAdventure()
+        }
+		SafetyCheck()
+		++gFailedStackConv
+		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
+        return
+    }
+    GuiControl, MyWindow:, gloopID, Dash Wait 
+	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
 	{
 		DirectedInput(gFKeys)
 		DirectedInput("q")
@@ -365,7 +549,7 @@ LevelUp()
 	}
 	if !gDashSleepTime
 	{
-		Loop, 20
+		while (ReadQuestRemaining(1))
 		{
 			DirectedInput(gFKeys)
 			if (gClickLeveling)
@@ -376,13 +560,14 @@ LevelUp()
 	{
 		StartTime := A_TickCount
         ElapsedTime := 0
-        GuiControl, MyWindow:, gloopID, Transitioning
-		while Transitioning()
+        GuiControl, MyWindow:, gloopID, gult Transition
+		while (ReadTransitioning(1) AND ElapsedTime < 5000)
 		{
 			sleep, 100
 			ElapsedTime := UpdateElapsedTime(StartTime)
 			UpdateStatTimers()
 		}
+		GuiControl, MyWindow:, gloopID, gult ult spam
 		Loop, 3
 		{
 			DirectedInput("23456789")
@@ -401,80 +586,12 @@ DirectedInput(s)
 	Sleep, %ScriptSpeed%
 }
 
-CurrentLevel()
-{
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-	gLevel_Number := idle.read(Controller, "Int", arrayPointerOffsetsLevel*)
-	GuiControl, MyWindow:, gLevel_NumberID, % gLevel_Number
-	return gLevel_Number
-}
-
-QuestRemaining()
-{
-    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    gQuestRemaining := idle.read(Controller, "Int", arrayPointerOffsetsQR*)
-    GuiControl, MyWindow:, gQuestRemainingID, % gQuestRemaining
-	return gQuestRemaining
-}
-
 ShandieLvl()
 {
-
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     gShandieLvl := idle.read(Controller, "Int", arrayPointerOffsetsShandieLvl*)
     GuiControl, MyWindow:, gShandieLvlID, % gShandieLvl
 	return gShandieLvl
-}
-
-TimeScaleMulti()
-{
-    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    gTime := Round(idle.read(Controller, "Float", arrayPointerOffsetsTimeScaleMultiplier*), 3)
-    GuiControl, MyWindow:, gTimeID, % gTime
-	return gTime
-}
-
-Transitioning()
-{
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-	gTrans := idle.read(Controller, "Char", arrayPointerOffsetsTransitioning*)
-	GuiControl, MyWindow:, gTransID, % gTrans
-	return gTrans
-}
-
-StackRead()
-{
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-	gStackCountH := idle.read(Controller, "Int", arrayPointerOffsetsH*)
-	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-	gStackCountSB := idle.read(Controller, "Int", arrayPointerOffsetsSB*)
-	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-	return gStackCountH + gStackCountSB
-}
-
-ReadCoreXP()
-{
-
-    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    gCoreXP := idle.read(Controller, "Int", arrayPointerOffsetsCoreXP*)
-    GuiControl, MyWindow:, gCoreXPID, % gCoreXP
-	return gCoreXP
-}
-
-Resetting()
-{
-    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    ModResetting := idle.read(Controller, "Char", arrayPointerOffsetsResetting*)
-    GuiControl, MyWindow:, ModResettingID, % ModResetting
-	return ModResetting
-}
-
-ChampionLvlbySlot(slot)
-{
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    level := idle.read(Controller, "Int", arrayPointerOffsetsSlotLvl%slot%*)
-    ;GuiControl, MyWindow:, ChampLvlSlot%slot%ID, % Level
-	return level
 }
 
 SetFormation(gLevel_Number)
@@ -483,13 +600,13 @@ SetFormation(gLevel_Number)
 	{
 		DirectedInput("e")
 	}
-	else if (!QuestRemaining() AND Transitioning() AND gBrivSwap)
+	else if (!ReadQuestRemaining(1) AND ReadTransitioning(1) AND gBrivSwap)
 	{
 		DirectedInput("e")
 		StartTime := A_TickCount
 		ElapsedTime := 0
-		GuiControl, MyWindow:, gloopID, Transitioning
-		while (ElapsedTime < 5000 AND !QuestRemaining())
+		GuiControl, MyWindow:, gloopID, ReadTransitioning
+		while (ElapsedTime < 5000 AND !ReadQuestRemaining(1))
 		{
 			DirectedInput("{Right}")
 			ElapsedTime := UpdateElapsedTime(StartTime)
@@ -497,10 +614,10 @@ SetFormation(gLevel_Number)
 		}
 		StartTime := A_TickCount
 		ElapsedTime := 0
-		gTime := TimeScaleMulti()
+		gTime := ReadTimeScaleMultiplier(1)
 		sleepy := 1500 / gTime
-		GuiControl, MyWindow:, gloopID, Still Transitioning
-		while (ElapsedTime < sleepy AND Transitioning())
+		GuiControl, MyWindow:, gloopID, Still ReadTransitioning
+		while (ElapsedTime < sleepy AND ReadTransitioning(1))
 		{
 			DirectedInput("{Right}")
 			ElapsedTime := UpdateElapsedTime(StartTime)
@@ -517,16 +634,20 @@ LoadingZone()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Zone
-	while (!ChampionLvlbySlot(gShandieSlot) AND ElapsedTime < 180000)
+	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000)
 	{
 		DirectedInput("q{F6}")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
+	if (ElapsedTime > 180000)
+	{
+		CheckifStuck(ReadCurrentZone(1))
+	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ChampionLvlbySlot(gShandieSlot) AND ElapsedTime < 180000)
+	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000)
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -536,18 +657,17 @@ LoadingZone()
 
 StackRestart()
 {
-	GuiControl, MyWindow:, gloopID, Start Stack Restart
-	Sleep 1000
-	PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
 	StartTime := A_TickCount
 	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, Closing IC
-	While (WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000) 
+	GuiControl, MyWindow:, gloopID, Transitioning to Stack Restart
+	while (ReadTransitioning(1))
 	{
-        Sleep 100
+		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
+	Sleep 1000
+	CloseIC()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack `Sleep
@@ -558,18 +678,17 @@ StackRestart()
 		UpdateStatTimers()
 	}
 	SafetyCheck()
-    LoadingZone()
 }
 
-StackFarm()
+StackNormal()
 {
 	StartTime := A_TickCount
 	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, Stack Farm
-	while (StackRead() < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
+	GuiControl, MyWindow:, gloopID, Stack Normal
+	while (ReadSBStacks(1) < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
 		directedinput("w")
-        if (gLevel_Number <= gAreaLow) 
+        if (ReadCurrentZone(1) <= gAreaLow) 
 		{
         	DirectedInput("{Right}")
 		}
@@ -579,13 +698,39 @@ StackFarm()
 	}
 }
 
-UpdateStartLoopStats()
+StackFarm()
+{
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Transitioning to Stack Farm
+	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 5000)
+	{
+		DirectedInput("w")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	DirectedInput("g")
+	;send input Left while on a boss zone
+	while (!mod(ReadCurrentZone(1), 5))
+	{
+		DirectedInput("{Left}")
+	}
+	if gStackRestart
+    StackRestart()
+	StackNormal()
+	gPrevLevelTime := A_TickCount
+	DirectedInput("g")
+}
+
+UpdateStartLoopStats(gLevel_Number)
 {
 	if (gTotal_RunCount = 0)
 	{
 		gStartTime := A_TickCount
-		gCoreXPStart := ReadCoreXP()
+		gCoreXPStart := ReadCoreXP(1)
 		GuiControl, MyWindow:, gCoreXPStartID, % gCoreXPStart
+		gGemStart := ReadGems(1)
+		GuiControl, MyWindow:, gGemStartID, % gGemStart
 	}
 	if (gTotal_RunCount)
 	{
@@ -601,14 +746,23 @@ UpdateStartLoopStats()
 			gFastRunTime := gPrevRunTime
             GuiControl, MyWindow:, gFastRunTimeID, % gFastRunTime
 		}
+		if (gStackFail)
+		{
+			gFailRunTime := gPrevRunTime
+			GuiControl, MyWindow:, gFailRunTimeID, % gFailRunTime
+		}
 		dtTotalTime := (A_TickCount - gStartTime) / 3600000
 		gAvgRunTime := Round((dtTotalTime / gTotal_RunCount) * 60, 2)
 		GuiControl, MyWindow:, gAvgRunTimeID, % gAvgRunTime
 		dtTotalTime := (A_TickCount - gStartTime) / 3600000
-		TotalBosses := (ReadCoreXP() - gCoreXPStart) / 5
+		TotalBosses := (ReadCoreXP(1) - gCoreXPStart) / 5
 		gbossesPhr := Round(TotalBosses / dtTotalTime, 2)
 		GuiControl, MyWindow:, gbossesPhrID, % gbossesPhr
 		GuiControl, MyWindow:, gTotal_RunCountID, % gTotal_RunCount
+		GemsTotal := ReadGems(1) - gGemStart
+		GuiControl, MyWindow:, GemsTotalID, % GemsTotal
+		GemsPhr := Round(GemsTotal / dtTotalTime, 2)
+		GuiControl, MyWindow:, GemsPhrID, % GemsPhr
 	}
 	gRunStartTime := A_TickCount
 	gPrevLevel := gLevel_Number
@@ -636,43 +790,63 @@ GemFarm()
 {  
 	OpenProcess()
 	ModuleBaseAddress()
-	
-	gprevLevel := CurrentLevel()
+	GetUserDetails()
+	UserID := ReadUserID(1)
+	UserHash := ReadUserHash(1)
+    advtoload := GetUserDetails()
+    GuiControl, MyWindow:, advtoloadID, % advtoload
+	LoadingZone()
 	gPrevLevelTime := A_TickCount
 
 	loop 
 	{
         GuiControl, MyWindow:, gLoopID, Main `Loop
-		gLevel_Number := CurrentLevel()
+		gLevel_Number := ReadCurrentZone(1)
 		
 		SetFormation(gLevel_Number)
 
-		if (ShandieLvl() < 120)
+		if (ShandieLvl() < 230)
 		{
 			LoadingZone()
 			directedinput("g")
 			LevelUp()
         }
 
-		if (StackRead() < gSBTargetStacks AND gLevel_Number > gAreaLow)
+		gStackCountH := ReadHasteStacks(1)
+		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
+		gStackCountSB := ReadSBStacks(1)
+		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
+		stacks := gStackCountSB + gStackCountH
+
+		if (gStackCountSB < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
-			Loop, 3
-			{
-				DirectedInput("w")
-			}
-			DirectedInput("g")
-			;send input Left while on a boss zone
-			while (!mod(CurrentLevel(), 5))
-			{
-				DirectedInput("{Left}")
-			}
-			if gStackRestart
-            StackRestart()
-			else if (StackRead() < gSBTargetStacks)
 			StackFarm()
-			gPrevLevelTime := A_TickCount
-			DirectedInput("g")
 		}
+
+		if (gStackCountH < 50 AND gLevel_Number > gMinStackZone AND gStackFailRecovery)
+        {
+            if (gStackCountSB < gSBTargetStacks)
+			{
+				StackFarm()
+			}
+			stacks := ReadSBStacks(1) + ReadHasteStacks(1)
+            if (stacks > gSBTargetStacks)
+            {
+                EndAdventure()
+				CloseIC()
+				if (GetUserDetails() = -1)
+        		{
+            		LoadAdventure()
+        		}
+				SafetyCheck()
+				gStackFail := 1
+				++gFailedStacking
+				GuiControl, MyWindow:, gFailedStackingID, % gFailedStacking
+				LevelUp()
+				gPrevLevelTime := A_TickCount
+				gprevLevel := ReadCurrentZone(1)
+            }
+        }
 		
         DirectedInput("{Right}")
 		If (gClickLeveling)
@@ -688,16 +862,18 @@ GemFarm()
 			DirectedInput(gHewUlt)
 		}
 
-		if (Resetting())
+		if (ReadResettting(1))
 		{
 			ModronReset()
 			LoadingZone()
-			UpdateStartLoopStats()
-			++gTotal_RunCount
 			directedinput("g")
+			UpdateStartLoopStats(gLevel_Number)
+			if (!gStackFail)
+			++gTotal_RunCount
+			gStackFail := 0
 			LevelUp()
 			gPrevLevelTime := A_TickCount
-			gprevLevel := CurrentLevel()
+			gprevLevel := ReadCurrentZone(1)
 		}
 
 		CheckifStuck(gLevel_Number)
@@ -718,20 +894,12 @@ CheckifStuck(gLevel_Number)
 	GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime		
 	if (dtCurrentLevelTime > 60)
 	{
-		PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-		sleep 2000
-		GuiControl, MyWindow:, gloopID, Closing IC Stuck
-		StartTime := A_TickCount
-		ElapsedTime := 0
-		While (WinExist("ahk_exe IdleDragons.exe")) 
-		{
-			PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
-			sleep 1000
-			ElapsedTime := UpdateElapsedTime(StartTime)
-			UpdateStatTimers()
-		}
+		CloseIC()
+		if (GetUserDetails() = -1)
+        {
+            LoadAdventure()
+        }
 		SafetyCheck()
-		LoadingZone()
 		gPrevLevelTime := A_TickCount
 	}
 }
@@ -741,7 +909,7 @@ ModronReset()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Modron Reset
-	while (Resetting() AND ElapsedTime < 300000)
+	while (ReadResettting(1) AND ElapsedTime < 300000)
 	{
 		Sleep, 250
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -749,11 +917,72 @@ ModronReset()
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, Resetting to z1
-	while (CurrentLevel() != 1 AND ElapsedTime < 300000)
+	GuiControl, MyWindow:, gloopID, ReadResettting to z1
+	while (ReadCurrentZone(1) != 1 AND ElapsedTime < 300000)
 	{
 		Sleep, 250
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
+}
+
+EndAdventure() 
+{
+    DirectedInput("r")
+    xClick := (ReadScreenWidth(1) / 2) - 80
+    yClick := (ReadScreenHeight(1) / 2) + 135
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Manually Ending Adventure
+    while(!ReadResettting(1) AND ElapsedTime < 30000)
+    {
+        WinActivate, ahk_exe IdleDragons.exe
+        MouseClick, Left, xClick, yClick, 1
+        Sleep, 25
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+    }
+}
+
+ServerCall(callname, parameters) 
+{
+	URLtoCall := "http://ps6.idlechampions.com/~idledragons/post.php?call=" callname parameters
+	GuiControl, MyWindow:, advparamsID, % URLtoCall
+	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	WR.SetTimeouts("10000", "10000", "10000", "10000")
+	Try {
+		WR.Open("POST", URLtoCall, false)
+		WR.SetRequestHeader("Content-Type","application/x-www-form-urlencoded")
+		WR.Send()
+		WR.WaitForResponse(-1)
+		data := WR.ResponseText
+	}
+	return data
+}
+
+GetUserDetails() 
+{
+	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
+	rawdetails := ServerCall("getuserdetails", getuserparams)
+	UserDetails := JSON.parse(rawdetails)
+	InstanceID := UserDetails.details.instance_id
+    GuiControl, MyWindow:, InstanceIDID, % InstanceID
+	ActiveInstance := UserDetails.details.active_game_instance_id
+    GuiControl, MyWindow:, ActiveInstanceID, % ActiveInstance
+	for k, v in UserDetails.details.game_instances
+		if (v.game_instance_id == ActiveInstance) 
+		{
+			CurrentAdventure := v.current_adventure_id
+			GuiControl, MyWindow:, CurrentAdventureID, % CurrentAdventure
+			CurrentArea := v.current_area
+			GuiControl, MyWindow:, CurrentAreaID, % CurrentArea
+		}
+	return CurrentAdventure
+}
+
+LoadAdventure() 
+{
+	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=0"
+    ServerCall("setcurrentobjective", advparams)
+	return
 }
