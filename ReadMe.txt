@@ -6,7 +6,7 @@ Modron.AHK may no longer be updated and should be considered legacy. If someone 
 
 Instructions for ModronGUI.AHK:
 1. Download and install AutoHotkey: https://www.autohotkey.com/
-2. Download ModronGUI.AHK, IC_MemoryFunctions.AHK, and classMemory.AHK to the same folder.
+2. Download ModronGUI.AHK, IC_MemoryFunctions.AHK, json.AHK, and classMemory.AHK to the same folder.
 3. Scan all downloaded files with trusted antivirus software.
 4. Right click ModronGUI.AHK and select run script.
 5. Read and follow the instructions on the 'Read First' tab.
