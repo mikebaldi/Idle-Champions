@@ -808,6 +808,8 @@ GemFarm()
 		if (ShandieLvl() < 230)
 		{
 			LoadingZone()
+			GuiControl, MyWindow:, gloopID, wait 1s for auto
+			sleep, 1000
 			directedinput("g")
 			LevelUp()
         }
@@ -866,6 +868,8 @@ GemFarm()
 		{
 			ModronReset()
 			LoadingZone()
+			GuiControl, MyWindow:, gloopID, wait 1s for auto
+			sleep, 1000
 			directedinput("g")
 			UpdateStartLoopStats(gLevel_Number)
 			if (!gStackFail)
