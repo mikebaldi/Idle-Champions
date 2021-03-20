@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/19/21"
+global ScriptDate := "3/20/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -70,6 +70,9 @@ loop, 9
 	gShandieSlot := slot
 	++slot
 }
+;Briv swap sleep time
+IniRead, SwapSleep, UserSettings.ini, Section1, SwapSleep
+global gSwapSleep := SwapSleep
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
@@ -212,7 +215,9 @@ Gui, MyWindow:Add, Edit, vNewHewUlt x15 y+10 w50, % gHewUlt
 Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key, set to 0 to disable
 Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after intial champion leveling
 Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' formation to avoid Briv's jump animation
-Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones
+Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w50, % gSwapSleep
+Gui, MyWindow:Add, Text, x+5, Briv swap `sleep time.
+Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
 Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
@@ -408,6 +413,9 @@ Save_Clicked:
 	IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
 	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
 	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
+	gSwapSleep := NewSwapSleep
+	GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
+	IniWrite, %gSwapSleep%, UserSettings.ini, Section1, SwapSleep
 	return
 }
 
@@ -615,9 +623,9 @@ SetFormation(gLevel_Number)
 		StartTime := A_TickCount
 		ElapsedTime := 0
 		gTime := ReadTimeScaleMultiplier(1)
-		sleepy := 1500 / gTime
+		swapSleepMod := gSwapSleep / gTime
 		GuiControl, MyWindow:, gloopID, Still ReadTransitioning
-		while (ElapsedTime < sleepy AND ReadTransitioning(1))
+		while (ElapsedTime < swapSleepMod AND ReadTransitioning(1))
 		{
 			DirectedInput("{Right}")
 			ElapsedTime := UpdateElapsedTime(StartTime)
@@ -822,6 +830,7 @@ GemFarm()
 
 		if (gStackCountSB < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
+			If (stacks < gSBTargetStacks)
 			StackFarm()
 		}
 
