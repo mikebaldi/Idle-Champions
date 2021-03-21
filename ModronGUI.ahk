@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/21/21"
+global ScriptDate := "3/21/21 Rev2"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -242,8 +242,10 @@ statTabTxtWidth :=
 Gui, Tab, Stats
 Gui, MyWindow:Add, Text, x15 y33 %statTabTxtWidth%, SB Stack `Count: 
 Gui, MyWindow:Add, Text, vgStackCountSBID x+2 w50, % gStackCountSB
+;Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Haste Stack `Count:
 Gui, MyWindow:Add, Text, vgStackCountHID x+2 w50, % gStackCountH
+;Gui, MyWindow:Add, Text, vReadHasteStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Current `Run `Time:
 Gui, MyWindow:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Time:
@@ -673,6 +675,39 @@ LoadingZone()
 	}
 }
 
+CheckSetUp()
+{
+	StartTime := A_TickCount
+	ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Looking for Shandie
+	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
+	{
+		DirectedInput("q{F6}")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	if (!ReadChampLvlBySlot(1,,gShandieSlot))
+	{
+		MsgBox, Couldn't find Shandie in "Q" formation. Check Settings. Ending Gem Farm.
+		return, 1
+	}
+	StartTime := A_TickCount
+	ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Looking for no Shandie
+	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
+	{
+		DirectedInput("w")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	if (ReadChampLvlBySlot(1,,gShandieSlot))
+	{
+		MsgBox, Shandie is in "W" formation. Check Settings. Ending Gem Farm.
+		return, 1
+	}
+	return, 0
+}
+
 StackRestart()
 {
 	StartTime := A_TickCount
@@ -703,7 +738,9 @@ StackNormal()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack Normal
-	while (ReadSBStacks(1) < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
+	gStackCountSB := ReadSBStacks(1)
+	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
+	while (gStackCountSB < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
 		directedinput("w")
         if (ReadCurrentZone(1) <= gAreaLow) 
@@ -711,6 +748,8 @@ StackNormal()
         	DirectedInput("{Right}")
 		}
 		Sleep 1000
+		gStackCountSB := ReadSBStacks(1)
+		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -813,7 +852,10 @@ GemFarm()
 	UserHash := ReadUserHash(1)
     advtoload := GetUserDetails()
     GuiControl, MyWindow:, advtoloadID, % advtoload
-	LoadingZone()
+	var := 0
+	var := CheckSetUp()
+	if var
+	Return
 	gPrevLevelTime := A_TickCount
 
 	loop 
