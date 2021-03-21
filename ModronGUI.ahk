@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/20/21"
+global ScriptDate := "3/21/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -60,6 +60,9 @@ global gStackRestart := StackRestart
 ;Stack fail recovery toggle
 IniRead, StackFailRecovery, UserSettings.ini, Section1, StackFailRecovery
 global gStackFailRecovery := StackFailRecovery
+;Stack fail recovery toggle
+IniRead, StackFailConvRecovery, UserSettings.ini, Section1, StackFailConvRecovery
+global gStackFailConvRecovery := StackFailConvRecovery
 ;Shandie's position in formation
 slot := 0
 global gShandieSlot := 
@@ -177,7 +180,9 @@ Gui, MyWIndow:Add, Text, x+2 w370, Script reads system memory.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 9.
 Gui, MyWIndow:Add, Text, x+2 w370, The script does not work without Shandie.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 10.
-Gui, MyWIndow:Add, Text, x+2 w370, Disable manual resets to recover from failed Briv stacking when running event free plays.
+Gui, MyWIndow:Add, Text, x+2 w370, Disable manual resets to recover from failed Briv stack conversions when running event free plays.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 11.
+Gui, MyWIndow:Add, Text, x+2 w370, Recommended Briv swap `sleep time is 1500.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2. 
@@ -216,11 +221,12 @@ Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key, set to 0 to disable
 Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after intial champion leveling
 Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' formation to avoid Briv's jump animation
 Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w50, % gSwapSleep
-Gui, MyWindow:Add, Text, x+5, Briv swap `sleep time.
+Gui, MyWindow:Add, Text, x+5, Briv swap `sleep time (ms).
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
 Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
+Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
 Gui, MyWindow:Add, Text, x15 y+5, Shandie's position in formation:
 Gui, MyWindow:Add, Radio, x45 y+5 vShandieRadio3 Checked%ShandieRadio3%
 Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio6 Checked%ShandieRadio6%
@@ -335,6 +341,8 @@ Gui, MyWindow:Add, Text, x15 y+2, gStackRestart:
 Gui, MyWindow:Add, Text, vgStackRestartID x+2 w200, % gStackRestart
 Gui, MyWindow:Add, Text, x15 y+2, gStackFailRecovery:
 Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
+Gui, MyWindow:Add, Text, x15 y+2, gStackFailConvRecovery:
+Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
 Gui, MyWindow:Add, Text, x15 y+2, gShandieSlot:
 Gui, MyWindow:Add, Text, vgShandieSlotID x+2 w200, % gShandieSlot
 Gui, MyWindow:Add, Text, x15 y+2, gHewUlt:
@@ -413,6 +421,8 @@ Save_Clicked:
 	IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
 	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
 	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
+	GuiControl, MyWindow:, gStackFailConvRecoveryID, % gStackFailConvRecovery
+	IniWrite, %gStackFailConvRecovery%, UserSettings.ini, Section1, StackFailConvRecovery
 	gSwapSleep := NewSwapSleep
 	GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
 	IniWrite, %gSwapSleep%, UserSettings.ini, Section1, SwapSleep
@@ -532,7 +542,7 @@ LevelUp()
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := gStackCountSB + gStackCountH
-    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gStackFailRecovery)
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gStackFailConvRecovery)
     {
         EndAdventure()
 		CloseIC()
