@@ -1,4 +1,4 @@
-3/19/21+ UPDATE: IC_POINTERS.AHK NO LONGER USED. SCRIPT NOW USES IC_MEMORYFUNCTIONS.AHK
+v3/19/21+ IC_POINTERS.AHK NO LONGER USED. SCRIPT NOW USES IC_MEMORYFUNCTIONS.AHK AND JSON.AHK
 
 Warning: This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
