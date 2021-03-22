@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/21/21 Rev2"
+global ScriptDate := "3/22/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -22,25 +22,25 @@ loop, 12
 }
 global gSeatToggle := [Seat1Toggle,Seat2Toggle,Seat3Toggle,Seat4Toggle,Seat5Toggle,Seat6Toggle,Seat7Toggle,Seat8Toggle,Seat9Toggle,Seat10Toggle,Seat11Toggle,Seat12Toggle]
 ;Continued leveling stop zone
-IniRead, ContinuedLeveling, UserSettings.ini, Section1, ContinuedLeveling
+IniRead, ContinuedLeveling, UserSettings.ini, Section1, ContinuedLeveling, 10
 global gContinuedLeveling := ContinuedLeveling
 ;Farm SB stacks after this zone
-IniRead, AreaLow, UserSettings.ini, Section1, AreaLow
+IniRead, AreaLow, UserSettings.ini, Section1, AreaLow, 30
 global gAreaLow := AreaLow
 ;Lowest zone SB stacks can be farmed on
-IniRead, MinStackZone, UserSettings.ini, Section1, MinStackZone
+IniRead, MinStackZone, UserSettings.ini, Section1, MinStackZone, 25
 global gMinStackZone := MinStackZone
 ;Target Haste stacks
-IniRead, SBTargetStacks, UserSettings.ini, Section1, SBTargetStacks
+IniRead, SBTargetStacks, UserSettings.ini, Section1, SBTargetStacks, 400
 global gSBTargetStacks := SBTargetStacks
 ;SB stack max time
-IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax
+IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 40000
 global gSBTimeMax := SBTimeMax
 ;Dash wait max time
-IniRead, DashSleepTime, UserSettings.ini, Section1, DashSleepTime
+IniRead, DashSleepTime, UserSettings.ini, Section1, DashSleepTime, 60000
 global gDashSleepTime := DashSleepTime
 ;Hew's ult key
-IniRead, HewUlt, UserSettings.ini, Section1, HewUlt
+IniRead, HewUlt, UserSettings.ini, Section1, HewUlt, 6
 global gHewUlt := HewUlt
 ;spam ults after initial leveling
 IniRead, Ults, UserSettings.ini, Section1, Ults
@@ -74,7 +74,7 @@ loop, 9
 	++slot
 }
 ;Briv swap sleep time
-IniRead, SwapSleep, UserSettings.ini, Section1, SwapSleep
+IniRead, SwapSleep, UserSettings.ini, Section1, SwapSleep, 1500
 global gSwapSleep := SwapSleep
 
 ;variables to consider changing if restarts are causing issues
