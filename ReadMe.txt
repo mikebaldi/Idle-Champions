@@ -10,6 +10,7 @@ Instructions for ModronGUI.AHK:
 3. Scan all downloaded files with trusted antivirus software.
 4. Right click ModronGUI.AHK and select run script.
 5. Read and follow the instructions on the 'Read First' tab.
+6. In the in game settings, uncheck 'Disable F1-F12 Leveling' and if using seat 12 champion then make sure to change Steam's settings for screenshots.
 
 Recommended Additional Steps:
 Review AutoHotkey tutorials and documentation.
