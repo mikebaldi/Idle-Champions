@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/2/21 v2"
+global ScriptDate := "4/3/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -532,8 +532,7 @@ CloseIC()
 
 CheckForFailedConv()
 {
-	LevelChampBySlot(6, gShandieSlot, 120, 5000, "q")
-	LevelChampBySlot(5, 0, 100, 5000, "q")
+	LevelChampByID(58, 100, 5000, "q")
 
     gStackCountH := ReadHasteStacks(1)
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
@@ -575,14 +574,16 @@ FinishZone()
 	GuiControl, MyWindow:, gloopID, Finishing Zone
 	while (ReadQuestRemaining(1) AND ElapsedTime < 15000)
 	{
+		StuffToSpam(0, gLevel_Number)
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
 	return
 }
 
-LevelChampBySlot(seat := 1, slot := 1, Lvl := 0, i := 5000, j := "q")
+LevelChampBySlot(slot := 1, Lvl := 0, i := 5000, j := "q")
 {
+	seat := ReadChampSeatBySlot(,, slot)
 	StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Leveling Seat %seat% to %Lvl%
@@ -597,10 +598,27 @@ LevelChampBySlot(seat := 1, slot := 1, Lvl := 0, i := 5000, j := "q")
 	return
 }
 
+LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q")
+{
+	seat := ReadChampSeatByID(,, ChampID)
+	StartTime := A_TickCount
+    ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Leveling Champ %ChampID% to %Lvl%
+	var := "{F" . seat . "}"
+	var := var j
+	while (ReadChampLvlByID(1,,ChampID) < Lvl AND ElapsedTime < i)
+    {
+	    DirectedInput(var)
+        ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+    }
+	return
+}
+
 DoDashWait()
 {
 	DirectedInput("g")
-	LevelChampBySlot(6, gShandieSlot, 120, 5000, "q")
+	LevelChampByID(47, 120, 5000, "q")
     StartTime := A_TickCount
     ElapsedTime := 0
     gTime := ReadTimeScaleMultiplier(1)
