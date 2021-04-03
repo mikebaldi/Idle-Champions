@@ -164,6 +164,29 @@ ReadChampLvlBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     pointerArray.Push(var, 0x14, 0x190)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
-    GuiControl, %GUIwindow%, ReadChampLvlBySlotID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+    GuiControl, %GUIwindow%, ReadChampLvlBySlotID, Slot: %slot% Lvl: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadChampLvlByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x50, 0x8, 0xC, 0x8]
+    --ChampID
+    var := 0x10 + (ChampID * 0x4)
+    pointerArray.Push(var, 0x190)
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadChampLvlByIDID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadMonstersSpawned(UpdateGUI := 0, GUIWindow := "MyWindow:")
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0xC, 0x148]
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadMonstersSpawnedID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
