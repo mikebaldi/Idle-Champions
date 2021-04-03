@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "3/22/21 Rev2"
+global ScriptDate := "4/2/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -55,8 +55,8 @@ global gAvoidBosses := AvoidBosses
 IniRead, ClickLeveling, UserSettings.ini, Section1, ClickLeveling
 global gClickLeveling := ClickLeveling
 ;Stack restart toggle
-IniRead, StackRestart, UserSettings.ini, Section1, StackRestart
-global gStackRestart := StackRestart
+;IniRead, StackRestart, UserSettings.ini, Section1, StackRestart
+;global gStackRestart := StackRestart
 ;Stack fail recovery toggle
 IniRead, StackFailRecovery, UserSettings.ini, Section1, StackFailRecovery
 global gStackFailRecovery := StackFailRecovery
@@ -76,11 +76,18 @@ loop, 9
 ;Briv swap sleep time
 IniRead, SwapSleep, UserSettings.ini, Section1, SwapSleep, 1500
 global gSwapSleep := SwapSleep
+;Restart stack sleep time
+IniRead, RestartStackTime, UserSettings.ini, Section1, RestartStackTime, 12000
+global gRestartStackTime := RestartStackTime
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
 global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
 ;end of user settings
+
+global ScriptSpeed := 25
+
+global gStackFail := 0
 
 ;global variables used for server calls
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -218,13 +225,15 @@ Gui, MyWindow:Add, Edit, vNewDashSleepTime x15 y+10 w50, % gDashSleepTime
 Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will wait for Dash
 Gui, MyWindow:Add, Edit, vNewHewUlt x15 y+10 w50, % gHewUlt
 Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key, set to 0 to disable
+Gui, MyWindow:Add, Edit, vNewRestartStackTime x15 y+10 w50, % gRestartStackTime
+Gui, MyWindow:Add, Text, x+5, `Time (ms) client remains closed for Briv Restart Stack (0 disables)
 Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults after intial champion leveling
 Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' formation to avoid Briv's jump animation
 Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w50, % gSwapSleep
 Gui, MyWindow:Add, Text, x+5, Briv swap `sleep time (ms).
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
-Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
+;Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
 Gui, MyWindow:Add, Text, x15 y+5, Shandie's position in formation:
@@ -240,7 +249,10 @@ Gui, MyWindow:Add, Radio, x45 y+1 vShandieRadio5 Checked%ShandieRadio5%
 
 statTabTxtWidth := 
 Gui, Tab, Stats
-Gui, MyWindow:Add, Text, x15 y33 %statTabTxtWidth%, SB Stack `Count: 
+Gui, MyWindow:Font, w700
+Gui, MyWindow:Add, Text, x15 y33, Stats updated continuously (mostly):
+Gui, MyWindow:Font, w400
+Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, SB Stack `Count: 
 Gui, MyWindow:Add, Text, vgStackCountSBID x+2 w50, % gStackCountSB
 ;Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Haste Stack `Count:
@@ -253,14 +265,16 @@ Gui, MyWindow:Add, Text, vdtTotalTimeID x+2 w50, % dtTotalTime
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+10, Stats updated once per run:
 Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Total `Run `Count:
+Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Total `Run `Count:
 Gui, MyWindow:Add, Text, vgTotal_RunCountID x+2 w50, % gTotal_RunCount
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Previous `Run `Time:
 Gui, MyWindow:Add, Text, vgPrevRunTimeID x+2 w50, % gPrevRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fastest `Run `Time:
 Gui, MyWindow:Add, Text, vgFastRunTimeID x+2 w50, 
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Slowest `Run `Time:
-Gui, MyWindow:Add, Text, vgSlowRunTimeID x+2 w50, % gSlowRunTime		
+Gui, MyWindow:Add, Text, vgSlowRunTimeID x+2 w50, % gSlowRunTime
+Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail `Run `Time:
+Gui, MyWindow:Add, Text, vgFailRunTimeID x+2 w50, % gFailRunTime	
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Avg. `Run `Time:
 Gui, MyWindow:Add, Text, vgAvgRunTimeID x+2 w50, % gAvgRunTime
 Gui, MyWindow:Font, cBlue w700
@@ -270,7 +284,7 @@ Gui, MyWindow:Font, cGreen
 Gui, MyWINdow:Add, Text, x15 y+10, Total Gems:
 Gui, MyWindow:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
 Gui, MyWINdow:Add, Text, x15 y+2, Gems per hour:
-Gui, MyWindow:Add, Text, vGemsPhrID x+2 w50, % GemsPhr
+Gui, MyWindow:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
 Gui, MyWindow:Font, cDefault w400
 
 Gui, Tab, Debug
@@ -314,8 +328,8 @@ Gui, MyWindow:Add, Text, x15 y+2, ReadScreenHeight:
 Gui, MyWindow:Add, Text, vReadScreenHeightID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+2, ReadChampLvlBySlot: 
 Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+2, gShandieLvl:
-Gui, MyWindow:Add, Text, vgShandieLvlID x+2 w200, % gShandieLvl
+Gui, MyWindow:Add, Text, x15 y+2, ReadMonstersSpawned:
+Gui, MyWindow:Add, Text, vReadMonstersSpawnedID x+2 w200,
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Settings and Other Variables: 
 Gui, MyWindow:Font, w400
@@ -339,8 +353,8 @@ Gui, MyWindow:Add, Text, x15 y+2, gAvoidBosses:
 Gui, MyWindow:Add, Text, vgAvoidBossesID x+2 w200, % gAvoidBosses
 Gui, MyWindow:Add, Text, x15 y+2, gClickLeveling:
 Gui, MyWindow:Add, Text, vgClickLevelingID x+2 w200, % gClickLeveling
-Gui, MyWindow:Add, Text, x15 y+2, gStackRestart:
-Gui, MyWindow:Add, Text, vgStackRestartID x+2 w200, % gStackRestart
+;Gui, MyWindow:Add, Text, x15 y+2, gStackRestart:
+;Gui, MyWindow:Add, Text, vgStackRestartID x+2 w200, % gStackRestart
 Gui, MyWindow:Add, Text, x15 y+2, gStackFailRecovery:
 Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
 Gui, MyWindow:Add, Text, x15 y+2, gStackFailConvRecovery:
@@ -419,15 +433,18 @@ Save_Clicked:
 	IniWrite, %gAvoidBosses%, UserSettings.ini, Section1, AvoidBosses
 	GuiControl, MyWindow:, gClickLevelingID, % gClickLeveling
 	IniWrite, %gClickLeveling%, UserSettings.ini, Section1, ClickLeveling
-	GuiControl, MyWindow:, gStackRestartID, % gStackRestart
-	IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
+	;GuiControl, MyWindow:, gStackRestartID, % gStackRestart
+	;IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
 	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
 	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
 	GuiControl, MyWindow:, gStackFailConvRecoveryID, % gStackFailConvRecovery
 	IniWrite, %gStackFailConvRecovery%, UserSettings.ini, Section1, StackFailConvRecovery
 	gSwapSleep := NewSwapSleep
-	GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
+	;GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
 	IniWrite, %gSwapSleep%, UserSettings.ini, Section1, SwapSleep
+	gRestartStackTime := NewRestartStackTime
+	;GuiControl, MyWindow:, gRestartStackTimeID, % gRestartStackTime
+	IniWrite, %gRestartStackTime%, UserSettings.ini, Section1, RestartStackTime
 	return
 }
 
@@ -485,6 +502,8 @@ SafetyCheck()
 	    ++ResetCount
         GuiControl, MyWindow:, ResetCountID, % ResetCount
 		LoadingZone()
+		if (gUlts)
+		DoUlts()
 		gPrevLevelTime := A_TickCount
     }
 }
@@ -511,42 +530,21 @@ CloseIC()
 	}
 }
 
-LevelUp()
+CheckForFailedConv()
 {
-	StartTime := A_TickCount
-    ElapsedTime := 0
-    GuiControl, MyWindow:, gloopID, Leveling Shandie
-	while (ReadChampLvlBySlot(1,,gShandieSlot) < 120 AND ElapsedTime < 5000)
-    {
-	    DirectedInput("q{F6}")
-        ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-    }
-    StartTime := A_TickCount
-    ElapsedTime := 0
-    gTime := ReadTimeScaleMultiplier(1)
-	if (gTime < 1)
-	gTime := 1
-    DashSpeed := gTime * 1.4
-    modDashSleep := gDashSleepTime / gTime
-	if (modDashSleep < 1)
-	modDashSleep := gDashSleepTime
-	GuiControl, MyWindow:, NewDashSleepID, % modDashSleep
-	GuiControl, MyWindow:, gloopID, Leveling Briv
-    while (ReadChampLvlBySlot(1,,0) < 100 AND ElapsedTime < 5000)
-    {
-        DirectedInput("q{F5}")
-        ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-    }
+	LevelChampBySeat(gShandieSlot, 120, 5000, "q")
+	LevelChampBySeat(5, 100, 5000, "q")
+
     gStackCountH := ReadHasteStacks(1)
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := gStackCountSB + gStackCountH
-    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gStackFailConvRecovery)
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks)
     {
         EndAdventure()
+		;If this sleep is too low it can cancel the reset before it completes. In this case that could be good as it will convert SB to Haste and not end the adventure.
+		;Sleep, 2000
 		CloseIC()
 		if (GetUserDetails() = -1)
         {
@@ -557,45 +555,93 @@ LevelUp()
 		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
         return
     }
-    GuiControl, MyWindow:, gloopID, Dash Wait 
-	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
+	if (gUlts)
 	{
-		DirectedInput(gFKeys)
-		DirectedInput("q")
-		if gClickLeveling
-		DirectedInput("``")
+		DirectedInput("g")
+		FinishZone()
+		DoUlts()
+		DirectedInput("g")
+	}
+	else
+	FinishZone()
+
+	return
+}
+
+FinishZone()
+{
+	StartTime := A_TickCount
+    ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Finishing Zone
+	while (ReadQuestRemaining(1) AND ElapsedTime < 15000)
+	{
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if !gDashSleepTime
+	return
+}
+
+LevelChampBySeat(seat := 1, Lvl := 0, i := 5000, j := "q")
+{
+	StartTime := A_TickCount
+    ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Leveling Seat %seat% to %Lvl%
+	var := "{F" . seat . "}"
+	var := var j
+	while (ReadChampLvlBySlot(1,,slot) < Lvl AND ElapsedTime < i)
+    {
+	    DirectedInput(var)
+        ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+    }
+	return
+}
+
+DoDashWait()
+{
+	DirectedInput("g")
+	LevelChampBySeat(gShandieSlot, 120, 5000, "q")
+    StartTime := A_TickCount
+    ElapsedTime := 0
+    gTime := ReadTimeScaleMultiplier(1)
+	if (gTime < 1)
+	gTime := 1
+    DashSpeed := gTime * 1.4
+    modDashSleep := gDashSleepTime / gTime
+	if (modDashSleep < 1)
+	modDashSleep := gDashSleepTime
+	GuiControl, MyWindow:, NewDashSleepID, % modDashSleep
+	if (gStackFailConvRecovery)
 	{
-		while (ReadQuestRemaining(1))
-		{
-			DirectedInput(gFKeys)
-			if (gClickLeveling)
-			directedinput("``")
-		}
+		CheckForFailedConv()
 	}
-	if gUlts
+	GuiControl, MyWindow:, gloopID, Dash Wait 
+	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
 	{
-		StartTime := A_TickCount
-        ElapsedTime := 0
-        GuiControl, MyWindow:, gloopID, gult Transition
-		while (ReadTransitioning(1) AND ElapsedTime < 5000)
-		{
-			sleep, 100
-			ElapsedTime := UpdateElapsedTime(StartTime)
-			UpdateStatTimers()
-		}
-		GuiControl, MyWindow:, gloopID, gult ult spam
-		Loop, 3
-		{
-			DirectedInput("23456789")
-		}
-		Sleep, 2000
+		StuffToSpam(0, 1)
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	FinishZone()
+	if (gUlts)
+	{
+		DoUlts()
 	}
 	DirectedInput("g")
-	gPrevLevelTime := A_TickCount
+	return
+}
+
+DoUlts()
+{
+	StartTime := A_TickCount
+    ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Spamming Ults for 2s
+	while (ElapsedTime < 2000)
+	{
+		DirectedInput("23456789")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
 }
 
 DirectedInput(s) 
@@ -604,14 +650,6 @@ DirectedInput(s)
 	ControlFocus,, ahk_exe IdleDragons.exe
 	ControlSend,, {Blind}%s%, ahk_exe IdleDragons.exe
 	Sleep, %ScriptSpeed%
-}
-
-ShandieLvl()
-{
-    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    gShandieLvl := idle.read(Controller, "Int", arrayPointerOffsetsShandieLvl*)
-    GuiControl, MyWindow:, gShandieLvlID, % gShandieLvl
-	return gShandieLvl
 }
 
 SetFormation(gLevel_Number)
@@ -667,7 +705,7 @@ LoadingZone()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000)
+	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000 AND !ReadMonstersSpawned(1))
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -724,7 +762,7 @@ StackRestart()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack `Sleep
-	while (ElapsedTime < 12000)
+	while (ElapsedTime < gRestartStackTime)
 	{
 		Sleep 100
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -738,9 +776,13 @@ StackNormal()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack Normal
+	StackRestart()
+	gStackCountH := ReadHasteStacks(1)
+	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-	while (gStackCountSB < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
+	stacks := gStackCountSB + gStackCountH
+	while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
 		directedinput("w")
         if (ReadCurrentZone(1) <= gAreaLow) 
@@ -748,8 +790,11 @@ StackNormal()
         	DirectedInput("{Right}")
 		}
 		Sleep 1000
+		gStackCountH := ReadHasteStacks(1)
+		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 		gStackCountSB := ReadSBStacks(1)
 		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
+		stacks := gStackCountSB + gStackCountH
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -772,8 +817,14 @@ StackFarm()
 	{
 		DirectedInput("{Left}")
 	}
-	if gStackRestart
+	if gRestartStackTime
     StackRestart()
+	gStackCountH := ReadHasteStacks(1)
+	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
+	gStackCountSB := ReadSBStacks(1)
+	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
+	stacks := gStackCountSB + gStackCountH
+	if (stacks < gSBTargetStacks)
 	StackNormal()
 	gPrevLevelTime := A_TickCount
 	DirectedInput("g")
@@ -793,12 +844,12 @@ UpdateStartLoopStats(gLevel_Number)
 	{
 		gPrevRunTime := round((A_TickCount - gRunStartTime) / 60000, 2)
         GuiControl, MyWindow:, gPrevRunTimeID, % gPrevRunTime
-		if (gSlowRunTime < gPrevRunTime)
+		if (gSlowRunTime < gPrevRunTime AND !gStackFail)
 		{
 			gSlowRunTime := gPrevRunTime
             GuiControl, MyWindow:, gSlowRunTimeID, % gSlowRunTime
 		}
-		if (gFastRunTime > gPrevRunTime)
+		if (gFastRunTime > gPrevRunTime AND !gStackFail)
 		{
 			gFastRunTime := gPrevRunTime
             GuiControl, MyWindow:, gFastRunTimeID, % gFastRunTime
@@ -865,13 +916,16 @@ GemFarm()
 		
 		SetFormation(gLevel_Number)
 
-		if (ShandieLvl() < 230)
+		if (gLevel_Number = 1)
 		{
-			LoadingZone()
-			GuiControl, MyWindow:, gloopID, wait 1s for auto
-			sleep, 1000
-			directedinput("g")
-			LevelUp()
+			if (DashSleepTime)
+			{
+				DoDashWait()
+			}
+			Else if(gFailedStackConv)
+			{
+				CheckForFailedConv()
+			}
         }
 
 		gStackCountH := ReadHasteStacks(1)
@@ -880,9 +934,8 @@ GemFarm()
 		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 		stacks := gStackCountSB + gStackCountH
 
-		if (gStackCountSB < gSBTargetStacks AND gLevel_Number > gAreaLow)
+		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
-			If (stacks < gSBTargetStacks)
 			StackFarm()
 		}
 
@@ -893,50 +946,44 @@ GemFarm()
 				StackFarm()
 			}
 			stacks := ReadSBStacks(1) + ReadHasteStacks(1)
-            if (stacks > gSBTargetStacks)
+			var := 1
+            if (stacks > gSBTargetStacks AND var)
             {
                 EndAdventure()
+				sleep 2000
 				CloseIC()
 				if (GetUserDetails() = -1)
         		{
             		LoadAdventure()
         		}
 				SafetyCheck()
+				;GuiControl, MyWindow:, gloopID, wait 1s for auto
+				;sleep, 1000
+				;directedinput("g")
+				UpdateStartLoopStats(gLevel_Number)
 				gStackFail := 1
 				++gFailedStacking
 				GuiControl, MyWindow:, gFailedStackingID, % gFailedStacking
-				LevelUp()
+				;LevelUp()
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
         }
 		
-        DirectedInput("{Right}")
-		If (gClickLeveling)
-		{
-			DirectedInput("``")
-		}
-		if (gContinuedLeveling > gLevel_Number OR !gLevel_Number)
-		{
-			DirectedInput(gFKeys)
-		}
-		if (gHewUlt)
-		{
-			DirectedInput(gHewUlt)
-		}
+		StuffToSpam(1, gLevel_Number)
 
 		if (ReadResettting(1))
 		{
 			ModronReset()
 			LoadingZone()
-			GuiControl, MyWindow:, gloopID, wait 1s for auto
-			sleep, 1000
-			directedinput("g")
+			;GuiControl, MyWindow:, gloopID, wait 1s for auto
+			;sleep, 1000
+			;directedinput("g")
 			UpdateStartLoopStats(gLevel_Number)
 			if (!gStackFail)
 			++gTotal_RunCount
 			gStackFail := 0
-			LevelUp()
+			;LevelUp()
 			gPrevLevelTime := A_TickCount
 			gprevLevel := ReadCurrentZone(1)
 		}
@@ -995,7 +1042,8 @@ EndAdventure()
 {
     DirectedInput("r")
     xClick := (ReadScreenWidth(1) / 2) - 80
-    yClick := (ReadScreenHeight(1) / 2) + 135
+    yClickMax := ReadScreenHeight(1)
+	yClick := yClickMax / 2
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Manually Ending Adventure
@@ -1003,6 +1051,10 @@ EndAdventure()
     {
         WinActivate, ahk_exe IdleDragons.exe
         MouseClick, Left, xClick, yClick, 1
+		if (yClick < yClickMax)
+		yClick := yClick + 10
+		Else
+		yClick := yClickMax / 2
         Sleep, 25
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
@@ -1050,4 +1102,18 @@ LoadAdventure()
 	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=0"
     ServerCall("setcurrentobjective", advparams)
 	return
+}
+
+StuffToSpam(SendRight := 1, gLevel_Number := 1)
+{
+	var := "{Right}"
+	if (gClickLeveling)
+	var := var "{Ctrl down}``{Ctrl up}"
+	if (gContinuedLeveling > gLevel_Number)
+	var := var gFKeys
+	if (gHewUlt)
+	var := var gHewUlt
+
+	DirectedInput(var)
+	Return
 }
