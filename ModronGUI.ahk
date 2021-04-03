@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/3/21 Rev2"
+global ScriptDate := "4/3/21 RevTooMany"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -563,6 +563,8 @@ CheckForFailedConv()
 	}
 	else
 	FinishZone()
+	
+	SetFormatino()
 
 	return
 }
@@ -646,6 +648,8 @@ DoDashWait()
 		DoUlts()
 	}
 	DirectedInput("g")
+	
+	SetFormation()
 	return
 }
 
