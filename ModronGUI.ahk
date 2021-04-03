@@ -1124,6 +1124,8 @@ LoadAdventure()
 
 StuffToSpam(SendRight := 1, gLevel_Number := 1)
 {
+	var := 
+	if (SendRight)
 	var := "{Right}"
 	if (gClickLeveling)
 	var := var "{Ctrl down}``{Ctrl up}"
