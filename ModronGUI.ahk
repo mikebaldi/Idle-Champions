@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/2/21"
+global ScriptDate := "4/2/21 v2"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -532,8 +532,8 @@ CloseIC()
 
 CheckForFailedConv()
 {
-	LevelChampBySeat(gShandieSlot, 120, 5000, "q")
-	LevelChampBySeat(5, 100, 5000, "q")
+	LevelChampBySlot(6, gShandieSlot, 120, 5000, "q")
+	LevelChampBySlot(5, 0, 100, 5000, "q")
 
     gStackCountH := ReadHasteStacks(1)
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
@@ -581,7 +581,7 @@ FinishZone()
 	return
 }
 
-LevelChampBySeat(seat := 1, Lvl := 0, i := 5000, j := "q")
+LevelChampBySlot(seat := 1, slot := 1, Lvl := 0, i := 5000, j := "q")
 {
 	StartTime := A_TickCount
     ElapsedTime := 0
@@ -600,7 +600,7 @@ LevelChampBySeat(seat := 1, Lvl := 0, i := 5000, j := "q")
 DoDashWait()
 {
 	DirectedInput("g")
-	LevelChampBySeat(gShandieSlot, 120, 5000, "q")
+	LevelChampBySlot(6, gShandieSlot, 120, 5000, "q")
     StartTime := A_TickCount
     ElapsedTime := 0
     gTime := ReadTimeScaleMultiplier(1)
@@ -922,7 +922,7 @@ GemFarm()
 			{
 				DoDashWait()
 			}
-			Else if(gFailedStackConv)
+			Else if(gStackFailConvRecovery)
 			{
 				CheckForFailedConv()
 			}
