@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/3/21"
+global ScriptDate := "4/3/21 Rev2"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -936,7 +936,7 @@ GemFarm()
 
 		if (gLevel_Number = 1)
 		{
-			if (DashSleepTime)
+			if (gDashSleepTime)
 			{
 				DoDashWait()
 			}
