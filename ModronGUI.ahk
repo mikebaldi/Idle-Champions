@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/3/21 RevTooMany"
+global ScriptDate := "4/4/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -79,6 +79,9 @@ global gSwapSleep := SwapSleep
 ;Restart stack sleep time
 IniRead, RestartStackTime, UserSettings.ini, Section1, RestartStackTime, 12000
 global gRestartStackTime := RestartStackTime
+;Intall location
+IniRead, GameInstallPath, Usersettings.ini, Section1, GameInstallPath, C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe
+global gInstallPath := GameInstallPath
 
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
@@ -151,12 +154,12 @@ Gui, MyWindow:Add, Button, x415 y25 w60 gSave_Clicked, Save
 Gui, MyWindow:Add, Button, x415 y+50 w60 gRun_Clicked, `Run
 Gui, MyWindow:Add, Button, x415 y+100 w60 gReload_Clicked, `Reload
 Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
-Gui, Tab, Read First
+;Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Settings Help|Stats|Debug|
 
+Gui, Tab, Read First
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
-
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
 Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
 Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie, Briv at the very front of the formation, and at least one familiar on the field.
@@ -189,7 +192,7 @@ Gui, MyWIndow:Add, Text, x+2 w370, The script does not work without Shandie.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 10.
 Gui, MyWIndow:Add, Text, x+2 w370, Disable manual resets to recover from failed Briv stack conversions when running event free plays.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 11.
-Gui, MyWIndow:Add, Text, x+2 w370, Recommended Briv swap `sleep time is 1500.
+Gui, MyWIndow:Add, Text, x+2 w370, Recommended Briv swap `sleep time is 1500 - 3000.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2. 
@@ -233,7 +236,6 @@ Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w50, % gSwapSleep
 Gui, MyWindow:Add, Text, x+5, Briv swap `sleep time (ms).
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
-;Gui, MyWindow:Add, Checkbox, vgStackRestart Checked%gStackRestart% x15 y+5, Farm SB stacks by restarting IC
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
 Gui, MyWindow:Add, Text, x15 y+5, Shandie's position in formation:
@@ -246,6 +248,14 @@ Gui, MyWindow:Add, Radio, x+1 vShandieRadio0 Checked%ShandieRadio0%
 Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio7 Checked%ShandieRadio7%
 Gui, MyWindow:Add, Radio, x+1 vShandieRadio2 Checked%ShandieRadio2%
 Gui, MyWindow:Add, Radio, x45 y+1 vShandieRadio5 Checked%ShandieRadio5%
+Gui, MyWindow:Add, Button, x15 y+20 gChangeInstallLocation_Clicked, Change Install Path
+
+;Gui, Tab, Settings Help
+;Gui, MyWindow:Font, w700
+;Gui, MyWindow:Add, Text, x15 y30, Detailed Settings Information
+;Gui, MyWindow:Font, w400
+;Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
+;Gui, MyWindow:Add, Text, x+2 w370, Fkeys must be enabled in the Idle Champions in game settings. F12 is the default screenshot key for Steam and should be changed in the Steam settings if used.
 
 statTabTxtWidth := 
 Gui, Tab, Stats
@@ -372,6 +382,33 @@ Gui, MyWindow:Add, Text, vgFailedStackingID x+2 w200, % gFailedStacking
 
 Gui, MyWindow:Show
 
+Gui, InstallGUI:New
+Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+10 w300 r5, % gInstallPath
+Gui, InstallGUI:Add, Button, x15 y+25 gInstallOK_Clicked, Save and `Close
+Gui, InstallGUI:Add, Button, x+100 gInstallCancel_Clicked, `Cancel
+
+InstallCancel_Clicked:
+{
+	GuiControl, InstallGUI:, NewInstallPath, %gInstallPath%
+	Gui, InstallGUI:Hide
+	Return
+}
+
+InstallOK_Clicked:
+{
+	Gui, Submit, NoHide
+	gInstallPath := NewInstallPath
+	IniWrite, %gInstallPath%, Usersettings.ini, Section1, GameInstallPath
+	Gui, InstallGUI:Hide
+	Return
+}
+
+ChangeInstallLocation_Clicked:
+{
+	Gui, InstallGUI:Show
+	Return
+}
+
 Save_Clicked:
 {
 	Gui, Submit, NoHide
@@ -480,7 +517,8 @@ SafetyCheck()
 {
     While (Not WinExist("ahk_exe IdleDragons.exe")) 
     {
-        Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
+		Run, %gInstallPath%
+        ;Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
         StartTime := A_TickCount
         ElapsedTime := 0
         GuiControl, MyWindow:, gloopID, Opening IC
@@ -554,18 +592,6 @@ CheckForFailedConv()
 		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
         return
     }
-	if (gUlts)
-	{
-		DirectedInput("g")
-		FinishZone()
-		DoUlts()
-		DirectedInput("g")
-	}
-	else
-	FinishZone()
-	
-	SetFormatino()
-
 	return
 }
 
@@ -638,18 +664,18 @@ DoDashWait()
 	GuiControl, MyWindow:, gloopID, Dash Wait 
 	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
 	{
-		StuffToSpam(0, 1)
+		StuffToSpam(0, 1, 0)
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
+	if (ReadQuestRemaining(1))
 	FinishZone()
 	if (gUlts)
 	{
 		DoUlts()
 	}
 	DirectedInput("g")
-	
-	SetFormation()
+	SetFormation(1)
 	return
 }
 
@@ -714,20 +740,20 @@ LoadingZone()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Zone
-	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000)
+	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 60000)
 	{
 		DirectedInput("q{F6}")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (ElapsedTime > 180000)
+	if (ElapsedTime > 60000)
 	{
-		CheckifStuck(ReadCurrentZone(1))
+		CheckifStuck(gprevLevel)
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 180000 AND !ReadMonstersSpawned(1))
+	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 15000 AND !ReadMonstersSpawned(1))
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -947,6 +973,16 @@ GemFarm()
 			Else if(gStackFailConvRecovery)
 			{
 				CheckForFailedConv()
+				if (gUlts)
+				{
+					DirectedInput("g")
+					FinishZone()
+					DoUlts()
+					DirectedInput("g")
+				}
+				else
+				FinishZone()
+				SetFormation()
 			}
         }
 
@@ -979,14 +1015,10 @@ GemFarm()
             		LoadAdventure()
         		}
 				SafetyCheck()
-				;GuiControl, MyWindow:, gloopID, wait 1s for auto
-				;sleep, 1000
-				;directedinput("g")
 				UpdateStartLoopStats(gLevel_Number)
 				gStackFail := 1
 				++gFailedStacking
 				GuiControl, MyWindow:, gFailedStackingID, % gFailedStacking
-				;LevelUp()
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
@@ -998,14 +1030,10 @@ GemFarm()
 		{
 			ModronReset()
 			LoadingZone()
-			;GuiControl, MyWindow:, gloopID, wait 1s for auto
-			;sleep, 1000
-			;directedinput("g")
 			UpdateStartLoopStats(gLevel_Number)
 			if (!gStackFail)
 			++gTotal_RunCount
 			gStackFail := 0
-			;LevelUp()
 			gPrevLevelTime := A_TickCount
 			gprevLevel := ReadCurrentZone(1)
 		}
@@ -1126,16 +1154,16 @@ LoadAdventure()
 	return
 }
 
-StuffToSpam(SendRight := 1, gLevel_Number := 1)
+StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1)
 {
-	var := 
+	var :=
 	if (SendRight)
 	var := "{Right}"
 	if (gClickLeveling)
 	var := var "{Ctrl down}``{Ctrl up}"
 	if (gContinuedLeveling > gLevel_Number)
 	var := var gFKeys
-	if (gHewUlt)
+	if (gHewUlt AND hew)
 	var := var gHewUlt
 
 	DirectedInput(var)
