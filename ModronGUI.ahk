@@ -982,7 +982,7 @@ GemFarm()
 				}
 				else
 				FinishZone()
-				SetFormation()
+				SetFormation(1)
 			}
         }
 
