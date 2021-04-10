@@ -12,4 +12,4 @@ Recommended Additional Steps:
 Review AutoHotkey tutorials and documentation.
 
 Notes:
-1. Script requires Shandie and Modron Automation.
+1. Script requires Shandie, Briv, and Modron Automation.
