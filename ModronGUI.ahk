@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/9/21"
+global ScriptDate := "4/10/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -330,6 +330,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlByID:
 Gui, MyWindow:Add, Text, vReadChampLvlByIDID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadChampSeatByID:
 Gui, MyWindow:Add, Text, vReadChampSeatByIDID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
+Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
 
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
@@ -836,8 +838,22 @@ CheckSetUp()
 	}
 	if (!ReadChampLvlBySlot(1,,gShandieSlot))
 	{
-		MsgBox, Couldn't find Shandie in "Q" formation. Check Settings. Ending Gem Farm.
-		return, 1
+		var := FindChamp(47)
+		if var
+		{
+			MsgBox 4,, Shandie found at slot %var%. Update settings?
+			IfMsgBox Yes
+			{
+				IniWrite, 0, UserSettings.ini, Section1, ShandieRadio%gShandieSlot%
+				gShandieSlot := var
+				IniWrite, 1, UserSettings.ini, Section1, ShandieRadio%var%
+			}
+		}
+		Else
+		{
+			MsgBox, Couldn't find Shandie in "Q" formation. Check Settings. Ending Gem Farm.
+			Return, 1
+		}
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
@@ -853,7 +869,25 @@ CheckSetUp()
 		MsgBox, Shandie is in "W" formation. Check Settings. Ending Gem Farm.
 		return, 1
 	}
+	if (advtoload < 1)
+	{
+		MsgBox, Please load into a valid adventure and restart. Ending Gem Farm.
+		return, 1
+	}
 	return, 0
+}
+
+FindChamp(ChampID := 1)
+{
+    loop, 10
+    {
+        ChampSlot := A_Index - 1
+        if (ReadChampIDbySlot(1,, ChampSlot) = ChampID)
+        {
+            Return, ChampSlot
+        }
+    }
+    Return, 0
 }
 
 StackRestart()
@@ -1021,10 +1055,10 @@ GemFarm()
 	OpenProcess()
 	ModuleBaseAddress()
 	;not sure why this one is here, commented out for now.
-	GetUserDetails()
+	;GetUserDetails()
 	UserID := ReadUserID(1)
 	UserHash := ReadUserHash(1)
-    advtoload := GetUserDetails()
+    advtoload := ReadCurrentObjID(0)
     GuiControl, MyWindow:, advtoloadID, % advtoload
 	var := 0
 	var := CheckSetUp()
@@ -1151,10 +1185,12 @@ ModronReset()
 		Sleep, 250
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
+		if (ReadCurrentZone(1) = 1)
+		Break
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, ReadResettting to z1
+	GuiControl, MyWindow:, gloopID, Resettting to z1
 	while (ReadCurrentZone(1) != 1 AND ElapsedTime < 300000)
 	{
 		Sleep, 250
