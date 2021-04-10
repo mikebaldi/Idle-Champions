@@ -180,6 +180,18 @@ ReadChampSeatBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
 	return var
 }
 
+ReadChampIDbySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x14, 0xC, 0x8]
+    var := 0x10 + (slot * 0x4)
+    pointerArray.Push(var, 0x14, 0x8, 0x8)
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadChampIDbySlotID, Slot: %slot% `ID: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
 ReadChampLvlByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
@@ -213,5 +225,15 @@ ReadMonstersSpawned(UpdateGUI := 0, GUIWindow := "MyWindow:")
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadMonstersSpawnedID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadCurrentObjID(UpdateGUI := 0, GUIWindow := "MyWindow:")
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x18, 0xC, 0x8]
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadCurrentObjIDID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
