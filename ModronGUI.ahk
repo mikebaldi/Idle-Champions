@@ -1,15 +1,27 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/10/21"
+global ScriptDate := "4/17/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
 
+;========================================
+;User settings not accessible via the GUI
+;========================================
+;variables to consider changing if restarts are causing issues
+global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
+global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
+
+;variables for opening chests during stack restart
+global gDoChests := 0 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
+
+global ScriptSpeed := 25
+;====================
+;end of user settings
+;====================
+
 ;Thanks ThePuppy for the ini code
-;==================
-;Load user settings
-;==================
 ;Champions to level with Fkeys
 global gFKeys := 
 loop, 12
@@ -54,25 +66,12 @@ global gAvoidBosses := AvoidBosses
 ;Click damage toggle
 IniRead, ClickLeveling, UserSettings.ini, Section1, ClickLeveling
 global gClickLeveling := ClickLeveling
-;Stack restart toggle
-;IniRead, StackRestart, UserSettings.ini, Section1, StackRestart
-;global gStackRestart := StackRestart
 ;Stack fail recovery toggle
 IniRead, StackFailRecovery, UserSettings.ini, Section1, StackFailRecovery
 global gStackFailRecovery := StackFailRecovery
 ;Stack fail recovery toggle
 IniRead, StackFailConvRecovery, UserSettings.ini, Section1, StackFailConvRecovery
 global gStackFailConvRecovery := StackFailConvRecovery
-;Shandie's position in formation
-slot := 0
-global gShandieSlot := 
-loop, 9
-{
-	IniRead, ShandieRadio%slot%, UserSettings.ini, Section1, ShandieRadio%slot%
-	if (ShandieRadio%slot%)
-	gShandieSlot := slot
-	++slot
-}
 ;Briv swap sleep time
 IniRead, SwapSleep, UserSettings.ini, Section1, SwapSleep, 1500
 global gSwapSleep := SwapSleep
@@ -83,22 +82,11 @@ global gRestartStackTime := RestartStackTime
 IniRead, GameInstallPath, Usersettings.ini, Section1, GameInstallPath, C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe
 global gInstallPath := GameInstallPath
 
-;variables to consider changing if restarts are causing issues
-global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
-global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
-;end of user settings
+;Shandie's seat 
+global gShandieSlot := 
 
-global ScriptSpeed := 25
-
+;variable for correctly tracking stats during a failed stack, to prevent fast/slow runs to be thrown off
 global gStackFail := 0
-
-;global variables used for server calls
-global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
-global ActiveInstance :=
-global InstanceID :=
-global UserID :=
-global UserHash := ""
-global advtoload :=
 
 ;class and methods for parsing JSON (User details sent back from a server call)
 #include JSON.ahk
@@ -115,6 +103,9 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 ;pointer addresses and offsets
 #include IC_MemoryFunctions.ahk
+
+;server call functions and variables
+#include IC_ServerCallFunctions.ahk
 
 ;globals for various timers
 global gSlowRunTime		:= 		
@@ -135,13 +126,15 @@ global ResetCount		:= 0
 global gGemStart		:=
 global gCoreXPStart		:=
 
+global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
+
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
 Gui, MyWindow:Add, Button, x415 y25 w60 gSave_Clicked, Save
 Gui, MyWindow:Add, Button, x415 y+50 w60 gRun_Clicked, `Run
 Gui, MyWindow:Add, Button, x415 y+100 w60 gReload_Clicked, `Reload
-Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
-;Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Settings Help|Stats|Debug|
+;Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
+Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Help|Stats|Debug|
 
 Gui, Tab, Read First
 Gui, MyWindow:Font, w700
@@ -149,11 +142,11 @@ Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
 Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
-Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie and at least one familiar on the field.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie, Briv, and at least one familiar on the field.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2.
 Gui, MyWindow:Add, Text, x+2 w370, Save your stack farming formation in formation save slot 2, in game `hotkey "W". Don't include any familiars on the field or any champions in the formation slot Shandie is in as part of formation save slot 1.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 3.
-Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game `hotkey "E".
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game `hotkey "E". This step may be ommitted if you will not be swapping out Briv to cancel his jump animation.
 Gui, MyWindow:Add, Text, x15 y+2, 4. Adjust the settings on the settings tab.
 Gui, MyWindow:Add, Text, x15 y+2, 5. `Click the save button to save your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 6. Load into zone 1 of an adventure to farm gems.
@@ -223,24 +216,47 @@ Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap 
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
-Gui, MyWindow:Add, Text, x15 y+5, Shandie's position in formation:
-Gui, MyWindow:Add, Radio, x45 y+5 vShandieRadio3 Checked%ShandieRadio3%
-Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio6 Checked%ShandieRadio6%
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio1 Checked%ShandieRadio1%
-Gui, MyWindow:Add, Radio, x15 y+1 vShandieRadio8 Checked%ShandieRadio8%
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio4 Checked%ShandieRadio4%
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio0 Checked%ShandieRadio0%
-Gui, MyWindow:Add, Radio, x30 y+1 vShandieRadio7 Checked%ShandieRadio7%
-Gui, MyWindow:Add, Radio, x+1 vShandieRadio2 Checked%ShandieRadio2%
-Gui, MyWindow:Add, Radio, x45 y+1 vShandieRadio5 Checked%ShandieRadio5%
 Gui, MyWindow:Add, Button, x15 y+20 gChangeInstallLocation_Clicked, Change Install Path
 
-;Gui, Tab, Settings Help
+Gui, Tab, Help
 ;Gui, MyWindow:Font, w700
-;Gui, MyWindow:Add, Text, x15 y30, Detailed Settings Information
+Gui, MyWindow:Add, Text, x15 y30, Confirm your settings are saved. 
+Gui, MyWindow:Add, Text, x15 y+2, 1 = true, yes, or enabled
+Gui, MyWindow:Add, Text, x15 y+2, 0 = false, no, or disabled
 ;Gui, MyWindow:Font, w400
-;Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
-;Gui, MyWindow:Add, Text, x+2 w370, Fkeys must be enabled in the Idle Champions in game settings. F12 is the default screenshot key for Steam and should be changed in the Steam settings if used.
+Gui, MyWindow:Add, Text, x15 y+15, Fkeys used for leveling: 
+Gui, MyWindow:Add, Text, vgFKeysID x+2 w300, % gFKeys
+Gui, MyWindow:Add, Text, x15 y+5, Use Fkey leveling while below this zone: 
+Gui, MyWindow:Add, Text, vgContinuedLevelingID x+2 w200, % gContinuedLeveling
+Gui, MyWindow:Add, Text, x15 y+5, Farm SB stacks AFTER this zone: 
+Gui, MyWindow:Add, Text, vgAreaLowID x+2 w200, % gAreaLow
+Gui, MyWindow:Add, Text, x15 y+5, Minimum zone Briv can farm SB stacks on: 
+Gui, MyWindow:Add, Text, vgMinStackZoneID x+2 w200, % gMinStackZone 
+Gui, MyWindow:Add, Text, x15 y+5, Target Haste stacks for next run: 
+Gui, MyWindow:Add, Text, vgSBTargetStacksID x+2 w200, % gSBTargetStacks
+Gui, MyWindow:Add, Text, x15 y+5, Maximum time (ms) script will wait for Dash: 
+Gui, MyWindow:Add, Text, vDashSleepTimeID x+2 w200, % gDashSleepTime
+Gui, MyWindow:Add, Text, x15 y+5, Hew's ultimate key: 
+Gui, MyWindow:Add, Text, vgHewUltID x+2 w200, % gHewUlt
+Gui, MyWindow:Add, Text, x15 y+5, Time (ms) client remains closed for Briv Restart Stack:
+Gui, MyWindow:Add, Text, vgRestartStackTimeID x+2 w200, % gRestartStackTime
+Gui, MyWindow:Add, Text, x15 y+5, Use ults 2-9 after initial champion leveling:
+Gui, MyWindow:Add, Text, vgUltsID x+2 w200, % gUlts
+Gui, MyWindow:Add, Text, x15 y+5, Swap to 'e' formation to cancle Briv's jump animation:
+Gui, MyWindow:Add, Text, vgBrivSwapID x+2 w200, % gBrivSwap
+Gui, MyWindow:Add, Text, x15 y+5, Briv swap sleep time (ms):
+Gui, MyWindow:Add, Text, vgSwapSleepID x+2 w200, % gSwapSleep
+Gui, MyWindow:Add, Text, x15 y+5, Swap to 'e' formation when on boss zones:
+Gui, MyWindow:Add, Text, vgAvoidBossesID x+2 w200, % gAvoidBosses
+Gui, MyWindow:Add, Text, x15 y+5, Using a familiar on click damage:
+Gui, MyWindow:Add, Text, vgClickLevelingID x+2 w200, % gClickLeveling
+Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stacking:
+Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
+Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stack conversion:
+Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
+Gui, MyWindow:Add, Text, x15 y+5, Install Path:
+Gui, MyWindow:Add, Text, vgInstallPathID x15 y+2 w350 r5, %gInstallPath%
+Gui, MyWindow:Add, Text, x15 y+15 w375 r5, Still having trouble? Take note of the information on the debug tab and ask for help in the scripting channel on the official discord.
 
 statTabTxtWidth := 
 Gui, Tab, Stats
@@ -312,8 +328,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadHasteStacks:
 Gui, MyWindow:Add, Text, vReadHasteStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
 Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadResettting: 
-Gui, MyWindow:Add, Text, vReadResetttingID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadResetting: 
+Gui, MyWindow:Add, Text, vReadResettingID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadUserID: 
 Gui, MyWindow:Add, Text, vReadUserIDID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadUserHash: 
@@ -332,6 +348,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadChampSeatByID:
 Gui, MyWindow:Add, Text, vReadChampSeatByIDID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
 Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadCoreTargetArea:
+Gui, MyWindow:Add, Text, vReadCoreTargetAreaID x+2 w200,
 
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
@@ -345,50 +363,6 @@ Gui, MyWindow:Add, Text, vInstanceIDID x+2 w300, % InstanceID
 Gui, MyWindow:Add, Text, x15 y+5, ActiveInstance:
 Gui, MyWindow:Add, Text, vActiveInstanceID x+2 w300, % ActiveInstance
 
-
-debug := 0
-if (debug)
-{
-Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y+15, Settings and Other Variables: 
-Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+2, gFKeys:
-Gui, MyWindow:Add, Text, vgFKeysID x+2 w300, % gFKeys
-Gui, MyWindow:Add, Text, x15 y+2, gAreaLow:
-Gui, MyWindow:Add, Text, vgAreaLowID x+2 w200, % gAreaLow
-Gui, MyWindow:Add, Text, x15 y+2, gSBTargetStacks:
-Gui, MyWindow:Add, Text, vgSBTargetStacksID x+2 w200, % gSBTargetStacks
-Gui, MyWindow:Add, Text, x15 y+2, gDashSleepTime:
-Gui, MyWindow:Add, Text, vDashSleepTimeID x+2 w200, % gDashSleepTime
-Gui, MyWindow:Add, Text, x15 y+2, NewDashSleep:
-Gui, MyWindow:Add, Text, vNewDashSleepID x+2 w200, % NewDashSleep
-Gui, MyWindow:Add, Text, x15 y+2, gContinuedLeveling:
-Gui, MyWindow:Add, Text, vgContinuedLevelingID x+2 w200, % gContinuedLeveling
-Gui, MyWindow:Add, Text, x15 y+2, gUlts:
-Gui, MyWindow:Add, Text, vgUltsID x+2 w200, % gUlts
-Gui, MyWindow:Add, Text, x15 y+2, gBrivSwap:
-Gui, MyWindow:Add, Text, vgBrivSwapID x+2 w200, % gBrivSwap
-Gui, MyWindow:Add, Text, x15 y+2, gAvoidBosses:
-Gui, MyWindow:Add, Text, vgAvoidBossesID x+2 w200, % gAvoidBosses
-Gui, MyWindow:Add, Text, x15 y+2, gClickLeveling:
-Gui, MyWindow:Add, Text, vgClickLevelingID x+2 w200, % gClickLeveling
-;Gui, MyWindow:Add, Text, x15 y+2, gStackRestart:
-;Gui, MyWindow:Add, Text, vgStackRestartID x+2 w200, % gStackRestart
-Gui, MyWindow:Add, Text, x15 y+2, gStackFailRecovery:
-Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
-Gui, MyWindow:Add, Text, x15 y+2, gStackFailConvRecovery:
-Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
-Gui, MyWindow:Add, Text, x15 y+2, gShandieSlot:
-Gui, MyWindow:Add, Text, vgShandieSlotID x+2 w200, % gShandieSlot
-Gui, MyWindow:Add, Text, x15 y+2, gHewUlt:
-Gui, MyWindow:Add, Text, vgHewUltID x+2 w200, % gHewUlt
-Gui, MyWindow:Add, Text, x15 y+2, ResetCount:
-Gui, MyWindow:Add, Text, vResetCountID x+2 w200, % ResetCount
-Gui, MyWindow:Add, Text, x15 y+2, gFailedStackConv:
-Gui, MyWindow:Add, Text, vgFailedStackConvID x+2 w200, % gFailedStackConv
-Gui, MyWindow:Add, Text, x15 y+2, gFailedStacking:
-Gui, MyWindow:Add, Text, vgFailedStackingID x+2 w200, % gFailedStacking
-}
 
 Gui, MyWindow:Show
 
@@ -408,6 +382,7 @@ InstallOK_Clicked:
 {
 	Gui, Submit, NoHide
 	gInstallPath := NewInstallPath
+	GuiControl, MyWindow:, gInstallPathID, %gInstallPath%
 	IniWrite, %gInstallPath%, Usersettings.ini, Section1, GameInstallPath
 	Gui, InstallGUI:Hide
 	Return
@@ -440,23 +415,11 @@ Save_Clicked:
 		IniWrite, 0, UserSettings.ini, Section1, Seat%A_Index%Toggle
 	}
 	GuiControl, MyWindow:, gFkeysID, % gFKeys
-	slot := 0
-	loop, 9
-	{
-		if (ShandieRadio%slot%)
-		{
-			gShandieSlot := slot
-			IniWrite, 1, UserSettings.ini, Section1, ShandieRadio%slot%
-		}
-		Else
-		IniWrite, 0, UserSettings.ini, Section1, ShandieRadio%slot%
-		++slot	
-	}
-	GuiControl, MyWindow:, gShandieSlotID, % gShandieSlot
 	gAreaLow := NewgAreaLow
 	GuiControl, MyWindow:, gAreaLowID, % gAreaLow
 	IniWrite, %gAreaLow%, UserSettings.ini, Section1, AreaLow
 	gMinStackZone := NewgMinStackZone
+	GuiControl, MyWindow:, gMinStackZoneID, % gMinStackZone
 	IniWrite, %gMinStackZone%, Usersettings.ini, Section1, MinStackZone
 	gSBTargetStacks := NewSBTargetStacks
 	GuiControl, MyWindow:, gSBTargetStacksID, % gSBTargetStacks
@@ -480,17 +443,15 @@ Save_Clicked:
 	IniWrite, %gAvoidBosses%, UserSettings.ini, Section1, AvoidBosses
 	GuiControl, MyWindow:, gClickLevelingID, % gClickLeveling
 	IniWrite, %gClickLeveling%, UserSettings.ini, Section1, ClickLeveling
-	;GuiControl, MyWindow:, gStackRestartID, % gStackRestart
-	;IniWrite, %gStackRestart%, UserSettings.ini, Section1, StackRestart
 	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
 	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
 	GuiControl, MyWindow:, gStackFailConvRecoveryID, % gStackFailConvRecovery
 	IniWrite, %gStackFailConvRecovery%, UserSettings.ini, Section1, StackFailConvRecovery
 	gSwapSleep := NewSwapSleep
-	;GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
+	GuiControl, MyWindow:, gSwapSleepID, % gSwapSleep
 	IniWrite, %gSwapSleep%, UserSettings.ini, Section1, SwapSleep
 	gRestartStackTime := NewRestartStackTime
-	;GuiControl, MyWindow:, gRestartStackTimeID, % gRestartStackTime
+	GuiControl, MyWindow:, gRestartStackTimeID, % gRestartStackTime
 	IniWrite, %gRestartStackTime%, UserSettings.ini, Section1, RestartStackTime
 	return
 }
@@ -580,8 +541,6 @@ CloseIC()
 
 CheckForFailedConv()
 {
-	LevelChampByID(58, 100, 5000, "q")
-
     gStackCountH := ReadHasteStacks(1)
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 	gStackCountSB := ReadSBStacks(1)
@@ -619,24 +578,7 @@ FinishZone()
 	return
 }
 
-LevelChampBySlot(slot := 1, Lvl := 0, i := 5000, j := "q")
-{
-	seat := ReadChampSeatBySlot(,, slot)
-	StartTime := A_TickCount
-    ElapsedTime := 0
-    GuiControl, MyWindow:, gloopID, Leveling Seat %seat% to %Lvl%
-	var := "{F" . seat . "}"
-	var := var j
-	while (ReadChampLvlBySlot(1,,slot) < Lvl AND ElapsedTime < i)
-    {
-	    DirectedInput(var)
-        ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-    }
-	return
-}
-
-LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q")
+LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
 {
 	seat := ReadChampSeatByID(,, ChampID)
 	StartTime := A_TickCount
@@ -656,7 +598,7 @@ LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q")
 DoDashWait()
 {
 	DirectedInput("g")
-	LevelChampByID(47, 120, 5000, "q")
+	LevelChampByID(47, 120, 5000, "q", 6)
     StartTime := A_TickCount
     ElapsedTime := 0
     gTime := ReadTimeScaleMultiplier(1)
@@ -827,33 +769,63 @@ LoadingZone()
 
 CheckSetUp()
 {
+	;find core target reset area so script does not try and Briv stack before a modron reset happens.
+	gCoreTargetArea := ReadCoreTargetArea(1)
+	;confirm target area has been read
+	While (!gCoreTargetArea)
+	{
+		MsgBox, 2,, Script cannot find Modron Reset Area.
+		IfMsgBox, Abort
+		{
+			Return, 1
+		}
+		IfMsgBox, Retry
+		{
+			gCoreTargetArea := ReadCoreTargetArea(1)
+		}
+		IfMsgBox, ignore
+		{
+			gCoreTargetArea := 999
+		}
+	}
+	;will need to add more here eventually
+	if (gCoreTargetArea < gAreaLow)
+	{
+		gCoreTargetArea := 999
+	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Looking for Shandie
+	DirectedInput("q{F6}q")
 	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
 	{
-		DirectedInput("q{F6}")
+		gShandieSlot := FindChamp(47)
+		DirectedInput("q{F6}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
 	if (!ReadChampLvlBySlot(1,,gShandieSlot))
 	{
-		var := FindChamp(47)
-		if var
-		{
-			MsgBox 4,, Shandie found at slot %var%. Update settings?
-			IfMsgBox Yes
-			{
-				IniWrite, 0, UserSettings.ini, Section1, ShandieRadio%gShandieSlot%
-				gShandieSlot := var
-				IniWrite, 1, UserSettings.ini, Section1, ShandieRadio%var%
-			}
-		}
-		Else
-		{
-			MsgBox, Couldn't find Shandie in "Q" formation. Check Settings. Ending Gem Farm.
-			Return, 1
-		}
+		MsgBox, Couldn't find Shandie in "Q" formation. Check saved formations. Ending Gem Farm.
+		Return, 1
+	}
+
+	StartTime := A_TickCount
+	ElapsedTime := 0
+	slot := 0
+    GuiControl, MyWindow:, gloopID, Looking for Briv
+	DirectedInput("q{F5}q")
+	while (!ReadChampLvlBySlot(1,,slot) AND ElapsedTime < 10000)
+	{
+		slot := FindChamp(58)
+		DirectedInput("q{F5}q")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	if (!ReadChampLvlBySlot(1,,slot))
+	{
+		MsgBox, Couldn't find Briv in "Q" formation. Check saved formations. Ending Gem Farm.
+		Return, 1
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
@@ -890,6 +862,8 @@ FindChamp(ChampID := 1)
     Return, 0
 }
 
+
+
 StackRestart()
 {
 	StartTime := A_TickCount
@@ -916,6 +890,10 @@ StackRestart()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack `Sleep
+    if (gDoChests)
+    {
+        DoChests()
+    }
 	while (ElapsedTime < gRestartStackTime)
 	{
 		Sleep 100
@@ -1077,6 +1055,8 @@ GemFarm()
 		{
 			if (gDashSleepTime)
 			{
+				;putting this check with the gLevel_Number = 1 appeared to completely disable DashWait
+				if (ReadQuestRemaining(1))
 				DoDashWait()
 			}
 			Else if(gStackFailConvRecovery)
@@ -1101,7 +1081,8 @@ GemFarm()
 		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 		stacks := gStackCountSB + gStackCountH
 
-		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
+		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow AND gLevel_Number < gCoreTargetArea)
+		;if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
 			StackFarm()
 		}
@@ -1220,55 +1201,6 @@ EndAdventure()
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
     }
-}
-
-ServerCall(callname, parameters) 
-{
-	URLtoCall := "http://ps6.idlechampions.com/~idledragons/post.php?call=" callname parameters
-	GuiControl, MyWindow:, advparamsID, % URLtoCall
-	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-	WR.SetTimeouts("10000", "10000", "10000", "10000")
-	Try {
-		WR.Open("POST", URLtoCall, false)
-		WR.SetRequestHeader("Content-Type","application/x-www-form-urlencoded")
-		WR.Send()
-		WR.WaitForResponse(-1)
-		data := WR.ResponseText
-	}
-	return data
-}
-
-GetUserDetails() 
-{
-	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
-	rawdetails := ServerCall("getuserdetails", getuserparams)
-	UserDetails := JSON.parse(rawdetails)
-    InstanceID := UserDetails.details.instance_id
-    GuiControl, MyWindow:, InstanceIDID, % InstanceID
-	ActiveInstance := UserDetails.details.active_game_instance_id
-    GuiControl, MyWindow:, ActiveInstanceID, % ActiveInstance
-	for k, v in UserDetails.details.game_instances
-		if (v.game_instance_id == ActiveInstance) 
-		{
-			CurrentAdventure := v.current_adventure_id
-			GuiControl, MyWindow:, CurrentAdventureID, % CurrentAdventure
-			;InstanceID := v.game_instance_id
-    		;GuiControl, MyWindow:, InstanceIDID, % InstanceID
-            ;MsgBox, ActiveInstance: %ActiveInstance% InstanceID: %InstanceID%
-			;CurrentArea := v.current_area
-			;GuiControl, MyWindow:, CurrentAreaID, % CurrentArea
-		}
-	rawdetails :=
-	UserDetails := 
-	return CurrentAdventure
-}
-
-
-LoadAdventure() 
-{
-	advparams := DummyData "&patron_tier=0&user_id=" UserID "&hash=" UserHash "&instance_id=" InstanceID "&game_instance_id=" ActiveInstance "&adventure_id=" advtoload "&patron_id=0"
-    ServerCall("setcurrentobjective", advparams)
-	return
 }
 
 StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
