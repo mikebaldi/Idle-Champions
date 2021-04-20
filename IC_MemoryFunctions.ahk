@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 4/17/21
+;date of script: 4/20/21
 ;IC Version v0.384
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -267,5 +267,29 @@ ReadMonstersOnScreen(UpdateGUI := 0, GUIWindow := "MyWindow:")
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadMonstersOnScreenID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadClickFamiliarBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x38, 0x230, 0x8]
+    var := 0x10 + (slot * 0x4)
+    pointerArray.Push(var, 0x204, 0xEC)
+    var := idle.read(Controller, "Char", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadClickFamiliarBySlotID, slot: %Slot% objectActive: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadHeroAliveBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x14, 0xC, 0x8]
+    var := 0x10 + (slot * 0x4)
+    pointerArray.Push(var, 0x139)
+    var := idle.read(Controller, "Char", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadHeroAliveBySlotID, slot: %Slot% heroAlive: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
