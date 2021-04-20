@@ -1,15 +1,31 @@
-
+;date of script: 4/20/21
+;========================================
+;User settings not accessible via the GUI
+;========================================
 ;globals for buying and opening chests when offline during restart stacking
-global gMinGemCount	:= 0 ;script will only buy chests when you have more than this many gems
+global gSCMinGemCount := 0 ;script will only buy chests when you have more than this many gems
 ;script will only ever buy one type of chest, which ever it can afford first
-global gBuySilvers := 100 ;script will buy this many silvers when you have enough gems
-global gSilverCount := 99 ;script will open this many silvers when you have hoarded at least this many
-global gBuyGolds := 0 ;script will buy this many golds when you have enough gems
-global gGoldCount := 99 ;script will open this many golds when you have hoarded at least this many
+global gSCBuySilvers := 100 ;script will buy this many silvers when you have enough gems
+global gSCSilverCount := 99 ;script will open this many silvers when you have hoarded at least this many
+global gSCBuyGolds := 0 ;script will buy this many golds when you have enough gems
+global gSCGoldCount := 99 ;script will open this many golds when you have hoarded at least this many
 ;global gEventSilverID := 0 ;event silver chest ID, set to 0 to disable
 ;global gEventSilverCount := 99 ;script will open this many event silvers when you have hoarded at least this many
 ;global gEventGoldID := 0 ;event gold chest ID, set to 0 to disable
 ;global gEventGoldCount := 99 ;script will open this many event golds when you have hoarded at least this many
+;====================
+;end of user settings
+;====================
+
+;globals used to track chest opening and purchases
+global gSCGemsSpent := 0
+global gSCSilversPurchased := 0
+global gSCGoldsPurchased := 0
+global gSCSilversOpened := 0
+global gSCGoldsOpened := 0
+global gSCFirstRun := 1
+global gSCRedRubiesStart :=
+global gSCRedRubiesSpentStart :=
 
 ;global variables used for server calls
 global DummyData := "&language_id=1&timestamp=0&request_id=0&network_id=11&mobile_client_version=999"
@@ -22,12 +38,28 @@ global gSilversHoarded := ;variable to store amount of chests hoarded
 global gGoldsHoarded := ;variable to store amount of chests hoarded
 global gEventSilversHoarded := ;variable to store amount of chests hoarded
 global gEventGoldsHoarded := ;variable to store amount of chests hoarded
-global gServerGems := ;variable to store amount of gems server thinks you have
+global gRedRubies := ;variable to store amount of gems server thinks you have
+global gRedRubiesSpent := ;variable to store amount of gems server thinks you have spent
+
+	Gui, SCWindow:New
+	Gui, SCWindow:+Resize -MaximizeBox
+	Gui, SCWindow:Add, Text, x15 y30, Starting Gems: 
+	Gui, SCWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
+	Gui, SCWindow:Add, Text, x15 y+5, Starting Gems Spent: 
+	Gui, SCWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
+	Gui, SCWindow:Add, Text, x15 y+5, Silvers Opened: 
+	Gui, SCWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
+	Gui, SCWindow:Add, Text, x15 y+5, Golds Opened: 
+	Gui, SCWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
+	Gui, SCWindow:Add, Text, x15 y+5, Gems Spent Counted: 
+	Gui, SCWindow:Add, Text, vgSCGemsSpentID x+2 w200,
+	Gui, SCWindow:Add, Text, x15 y+5, Gems Spent Server: 
+	Gui, SCWindow:Add, Text, vGemsSpentID x+2 w200,
 
 ServerCall(callname, parameters) 
 {
 	URLtoCall := "http://ps6.idlechampions.com/~idledragons/post.php?call=" callname parameters
-	GuiControl, MyWindow:, advparamsID, % URLtoCall
+	GuiControl, SCWindow:, advparamsID, % URLtoCall
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	WR.SetTimeouts("10000", "10000", "10000", "10000")
 	Try {
@@ -46,20 +78,21 @@ GetUserDetails()
 	rawdetails := ServerCall("getuserdetails", getuserparams)
 	UserDetails := JSON.parse(rawdetails)
     InstanceID := UserDetails.details.instance_id
-    GuiControl, MyWindow:, InstanceIDID, % InstanceID
+    GuiControl, SCWindow:, InstanceIDID, % InstanceID
 	ActiveInstance := UserDetails.details.active_game_instance_id
-    GuiControl, MyWindow:, ActiveInstanceID, % ActiveInstance
+    GuiControl, SCWindow:, ActiveInstanceID, % ActiveInstance
 	for k, v in UserDetails.details.game_instances
 	{
 		if (v.game_instance_id == ActiveInstance) 
 		{
 			CurrentAdventure := v.current_adventure_id
-			GuiControl, MyWindow:, CurrentAdventureID, % CurrentAdventure
+			GuiControl, SCWindow:, CurrentAdventureID, % CurrentAdventure
 		}
 	}
 	gSilversHoarded := UserDetails.details.chests.1
 	gGoldsHoarded := UserDetails.details.chests.2
-	gServerGems := UserDetails.details.red_rubies
+	gRedRubies := UserDetails.details.red_rubies
+	gRedRubiesSpent := UserDetails.details.red_rubies_spent
 	rawdetails :=
 	UserDetails := 
 	return CurrentAdventure
@@ -98,32 +131,57 @@ OpenChests(chestID, chests)
 DoChests()
 {
 	GetUserDetails()
-	if (gSilverCount < gSilversHoarded)
+	if gSCFirstRun
 	{
-		OpenChests(1, gSilverCount)
+		gSCRedRubiesStart := gRedRubies
+		GuiControl, SCWindow:, gSCRedRubiesStartID, %gSCRedRubiesStart%
+		gSCRedRubiesSpentStart := gRedRubiesSpent
+		GuiControl, SCWindow:, gSCRedRubiesSpentStartID, %gSCRedRubiesSpentStart%
+		gSCFirstRun := 0
 	}
-	else if(gGoldCount < gGoldsHoarded)
+	if (gSCSilverCount < gSilversHoarded)
 	{
-		OpenChests(2, gGoldCount)
+		OpenChests(1, gSCSilverCount)
+		gSCSilversOpened := gSCSilversOpened + gSCSilverCount
+		GuiControl, SCWindow:, gSCSilversOpenedID, %gSCSilversOpened%
 	}
-	else if (gBuySilvers)
+	else if(gSCGoldCount < gGoldsHoarded)
 	{
-		i := gBuySilvers * 50
-		j := i - gMinGemCount
-		if (gServerGems > j)
+		OpenChests(2, gSCGoldCount)
+		gSCGoldsOpened := gSCGoldsOpened + gSCGoldCount
+		GuiControl, SCWindow:, gSCGoldsOpenedID, %gSCGoldsOpened%
+	}
+	else if (gSCBuySilvers)
+	{
+		i := gSCBuySilvers * 50
+		j := i - gSCMinGemCount
+		if (gRedRubies > j)
 		{
-			BuyChests(1, gBuySilvers)
+			BuyChests(1, gSCBuySilvers)
+			gSCGemsSpent := gSCGemsSpent + i
+			GuiControl, SCWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
-	else if (gBuyGolds)
+	else if (gSCBuyGolds)
 	{
-		i := gBuyGolds * 500
-		j := i - gMinGemCount
-		if (gServerGems > j)
+		i := gSCBuyGolds * 500
+		j := i - gSCMinGemCount
+		if (gRedRubies > j)
 		{
-			BuyChests(2, gBuyGolds)
+			BuyChests(2, gSCBuyGolds)
+			gSCGemsSpent := gSCGemsSpent + i
+			GuiControl, SCWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
-
+	var := gRedRubiesSpent - gSCRedRubiesSpentStart
+	GuiControl, SCWindow:, GemsSpentID, %var%
 	Return
+}
+
+
+
+BuildChestGUI()
+{
+
+	Gui, SCWindow:Show
 }
