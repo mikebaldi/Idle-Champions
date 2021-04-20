@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/17/21"
+global ScriptDate := "4/20/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -20,6 +20,25 @@ global ScriptSpeed := 25
 ;====================
 ;end of user settings
 ;====================
+
+;class and methods for parsing JSON (User details sent back from a server call)
+#include JSON.ahk
+
+;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
+#include classMemory.ahk
+
+;Check if you have installed the class correctly.
+if (_ClassMemory.__Class != "_ClassMemory")
+{
+	msgbox class memory not correctly installed. Or the (global class) variable "_ClassMemory" has been overwritten
+	ExitApp
+}
+
+;pointer addresses and offsets
+#include IC_MemoryFunctions.ahk
+
+;server call functions and variables
+#include IC_ServerCallFunctions.ahk
 
 ;Thanks ThePuppy for the ini code
 ;Champions to level with Fkeys
@@ -45,9 +64,6 @@ global gMinStackZone := MinStackZone
 ;Target Haste stacks
 IniRead, SBTargetStacks, UserSettings.ini, Section1, SBTargetStacks, 400
 global gSBTargetStacks := SBTargetStacks
-;SB stack max time
-IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 40000
-global gSBTimeMax := SBTimeMax
 ;Dash wait max time
 IniRead, DashSleepTime, UserSettings.ini, Section1, DashSleepTime, 60000
 global gDashSleepTime := DashSleepTime
@@ -88,25 +104,6 @@ global gShandieSlot :=
 ;variable for correctly tracking stats during a failed stack, to prevent fast/slow runs to be thrown off
 global gStackFail := 0
 
-;class and methods for parsing JSON (User details sent back from a server call)
-#include JSON.ahk
-
-;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
-#include classMemory.ahk
-
-;Check if you have installed the class correctly.
-if (_ClassMemory.__Class != "_ClassMemory")
-{
-	msgbox class memory not correctly installed. Or the (global class) variable "_ClassMemory" has been overwritten
-	ExitApp
-}
-
-;pointer addresses and offsets
-#include IC_MemoryFunctions.ahk
-
-;server call functions and variables
-#include IC_ServerCallFunctions.ahk
-
 ;globals for various timers
 global gSlowRunTime		:= 		
 global gFastRunTime		:= 100
@@ -125,8 +122,11 @@ global ResetCount		:= 0
 ;globals used for stat tracking
 global gGemStart		:=
 global gCoreXPStart		:=
+global gGemSpentStart	:=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
+
+global gTestReset := 1 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -314,8 +314,6 @@ Gui, MyWindow:Add, Text, x15 y+15, Memory Reads:
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+5, ReadCurrentZone: 
 Gui, MyWindow:Add, Text, vReadCurrentZoneID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadGems: 
-Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadQuestRemaining: 
 Gui, MyWindow:Add, Text, vReadQuestRemainingID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadTimeScaleMultiplier: 
@@ -326,8 +324,6 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadSBStacks:
 Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadHasteStacks: 
 Gui, MyWindow:Add, Text, vReadHasteStacksID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
-Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadResetting: 
 Gui, MyWindow:Add, Text, vReadResettingID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadUserID: 
@@ -350,6 +346,12 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
 Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreTargetArea:
 Gui, MyWindow:Add, Text, vReadCoreTargetAreaID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
+Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadGems: 
+Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent: 
+Gui, MyWindow:Add, Text, vReadGemsSpentID x+2 w200,
 
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
@@ -546,7 +548,7 @@ CheckForFailedConv()
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := gStackCountSB + gStackCountH
-    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks)
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gTestReset)
     {
         EndAdventure()
 		;If this sleep is too low it can cancel the reset before it completes. In this case that could be good as it will convert SB to Haste and not end the adventure.
@@ -561,6 +563,10 @@ CheckForFailedConv()
 		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
         return
     }
+	if (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND !gTestReset)
+	{
+		TestResetFunction()
+	}
 	return
 }
 
@@ -846,6 +852,15 @@ CheckSetUp()
 		MsgBox, Please load into a valid adventure and restart. Ending Gem Farm.
 		return, 1
 	}
+	loop, 6
+	{
+		slot := A_Index - 1
+		if (ReadClickFamiliarBySlot(1,, slot))
+		{
+			MsgBox, Found familiar on field in "W" Formation. Ending Gem Farm.
+			Return, 1
+		}
+	}
 	return, 0
 }
 
@@ -916,7 +931,7 @@ StackNormal()
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := gStackCountSB + gStackCountH
-	while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
+	while (stacks < gSBTargetStacks AND ElapsedTime < 60000)
 	{
 		directedinput("w")
         if (ReadCurrentZone(1) <= gAreaLow) 
@@ -970,9 +985,8 @@ UpdateStartLoopStats(gLevel_Number)
 	{
 		gStartTime := A_TickCount
 		gCoreXPStart := ReadCoreXP(1)
-		GuiControl, MyWindow:, gCoreXPStartID, % gCoreXPStart
 		gGemStart := ReadGems(1)
-		GuiControl, MyWindow:, gGemStartID, % gGemStart
+		gGemSpentStart := ReadGemsSpent(1)
 	}
 	if (gTotal_RunCount)
 	{
@@ -1001,7 +1015,7 @@ UpdateStartLoopStats(gLevel_Number)
 		gbossesPhr := Round(TotalBosses / dtTotalTime, 2)
 		GuiControl, MyWindow:, gbossesPhrID, % gbossesPhr
 		GuiControl, MyWindow:, gTotal_RunCountID, % gTotal_RunCount
-		GemsTotal := ReadGems(1) - gGemStart
+		GemsTotal := (ReadGems(1) - gGemStart) + (ReadGemsSpent(1) - gGemSpentStart)
 		GuiControl, MyWindow:, GemsTotalID, % GemsTotal
 		GemsPhr := Round(GemsTotal / dtTotalTime, 2)
 		GuiControl, MyWindow:, GemsPhrID, % GemsPhr
@@ -1042,6 +1056,8 @@ GemFarm()
 	var := CheckSetUp()
 	if var
 	Return
+	if gDoChests
+	BuildChestGUI()
 	gPrevLevelTime := A_TickCount
 
 	loop 
@@ -1094,8 +1110,7 @@ GemFarm()
 				StackFarm()
 			}
 			stacks := ReadSBStacks(1) + ReadHasteStacks(1)
-			var := 1
-            if (stacks > gSBTargetStacks AND var)
+			if (stacks > gSBTargetStacks AND gTestReset)
             {
                 EndAdventure()
 				sleep 2000
@@ -1112,6 +1127,10 @@ GemFarm()
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
+			if (stacks > gSBTargetStacks AND !gTestReset)
+			{
+				TestResetFunction()
+			}
         }
 		
 		StuffToSpam(1, gLevel_Number)
@@ -1219,4 +1238,9 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 	DirectedInput(var)
 	Return
+}
+
+TestResetFunction()
+{
+	;placeholder
 }
