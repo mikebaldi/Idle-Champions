@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/20/21"
+global ScriptDate := "4/24/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -14,7 +14,7 @@ global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Cham
 global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
 
 ;variables for opening chests during stack restart
-global gDoChests := 0 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
+global gDoChests := 1 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
 
 global ScriptSpeed := 25
 ;====================
@@ -36,9 +36,6 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 ;pointer addresses and offsets
 #include IC_MemoryFunctions.ahk
-
-;server call functions and variables
-#include IC_ServerCallFunctions.ahk
 
 ;Thanks ThePuppy for the ini code
 ;Champions to level with Fkeys
@@ -97,6 +94,12 @@ global gRestartStackTime := RestartStackTime
 ;Intall location
 IniRead, GameInstallPath, Usersettings.ini, Section1, GameInstallPath, C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe
 global gInstallPath := GameInstallPath
+;Modron Reset Check
+IniRead, ModronResetCheckEnabled, UserSettings.ini, Section1, ModronResetCheckEnabled
+global gModronResetCheckEnabled := ModronResetCheckEnabled
+;Normal SB farm max time
+IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 60000
+global gSBTimeMax := SBTimeMax
 
 ;Shandie's seat 
 global gShandieSlot := 
@@ -126,14 +129,13 @@ global gGemSpentStart	:=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
 
-global gTestReset := 1 ;variable to test a reset function not ready for release
+global gTestReset := 0 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
 Gui, MyWindow:Add, Button, x415 y25 w60 gSave_Clicked, Save
 Gui, MyWindow:Add, Button, x415 y+50 w60 gRun_Clicked, `Run
 Gui, MyWindow:Add, Button, x415 y+100 w60 gReload_Clicked, `Reload
-;Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Stats|Debug|
 Gui, MyWindow:Add, Tab3, x5 y5 w400, Read First|Settings|Help|Stats|Debug|
 
 Gui, Tab, Read First
@@ -156,11 +158,8 @@ Gui, MyWindow:Add, Text, x15 y+2, 1. Use the pause hotkey, ``, to adjust setting
 Gui, MyWindow:Add, Text, x15 y+2, 2. Don't forget to unpause after saving your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 3. First run is ignored for stats, in case it is a partial run.
 Gui, MyWindow:Add, Text, x15 y+2, 4. Settings save to and load from UserSettings.ini file.
-Gui, MyWindow:Add, Text, x15 y+2, 5. Recommended SB stack level is:
-Gui, MyWindow:Add, Text, x15 y+2 w10,
-Gui, MyWindow:Add, Text, x+2, Modron Reset Level - [2 * (Briv Skip Amount + 1)]
-Gui, MyWindow:Add, Text, x15 y+2 w10,
-Gui, MyWindow:Add, Text, x+2, Then adjust to avoid stacking on boss zones.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 5.
+Gui, MyWIndow:Add, Text, x+2 w370, Recommended SB stack level is [Modron Reset Zone] - X, with X = 4 for single skip, X = 6 for double skip, X = 8 for triple skip, and X = 10 for quadruple skip.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 6.
 Gui, MyWindow:Add, Text, x+2 w370, Script will activate and focus the game window for manual resets as part of failed stacking.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 7.
@@ -200,8 +199,8 @@ Gui, MyWindow:Add, Edit, vNewgMinStackZone x15 y+10 w50, % gMinStackZone
 Gui, MyWindow:Add, Text, x+5, Minimum zone Briv can farm SB stacks on
 Gui, MyWindow:Add, Edit, vNewSBTargetStacks x15 y+10 w50, % gSBTargetStacks
 Gui, MyWindow:Add, Text, x+5, Target Haste stacks for next run
-;Gui, MyWindow:Add, Edit, vNewgSBTimeMax x15 y+10 w50, % gSBTimeMax
-;Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will spend farming SB stacks
+Gui, MyWindow:Add, Edit, vNewgSBTimeMax x15 y+10 w50, % gSBTimeMax
+Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will spend farming SB stacks
 Gui, MyWindow:Add, Edit, vNewDashSleepTime x15 y+10 w50, % gDashSleepTime
 Gui, MyWindow:Add, Text, x+5, Maximum time (ms) script will wait for Dash (0 disables)
 Gui, MyWindow:Add, Edit, vNewHewUlt x15 y+10 w50, % gHewUlt
@@ -216,6 +215,7 @@ Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap 
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
+Gui, MyWindow:Add, Checkbox, vgModronResetCheckEnabled Checked%gModronResetCheckEnabled% x15 y+5, Have script check for Modron reset level
 Gui, MyWindow:Add, Button, x15 y+20 gChangeInstallLocation_Clicked, Change Install Path
 
 Gui, Tab, Help
@@ -234,6 +234,8 @@ Gui, MyWindow:Add, Text, x15 y+5, Minimum zone Briv can farm SB stacks on:
 Gui, MyWindow:Add, Text, vgMinStackZoneID x+2 w200, % gMinStackZone 
 Gui, MyWindow:Add, Text, x15 y+5, Target Haste stacks for next run: 
 Gui, MyWindow:Add, Text, vgSBTargetStacksID x+2 w200, % gSBTargetStacks
+Gui, MyWindow:Add, Text, x15 y+5, Max time script will farm SB Stacks normally: 
+Gui, MyWindow:Add, Text, vgSBTimeMaxID x+2 w200, % gSBTimeMax
 Gui, MyWindow:Add, Text, x15 y+5, Maximum time (ms) script will wait for Dash: 
 Gui, MyWindow:Add, Text, vDashSleepTimeID x+2 w200, % gDashSleepTime
 Gui, MyWindow:Add, Text, x15 y+5, Hew's ultimate key: 
@@ -254,6 +256,8 @@ Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Br
 Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
 Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stack conversion:
 Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
+Gui, MyWindow:Add, Text, x15 y+5, Enable script to check for Modron reset level:
+Gui, MyWindow:Add, Text, vgModronResetCheckenabledID x+2 w200, % gModronResetCheckEnabled
 Gui, MyWindow:Add, Text, x15 y+5, Install Path:
 Gui, MyWindow:Add, Text, vgInstallPathID x15 y+2 w350 r5, %gInstallPath%
 Gui, MyWindow:Add, Text, x15 y+15 w375 r5, Still having trouble? Take note of the information on the debug tab and ask for help in the scripting channel on the official discord.
@@ -297,14 +301,38 @@ Gui, MyWindow:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
 Gui, MyWINdow:Add, Text, x15 y+2, Gems per hour:
 Gui, MyWindow:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
 Gui, MyWindow:Font, cDefault w400
+Gui, MyWindow:Font, w700
+Gui, MyWindow:Add, Text, x15 y+10, `Loop: 
+Gui, MyWindow:Add, Text, vgLoopID x+2 w200, Not Started
+Gui, MyWindow:Font, w400
+Gui, MyWindow:Font, w700
+Gui, MyWindow:Add, Text, vFamiliarFoundID x15 y+10 w300,
+Gui, MyWindow:Font, w400
+if (gDoChests)
+{
+	Gui, MyWindow:Font, w700
+	Gui, MyWindow:Add, Text, x15 y+10 w300, Chest Data:
+	Gui, MyWindow:Font, w400
+	Gui, MyWindow:Add, Text, x15 y+5, Starting Gems: 
+	Gui, MyWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Starting Gems Spent: 
+	Gui, MyWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Silvers Opened: 
+	Gui, MyWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Golds Opened: 
+	Gui, MyWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted: 
+	Gui, MyWindow:Add, Text, vgSCGemsSpentID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Server: 
+	Gui, MyWindow:Add, Text, vGemsSpentID x+2 w200,
+}
+
 
 Gui, Tab, Debug
 Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y33, `Loop: 
-Gui, MyWindow:Add, Text, vgLoopID x+2 w200, Not Started
-Gui, MyWindow:Add, Text, x15 y+15, Timers:
+Gui, MyWindow:Add, Text, x15 y35, Timers:
 Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+2, ElapsedTime:
+Gui, MyWindow:Add, Text, x15 y+10, ElapsedTime:
 Gui, MyWindow:Add, Text, vElapsedTimeID x+2 w200, % ElapsedTime
 Gui, MyWindow:Add, Text, x15 y+2, dtCurrentLevelTime:
 Gui, MyWindow:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
@@ -352,6 +380,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadGems:
 Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent: 
 Gui, MyWindow:Add, Text, vReadGemsSpentID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadClickFamiliarBySlot: 
+Gui, MyWindow:Add, Text, vReadClickFamiliarBySlotID x+2 w200,
 
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
@@ -365,6 +395,8 @@ Gui, MyWindow:Add, Text, vInstanceIDID x+2 w300, % InstanceID
 Gui, MyWindow:Add, Text, x15 y+5, ActiveInstance:
 Gui, MyWindow:Add, Text, vActiveInstanceID x+2 w300, % ActiveInstance
 
+;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
+#include IC_ServerCallFunctions.ahk
 
 Gui, MyWindow:Show
 
@@ -427,6 +459,7 @@ Save_Clicked:
 	GuiControl, MyWindow:, gSBTargetStacksID, % gSBTargetStacks
 	IniWrite, %gSBTargetStacks%, UserSettings.ini, Section1, SBTargetStacks
 	gSBTimeMax := NewgSBTimeMax
+	GuiControl, MyWindow:, gSBTimeMaxID, %gSBTimeMax%
 	IniWrite, %gSBTimeMax%, Usersettings.ini, Section1, SBTimeMax
 	gDashSleepTime := NewDashSleepTime
 	GuiControl, MyWindow:, DashSleepTimeID, % gDashSleepTime
@@ -455,6 +488,8 @@ Save_Clicked:
 	gRestartStackTime := NewRestartStackTime
 	GuiControl, MyWindow:, gRestartStackTimeID, % gRestartStackTime
 	IniWrite, %gRestartStackTime%, UserSettings.ini, Section1, RestartStackTime
+	GuiControl, MyWindow:, gModronResetCheckEnabledID, % gModronResetCheckEnabled
+	IniWrite, %gModronResetCheckEnabled%, UserSettings.ini, Section1, ModronResetCheckEnabled
 	return
 }
 
@@ -778,20 +813,27 @@ CheckSetUp()
 	;find core target reset area so script does not try and Briv stack before a modron reset happens.
 	gCoreTargetArea := ReadCoreTargetArea(1)
 	;confirm target area has been read
-	While (!gCoreTargetArea)
+	if (!gModronResetCheckEnabled)
 	{
-		MsgBox, 2,, Script cannot find Modron Reset Area.
-		IfMsgBox, Abort
+		gCoreTargetArea := 999
+	}
+	Else
+	{
+		While (!gCoreTargetArea)
 		{
-			Return, 1
-		}
-		IfMsgBox, Retry
-		{
-			gCoreTargetArea := ReadCoreTargetArea(1)
-		}
-		IfMsgBox, ignore
-		{
-			gCoreTargetArea := 999
+			MsgBox, 2,, Script cannot find Modron Reset Area.
+			IfMsgBox, Abort
+			{
+				Return, 1
+			}
+			IfMsgBox, Retry
+			{
+				gCoreTargetArea := ReadCoreTargetArea(1)
+			}
+			IfMsgBox, ignore
+			{
+				gCoreTargetArea := 999
+			}
 		}
 	}
 	;will need to add more here eventually
@@ -855,11 +897,26 @@ CheckSetUp()
 	loop, 6
 	{
 		slot := A_Index - 1
-		if (ReadClickFamiliarBySlot(1,, slot))
+		if (ReadClickFamiliarBySlot(1,, slot) = 1)
 		{
-			MsgBox, Found familiar on field in "W" Formation. Ending Gem Farm.
-			Return, 1
+			GuiControl, MyWindow:, FamiliarFoundID, WARNING: A familiar may be saved in "W" formation slot %slot%.
 		}
+		;while (ReadClickFamiliarBySlot(1,, slot) = 1)
+		;{
+			;MsgBox, 2,, Found familiar on field slot %slot% in "W" Formation.
+			;IfMsgBox, Abort
+			;{
+			;	Return, 1
+			;}
+			;IfMsgBox, Retry
+			;{
+			;	(ReadClickFamiliarBySlot(1,, slot)
+			;}
+			;IfMsgBox, ignore
+			;{
+			;	Break
+			;}
+		;}
 	}
 	return, 0
 }
@@ -931,7 +988,7 @@ StackNormal()
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := gStackCountSB + gStackCountH
-	while (stacks < gSBTargetStacks AND ElapsedTime < 60000)
+	while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
 		directedinput("w")
         if (ReadCurrentZone(1) <= gAreaLow) 
@@ -1242,5 +1299,7 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 TestResetFunction()
 {
-	;placeholder
+	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+	arrayPointerOffsetsModronTA := [0x8, 0x40, 0x1C, 0x30]
+	idle.write(Controller, 5, "Int", arrayPointerOffsetsModronTA*)
 }
