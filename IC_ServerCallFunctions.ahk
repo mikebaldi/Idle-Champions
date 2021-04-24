@@ -1,4 +1,4 @@
-;date of script: 4/20/21
+;date of script: 4/24/21
 ;========================================
 ;User settings not accessible via the GUI
 ;========================================
@@ -41,25 +41,10 @@ global gEventGoldsHoarded := ;variable to store amount of chests hoarded
 global gRedRubies := ;variable to store amount of gems server thinks you have
 global gRedRubiesSpent := ;variable to store amount of gems server thinks you have spent
 
-	Gui, SCWindow:New
-	Gui, SCWindow:+Resize -MaximizeBox
-	Gui, SCWindow:Add, Text, x15 y30, Starting Gems: 
-	Gui, SCWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
-	Gui, SCWindow:Add, Text, x15 y+5, Starting Gems Spent: 
-	Gui, SCWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
-	Gui, SCWindow:Add, Text, x15 y+5, Silvers Opened: 
-	Gui, SCWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
-	Gui, SCWindow:Add, Text, x15 y+5, Golds Opened: 
-	Gui, SCWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
-	Gui, SCWindow:Add, Text, x15 y+5, Gems Spent Counted: 
-	Gui, SCWindow:Add, Text, vgSCGemsSpentID x+2 w200,
-	Gui, SCWindow:Add, Text, x15 y+5, Gems Spent Server: 
-	Gui, SCWindow:Add, Text, vGemsSpentID x+2 w200,
-
 ServerCall(callname, parameters) 
 {
 	URLtoCall := "http://ps6.idlechampions.com/~idledragons/post.php?call=" callname parameters
-	GuiControl, SCWindow:, advparamsID, % URLtoCall
+	GuiControl, MyWindow:, advparamsID, % URLtoCall
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	WR.SetTimeouts("10000", "10000", "10000", "10000")
 	Try {
@@ -78,15 +63,15 @@ GetUserDetails()
 	rawdetails := ServerCall("getuserdetails", getuserparams)
 	UserDetails := JSON.parse(rawdetails)
     InstanceID := UserDetails.details.instance_id
-    GuiControl, SCWindow:, InstanceIDID, % InstanceID
+    GuiControl, MyWindow:, InstanceIDID, % InstanceID
 	ActiveInstance := UserDetails.details.active_game_instance_id
-    GuiControl, SCWindow:, ActiveInstanceID, % ActiveInstance
+    GuiControl, MyWindow:, ActiveInstanceID, % ActiveInstance
 	for k, v in UserDetails.details.game_instances
 	{
 		if (v.game_instance_id == ActiveInstance) 
 		{
 			CurrentAdventure := v.current_adventure_id
-			GuiControl, SCWindow:, CurrentAdventureID, % CurrentAdventure
+			GuiControl, MyWindow:, CurrentAdventureID, % CurrentAdventure
 		}
 	}
 	gSilversHoarded := UserDetails.details.chests.1
@@ -134,22 +119,22 @@ DoChests()
 	if gSCFirstRun
 	{
 		gSCRedRubiesStart := gRedRubies
-		GuiControl, SCWindow:, gSCRedRubiesStartID, %gSCRedRubiesStart%
+		GuiControl, MyWindow:, gSCRedRubiesStartID, %gSCRedRubiesStart%
 		gSCRedRubiesSpentStart := gRedRubiesSpent
-		GuiControl, SCWindow:, gSCRedRubiesSpentStartID, %gSCRedRubiesSpentStart%
+		GuiControl, MyWindow:, gSCRedRubiesSpentStartID, %gSCRedRubiesSpentStart%
 		gSCFirstRun := 0
 	}
 	if (gSCSilverCount < gSilversHoarded)
 	{
 		OpenChests(1, gSCSilverCount)
 		gSCSilversOpened := gSCSilversOpened + gSCSilverCount
-		GuiControl, SCWindow:, gSCSilversOpenedID, %gSCSilversOpened%
+		GuiControl, MyWindow:, gSCSilversOpenedID, %gSCSilversOpened%
 	}
 	else if(gSCGoldCount < gGoldsHoarded)
 	{
 		OpenChests(2, gSCGoldCount)
 		gSCGoldsOpened := gSCGoldsOpened + gSCGoldCount
-		GuiControl, SCWindow:, gSCGoldsOpenedID, %gSCGoldsOpened%
+		GuiControl, MyWindow:, gSCGoldsOpenedID, %gSCGoldsOpened%
 	}
 	else if (gSCBuySilvers)
 	{
@@ -159,7 +144,7 @@ DoChests()
 		{
 			BuyChests(1, gSCBuySilvers)
 			gSCGemsSpent := gSCGemsSpent + i
-			GuiControl, SCWindow:, gSCGemsSpentID, %gSCGemsSpent%
+			GuiControl, MyWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
 	else if (gSCBuyGolds)
@@ -170,11 +155,11 @@ DoChests()
 		{
 			BuyChests(2, gSCBuyGolds)
 			gSCGemsSpent := gSCGemsSpent + i
-			GuiControl, SCWindow:, gSCGemsSpentID, %gSCGemsSpent%
+			GuiControl, MyWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
 	var := gRedRubiesSpent - gSCRedRubiesSpentStart
-	GuiControl, SCWindow:, GemsSpentID, %var%
+	GuiControl, MyWindow:, GemsSpentID, %var%
 	Return
 }
 
@@ -183,5 +168,5 @@ DoChests()
 BuildChestGUI()
 {
 
-	Gui, SCWindow:Show
+	Gui, MyWindow:Show
 }
