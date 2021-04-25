@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/24/21"
+global ScriptDate := "4/25/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -1299,7 +1299,5 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 TestResetFunction()
 {
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-	arrayPointerOffsetsModronTA := [0x8, 0x40, 0x1C, 0x30]
-	idle.write(Controller, 5, "Int", arrayPointerOffsetsModronTA*)
+	;test
 }
