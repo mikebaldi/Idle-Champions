@@ -1,14 +1,14 @@
-;date of script: 4/24/21
+;date of script: 4/25/21
 ;========================================
 ;User settings not accessible via the GUI
 ;========================================
 ;globals for buying and opening chests when offline during restart stacking
 global gSCMinGemCount := 0 ;script will only buy chests when you have more than this many gems
 ;script will only ever buy one type of chest, which ever it can afford first
-global gSCBuySilvers := 100 ;script will buy this many silvers when you have enough gems
-global gSCSilverCount := 99 ;script will open this many silvers when you have hoarded at least this many
-global gSCBuyGolds := 0 ;script will buy this many golds when you have enough gems
-global gSCGoldCount := 99 ;script will open this many golds when you have hoarded at least this many
+global gSCBuySilvers := 100 ;script will buy this many silvers when you have enough gems. 100 max
+global gSCSilverCount := 99 ;script will open this many silvers when you have hoarded at least this many. 99 max
+global gSCBuyGolds := 0 ;script will buy this many golds when you have enough gems. 100 max
+global gSCGoldCount := 99 ;script will open this many golds when you have hoarded at least this many. 99 max
 ;global gEventSilverID := 0 ;event silver chest ID, set to 0 to disable
 ;global gEventSilverCount := 99 ;script will open this many event silvers when you have hoarded at least this many
 ;global gEventGoldID := 0 ;event gold chest ID, set to 0 to disable
@@ -139,7 +139,7 @@ DoChests()
 	else if (gSCBuySilvers)
 	{
 		i := gSCBuySilvers * 50
-		j := i - gSCMinGemCount
+		j := i + gSCMinGemCount
 		if (gRedRubies > j)
 		{
 			BuyChests(1, gSCBuySilvers)
@@ -150,7 +150,7 @@ DoChests()
 	else if (gSCBuyGolds)
 	{
 		i := gSCBuyGolds * 500
-		j := i - gSCMinGemCount
+		j := i + gSCMinGemCount
 		if (gRedRubies > j)
 		{
 			BuyChests(2, gSCBuyGolds)
