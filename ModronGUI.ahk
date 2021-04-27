@@ -14,7 +14,7 @@ global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Cham
 global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
 
 ;variables for opening chests during stack restart
-global gDoChests := 1 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
+global gDoChests := 0 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
 
 global ScriptSpeed := 25
 ;====================
