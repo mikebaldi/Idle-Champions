@@ -129,7 +129,7 @@ global gGemSpentStart	:=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
 
-global gTestReset := 0 ;variable to test a reset function not ready for release
+global gTestReset := 1 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
