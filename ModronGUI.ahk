@@ -934,6 +934,20 @@ FindChamp(ChampID := 1)
     Return, 0
 }
 
+GetNumStacksFarmed()
+{
+    if (gRestartStackTime) {
+        return ReadSBStacks(1) + ReadHasteStacks(1)
+    } else {
+        ; If restart stacking is disabled, we'll stack to basically the exact
+        ; threshold.  That means that doing a single jump would cause you to
+        ; lose stacks to fall below the threshold, which would mean StackNormal
+        ; would happen after every jump.
+        ; Thus, we use a static 47 instead of using the actual haste stacks
+        ; with the assumption that we'll be at minimum stacks after a reset.
+        return ReadSBStacks(1) + 47
+    }
+}
 
 
 StackRestart()
@@ -987,7 +1001,7 @@ StackNormal()
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-	stacks := gStackCountSB + gStackCountH
+	stacks := GetNumStacksFarmed()
 	while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
 		directedinput("w")
@@ -1000,7 +1014,7 @@ StackNormal()
 		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 		gStackCountSB := ReadSBStacks(1)
 		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-		stacks := gStackCountSB + gStackCountH
+		stacks := GetNumStacksFarmed()
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -1029,7 +1043,7 @@ StackFarm()
 	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 	gStackCountSB := ReadSBStacks(1)
 	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-	stacks := gStackCountSB + gStackCountH
+	stacks := GetNumStacksFarmed()
 	if (stacks < gSBTargetStacks)
 	StackNormal()
 	gPrevLevelTime := A_TickCount
@@ -1152,7 +1166,7 @@ GemFarm()
 		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
 		gStackCountSB := ReadSBStacks(1)
 		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-		stacks := gStackCountSB + gStackCountH
+		stacks := GetNumStacksFarmed()
 
 		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow AND gLevel_Number < gCoreTargetArea)
 		;if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
