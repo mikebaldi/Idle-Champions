@@ -101,19 +101,19 @@ global gModronResetCheckEnabled := ModronResetCheckEnabled
 IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 60000
 global gSBTimeMax := SBTimeMax
 
-;Shandie's seat 
+;Shandie's seat
 global gShandieSlot := 
 
 ;variable for correctly tracking stats during a failed stack, to prevent fast/slow runs to be thrown off
 global gStackFail := 0
 
 ;globals for various timers
-global gSlowRunTime        :=         
+global gSlowRunTime        := 
 global gFastRunTime        := 100
 global gRunStartTime     :=
 global gTotal_RunCount    := 0
 global gStartTime         := 
-global gPrevLevelTime    :=    
+global gPrevLevelTime    := 
 global gPrevRestart     :=
 global gprevLevel         :=
 global dtCurrentLevelTime :=
@@ -174,7 +174,7 @@ Gui, MyWIndow:Add, Text, x15 y+2 w10, 11.
 Gui, MyWIndow:Add, Text, x+2 w370, Recommended Briv swap `sleep time is betweeb 1500 - 3000. If you are seeing Briv's landing animation then increase the the swap sleep time. If Briv is not back in the formation before monsters can be killed then decrease the swap sleep time.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
-Gui, MyWindow:Add, Text, x15 y+2 w10, 2. 
+Gui, MyWindow:Add, Text, x15 y+2 w10, 2.
 Gui, MyWindow:Add, Text, x+2 w370, Using Hew's ult throughout a run with Briv swapping can result in Havi's ult being triggered instead. Consider removing Havi from formation save slot 3, in game `hotkey "E".
 
 Gui, Tab, Settings
@@ -220,25 +220,25 @@ Gui, MyWindow:Add, Button, x15 y+20 gChangeInstallLocation_Clicked, Change Insta
 
 Gui, Tab, Help
 ;Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y30, Confirm your settings are saved. 
+Gui, MyWindow:Add, Text, x15 y30, Confirm your settings are saved.
 Gui, MyWindow:Add, Text, x15 y+2, 1 = true, yes, or enabled
 Gui, MyWindow:Add, Text, x15 y+2, 0 = false, no, or disabled
 ;Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+15, Fkeys used for leveling: 
+Gui, MyWindow:Add, Text, x15 y+15, Fkeys used for leveling:
 Gui, MyWindow:Add, Text, vgFKeysID x+2 w300, % gFKeys
-Gui, MyWindow:Add, Text, x15 y+5, Use Fkey leveling while below this zone: 
+Gui, MyWindow:Add, Text, x15 y+5, Use Fkey leveling while below this zone:
 Gui, MyWindow:Add, Text, vgContinuedLevelingID x+2 w200, % gContinuedLeveling
-Gui, MyWindow:Add, Text, x15 y+5, Farm SB stacks AFTER this zone: 
+Gui, MyWindow:Add, Text, x15 y+5, Farm SB stacks AFTER this zone:
 Gui, MyWindow:Add, Text, vgAreaLowID x+2 w200, % gAreaLow
-Gui, MyWindow:Add, Text, x15 y+5, Minimum zone Briv can farm SB stacks on: 
-Gui, MyWindow:Add, Text, vgMinStackZoneID x+2 w200, % gMinStackZone 
-Gui, MyWindow:Add, Text, x15 y+5, Target Haste stacks for next run: 
+Gui, MyWindow:Add, Text, x15 y+5, Minimum zone Briv can farm SB stacks on:
+Gui, MyWindow:Add, Text, vgMinStackZoneID x+2 w200, % gMinStackZone
+Gui, MyWindow:Add, Text, x15 y+5, Target Haste stacks for next run:
 Gui, MyWindow:Add, Text, vgSBTargetStacksID x+2 w200, % gSBTargetStacks
-Gui, MyWindow:Add, Text, x15 y+5, Max time script will farm SB Stacks normally: 
+Gui, MyWindow:Add, Text, x15 y+5, Max time script will farm SB Stacks normally:
 Gui, MyWindow:Add, Text, vgSBTimeMaxID x+2 w200, % gSBTimeMax
-Gui, MyWindow:Add, Text, x15 y+5, Maximum time (ms) script will wait for Dash: 
+Gui, MyWindow:Add, Text, x15 y+5, Maximum time (ms) script will wait for Dash:
 Gui, MyWindow:Add, Text, vDashSleepTimeID x+2 w200, % gDashSleepTime
-Gui, MyWindow:Add, Text, x15 y+5, Hew's ultimate key: 
+Gui, MyWindow:Add, Text, x15 y+5, Hew's ultimate key:
 Gui, MyWindow:Add, Text, vgHewUltID x+2 w200, % gHewUlt
 Gui, MyWindow:Add, Text, x15 y+5, Time (ms) client remains closed for Briv Restart Stack:
 Gui, MyWindow:Add, Text, vgRestartStackTimeID x+2 w200, % gRestartStackTime
@@ -267,7 +267,7 @@ Gui, Tab, Stats
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y33, Stats updated continuously (mostly):
 Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, SB Stack `Count: 
+Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, SB Stack `Count:
 Gui, MyWindow:Add, Text, vgStackCountSBID x+2 w50, % gStackCountSB
 ;Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Haste Stack `Count:
@@ -285,11 +285,11 @@ Gui, MyWindow:Add, Text, vgTotal_RunCountID x+2 w50, % gTotal_RunCount
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Previous `Run `Time:
 Gui, MyWindow:Add, Text, vgPrevRunTimeID x+2 w50, % gPrevRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fastest `Run `Time:
-Gui, MyWindow:Add, Text, vgFastRunTimeID x+2 w50, 
+Gui, MyWindow:Add, Text, vgFastRunTimeID x+2 w50,
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Slowest `Run `Time:
 Gui, MyWindow:Add, Text, vgSlowRunTimeID x+2 w50, % gSlowRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail `Run `Time:
-Gui, MyWindow:Add, Text, vgFailRunTimeID x+2 w50, % gFailRunTime    
+Gui, MyWindow:Add, Text, vgFailRunTimeID x+2 w50, % gFailRunTime
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Avg. `Run `Time:
 Gui, MyWindow:Add, Text, vgAvgRunTimeID x+2 w50, % gAvgRunTime
 Gui, MyWindow:Font, cBlue w700
@@ -302,7 +302,7 @@ Gui, MyWINdow:Add, Text, x15 y+2, Gems per hour:
 Gui, MyWindow:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
 Gui, MyWindow:Font, cDefault w400
 Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y+10, `Loop: 
+Gui, MyWindow:Add, Text, x15 y+10, `Loop:
 Gui, MyWindow:Add, Text, vgLoopID x+2 w200, Not Started
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Font, w700
@@ -313,17 +313,17 @@ if (gDoChests)
     Gui, MyWindow:Font, w700
     Gui, MyWindow:Add, Text, x15 y+10 w300, Chest Data:
     Gui, MyWindow:Font, w400
-    Gui, MyWindow:Add, Text, x15 y+5, Starting Gems: 
+    Gui, MyWindow:Add, Text, x15 y+5, Starting Gems:
     Gui, MyWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
-    Gui, MyWindow:Add, Text, x15 y+5, Starting Gems Spent: 
+    Gui, MyWindow:Add, Text, x15 y+5, Starting Gems Spent:
     Gui, MyWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
-    Gui, MyWindow:Add, Text, x15 y+5, Silvers Opened: 
+    Gui, MyWindow:Add, Text, x15 y+5, Silvers Opened:
     Gui, MyWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
-    Gui, MyWindow:Add, Text, x15 y+5, Golds Opened: 
+    Gui, MyWindow:Add, Text, x15 y+5, Golds Opened:
     Gui, MyWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
-    Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted: 
+    Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted:
     Gui, MyWindow:Add, Text, vgSCGemsSpentID x+2 w200,
-    Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Server: 
+    Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Server:
     Gui, MyWindow:Add, Text, vGemsSpentID x+2 w200,
 }
 
@@ -338,31 +338,31 @@ Gui, MyWindow:Add, Text, x15 y+2, dtCurrentLevelTime:
 Gui, MyWindow:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
 
 Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y+15, Memory Reads: 
+Gui, MyWindow:Add, Text, x15 y+15, Memory Reads:
 Gui, MyWindow:Font, w400
-Gui, MyWindow:Add, Text, x15 y+5, ReadCurrentZone: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadCurrentZone:
 Gui, MyWindow:Add, Text, vReadCurrentZoneID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadQuestRemaining: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadQuestRemaining:
 Gui, MyWindow:Add, Text, vReadQuestRemainingID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadTimeScaleMultiplier: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadTimeScaleMultiplier:
 Gui, MyWindow:Add, Text, vReadTimeScaleMultiplierID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadTransitioning: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadTransitioning:
 Gui, MyWindow:Add, Text, vReadTransitioningID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadSBStacks: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadSBStacks:
 Gui, MyWindow:Add, Text, vReadSBStacksID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadHasteStacks: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadHasteStacks:
 Gui, MyWindow:Add, Text, vReadHasteStacksID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadResetting: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadResetting:
 Gui, MyWindow:Add, Text, vReadResettingID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadUserID: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadUserID:
 Gui, MyWindow:Add, Text, vReadUserIDID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadUserHash: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadUserHash:
 Gui, MyWindow:Add, Text, vReadUserHashID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadScreenWidth: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadScreenWidth:
 Gui, MyWindow:Add, Text, vReadScreenWidthID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadScreenHeight: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadScreenHeight:
 Gui, MyWindow:Add, Text, vReadScreenHeightID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlBySlot: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlBySlot:
 Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadMonstersSpawned:
 Gui, MyWindow:Add, Text, vReadMonstersSpawnedID x+2 w200,
@@ -374,17 +374,17 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
 Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreTargetArea:
 Gui, MyWindow:Add, Text, vReadCoreTargetAreaID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP:
 Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadGems: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadGems:
 Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent:
 Gui, MyWindow:Add, Text, vReadGemsSpentID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadClickFamiliarBySlot: 
+Gui, MyWindow:Add, Text, x15 y+5, ReadClickFamiliarBySlot:
 Gui, MyWindow:Add, Text, vReadClickFamiliarBySlotID x+2 w200,
 
 Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
+Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables:
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+5, advtoload:
 Gui, MyWindow:Add, Text, vadvtoloadID x+2 w300, % advtoload
@@ -507,7 +507,7 @@ Run_Clicked:
     return
 }
 
-MyWindowGuiClose() 
+MyWindowGuiClose()
 {
     MsgBox 4,, Are you sure you want to `exit?
     IfMsgBox Yes
@@ -521,16 +521,16 @@ Pause
 gPrevLevelTime := A_TickCount
 return
 
-SafetyCheck() 
+SafetyCheck()
 {
-    While (Not WinExist("ahk_exe IdleDragons.exe")) 
+    While (Not WinExist("ahk_exe IdleDragons.exe"))
     {
         Run, %gInstallPath%
         ;Run, "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
         StartTime := A_TickCount
         ElapsedTime := 0
         GuiControl, MyWindow:, gloopID, Opening IC
-        While (Not WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000) 
+        While (Not WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000)
         {
             Sleep 1000
             ElapsedTime := UpdateElapsedTime(StartTime)
@@ -560,13 +560,13 @@ CloseIC()
     StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Saving and Closing IC
-    While (WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000) 
+    While (WinExist("ahk_exe IdleDragons.exe") AND ElapsedTime < 60000)
     {
         Sleep 100
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
-    While (WinExist("ahk_exe IdleDragons.exe")) 
+    While (WinExist("ahk_exe IdleDragons.exe"))
     {
         GuiControl, MyWindow:, gloopID, Forcing IC Close
         PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
@@ -654,7 +654,7 @@ DoDashWait()
     {
         CheckForFailedConv()
     }
-    GuiControl, MyWindow:, gloopID, Dash Wait 
+    GuiControl, MyWindow:, gloopID, Dash Wait
     While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
     {
         StuffToSpam(0, 1, 0)
@@ -685,7 +685,7 @@ DoUlts()
     }
 }
 
-DirectedInput(s) 
+DirectedInput(s)
 {
     SafetyCheck()
     ControlFocus,, ahk_exe IdleDragons.exe
@@ -1005,7 +1005,7 @@ StackNormal()
     while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
     {
         directedinput("w")
-        if (ReadCurrentZone(1) <= gAreaLow) 
+        if (ReadCurrentZone(1) <= gAreaLow)
         {
             DirectedInput("{Right}")
         }
@@ -1103,7 +1103,7 @@ UpdateStatTimers()
     dtTotalTime := Round((A_TickCount - gStartTime) / 3600000, 2)
     GuiControl, MyWindow:, dtTotalTimeID, % dtTotalTime
     dtCurrentLevelTime := Round((A_TickCount - gPrevLevelTime) / 1000, 2)
-    GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime    
+    GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime
 }
 
 UpdateElapsedTime(StartTime)
@@ -1113,8 +1113,8 @@ UpdateElapsedTime(StartTime)
     return ElapsedTime
 }
 
-GemFarm() 
-{  
+GemFarm()
+{
     OpenProcess()
     ModuleBaseAddress()
     ;not sure why this one is here, commented out for now.
@@ -1131,11 +1131,11 @@ GemFarm()
         BuildChestGUI()
     gPrevLevelTime := A_TickCount
 
-    loop 
+    loop
     {
         GuiControl, MyWindow:, gLoopID, Main `Loop
         gLevel_Number := ReadCurrentZone(1)
-        
+
         SetFormation(gLevel_Number)
 
         if (gLevel_Number = 1)
@@ -1203,7 +1203,7 @@ GemFarm()
                 TestResetFunction()
             }
         }
-        
+
         StuffToSpam(1, gLevel_Number)
 
         if (ReadResettting(1))
@@ -1231,9 +1231,9 @@ CheckifStuck(gLevel_Number)
         GuiControl, MyWindow:, gprevLevelID, % gprevLevel
         gPrevLevelTime := A_TickCount
     }
-    
+
     dtCurrentLevelTime := Round((A_TickCount - gPrevLevelTime) / 1000, 2)
-    GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime        
+    GuiControl, MyWindow:, dtCurrentLevelTimeID, % dtCurrentLevelTime
     if (dtCurrentLevelTime > 60)
     {
         CloseIC()
@@ -1270,7 +1270,7 @@ ModronReset()
     }
 }
 
-EndAdventure() 
+EndAdventure()
 {
     DirectedInput("r")
     xClick := (ReadScreenWidth(1) / 2) - 80
