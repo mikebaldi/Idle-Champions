@@ -183,13 +183,13 @@ Loop, 12
 {
     i := gSeatToggle[A_Index]
     if (A_Index = 1)
-    Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x15 y+5 w60, Seat %A_Index%
+        Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x15 y+5 w60, Seat %A_Index%
     Else if (A_Index <= 6)
-    Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x+5 w60, Seat %A_Index%
+        Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x+5 w60, Seat %A_Index%
     Else if (A_Index = 7)
-    Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x15 y+5 w60, Seat %A_Index%
+        Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x15 y+5 w60, Seat %A_Index%
     Else
-    Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x+5 w60, Seat %A_Index%
+        Gui, MyWindow:Add, Checkbox, vCheckboxSeat%A_Index% Checked%i% x+5 w60, Seat %A_Index%
 }
 Gui, MyWindow:Add, Edit, vNewContinuedLeveling x15 y+10 w50, % gContinuedLeveling
 Gui, MyWindow:Add, Text, x+5, Use Fkey leveling while below this zone
@@ -446,7 +446,7 @@ Save_Clicked:
             IniWrite, 1, UserSettings.ini, Section1, Seat%A_Index%Toggle
         }
         Else
-        IniWrite, 0, UserSettings.ini, Section1, Seat%A_Index%Toggle
+            IniWrite, 0, UserSettings.ini, Section1, Seat%A_Index%Toggle
     }
     GuiControl, MyWindow:, gFkeysID, % gFKeys
     gAreaLow := NewgAreaLow
@@ -537,7 +537,7 @@ SafetyCheck()
             UpdateStatTimers()
         }
         If (Not WinExist("ahk_exe IdleDragons.exe"))
-        Return
+            Return
 
         GuiControl, MyWindow:, gloopID, Opening `Process
         Sleep gOpenProcess
@@ -549,7 +549,7 @@ SafetyCheck()
         GuiControl, MyWindow:, ResetCountID, % ResetCount
         LoadingZone()
         if (gUlts)
-        DoUlts()
+            DoUlts()
         gPrevLevelTime := A_TickCount
     }
 }
@@ -644,11 +644,11 @@ DoDashWait()
     ElapsedTime := 0
     gTime := ReadTimeScaleMultiplier(1)
     if (gTime < 1)
-    gTime := 1
+        gTime := 1
     DashSpeed := gTime * 1.4
     modDashSleep := gDashSleepTime / gTime
     if (modDashSleep < 1)
-    modDashSleep := gDashSleepTime
+        modDashSleep := gDashSleepTime
     GuiControl, MyWindow:, NewDashSleepID, % modDashSleep
     if (gStackFailConvRecovery)
     {
@@ -662,7 +662,7 @@ DoDashWait()
         UpdateStatTimers()
     }
     if (ReadQuestRemaining(1))
-    FinishZone()
+        FinishZone()
     if (gUlts)
     {
         DoUlts()
@@ -725,7 +725,7 @@ SetFormation(gLevel_Number)
         DirectedInput("q")
     }
     else
-    DirectedInput("q")
+        DirectedInput("q")
 }
 
 global qZones := [2, 9, 16, 23, 30, 37, 44]
@@ -755,7 +755,7 @@ DoLevel(gLevel_Number := 1, formation := "q")
         StuffToSpam(1, gLevel_Number, 0, formation)
         ElapsedTime := UpdateElapsedTime(StartTime)
         if (ElapsedTime > 10000)
-        Break
+            Break
         UpdateStatTimers()
     }
     StartTime := A_TickCount
@@ -1038,14 +1038,14 @@ StackFarm()
         DirectedInput("{Left}")
     }
     if gRestartStackTime
-    StackRestart()
+        StackRestart()
     gStackCountH := ReadHasteStacks(1)
     GuiControl, MyWindow:, gStackCountHID, % gStackCountH
     gStackCountSB := ReadSBStacks(1)
     GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
     stacks := GetNumStacksFarmed()
     if (stacks < gSBTargetStacks)
-    StackNormal()
+        StackNormal()
     gPrevLevelTime := A_TickCount
     DirectedInput("g")
 }
@@ -1126,9 +1126,9 @@ GemFarm()
     var := 0
     var := CheckSetUp()
     if var
-    Return
+        Return
     if gDoChests
-    BuildChestGUI()
+        BuildChestGUI()
     gPrevLevelTime := A_TickCount
 
     loop 
@@ -1144,7 +1144,7 @@ GemFarm()
             {
                 ;putting this check with the gLevel_Number = 1 appeared to completely disable DashWait
                 if (ReadQuestRemaining(1))
-                DoDashWait()
+                    DoDashWait()
             }
             Else if(gStackFailConvRecovery)
             {
@@ -1157,7 +1157,7 @@ GemFarm()
                     DirectedInput("g")
                 }
                 else
-                FinishZone()
+                    FinishZone()
                 SetFormation(1)
             }
         }
@@ -1212,7 +1212,7 @@ GemFarm()
             LoadingZone()
             UpdateStartLoopStats(gLevel_Number)
             if (!gStackFail)
-            ++gTotal_RunCount
+                ++gTotal_RunCount
             gStackFail := 0
             gPrevLevelTime := A_TickCount
             gprevLevel := ReadCurrentZone(1)
@@ -1257,7 +1257,7 @@ ModronReset()
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
         if (ReadCurrentZone(1) = 1)
-        Break
+            Break
     }
     StartTime := A_TickCount
     ElapsedTime := 0
@@ -1284,9 +1284,9 @@ EndAdventure()
         WinActivate, ahk_exe IdleDragons.exe
         MouseClick, Left, xClick, yClick, 1
         if (yClick < yClickMax)
-        yClick := yClick + 10
+            yClick := yClick + 10
         Else
-        yClick := yClickMax / 2
+            yClick := yClickMax / 2
         Sleep, 25
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
@@ -1297,15 +1297,15 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 {
     var :=
     if (SendRight)
-    var := "{Right}"
+        var := "{Right}"
     if (gClickLeveling)
-    var := var "{Ctrl down}``{Ctrl up}"
+        var := var "{Ctrl down}``{Ctrl up}"
     if (gContinuedLeveling > gLevel_Number)
-    var := var gFKeys
+        var := var gFKeys
     if (gHewUlt AND hew)
-    var := var gHewUlt
+        var := var gHewUlt
     if (formation)
-    var := var formation
+        var := var formation
 
     DirectedInput(var)
     Return
