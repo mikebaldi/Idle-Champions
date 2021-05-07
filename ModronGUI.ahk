@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "4/25/21"
+global ScriptDate := "5/5/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -12,10 +12,6 @@ CoordMode, Mouse, Client
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
 global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
-
-;variables for opening chests during stack restart
-global gDoChests := 0 ;enable/disable will buy specified chests when you have enough gold and will open specified chests when hoarded amount reaches a certain number
-
 global ScriptSpeed := 25
 ;====================
 ;end of user settings
@@ -100,9 +96,27 @@ global gModronResetCheckEnabled := ModronResetCheckEnabled
 ;Normal SB farm max time
 IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 60000
 global gSBTimeMax := SBTimeMax
+;Enable servecalls to open chests during stack restart
+IniRead, DoChests, UserSettings.ini, Section1, DoChests, 0
+global gDoChests := DoChests
+;Minimum gems to save when buying chests
+IniRead, SCMinGemCount, UserSettings.ini, Section1, SCMinGemCount, 0
+global gSCMinGemCount := SCMinGemCount
+;Buy silver chests when can afford this many
+IniRead, SCBuySilvers, UserSettings.ini, Section1, SCBuySilvers, 0
+global gSCBuySilvers := SCBuySilvers
+;Open silver chests when you have this many
+IniRead, SCSilverCount, UserSettings.ini, Section1, SCSilverCount, 0
+global gSCSilverCount := SCSilverCount
+;Buy gold chests when can afford this many
+IniRead, SCBuyGolds, UserSettings.ini, Section1, SCBuyGolds, 0
+global gSCBuyGolds := SCBuyGolds
+;Open silver chests when you have this many
+IniRead, SCGoldCount, UserSettings.ini, Section1, SCGoldCount, 0
+global gSCGoldCount := SCGoldCount
 
 ;Shandie's seat 
-global gShandieSlot := 
+global gShandieSlot := -1
 
 ;variable for correctly tracking stats during a failed stack, to prevent fast/slow runs to be thrown off
 global gStackFail := 0
@@ -127,9 +141,12 @@ global gGemStart		:=
 global gCoreXPStart		:=
 global gGemSpentStart	:=
 
+global gStackCountH	:=
+global gStackCountSB :=
+
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
 
-global gTestReset := 1 ;variable to test a reset function not ready for release
+global gTestReset := 0 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -216,6 +233,17 @@ Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `U
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
 Gui, MyWindow:Add, Checkbox, vgModronResetCheckEnabled Checked%gModronResetCheckEnabled% x15 y+5, Have script check for Modron reset level
+Gui, MyWindow:Add, Checkbox, vgDoChests Checked%gDoChests% x15 y+10, Enable server calls to buy and open chests during stack restart
+Gui, MyWindow:Add, Edit, vNewSCMinGemCount x15 y+10 w100, % gSCMinGemCount
+Gui, MyWindow:Add, Text, x+5, Maintain this many gems when buying chests
+Gui, MyWindow:Add, Edit, vNewSCBuySilvers x15 y+10 w50, % gSCBuySilvers
+Gui, MyWindow:Add, Text, x+5, When there are sufficient gems, buy this many silver chests
+Gui, MyWindow:Add, Edit, vNewSCSilverCount x15 y+10 w50, % gSCSilverCount
+Gui, MyWindow:Add, Text, x+5, When there are this many silver chests, open them
+Gui, MyWindow:Add, Edit, vNewSCBuyGolds x15 y+10 w50, % gSCBuyGolds
+Gui, MyWindow:Add, Text, x+5, When there are sufficient gems, buy this many Gold chests
+Gui, MyWindow:Add, Edit, vNewSCGoldCount x15 y+10 w50, % gSCGoldCount
+Gui, MyWindow:Add, Text, x+5, When there are this many gold chests, open them
 Gui, MyWindow:Add, Button, x15 y+20 gChangeInstallLocation_Clicked, Change Install Path
 
 Gui, Tab, Help
@@ -258,6 +286,18 @@ Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Br
 Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
 Gui, MyWindow:Add, Text, x15 y+5, Enable script to check for Modron reset level:
 Gui, MyWindow:Add, Text, vgModronResetCheckenabledID x+2 w200, % gModronResetCheckEnabled
+Gui, MyWindow:Add, Text, x15 y+5, Enable server calls to buy and open chests during stack restart:
+Gui, MyWindow:Add, Text, vgDoChestsID x+2 w200, % gDoChests
+Gui, MyWindow:Add, Text, x15 y+5, Maintain this many gems when buying chests:
+Gui, MyWindow:Add, Text, vgSCMinGemCountID x+2 w200, % gSCMinGemCount
+Gui, MyWindow:Add, Text, x15 y+5, When there are sufficient gems, buy this many silver chests:
+Gui, MyWindow:Add, Text, vgSCBuySilversID x+2 w200, % gSCBuySilvers
+Gui, MyWindow:Add, Text, x15 y+5, When there are this many silver chests, open them:
+Gui, MyWindow:Add, Text, vgSCSilverCountID x+2 w200, % gSCSilverCount
+Gui, MyWindow:Add, Text, x15 y+5, When there are sufficient gems, buy this many gold chests:
+Gui, MyWindow:Add, Text, vgSCBuyGoldsID x+2 w200, % gSCBuyGolds
+Gui, MyWindow:Add, Text, x15 y+5, When there are this many gold chests, open them:
+Gui, MyWindow:Add, Text, vgSCGoldCountID x+2 w200, % gSCGoldCount
 Gui, MyWindow:Add, Text, x15 y+5, Install Path:
 Gui, MyWindow:Add, Text, vgInstallPathID x15 y+2 w350 r5, %gInstallPath%
 Gui, MyWindow:Add, Text, x15 y+15 w375 r5, Still having trouble? Take note of the information on the debug tab and ask for help in the scripting channel on the official discord.
@@ -313,17 +353,21 @@ if (gDoChests)
 	Gui, MyWindow:Font, w700
 	Gui, MyWindow:Add, Text, x15 y+10 w300, Chest Data:
 	Gui, MyWindow:Font, w400
-	Gui, MyWindow:Add, Text, x15 y+5, Starting Gems: 
-	Gui, MyWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
+	;Gui, MyWindow:Add, Text, x15 y+5, Starting Gems: 
+	;Gui, MyWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Starting Gems Spent: 
 	Gui, MyWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Starting Silvers Opened: 
+	Gui, MyWindow:Add, Text, vgSCSilversOpenedStartID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Starting Golds Opened: 
+	Gui, MyWindow:Add, Text, vgSCGoldsOpenedStartID x+2 w200,	
 	Gui, MyWindow:Add, Text, x15 y+5, Silvers Opened: 
 	Gui, MyWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Golds Opened: 
 	Gui, MyWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
-	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted: 
-	Gui, MyWindow:Add, Text, vgSCGemsSpentID x+2 w200,
-	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Server: 
+	;Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted: 
+	;Gui, MyWindow:Add, Text, vgSCGemsSpentID x+2 w200,
+	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent: 
 	Gui, MyWindow:Add, Text, vGemsSpentID x+2 w200,
 }
 
@@ -490,6 +534,31 @@ Save_Clicked:
 	IniWrite, %gRestartStackTime%, UserSettings.ini, Section1, RestartStackTime
 	GuiControl, MyWindow:, gModronResetCheckEnabledID, % gModronResetCheckEnabled
 	IniWrite, %gModronResetCheckEnabled%, UserSettings.ini, Section1, ModronResetCheckEnabled
+	GuiControl, MyWindow:, gDoChestsID, % gDoChests
+	IniWrite, %gDoChests%, UserSettings.ini, Section1, DoChests
+	gSCMinGemCount := NewSCMinGemCount
+	GuiControl, MyWindow:, gSCMinGemCount, % gSCMinGemCount
+	IniWrite, %gSCMinGemCount%, UserSettings.ini, Section1, SCMinGemCount
+	gSCBuySilvers := NewSCBuySilvers
+	if (gSCBuySilvers > 100)
+	gSCBuySilvers := 100
+	GuiControl, MyWindow:, gSCBuySilversID, % gSCBuySilvers
+	IniWrite, %gSCBuySilvers%, UserSettings.ini, Section1, SCBuySilvers
+	gSCSilverCount := NewSCSilverCount
+	if (gSCSilverCount > 99)
+	gSCSilverCount := 99
+	GuiControl, MyWindow:, gSCSilverCountID, % gSCSilverCount
+	IniWrite, %gSCSilverCount%, UserSettings.ini, Section1, SCSilverCount
+	gSCBuyGolds := NewSCBuyGolds
+	if (gSCBuyGolds > 100)
+	gSCBuyGolds := 100
+	GuiControl, MyWindow:, gSCBuyGoldsID, % gSCBuyGolds
+	IniWrite, %gSCBuyGolds%, UserSettings.ini, Section1, SCBuyGolds
+	gSCGoldCount := NewSCGoldCount
+	if (gSCGoldCount > 99)
+	gSCGoldCount := 99
+	GuiControl, MyWindow:, gSCGoldCountID, % gSCGoldCount
+	IniWrite, %gSCGoldCount%, UserSettings.ini, Section1, SCGoldCount
 	return
 }
 
@@ -578,12 +647,8 @@ CloseIC()
 
 CheckForFailedConv()
 {
-    gStackCountH := ReadHasteStacks(1)
-	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-	gStackCountSB := ReadSBStacks(1)
-	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
-	stacks := gStackCountSB + gStackCountH
-    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gTestReset)
+	stacks := GetNumStacksFarmed()
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND !gTestReset)
     {
         EndAdventure()
 		;If this sleep is too low it can cancel the reset before it completes. In this case that could be good as it will convert SB to Haste and not end the adventure.
@@ -598,7 +663,7 @@ CheckForFailedConv()
 		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
         return
     }
-	if (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND !gTestReset)
+	if (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gTestReset)
 	{
 		TestResetFunction()
 	}
@@ -843,16 +908,20 @@ CheckSetUp()
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
+	;maybe fixed.
     GuiControl, MyWindow:, gloopID, Looking for Shandie
 	DirectedInput("q{F6}q")
-	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
+	gShandieSlot := FindChamp(47)
+	;while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
+	while (gShandieSlot = -1 AND ElapsedTime < 10000)
 	{
 		gShandieSlot := FindChamp(47)
 		DirectedInput("q{F6}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (!ReadChampLvlBySlot(1,,gShandieSlot))
+	;if (!ReadChampLvlBySlot(1,,gShandieSlot))
+	if (gShandieSlot = -1)
 	{
 		MsgBox, Couldn't find Shandie in "Q" formation. Check saved formations. Ending Gem Farm.
 		Return, 1
@@ -863,14 +932,17 @@ CheckSetUp()
 	slot := 0
     GuiControl, MyWindow:, gloopID, Looking for Briv
 	DirectedInput("q{F5}q")
-	while (!ReadChampLvlBySlot(1,,slot) AND ElapsedTime < 10000)
+	slot := FindChamp(58)
+	;while (!ReadChampLvlBySlot(1,,slot) AND ElapsedTime < 10000)
+	while (slot = -1 AND ElapsedTime < 10000)
 	{
 		slot := FindChamp(58)
 		DirectedInput("q{F5}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (!ReadChampLvlBySlot(1,,slot))
+	;if (!ReadChampLvlBySlot(1,,slot))
+	if (slot = -1)
 	{
 		MsgBox, Couldn't find Briv in "Q" formation. Check saved formations. Ending Gem Farm.
 		Return, 1
@@ -931,24 +1003,29 @@ FindChamp(ChampID := 1)
             Return, ChampSlot
         }
     }
-    Return, 0
+    Return, -1
 }
 
+;thanks meviin for coming up with this solution
 GetNumStacksFarmed()
 {
-    if (gRestartStackTime) {
-        return ReadSBStacks(1) + ReadHasteStacks(1)
-    } else {
+	gStackCountSB := ReadSBStacks(1)
+	gStackCountH := ReadHasteStacks(1)
+    if (gRestartStackTime) 
+	{
+        return gStackCountH + gStackCountSB
+    } 
+	else 
+	{
         ; If restart stacking is disabled, we'll stack to basically the exact
         ; threshold.  That means that doing a single jump would cause you to
         ; lose stacks to fall below the threshold, which would mean StackNormal
         ; would happen after every jump.
         ; Thus, we use a static 47 instead of using the actual haste stacks
         ; with the assumption that we'll be at minimum stacks after a reset.
-        return ReadSBStacks(1) + 47
+        return gStackCountSB + 47
     }
 }
-
 
 StackRestart()
 {
@@ -979,6 +1056,8 @@ StackRestart()
     if (gDoChests)
     {
         DoChests()
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		GuiControl, MyWindow:, gloopID, Finish Stack `Sleep: %ElapsedTime%
     }
 	while (ElapsedTime < gRestartStackTime)
 	{
@@ -997,10 +1076,6 @@ StackNormal()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Stack Normal
-	gStackCountH := ReadHasteStacks(1)
-	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-	gStackCountSB := ReadSBStacks(1)
-	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := GetNumStacksFarmed()
 	while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
 	{
@@ -1010,10 +1085,6 @@ StackNormal()
         	DirectedInput("{Right}")
 		}
 		Sleep 1000
-		gStackCountH := ReadHasteStacks(1)
-		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-		gStackCountSB := ReadSBStacks(1)
-		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 		stacks := GetNumStacksFarmed()
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
@@ -1039,10 +1110,6 @@ StackFarm()
 	}
 	if gRestartStackTime
     StackRestart()
-	gStackCountH := ReadHasteStacks(1)
-	GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-	gStackCountSB := ReadSBStacks(1)
-	GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 	stacks := GetNumStacksFarmed()
 	if (stacks < gSBTargetStacks)
 	StackNormal()
@@ -1127,8 +1194,6 @@ GemFarm()
 	var := CheckSetUp()
 	if var
 	Return
-	if gDoChests
-	BuildChestGUI()
 	gPrevLevelTime := A_TickCount
 
 	loop 
@@ -1162,14 +1227,9 @@ GemFarm()
 			}
         }
 
-		gStackCountH := ReadHasteStacks(1)
-		GuiControl, MyWindow:, gStackCountHID, % gStackCountH
-		gStackCountSB := ReadSBStacks(1)
-		GuiControl, MyWindow:, gStackCountSBID, % gStackCountSB
 		stacks := GetNumStacksFarmed()
 
 		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow AND gLevel_Number < gCoreTargetArea)
-		;if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
 			StackFarm()
 		}
@@ -1180,8 +1240,8 @@ GemFarm()
 			{
 				StackFarm()
 			}
-			stacks := ReadSBStacks(1) + ReadHasteStacks(1)
-			if (stacks > gSBTargetStacks AND gTestReset)
+			stacks := GetNumStacksFarmed()
+			if (stacks > gSBTargetStacks AND !gTestReset)
             {
                 EndAdventure()
 				sleep 2000
@@ -1198,7 +1258,7 @@ GemFarm()
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
-			if (stacks > gSBTargetStacks AND !gTestReset)
+			if (stacks > gSBTargetStacks AND gTestReset)
 			{
 				TestResetFunction()
 			}
@@ -1251,7 +1311,7 @@ ModronReset()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Modron Reset
-	while (ReadResettting(1) AND ElapsedTime < 300000)
+	while (ReadResettting(1) AND ElapsedTime < 60000)
 	{
 		Sleep, 250
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -1259,14 +1319,30 @@ ModronReset()
 		if (ReadCurrentZone(1) = 1)
 		Break
 	}
+	if (ElapsedTime > 60000)
+	{
+		CloseIC()
+		if (GetUserDetails() = -1)
+        {
+            LoadAdventure()
+        }
+	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Resettting to z1
-	while (ReadCurrentZone(1) != 1 AND ElapsedTime < 300000)
+	while (ReadCurrentZone(1) != 1 AND ElapsedTime < 60000)
 	{
 		Sleep, 250
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
+	}
+	if (ElapsedTime > 60000)
+	{
+		CloseIC()
+		if (GetUserDetails() = -1)
+        {
+            LoadAdventure()
+        }
 	}
 }
 
@@ -1313,5 +1389,5 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 TestResetFunction()
 {
-	;test
+	;place holder
 }
