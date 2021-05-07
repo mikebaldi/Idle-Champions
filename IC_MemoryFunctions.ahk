@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 4/20/21
+;date of script: 5/4/21
 ;IC Version v0.384
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -7,9 +7,6 @@ global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 ;Game Controller Structure
 global pointerBaseController :=
 global arrayPointerOffsetsController := [0x658, 0xA0, 0x28, 0x8]
-
-;shandie level direct (int)
-global arrayPointerOffsetsShandieLvl := [0x50, 0x8, 0xC, 0x8, 0xC8, 0x190]
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
@@ -92,7 +89,10 @@ ReadSBStacks(UpdateGUI := 0, GUIwindow := "MyWindow:")
     pointerArray := [0x50, 0x18, 0x2B0]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
-    GuiControl, %GUIwindow%, ReadSBStacksID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+    {
+        GuiControl, %GUIwindow%, ReadSBStacksID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+        GuiControl, %GUIwindow%, gStackCountSBID, %var%
+    }
 	return var
 }
 
@@ -102,7 +102,10 @@ ReadHasteStacks(UpdateGUI := 0, GUIwindow := "MyWindow:")
     pointerArray := [0x50, 0x18, 0x2B4]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
-    GuiControl, %GUIwindow%, ReadHasteStacksID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+    {
+        GuiControl, %GUIwindow%, ReadHasteStacksID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+        GuiControl, %GUIwindow%, gStackCountHID, %var%
+    }
 	return var
 }
 
@@ -115,6 +118,16 @@ ReadCoreXP(UpdateGUI := 0, GUIwindow := "MyWindow:")
     GuiControl, %GUIwindow%, ReadCoreXPID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
+
+;core reads via user data
+;pointerArray := [0x50, 0x6C, 0x10]
+;var := 0x10 + (slot * 0x4)
+;InstanceID
+;pointerArray.Push(var, 0x28)
+;ExpTotal
+;pointerArray.Push(var, 0x24)
+;targetArea
+;pointerArray.Push(var, 0x30)
 
 ReadCoreTargetArea(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
