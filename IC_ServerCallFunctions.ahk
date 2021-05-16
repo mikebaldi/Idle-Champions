@@ -1,15 +1,12 @@
-;date of script: 5/5/21
+;date of script: 5/14/21
 
 ;globals used to track chest opening and purchases
 global gSCGemsSpent := 0
-global gSCSilversPurchased := 0
-global gSCGoldsPurchased := 0
 global gSCSilversOpened := 0
 global gSCSilversOpenedStart :=
 global gSCGoldsOpened := 0
 global gSCGoldsOpenedStart :=
 global gSCFirstRun := 1
-global gSCRedRubiesStart :=
 global gSCRedRubiesSpentStart :=
 
 ;global variables used for server calls
@@ -31,7 +28,7 @@ global gRedRubiesSpent := ;variable to store amount of gems server thinks you ha
 ServerCall(callname, parameters) 
 {
 	URLtoCall := "http://ps6.idlechampions.com/~idledragons/post.php?call=" callname parameters
-	GuiControl, MyWindow:, advparamsID, % URLtoCall
+	;GuiControl, MyWindow:, advparamsID, % URLtoCall
 	WR := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	WR.SetTimeouts("10000", "10000", "10000", "10000")
 	Try {
@@ -48,7 +45,14 @@ GetUserDetails()
 {
 	getuserparams := DummyData "&include_free_play_objectives=true&instance_key=1&user_id=" UserID "&hash=" UserHash
 	rawdetails := ServerCall("getuserdetails", getuserparams)
-	UserDetails := JSON.parse(rawdetails)
+	Try
+	{
+		UserDetails := JSON.parse(rawdetails)
+	}
+	Catch
+	{
+		Return
+	}
     InstanceID := UserDetails.details.instance_id
     GuiControl, MyWindow:, InstanceIDID, % InstanceID
 	ActiveInstance := UserDetails.details.active_game_instance_id
@@ -116,19 +120,15 @@ DoChests()
 		GuiControl, MyWindow:, gSCGoldsOpenedStartID, %gSCGoldsOpenedStart%
 		gSCFirstRun := 0
 	}
-	if (gSCSilverCount < gSilversHoarded)
+	if (gSCSilverCount < gSilversHoarded AND gSCSilverCount)
 	{
 		GuiControl, MyWindow:, gloopID, Opening %gSCSilverCount% Silver Chests
 		OpenChests(1, gSCSilverCount)
-		;gSCSilversOpened := g
-		;GuiControl, MyWindow:, gSCSilversOpenedID, %gSCSilversOpened%
 	}
-	else if (gSCGoldCount < gGoldsHoarded)
+	else if (gSCGoldCount < gGoldsHoarded AND gSCGoldCount)
 	{
 		GuiControl, MyWindow:, gloopID, Opening %gSCGoldCount% Gold Chests
 		OpenChests(2, gSCGoldCount)
-		;gSCGoldsOpened := gSCGoldsOpened + gSCGoldCount
-		;GuiControl, MyWindow:, gSCGoldsOpenedID, %gSCGoldsOpened%
 	}
 	else if (gSCBuySilvers)
 	{
@@ -138,8 +138,6 @@ DoChests()
 		{
 			GuiControl, MyWindow:, gloopID, Buying %gSCBuySilvers% Silver Chests
 			BuyChests(1, gSCBuySilvers)
-			;gSCGemsSpent := gSCGemsSpent + i
-			;GuiControl, MyWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
 	else if (gSCBuyGolds)
@@ -150,8 +148,6 @@ DoChests()
 		{
 			GuiControl, MyWindow:, gloopID, Buying %gSCBuyGolds% Gold Chests
 			BuyChests(2, gSCBuyGolds)
-			;gSCGemsSpent := gSCGemsSpent + i
-			;GuiControl, MyWindow:, gSCGemsSpentID, %gSCGemsSpent%
 		}
 	}
 	var := gRedRubiesSpent - gSCRedRubiesSpentStart
