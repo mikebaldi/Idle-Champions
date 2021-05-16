@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 5/4/21
+;date of script: 5/12/21
 ;IC Version v0.384
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -50,6 +50,16 @@ ReadGemsSpent(UpdateGUI := 0, GUIwindow := "MyWindow:")
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadGemsSpentID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadRedGems(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x50, 0x18, 0x250]
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadRedGemsID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
 
