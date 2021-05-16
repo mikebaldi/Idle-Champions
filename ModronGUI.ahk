@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "5/11/21"
+global ScriptDate := "5/12/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -140,13 +140,14 @@ global ResetCount		:= 0
 global gGemStart		:=
 global gCoreXPStart		:=
 global gGemSpentStart	:=
+global gRedGemsStart	:=
 
 global gStackCountH	:=
 global gStackCountSB :=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
 
-global gTestReset := 0 ;variable to test a reset function not ready for release
+global gTestReset := 1 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -328,10 +329,14 @@ Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fastest `Run `Time:
 Gui, MyWindow:Add, Text, vgFastRunTimeID x+2 w50, 
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Slowest `Run `Time:
 Gui, MyWindow:Add, Text, vgSlowRunTimeID x+2 w50, % gSlowRunTime
-Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail `Run `Time:
-Gui, MyWindow:Add, Text, vgFailRunTimeID x+2 w50, % gFailRunTime	
 Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Avg. `Run `Time:
 Gui, MyWindow:Add, Text, vgAvgRunTimeID x+2 w50, % gAvgRunTime
+Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail `Run `Time:
+Gui, MyWindow:Add, Text, vgFailRunTimeID x+2 w50, % gFailRunTime	
+Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail Stack Conversion:
+Gui, MyWindow:Add, Text, vgFailedStackConvID x+2 w50, % gFailedStackConv
+Gui, MyWindow:Add, Text, x15 y+2 %statTabTxtWidth%, Fail Stacking:
+Gui, MyWindow:Add, Text, vgFailedStackingID x+2 w50, % gFailedStacking
 Gui, MyWindow:Font, cBlue w700
 Gui, MyWindow:Add, Text, x15 y+10 %statTabTxtWidth%, Bosses per hour:
 Gui, MyWindow:Add, Text, vgbossesPhrID x+2 w50, % gbossesPhr
@@ -340,6 +345,11 @@ Gui, MyWINdow:Add, Text, x15 y+10, Total Gems:
 Gui, MyWindow:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
 Gui, MyWINdow:Add, Text, x15 y+2, Gems per hour:
 Gui, MyWindow:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
+Gui, MyWindow:Font, cRed
+Gui, MyWINdow:Add, Text, x15 y+10, Total Black Viper Red Gems:
+Gui, MyWindow:Add, Text, vRedGemsTotalID x+2 w50, % RedGemsTotal
+Gui, MyWINdow:Add, Text, x15 y+2, Red Gems per hour:
+Gui, MyWindow:Add, Text, vRedGemsPhrID x+2 w200, % RedGemsPhr
 Gui, MyWindow:Font, cDefault w400
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+10, `Loop: 
@@ -424,6 +434,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadGems:
 Gui, MyWindow:Add, Text, vReadGemsID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent: 
 Gui, MyWindow:Add, Text, vReadGemsSpentID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadRedGems: 
+Gui, MyWindow:Add, Text, vReadRedGemsID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadClickFamiliarBySlot: 
 Gui, MyWindow:Add, Text, vReadClickFamiliarBySlotID x+2 w200,
 
@@ -659,13 +671,13 @@ CheckForFailedConv()
             LoadAdventure()
         }
 		SafetyCheck()
-		++gFailedStackConv
-		GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
+		gStackFail := 2
         return
     }
 	if (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gTestReset)
 	{
 		TestResetFunction()
+		gStackFail := 2
 	}
 	return
 }
@@ -707,7 +719,7 @@ DoDashWait()
 	LevelChampByID(47, 120, 5000, "q", 6)
     StartTime := A_TickCount
     ElapsedTime := 0
-    LevelChampByID(58, 80, 5000, "q", 5)
+	LevelChampByID(58, 80, 5000, "q", 5)
     gTime := ReadTimeScaleMultiplier(1)
 	if (gTime < 1)
 	gTime := 1
@@ -792,58 +804,6 @@ SetFormation(gLevel_Number)
 	}
 	else
 	DirectedInput("q")
-}
-
-global qZones := [2, 9, 16, 23, 30, 37, 44]
-
-LevelSelect(gLevel_Number := 1)
-{
-	i := mod(gLevelNumber, 50)
-	for k, v in qZones
-	{
-		if (v = i)
-		{
-			DoLevel(gLevel_Number, "q")
-			Return
-		}
-	}
-	DoLevel(gLevel_Number, "e")
-	Return
-}
-
-DoLevel(gLevel_Number := 1, formation := "q")
-{
-	StartTime := A_TickCount
-	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, Do Level %gLevel_Number%
-	while (!ReadTransitioning(1) OR ReadQuestRemaining(1))
-	{
-		StuffToSpam(1, gLevel_Number, 0, formation)
-		ElapsedTime := UpdateElapsedTime(StartTime)
-		if (ElapsedTime > 10000)
-		Break
-		UpdateStatTimers()
-	}
-	StartTime := A_TickCount
-	ElapsedTime := 0
-	GuiControl, MyWindow:, gloopID, Transitioning
-	while (ElapsedTime < 5000 AND !ReadQuestRemaining(1))
-	{
-		StuffToSpam(1, gLevel_Number, 0, "e")
-		ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-	}
-	StartTime := A_TickCount
-	ElapsedTime := 0
-	var := gSwapSleep / ReadTimeScaleMultiplier(1)
-	GuiControl, MyWindow:, gloopID, Still Transitioning
-	while (ElapsedTime < var AND ReadTransitioning(1))
-	{
-		StuffToSpam(1, gLevel_Number, 0, "e")
-		ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-	}
-	Return
 }
 
 LoadingZone()
@@ -1126,6 +1086,7 @@ UpdateStartLoopStats(gLevel_Number)
 		gCoreXPStart := ReadCoreXP(1)
 		gGemStart := ReadGems(1)
 		gGemSpentStart := ReadGemsSpent(1)
+		gRedGemsStart := ReadRedGems(1)
 	}
 	if (gTotal_RunCount)
 	{
@@ -1145,6 +1106,16 @@ UpdateStartLoopStats(gLevel_Number)
 		{
 			gFailRunTime := gPrevRunTime
 			GuiControl, MyWindow:, gFailRunTimeID, % gFailRunTime
+			if (gStackFail = 1)
+			{
+				++gFailedStacking
+				GuiControl, MyWindow:, gFailedStackingID, % gFailedStacking
+			}
+			else if (gStackFail = 2)
+			{
+				++gFailedStackConv
+				GuiControl, MyWindow:, gFailedStackConvID, % gFailedStackConv
+			}
 		}
 		dtTotalTime := (A_TickCount - gStartTime) / 3600000
 		gAvgRunTime := Round((dtTotalTime / gTotal_RunCount) * 60, 2)
@@ -1158,6 +1129,18 @@ UpdateStartLoopStats(gLevel_Number)
 		GuiControl, MyWindow:, GemsTotalID, % GemsTotal
 		GemsPhr := Round(GemsTotal / dtTotalTime, 2)
 		GuiControl, MyWindow:, GemsPhrID, % GemsPhr
+		RedGemsTotal := (ReadRedGems(1) - gRedGemsStart)
+		if (RedGemsTotal)
+		{
+			GuiControl, MyWindow:, RedGemsTotalID, % RedGemsTotal
+			RedGemsPhr := Round(RedGemsTotal / dtTotalTime, 2)
+			GuiControl, MyWindow:, RedGemsPhrID, % RedGemsPhr
+		}
+		Else
+		{
+			GuiControl, MyWindow:, RedGemsTotalID, 0
+			GuiControl, MyWindow:, RedGemsPhrID, Pathetic
+		}	
 	}
 	gRunStartTime := A_TickCount
 	gPrevLevel := gLevel_Number
@@ -1254,14 +1237,13 @@ GemFarm()
 				SafetyCheck()
 				UpdateStartLoopStats(gLevel_Number)
 				gStackFail := 1
-				++gFailedStacking
-				GuiControl, MyWindow:, gFailedStackingID, % gFailedStacking
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
 			if (stacks > gSBTargetStacks AND gTestReset)
 			{
 				TestResetFunction()
+				gStackFail := 1
 			}
         }
 		
@@ -1390,5 +1372,7 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 TestResetFunction()
 {
-	;place holder
+	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+	arrayPointerOffsetsModronTA := [0x8, 0x40, 0x1C, 0x30]
+	idle.write(Controller, 5, "Int", arrayPointerOffsetsModronTA*)
 }
