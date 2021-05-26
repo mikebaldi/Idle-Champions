@@ -3,7 +3,6 @@ Warning: This script reads system memory. I do not know CNE's stance on reading 
 Instructions for ModronGUI.AHK:
 1. Download and install AutoHotkey: https://www.autohotkey.com/
 2. Download ModronGUI.AHK, IC_MemoryFunctions.AHK, IC_ServerCallFunctions.AHK, json.AHK, and classMemory.AHK to the same folder.
-2A. EGS users can delete, archive, or omit downloading IC_MemoryFUnctions.AHK. Download all other items listed as part of step 2. AND IC_MemoryFunctions_EGS.AHK to the same foloder. Rename IC_MemoryFunctions_EGS.AHK to IC_MemoryFunctions.AHK. IMPORTANT: script has not been tested with EGS version. Script will not be able to calculate Bosses per hour. Briv stack reads may not be accurate, but should be. I don't have Modron or Briv on an EGS account to test those memory reads.
 3. Scan all downloaded files with trusted antivirus software.
 4. Right click ModronGUI.AHK and select run script.
 5. Read and follow the instructions on the 'Read First' tab.
@@ -14,6 +13,7 @@ Review AutoHotkey tutorials and documentation.
 
 Notes:
 1. Script requires Shandie, Briv, and Modron Automation.
+2. This script is for the Steam PC version of the game. For the EGS PC version of the game: https://github.com/CantRowOfficial/Idle-Champions-EGS
 
 Settings Documentation:
 
