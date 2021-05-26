@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 5/12/21
+;date of script: 5/26/21
 ;IC Version v0.384
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -129,16 +129,6 @@ ReadCoreXP(UpdateGUI := 0, GUIwindow := "MyWindow:")
 	return var
 }
 
-;core reads via user data
-;pointerArray := [0x50, 0x6C, 0x10]
-;var := 0x10 + (slot * 0x4)
-;InstanceID
-;pointerArray.Push(var, 0x28)
-;ExpTotal
-;pointerArray.Push(var, 0x24)
-;targetArea
-;pointerArray.Push(var, 0x30)
-
 ReadCoreTargetArea(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
@@ -263,6 +253,34 @@ ReadChampSeatByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
 	return var
 }
 
+ReadChampSlotByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x50, 0x8, 0xC, 0x8]
+    --ChampID
+    var := 0x10 + (ChampID * 0x4)
+    pointerArray.Push(var, 0x168)
+    var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    ++ChampID
+    GuiControl, %GUIwindow%, ReadChampSlotByIDID, `ID: %ChampID% Slot: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadChampBenchedByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
+{
+    Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x50, 0x8, 0xC, 0x8]
+    --ChampID
+    var := 0x10 + (ChampID * 0x4)
+    pointerArray.Push(var, 0x174)
+    var := idle.read(Controller, "Char", pointerArray*)
+    if UpdateGUI
+    ++ChampID
+    GuiControl, %GUIwindow%, ReadChampBenchedByIDID, `ID: %ChampID% Benched: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
 ReadMonstersSpawned(UpdateGUI := 0, GUIWindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
@@ -283,6 +301,7 @@ ReadCurrentObjID(UpdateGUI := 0, GUIWindow := "MyWindow:")
 	return var
 }
 
+/*
 ReadMonstersOnScreen(UpdateGUI := 0, GUIWindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
@@ -292,6 +311,7 @@ ReadMonstersOnScreen(UpdateGUI := 0, GUIWindow := "MyWindow:")
     GuiControl, %GUIwindow%, ReadMonstersOnScreenID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
+*/
 
 ReadClickFamiliarBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
 {
