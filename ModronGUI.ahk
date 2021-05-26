@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "5/12/21"
+global ScriptDate := "5/26/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -115,9 +115,6 @@ global gSCBuyGolds := SCBuyGolds
 IniRead, SCGoldCount, UserSettings.ini, Section1, SCGoldCount, 0
 global gSCGoldCount := SCGoldCount
 
-;Shandie's seat 
-global gShandieSlot := -1
-
 ;variable for correctly tracking stats during a failed stack, to prevent fast/slow runs to be thrown off
 global gStackFail := 0
 
@@ -147,7 +144,7 @@ global gStackCountSB :=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
 
-global gTestReset := 1 ;variable to test a reset function not ready for release
+global gTestReset := 0 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -355,16 +352,12 @@ Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+10, `Loop: 
 Gui, MyWindow:Add, Text, vgLoopID x+2 w200, Not Started
 Gui, MyWindow:Font, w400
-Gui, MyWindow:Font, w700
-Gui, MyWindow:Add, Text, vFamiliarFoundID x15 y+10 w300,
-Gui, MyWindow:Font, w400
+
 if (gDoChests)
 {
 	Gui, MyWindow:Font, w700
 	Gui, MyWindow:Add, Text, x15 y+10 w300, Chest Data:
 	Gui, MyWindow:Font, w400
-	;Gui, MyWindow:Add, Text, x15 y+5, Starting Gems: 
-	;Gui, MyWindow:Add, Text, vgSCRedRubiesStartID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Starting Gems Spent: 
 	Gui, MyWindow:Add, Text, vgSCRedRubiesSpentStartID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Starting Silvers Opened: 
@@ -375,8 +368,6 @@ if (gDoChests)
 	Gui, MyWindow:Add, Text, vgSCSilversOpenedID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Golds Opened: 
 	Gui, MyWindow:Add, Text, vgSCGoldsOpenedID x+2 w200,
-	;Gui, MyWindow:Add, Text, x15 y+5, Gems Spent Counted: 
-	;Gui, MyWindow:Add, Text, vgSCGemsSpentID x+2 w200,
 	Gui, MyWindow:Add, Text, x15 y+5, Gems Spent: 
 	Gui, MyWindow:Add, Text, vGemsSpentID x+2 w200,
 }
@@ -416,16 +407,16 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadScreenWidth:
 Gui, MyWindow:Add, Text, vReadScreenWidthID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadScreenHeight: 
 Gui, MyWindow:Add, Text, vReadScreenHeightID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlBySlot: 
-Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
+;Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlBySlot: 
+;Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadMonstersSpawned:
 Gui, MyWindow:Add, Text, vReadMonstersSpawnedID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlByID:
 Gui, MyWindow:Add, Text, vReadChampLvlByIDID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadChampSeatByID:
-Gui, MyWindow:Add, Text, vReadChampSeatByIDID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
-Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
+;Gui, MyWindow:Add, Text, x15 y+5, ReadChampSeatByID:
+;Gui, MyWindow:Add, Text, vReadChampSeatByIDID x+2 w200,
+;Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
+;Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreTargetArea:
 Gui, MyWindow:Add, Text, vReadCoreTargetAreaID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
@@ -436,8 +427,8 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadGemsSpent:
 Gui, MyWindow:Add, Text, vReadGemsSpentID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadRedGems: 
 Gui, MyWindow:Add, Text, vReadRedGemsID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadClickFamiliarBySlot: 
-Gui, MyWindow:Add, Text, vReadClickFamiliarBySlotID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadChampBenchedByID: 
+Gui, MyWindow:Add, Text, vReadChampBenchedByIDID x+2 w200,
 
 Gui, MyWindow:Font, w700
 Gui, MyWindow:Add, Text, x15 y+15, Server Call Variables: 
@@ -628,7 +619,7 @@ SafetyCheck()
 		ModuleBaseAddress()
 	    ++ResetCount
         GuiControl, MyWindow:, ResetCountID, % ResetCount
-		LoadingZone()
+		LoadingZoneREV()
 		if (gUlts)
 		DoUlts()
 		gPrevLevelTime := A_TickCount
@@ -698,7 +689,7 @@ FinishZone()
 
 LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
 {
-	seat := ReadChampSeatByID(,, ChampID)
+	;seat := ReadChampSeatByID(,, ChampID)
 	StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Leveling Champ %ChampID% to %Lvl%
@@ -806,14 +797,18 @@ SetFormation(gLevel_Number)
 	DirectedInput("q")
 }
 
-LoadingZone()
+LoadingZoneREV()
 {
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Zone
-	while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 60000)
+	;ReadMonstersSpawned was added in case monsters were spawned before game allowed inputs, an issue when spawn speed is very high. Might be creating more problems.
+	;Offline Progress appears to read monsters spawning, so this entire function can be bypassed creating issues with stack restart.
+	;while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 60000 AND ReadMonstersSpawned(1) < 2)
+	;shouldn't be an issue if monsters spawn, shandie is supposed to be on bench. Zone will kill monsters no problem. Higher zones she should be leveled.
+	while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 60000)
 	{
-		DirectedInput("q{F6}")
+		DirectedInput("w{F6}w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -824,17 +819,16 @@ LoadingZone()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	;ReadMonstersSpawned was added in case monsters were spawned before game allowed inputs, an issue when spawn speed is very high. Might be creating more problems.
-	;Offline Progress appears to read monsters spawning, so if Shandie is in the formation this entire function can be bypassed creating issues with stack restart.
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 15000 AND !ReadMonstersSpawned(1))
+	
+	while (ReadChampBenchedByID(1,, 47) != 0 AND ElapsedTime < 15000)
 	{
-		DirectedInput("w")
+		DirectedInput("q{F6}")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
 }
 
-CheckSetUp()
+CheckSetUpREV()
 {
 	;find core target reset area so script does not try and Briv stack before a modron reset happens.
 	gCoreTargetArea := ReadCoreTargetArea(1)
@@ -869,20 +863,15 @@ CheckSetUp()
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
-	;maybe fixed.
     GuiControl, MyWindow:, gloopID, Looking for Shandie
 	DirectedInput("q{F6}q")
-	gShandieSlot := FindChamp(47)
-	;while (!ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
-	while (gShandieSlot = -1 AND ElapsedTime < 10000)
+	while (ReadChampBenchedByID(1,, 47) = 1 AND ElapsedTime < 10000)
 	{
-		gShandieSlot := FindChamp(47)
 		DirectedInput("q{F6}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	;if (!ReadChampLvlBySlot(1,,gShandieSlot))
-	if (gShandieSlot = -1)
+	if (ReadChampBenchedByID(1,, 47) = 1)
 	{
 		MsgBox, Couldn't find Shandie in "Q" formation. Check saved formations. Ending Gem Farm.
 		Return, 1
@@ -893,17 +882,13 @@ CheckSetUp()
 	slot := 0
     GuiControl, MyWindow:, gloopID, Looking for Briv
 	DirectedInput("q{F5}q")
-	slot := FindChamp(58)
-	;while (!ReadChampLvlBySlot(1,,slot) AND ElapsedTime < 10000)
-	while (slot = -1 AND ElapsedTime < 10000)
+	while (ReadChampBenchedByID(1,, 58) = 1 AND ElapsedTime < 10000)
 	{
-		slot := FindChamp(58)
 		DirectedInput("q{F5}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	;if (!ReadChampLvlBySlot(1,,slot))
-	if (slot = -1)
+	if (ReadChampBenchedByID(1,, 58) = 1)
 	{
 		MsgBox, Couldn't find Briv in "Q" formation. Check saved formations. Ending Gem Farm.
 		Return, 1
@@ -911,13 +896,13 @@ CheckSetUp()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Looking for no Shandie
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 10000)
+	while (ReadChampBenchedByID(1,, 47) = 0 AND ElapsedTime < 10000)
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (ReadChampLvlBySlot(1,,gShandieSlot))
+	if (ReadChampBenchedByID(1,, 47) = 0)
 	{
 		MsgBox, Shandie is in "W" formation. Check Settings. Ending Gem Farm.
 		return, 1
@@ -927,44 +912,7 @@ CheckSetUp()
 		MsgBox, Please load into a valid adventure and restart. Ending Gem Farm.
 		return, 1
 	}
-	loop, 6
-	{
-		slot := A_Index - 1
-		if (ReadClickFamiliarBySlot(1,, slot) = 1)
-		{
-			GuiControl, MyWindow:, FamiliarFoundID, WARNING: A familiar may be saved in "W" formation slot %slot%.
-		}
-		;while (ReadClickFamiliarBySlot(1,, slot) = 1)
-		;{
-			;MsgBox, 2,, Found familiar on field slot %slot% in "W" Formation.
-			;IfMsgBox, Abort
-			;{
-			;	Return, 1
-			;}
-			;IfMsgBox, Retry
-			;{
-			;	(ReadClickFamiliarBySlot(1,, slot)
-			;}
-			;IfMsgBox, ignore
-			;{
-			;	Break
-			;}
-		;}
-	}
 	return, 0
-}
-
-FindChamp(ChampID := 1)
-{
-    loop, 10
-    {
-        ChampSlot := A_Index - 1
-        if (ReadChampIDbySlot(1,, ChampSlot) = ChampID)
-        {
-            Return, ChampSlot
-        }
-    }
-    Return, -1
 }
 
 ;thanks meviin for coming up with this solution
@@ -1003,7 +951,7 @@ StackRestart()
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming "w" Loaded
 	;added due to issues with Loading Zone function, see notes therein
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 15000)
+	while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 15000)
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -1057,7 +1005,7 @@ StackFarm()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	GuiControl, MyWindow:, gloopID, Transitioning to Stack Farm
-	while (ReadChampLvlBySlot(1,,gShandieSlot) AND ElapsedTime < 5000)
+	while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 5000)
 	{
 		DirectedInput("w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -1175,7 +1123,7 @@ GemFarm()
     advtoload := ReadCurrentObjID(0)
     GuiControl, MyWindow:, advtoloadID, % advtoload
 	var := 0
-	var := CheckSetUp()
+	var := CheckSetUpREV()
 	if var
 	Return
 	gPrevLevelTime := A_TickCount
@@ -1252,7 +1200,7 @@ GemFarm()
 		if (ReadResettting(1))
 		{
 			ModronReset()
-			LoadingZone()
+			LoadingZoneREV()
 			UpdateStartLoopStats(gLevel_Number)
 			if (!gStackFail)
 			++gTotal_RunCount
@@ -1372,7 +1320,5 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 TestResetFunction()
 {
-	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-	arrayPointerOffsetsModronTA := [0x8, 0x40, 0x1C, 0x30]
-	idle.write(Controller, 5, "Int", arrayPointerOffsetsModronTA*)
+	;placeholder
 }
