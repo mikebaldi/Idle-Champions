@@ -3,6 +3,7 @@ Warning: This script reads system memory. I do not know CNE's stance on reading 
 Instructions for ModronGUI.AHK:
 1. Download and install AutoHotkey: https://www.autohotkey.com/
 2. Download ModronGUI.AHK, IC_MemoryFunctions.AHK, IC_ServerCallFunctions.AHK, json.AHK, and classMemory.AHK to the same folder.
+2A. Occasionally, I may upload different versions of IC_MemoryFunctions.AHK for different versions of IC. Any Memory Function file with _v### has not been tested with the script by me and only tested for accurate memory reads. The file will need to be renamed, deleting the _v### portion.
 3. Scan all downloaded files with trusted antivirus software.
 4. Right click ModronGUI.AHK and select run script.
 5. Read and follow the instructions on the 'Read First' tab.
