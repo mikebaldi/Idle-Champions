@@ -26,7 +26,7 @@ Farm SB stacks AFTER this zone: The script will attempt to farm Steelbones stack
 
 Minimum zone Briv can farm SB Stacks on: This is the minimum zone number that your "W" formation can farm Steelbones stacks. This is only used when 'Enable manual resets to recover from failed Briv Stacking' is checked.
 
-Target Haste stacks for next run: When farming Steelbones stacks, the script will attempt to farm enough to have this amount of Haste stacks for the next run. You will have to calculate how many Haste stacks you need to complete your gem farm runs.
+Target Haste stacks for next run: When farming Steelbones stacks, the script will attempt to farm enough to have this amount of Haste stacks for the next run. You will have to calculate how many Haste stacks you need to complete your gem farm runs. This site provides an excellent stack calculator: https://ic.byteglow.com/speed
 
 Maximum time (ms) script will spend farming SB stacks: When the script is set to farm Steelbones stacks online it will do so until enough stacks are farmed to satisfy the 'Target Haste stacks for next run' or this much time in milliseconds has passed, which ever happens first. Note the script may try and farm more stacks if this time passes and it has not satisfied the 'Target haste stacks for next run' setting.
 
