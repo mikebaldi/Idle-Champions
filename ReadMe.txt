@@ -1,5 +1,7 @@
 Warning: This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
+v392+ WARNING: v392 drastically reduced tank health significantly impacting offline stacking. I will not be updating from v391 until forced to.
+
 Instructions for ModronGUI.AHK:
 1. Download and install AutoHotkey: https://www.autohotkey.com/
 2. Download ModronGUI.AHK, IC_MemoryFunctions.AHK, IC_ServerCallFunctions.AHK, json.AHK, and classMemory.AHK to the same folder.
