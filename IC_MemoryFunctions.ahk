@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 5/26/21
+;date of script: 6/9/21
 ;IC Version v0.391
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -295,7 +295,7 @@ ReadChampBenchedByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     --ChampID
     var := 0x10 + (ChampID * 0x4)
     pointerArray.Push(var, 0x178)
-    var := idle.read(Controller, "Int", pointerArray*)
+    var := idle.read(Controller, "Char", pointerArray*)
     if UpdateGUI
     ++ChampID
     GuiControl, %GUIwindow%, ReadChampBenchedByIDID, `ID: %ChampID% Benched: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
