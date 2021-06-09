@@ -22,7 +22,7 @@ Settings Documentation:
 
 Seats to level with Fkeys: Check the boxes for each seat you want the script to level up with Fkey inputs.
 
-Use Fkey leveling while below this zone: Once the script reads that it has passed the zone number entered here, it will no longer attempt to level up champions with Fkey inputs.
+Use Fkey leveling while below this zone: Once the script reads that it has passed the zone number entered here, it will no longer attempt to level up champions with Fkey inputs. The value input here should generally be a number comfortably above the zone you would soft cap at. If you are unsure, using 999 will continue to input fkeys your entire run.
 
 Farm SB stacks AFTER this zone: The script will attempt to farm Steelbones stacks once it reads that it has passed the zone number entered here. At a minimum, this zone should be high enough that the "W" formation does not kill anything. At a maximum, this zone should be 5 zones below the Modron reset zone for single skip, 7 zones below for double skip, 9 zones below for triple skip, and 11 zones below for quadruple skip.
 
