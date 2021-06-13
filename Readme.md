@@ -44,7 +44,7 @@ When the script is set to farm Steelbones stacks online it will do so until enou
 With a high enough ilvl Melf or Hew it can be faster to idle on zone one until Shandie's Dash ability activates. The script will attempt to detect this on its own, but if more than the amount of time passes input here (in milliseconds) then it will proceed. Note, the time here is modified based on the in game time scale multiplier when potions are used. Entering 0 (zero) will disable waiting on zone one until Shandie's Dash ability activates.
 
 ## Hew's ultimate key (0 disables):
-The script will attempt to continously use Hew's ultimate by inputting this value to the game client. Entering 0 (zero) will disable this function. It is recommended that if you enable this function and use Havilar with Dembo summoned that you remove her from the "E" formation so as to not accidentally unsommon Dembo.
+The script will attempt to continously use Hew's ultimate by inputting this value to the game client. Entering 0 (zero) will disable this function. It is recommended that if you enable this function and use Havilar with Dembo summoned that you remove her from the "E" formation so as to not accidentally unsummon Dembo.
 
 ## Use ults 2-9 after initial champion leveling:
 On zone one after waiting for Dash to activate or in the case of disabling Dash wait after completing zone one, the script will spend two seconds repeatedly inputing 2 through 9 to summon Dembo when this box is checked.
