@@ -1,5 +1,5 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 6/24/21
+;date of script: 6/28/21
 ;IC Version v0.394
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -30,6 +30,16 @@ ReadCurrentZone(UpdateGUI := 0, GUIwindow := "MyWindow:")
 	var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadCurrentZoneID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
+	return var
+}
+
+ReadHighestZone(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+	Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
+    pointerArray := [0x18, 0x4C]
+	var := idle.read(Controller, "Int", pointerArray*)
+    if UpdateGUI
+    GuiControl, %GUIwindow%, ReadHighestZoneID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
 	return var
 }
 
