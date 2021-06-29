@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "5/26/21"
+global ScriptDate := "6/28/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -75,6 +75,9 @@ global gAvoidBosses := AvoidBosses
 ;Click damage toggle
 IniRead, ClickLeveling, UserSettings.ini, Section1, ClickLeveling
 global gClickLeveling := ClickLeveling
+;Click damage toggle
+IniRead, CtrlClickLeveling, UserSettings.ini, Section1, CtrlClickLeveling, 0
+global gCtrlClickLeveling := CtrlClickLeveling
 ;Stack fail recovery toggle
 IniRead, StackFailRecovery, UserSettings.ini, Section1, StackFailRecovery
 global gStackFailRecovery := StackFailRecovery
@@ -228,6 +231,7 @@ Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w40, % gSwapSleep
 Gui, MyWindow:Add, Text, x+5, Briv swap sleep time (ms)
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
 Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `Uncheck `if using a familiar `on `click damage
+Gui, MyWindow:Add, Checkbox, vgCtrlClickLeveling Checked%gCtrlClickLeveling% x15 y+5, Enable ctrl (x100) leveling of `click damage
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
 Gui, MyWindow:Add, Checkbox, vgModronResetCheckEnabled Checked%gModronResetCheckEnabled% x15 y+5, Have script check for Modron reset level
@@ -278,6 +282,8 @@ Gui, MyWindow:Add, Text, x15 y+5, Swap to 'e' formation when on boss zones:
 Gui, MyWindow:Add, Text, vgAvoidBossesID x+2 w200, % gAvoidBosses
 Gui, MyWindow:Add, Text, x15 y+5, Using a familiar on click damage:
 Gui, MyWindow:Add, Text, vgClickLevelingID x+2 w200, % gClickLeveling
+Gui, MyWindow:Add, Text, x15 y+5, Enable ctrl (x100) leveling of `click damage:
+Gui, MyWindow:Add, Text, vgCtrlClickLevelingID x+2 w200, % gCtrlClickLeveling
 Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stacking:
 Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
 Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stack conversion:
@@ -387,6 +393,8 @@ Gui, MyWindow:Add, Text, x15 y+15, Memory Reads:
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+5, ReadCurrentZone: 
 Gui, MyWindow:Add, Text, vReadCurrentZoneID x+2 w200,
+Gui, MyWindow:Add, Text, x15 y+5, ReadHighestZone: 
+Gui, MyWindow:Add, Text, vReadHighestZoneID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadQuestRemaining: 
 Gui, MyWindow:Add, Text, vReadQuestRemainingID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadTimeScaleMultiplier: 
@@ -525,6 +533,8 @@ Save_Clicked:
 	IniWrite, %gAvoidBosses%, UserSettings.ini, Section1, AvoidBosses
 	GuiControl, MyWindow:, gClickLevelingID, % gClickLeveling
 	IniWrite, %gClickLeveling%, UserSettings.ini, Section1, ClickLeveling
+	GuiControl, MyWindow:, gCtrlClickLevelingID, % gCtrlClickLeveling
+	IniWrite, %gCtrlClickLeveling%, UserSettings.ini, Section1, CtrlClickLeveling
 	GuiControl, MyWindow:, gStackFailRecoveryID, % gStackFailRecovery
 	IniWrite, %gStackFailRecovery%, UserSettings.ini, Section1, StackFailRecovery
 	GuiControl, MyWindow:, gStackFailConvRecoveryID, % gStackFailConvRecovery
@@ -819,8 +829,8 @@ LoadingZoneREV()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	
-	while (ReadChampBenchedByID(1,, 47) != 0 AND ElapsedTime < 15000)
+	;need a longer sleep since offline progress should read shandie benched.
+	while (ReadChampBenchedByID(1,, 47) != 0 AND ElapsedTime < 60000)
 	{
 		DirectedInput("q{F6}")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -997,6 +1007,8 @@ StackNormal()
 		stacks := GetNumStacksFarmed()
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
+		if (ReadResettting(1) OR ReadCurrentZone(1) = 1)
+		 Return
 	}
 }
 
@@ -1143,7 +1155,7 @@ GemFarm()
 				if (ReadQuestRemaining(1))
 				DoDashWait()
 			}
-			Else if(gStackFailConvRecovery)
+			Else if (gStackFailConvRecovery)
 			{
 				CheckForFailedConv()
 				if (gUlts)
@@ -1156,6 +1168,13 @@ GemFarm()
 				else
 				FinishZone()
 				SetFormation(1)
+			}
+			Else if (gUlts)
+			{
+				DirectedInput("g")
+				FinishZone()
+				DoUlts()
+				DirectedInput("g")
 			}
         }
 
@@ -1194,7 +1213,13 @@ GemFarm()
 				gStackFail := 1
 			}
         }
-		
+
+		if (!Mod(gLevel_Number, 5) AND Mod(ReadHighestZone(1), 5) AND !ReadTransitioning(1))
+		{
+			DirectedInput("g")
+			DirectedInput("g")
+		}
+		 
 		StuffToSpam(1, gLevel_Number)
 
 		if (ReadResettting(1))
@@ -1305,8 +1330,10 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 	var :=
 	if (SendRight)
 	var := "{Right}"
-	if (gClickLeveling)
+	if (gCtrlClickLeveling)
 	var := var "{Ctrl down}``{Ctrl up}"
+	else if (gClickLeveling)
+	var := var "``"
 	if (gContinuedLeveling > gLevel_Number)
 	var := var gFKeys
 	if (gHewUlt AND hew)
