@@ -5,13 +5,14 @@ This script reads system memory. I do not know CNE's stance on reading system me
 v392 drastically reduced tank health significantly impacting offline stacking. I will not be updating from v391 until forced to.
 
 # Instructions for ModronGUI.AHK:
-1. Download and install AutoHotkey: https://www.autohotkey.com/
-2. Download `ModronGUI.AHK`, `IC_MemoryFunctions.AHK`, `IC_ServerCallFunctions.AHK`, `json.AHK`, and `classMemory.AHK` to the same folder.
+1. Read and familiarize yourself with all topics covered in Maviin's FAQ: https://docs.google.com/document/d/1ek-66HsOT3VABWdBNh-5iMOSd7UP5ssTRjgS4xkO1To/edit#
+2. Download and install AutoHotkey: https://www.autohotkey.com/
+3. Download `ModronGUI.AHK`, `IC_MemoryFunctions.AHK`, `IC_ServerCallFunctions.AHK`, `json.AHK`, and `classMemory.AHK` to the same folder.
     * Occasionally, I may upload different versions of IC_MemoryFunctions.AHK for different versions of IC. Any Memory Function file with `_v###` has not been tested with the script by me and only tested for accurate memory reads. The file will need to be renamed, deleting the `_v###` portion.
-3. Scan all downloaded files with trusted antivirus software.
-4. Right click ModronGUI.AHK and select run script.
-5. Read and follow the instructions on the **'Read First'** tab.
-6. In the in game settings, uncheck **'Disable F1-F12 Leveling'** and if using seat 12 champion then make sure to change Steam's settings for screenshots.
+4. Scan all downloaded files with trusted antivirus software.
+5. Right click ModronGUI.AHK and select run script.
+6. Read and follow the instructions on the **'Read First'** tab.
+7. In the in game settings, uncheck **'Disable F1-F12 Leveling'** and if using seat 12 champion then make sure to change Steam's settings for screenshots.
 
 ## Recommended Additional Steps:
 Review AutoHotkey tutorials and documentation.
