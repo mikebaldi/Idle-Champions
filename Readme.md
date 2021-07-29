@@ -1,9 +1,6 @@
 ### Warning:
 This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
-### v392+ WARNING:
-v392 drastically reduced tank health significantly impacting offline stacking. I will not be updating from v391 until forced to.
-
 # Instructions for ModronGUI.AHK:
 1. Read and familiarize yourself with all topics covered in Maviin's FAQ: https://docs.google.com/document/d/1ek-66HsOT3VABWdBNh-5iMOSd7UP5ssTRjgS4xkO1To/edit#
 2. Download and install AutoHotkey: https://www.autohotkey.com/
@@ -46,6 +43,9 @@ With a high enough ilvl Melf or Hew it can be faster to idle on zone one until S
 
 ## Hew's ultimate key (0 disables):
 The script will attempt to continously use Hew's ultimate by inputting this value to the game client. Entering 0 (zero) will disable this function. It is recommended that if you enable this function and use Havilar with Dembo summoned that you remove her from the "E" formation so as to not accidentally unsummon Dembo.
+
+## Time (ms) client remains closed for Briv Restart Stack (0 disables):
+After passing the zone set as part of 'Farm SB stacks AFTER this zone', the script will close the Idle Champions client for this amount of time, in milliseconds. With this value properly set, upon restarting the client an offline progress catch up mechanic will trigger and 5 minutes of time will be simulated, generally providing more stacks in less time when compared to stacking in game manually (by setting this value to 0). Recommended value range is 9000 to 15000. Longer durations do not provide more stacks, but too low of a duration may prevent the catch up mechanic from triggering resulting in few or no stacks.
 
 ## Use ults 2-9 after initial champion leveling:
 On zone one after waiting for Dash to activate or in the case of disabling Dash wait after completing zone one, the script will spend two seconds repeatedly inputing 2 through 9 to summon Dembo when this box is checked.
