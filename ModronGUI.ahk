@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "6/28/21"
+global ScriptDate := "8/10/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -16,6 +16,13 @@ global ScriptSpeed := 25
 ;====================
 ;end of user settings
 ;====================
+
+/* Changes
+7/10/21
+1. Eliminated test reset code.
+8/10/21
+1. Modifications to Dash Wait functino for reliability.
+*/
 
 ;class and methods for parsing JSON (User details sent back from a server call)
 #include JSON.ahk
@@ -146,8 +153,6 @@ global gStackCountH	:=
 global gStackCountSB :=
 
 global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
-
-global gTestReset := 0 ;variable to test a reset function not ready for release
 
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
@@ -661,7 +666,7 @@ CloseIC()
 CheckForFailedConv()
 {
 	stacks := GetNumStacksFarmed()
-    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND !gTestReset)
+    If (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks)
     {
         EndAdventure()
 		;If this sleep is too low it can cancel the reset before it completes. In this case that could be good as it will convert SB to Haste and not end the adventure.
@@ -675,11 +680,6 @@ CheckForFailedConv()
 		gStackFail := 2
         return
     }
-	if (gStackCountH < gSBTargetStacks AND stacks > gSBTargetStacks AND gTestReset)
-	{
-		TestResetFunction()
-		gStackFail := 2
-	}
 	return
 }
 
@@ -716,8 +716,8 @@ LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
 
 DoDashWait()
 {
-	DirectedInput("g")
 	LevelChampByID(47, 120, 5000, "q", 6)
+	DirectedInput("g")
     StartTime := A_TickCount
     ElapsedTime := 0
 	LevelChampByID(58, 80, 5000, "q", 5)
@@ -734,7 +734,7 @@ DoDashWait()
 		CheckForFailedConv()
 	}
 	GuiControl, MyWindow:, gloopID, Dash Wait 
-	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep)
+	While (ReadTimeScaleMultiplier(1) < DashSpeed AND ElapsedTime < modDashSleep AND ReadCurrentZone(1) = 1)
 	{
 		StuffToSpam(0, 1, 0)
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -748,6 +748,15 @@ DoDashWait()
 	}
 	DirectedInput("g")
 	SetFormation(1)
+	StartTime := A_TickCount
+    ElapsedTime := 0
+	GuiControl, MyWindow:, gloopID, Finishing Zone 1
+	while (ReadCurrentZone(1) = 1 AND ElapsedTime < 5000)
+	{
+		DirectedInput("{Right}")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
 	return
 }
 
@@ -1192,7 +1201,7 @@ GemFarm()
 				StackFarm()
 			}
 			stacks := GetNumStacksFarmed()
-			if (stacks > gSBTargetStacks AND !gTestReset)
+			if (stacks > gSBTargetStacks)
             {
                 EndAdventure()
 				sleep 2000
@@ -1207,11 +1216,6 @@ GemFarm()
 				gPrevLevelTime := A_TickCount
 				gprevLevel := ReadCurrentZone(1)
             }
-			if (stacks > gSBTargetStacks AND gTestReset)
-			{
-				TestResetFunction()
-				gStackFail := 1
-			}
         }
 
 		if (!Mod(gLevel_Number, 5) AND Mod(ReadHighestZone(1), 5) AND !ReadTransitioning(1))
@@ -1343,9 +1347,4 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
 	DirectedInput(var)
 	Return
-}
-
-TestResetFunction()
-{
-	;placeholder
 }
