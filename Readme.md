@@ -50,11 +50,8 @@ After passing the zone set as part of 'Farm SB stacks AFTER this zone', the scri
 ## Use ults 2-9 after initial champion leveling:
 On zone one after waiting for Dash to activate or in the case of disabling Dash wait after completing zone one, the script will spend two seconds repeatedly inputing 2 through 9 to summon Dembo when this box is checked.
 
-## Swap to 'e' formation to cancel Briv's jump animation:
-When checked, this box enables a function that will attempt to swap out Briv when a zone is completed and then swap him back in before the next zone is fully loaded. This eliminates most of his jump animation most of the time saving a significant amount time. Enabling this function is highly recomended.
-
 ## Briv swap sleep time (ms):
-When 'Swap to 'e' formation to cancel Briv's jump animation' is enabled, you may need to adjust this value to maximize the functions efficiency. If you see Briv's landing animation then this value should be made larger. If Briv is not being put back in the formation until after monsters spawn then this value should be made smaller. 2000 is the recomended starting point, but you should expect to tweak. This value may need to be tweaked again if you use different combinations of potions.
+If you see Briv's landing animation then this value should be made larger. If Briv is not being put back in the formation until after monsters spawn then this value should be made smaller. 2000 to 3000 is the typical range. This value may need to be tweaked again if you use different combinations of potions.
 
 ## Swap to 'e' formation when on boss zones:
 This function will remove Briv when the script reads that it has landed on a boss zone. This is only recomended for high quadruple skip Briv's who can end up on boss zones.
