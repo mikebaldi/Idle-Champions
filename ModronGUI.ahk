@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "8/10/21"
+global ScriptDate := "8/19/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,10 +18,10 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-7/10/21
-1. Eliminated test reset code.
-8/10/21
-1. Modifications to Dash Wait functino for reliability.
+8/19/21 in progress
+1. Removed reliance on Shandie to confirm zone loads.
+2. Briv swapping is always enabled with no option to disable.
+3. Removed Modron reset checks.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -73,9 +73,6 @@ global gHewUlt := HewUlt
 ;spam ults after initial leveling
 IniRead, Ults, UserSettings.ini, Section1, Ults
 global gUlts := Ults
-;Briv swap to avoid animation
-IniRead, BrivSwap, UserSettings.ini, Section1, BrivSwap
-global gBrivSwap := BrivSwap
 ;Briv swap to avoid bosses
 IniRead, AvoidBosses, UserSettings.ini, Section1, AvoidBosses
 global gAvoidBosses := AvoidBosses
@@ -100,9 +97,6 @@ global gRestartStackTime := RestartStackTime
 ;Intall location
 IniRead, GameInstallPath, Usersettings.ini, Section1, GameInstallPath, C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe
 global gInstallPath := GameInstallPath
-;Modron Reset Check
-IniRead, ModronResetCheckEnabled, UserSettings.ini, Section1, ModronResetCheckEnabled
-global gModronResetCheckEnabled := ModronResetCheckEnabled
 ;Normal SB farm max time
 IniRead, SBTimeMax, UserSettings.ini, Section1, SBTimeMax, 60000
 global gSBTimeMax := SBTimeMax
@@ -152,8 +146,6 @@ global gRedGemsStart	:=
 global gStackCountH	:=
 global gStackCountSB :=
 
-global gCoreTargetArea := ;global to help protect against script attempting to stack farm immediately before a modron reset
-
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
 Gui, MyWindow:Add, Button, x415 y25 w60 gSave_Clicked, Save
@@ -167,11 +159,11 @@ Gui, MyWindow:Add, Text, x15 y30, Gem Farm, %ScriptDate%
 Gui, MyWindow:Font, w400
 Gui, MyWindow:Add, Text, x15 y+10, Instructions:
 Gui, MyWindow:Add, Text, x15 y+2 w10, 1.
-Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Shandie, Briv, and at least one familiar on the field.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation in formation save slot 1, in game `hotkey "Q". This formation must include Briv and at least one familiar on the field.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 2.
-Gui, MyWindow:Add, Text, x+2 w370, Save your stack farming formation in formation save slot 2, in game `hotkey "W". Don't include any familiars on the field or any champions in the formation slot Shandie is in as part of formation save slot 1.
+Gui, MyWindow:Add, Text, x+2 w370, Save your stack farming formation in formation save slot 2, in game `hotkey "W". Don't include any familiars on the field.
 Gui, MyWindow:Add, Text, x15 y+2 w10, 3.
-Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game `hotkey "E". This step may be ommitted if you will not be swapping out Briv to cancel his jump animation.
+Gui, MyWindow:Add, Text, x+2 w370, Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game `hotkey "E".
 Gui, MyWindow:Add, Text, x15 y+2, 4. Adjust the settings on the settings tab.
 Gui, MyWindow:Add, Text, x15 y+2, 5. `Click the save button to save your settings.
 Gui, MyWindow:Add, Text, x15 y+2, 6. Load into zone 1 of an adventure to farm gems.
@@ -190,10 +182,8 @@ Gui, MyWIndow:Add, Text, x+2 w370, Script communicates directly with Idle Champi
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 8.
 Gui, MyWIndow:Add, Text, x+2 w370, Script reads system memory.
 Gui, MyWIndow:Add, Text, x15 y+2 w10, 9.
-Gui, MyWIndow:Add, Text, x+2 w370, The script does not work without Shandie.
-Gui, MyWIndow:Add, Text, x15 y+2 w10, 10.
 Gui, MyWIndow:Add, Text, x+2 w370, Disable manual resets to recover from failed Briv stack conversions when running event free plays.
-Gui, MyWIndow:Add, Text, x15 y+2 w10, 11.
+Gui, MyWIndow:Add, Text, x15 y+2 w10, 10.
 Gui, MyWIndow:Add, Text, x+2 w370, Recommended Briv swap `sleep time is betweeb 1500 - 3000. If you are seeing Briv's landing animation then increase the the swap sleep time. If Briv is not back in the formation before monsters can be killed then decrease the swap sleep time.
 Gui, MyWindow:Add, Text, x15 y+10, Known Issues:
 Gui, MyWindow:Add, Text, x15 y+2, 1. Cannot fully interact with `GUI `while script is running.
@@ -231,7 +221,6 @@ Gui, MyWindow:Add, Text, x+5, `Hew's ultimate key (0 disables)
 Gui, MyWindow:Add, Edit, vNewRestartStackTime x15 y+10 w50, % gRestartStackTime
 Gui, MyWindow:Add, Text, x+5, `Time (ms) client remains closed for Briv Restart Stack (0 disables)
 Gui, MyWindow:Add, Checkbox, vgUlts Checked%gUlts% x15 y+10, Use ults 2-9 after intial champion leveling
-Gui, MyWindow:Add, Checkbox, vgBrivSwap Checked%gBrivSwap% x15 y+5, Swap to 'e' formation to cancel Briv's jump animation
 Gui, MyWindow:Add, Edit, vNewSwapSleep x15 y+5 w40, % gSwapSleep
 Gui, MyWindow:Add, Text, x+5, Briv swap sleep time (ms)
 Gui, MyWindow:Add, Checkbox, vgAvoidBosses Checked%gAvoidBosses% x15 y+10, Swap to 'e' formation when `on boss zones
@@ -239,7 +228,6 @@ Gui, MyWindow:Add, Checkbox, vgClickLeveling Checked%gClickLeveling% x15 y+5, `U
 Gui, MyWindow:Add, Checkbox, vgCtrlClickLeveling Checked%gCtrlClickLeveling% x15 y+5, Enable ctrl (x100) leveling of `click damage
 Gui, MyWindow:Add, Checkbox, vgStackFailRecovery Checked%gStackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking
 Gui, MyWindow:Add, Checkbox, vgStackFailConvRecovery Checked%gStackFailConvRecovery% x15 y+5, Enable manual resets to recover from failed Briv stack conversion
-Gui, MyWindow:Add, Checkbox, vgModronResetCheckEnabled Checked%gModronResetCheckEnabled% x15 y+5, Have script check for Modron reset level
 Gui, MyWindow:Add, Checkbox, vgDoChests Checked%gDoChests% x15 y+10, Enable server calls to buy and open chests during stack restart
 Gui, MyWindow:Add, Edit, vNewSCMinGemCount x15 y+10 w100, % gSCMinGemCount
 Gui, MyWindow:Add, Text, x+5, Maintain this many gems when buying chests
@@ -279,8 +267,6 @@ Gui, MyWindow:Add, Text, x15 y+5, Time (ms) client remains closed for Briv Resta
 Gui, MyWindow:Add, Text, vgRestartStackTimeID x+2 w200, % gRestartStackTime
 Gui, MyWindow:Add, Text, x15 y+5, Use ults 2-9 after initial champion leveling:
 Gui, MyWindow:Add, Text, vgUltsID x+2 w200, % gUlts
-Gui, MyWindow:Add, Text, x15 y+5, Swap to 'e' formation to cancle Briv's jump animation:
-Gui, MyWindow:Add, Text, vgBrivSwapID x+2 w200, % gBrivSwap
 Gui, MyWindow:Add, Text, x15 y+5, Briv swap sleep time (ms):
 Gui, MyWindow:Add, Text, vgSwapSleepID x+2 w200, % gSwapSleep
 Gui, MyWindow:Add, Text, x15 y+5, Swap to 'e' formation when on boss zones:
@@ -293,8 +279,6 @@ Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Br
 Gui, MyWindow:Add, Text, vgStackFailRecoveryID x+2 w200, % gStackFailRecovery
 Gui, MyWindow:Add, Text, x15 y+5, Enable manual resets to recover from failed Briv stack conversion:
 Gui, MyWindow:Add, Text, vgStackFailConvRecoveryID x+2 w200, % gStackFailConvRecovery
-Gui, MyWindow:Add, Text, x15 y+5, Enable script to check for Modron reset level:
-Gui, MyWindow:Add, Text, vgModronResetCheckenabledID x+2 w200, % gModronResetCheckEnabled
 Gui, MyWindow:Add, Text, x15 y+5, Enable server calls to buy and open chests during stack restart:
 Gui, MyWindow:Add, Text, vgDoChestsID x+2 w200, % gDoChests
 Gui, MyWindow:Add, Text, x15 y+5, Maintain this many gems when buying chests:
@@ -420,18 +404,10 @@ Gui, MyWindow:Add, Text, x15 y+5, ReadScreenWidth:
 Gui, MyWindow:Add, Text, vReadScreenWidthID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadScreenHeight: 
 Gui, MyWindow:Add, Text, vReadScreenHeightID x+2 w200,
-;Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlBySlot: 
-;Gui, MyWindow:Add, Text, vReadChampLvlBySlotID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadMonstersSpawned:
 Gui, MyWindow:Add, Text, vReadMonstersSpawnedID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadChampLvlByID:
 Gui, MyWindow:Add, Text, vReadChampLvlByIDID x+2 w200,
-;Gui, MyWindow:Add, Text, x15 y+5, ReadChampSeatByID:
-;Gui, MyWindow:Add, Text, vReadChampSeatByIDID x+2 w200,
-;Gui, MyWindow:Add, Text, x15 y+5, ReadChampIDbySlot:
-;Gui, MyWindow:Add, Text, vReadChampIDbySlotID x+2 w200,
-Gui, MyWindow:Add, Text, x15 y+5, ReadCoreTargetArea:
-Gui, MyWindow:Add, Text, vReadCoreTargetAreaID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadCoreXP: 
 Gui, MyWindow:Add, Text, vReadCoreXPID x+2 w200,
 Gui, MyWindow:Add, Text, x15 y+5, ReadGems: 
@@ -532,8 +508,6 @@ Save_Clicked:
 	IniWrite, %gHewUlt%, UserSettings.ini, Section1, HewUlt
 	GuiControl, MyWindow:, gUltsID, % gUlts
 	IniWrite, %gUlts%, UserSettings.ini, Section1, Ults
-	GuiControl, MyWindow:, gBrivSwapID, % gBrivSwap
-	IniWrite, %gBrivSwap%, UserSettings.ini, Section1, BrivSwap
 	GuiControl, MyWindow:, gAvoidBossesID, % gAvoidBosses
 	IniWrite, %gAvoidBosses%, UserSettings.ini, Section1, AvoidBosses
 	GuiControl, MyWindow:, gClickLevelingID, % gClickLeveling
@@ -550,8 +524,6 @@ Save_Clicked:
 	gRestartStackTime := NewRestartStackTime
 	GuiControl, MyWindow:, gRestartStackTimeID, % gRestartStackTime
 	IniWrite, %gRestartStackTime%, UserSettings.ini, Section1, RestartStackTime
-	GuiControl, MyWindow:, gModronResetCheckEnabledID, % gModronResetCheckEnabled
-	IniWrite, %gModronResetCheckEnabled%, UserSettings.ini, Section1, ModronResetCheckEnabled
 	GuiControl, MyWindow:, gDoChestsID, % gDoChests
 	IniWrite, %gDoChests%, UserSettings.ini, Section1, DoChests
 	gSCMinGemCount := NewSCMinGemCount
@@ -787,7 +759,7 @@ SetFormation(gLevel_Number)
 	{
 		DirectedInput("e")
 	}
-	else if (!ReadQuestRemaining(1) AND ReadTransitioning(1) AND gBrivSwap)
+	else if (!ReadQuestRemaining(1) AND ReadTransitioning(1))
 	{
 		DirectedInput("e")
 		StartTime := A_TickCount
@@ -818,16 +790,13 @@ SetFormation(gLevel_Number)
 
 LoadingZoneREV()
 {
+	;look for Briv benched when spamming 'e' formation.
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Zone
-	;ReadMonstersSpawned was added in case monsters were spawned before game allowed inputs, an issue when spawn speed is very high. Might be creating more problems.
-	;Offline Progress appears to read monsters spawning, so this entire function can be bypassed creating issues with stack restart.
-	;while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 60000 AND ReadMonstersSpawned(1) < 2)
-	;shouldn't be an issue if monsters spawn, shandie is supposed to be on bench. Zone will kill monsters no problem. Higher zones she should be leveled.
-	while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 60000)
+	while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 60000)
 	{
-		DirectedInput("w{F6}w")
+		DirectedInput("e")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -835,73 +804,37 @@ LoadingZoneREV()
 	{
 		CheckifStuck(gprevLevel)
 	}
+	;look for Briv no benched when spamming 'w' formation.
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	;need a longer sleep since offline progress should read shandie benched.
-	while (ReadChampBenchedByID(1,, 47) != 0 AND ElapsedTime < 60000)
+	while (ReadChampBenchedByID(1,, 58) = 1 AND ElapsedTime < 60000)
 	{
-		DirectedInput("q{F6}")
+		DirectedInput("w{F5}w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
+	}
+	if (ElapsedTime > 60000)
+	{
+		CheckifStuck(gprevLevel)
 	}
 }
 
 CheckSetUpREV()
 {
-	;find core target reset area so script does not try and Briv stack before a modron reset happens.
-	gCoreTargetArea := ReadCoreTargetArea(1)
-	;confirm target area has been read
-	if (!gModronResetCheckEnabled)
-	{
-		gCoreTargetArea := 999
-	}
-	Else
-	{
-		While (!gCoreTargetArea)
-		{
-			MsgBox, 2,, Script cannot find Modron Reset Area.
-			IfMsgBox, Abort
-			{
-				Return, 1
-			}
-			IfMsgBox, Retry
-			{
-				gCoreTargetArea := ReadCoreTargetArea(1)
-			}
-			IfMsgBox, ignore
-			{
-				gCoreTargetArea := 999
-			}
-		}
-	}
-	;will need to add more here eventually
-	if (gCoreTargetArea < gAreaLow)
-	{
-		gCoreTargetArea := 999
-	}
-	StartTime := A_TickCount
-	ElapsedTime := 0
-    GuiControl, MyWindow:, gloopID, Looking for Shandie
-	DirectedInput("q{F6}q")
-	while (ReadChampBenchedByID(1,, 47) = 1 AND ElapsedTime < 10000)
-	{
-		DirectedInput("q{F6}q")
-		ElapsedTime := UpdateElapsedTime(StartTime)
-		UpdateStatTimers()
-	}
-	if (ReadChampBenchedByID(1,, 47) = 1)
-	{
-		MsgBox, Couldn't find Shandie in "Q" formation. Check saved formations. Ending Gem Farm.
-		Return, 1
-	}
-
+	;Check if Briv is in 'Q' formation.
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	slot := 0
     GuiControl, MyWindow:, gloopID, Looking for Briv
-	DirectedInput("q{F5}q")
-	while (ReadChampBenchedByID(1,, 58) = 1 AND ElapsedTime < 10000)
+	Loop, 5
+	{
+		DirectedInput("q{F5}q")
+		sleep, 100
+		if (ReadChampBenchedByID(1,, 58) = 0)
+		  break
+	}
+	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 10000)
 	{
 		DirectedInput("q{F5}q")
 		ElapsedTime := UpdateElapsedTime(StartTime)
@@ -912,18 +845,19 @@ CheckSetUpREV()
 		MsgBox, Couldn't find Briv in "Q" formation. Check saved formations. Ending Gem Farm.
 		Return, 1
 	}
+	;Check if Briv is not in 'E' formation.
 	StartTime := A_TickCount
 	ElapsedTime := 0
-    GuiControl, MyWindow:, gloopID, Looking for no Shandie
-	while (ReadChampBenchedByID(1,, 47) = 0 AND ElapsedTime < 10000)
+    GuiControl, MyWindow:, gloopID, Looking for no Briv
+	while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 10000)
 	{
-		DirectedInput("w")
+		DirectedInput("e")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (ReadChampBenchedByID(1,, 47) = 0)
+	if (ReadChampBenchedByID(1,, 58) = 0)
 	{
-		MsgBox, Shandie is in "W" formation. Check Settings. Ending Gem Farm.
+		MsgBox, Briv is in "E" formation. Check Settings. Ending Gem Farm.
 		return, 1
 	}
 	if (advtoload < 1)
@@ -1189,7 +1123,7 @@ GemFarm()
 
 		stacks := GetNumStacksFarmed()
 
-		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow AND gLevel_Number < gCoreTargetArea)
+		if (stacks < gSBTargetStacks AND gLevel_Number > gAreaLow)
 		{
 			StackFarm()
 		}
