@@ -15,7 +15,7 @@ This script reads system memory. I do not know CNE's stance on reading system me
 Review AutoHotkey tutorials and documentation.
 
 ## Notes:
-1. Script requires Shandie, Briv, and Modron Automation.
+1. Script requires Briv and Modron Automation.
 2. This script is for the Steam PC version of the game. For the EGS PC version of the game: https://github.com/CantRowOfficial/Idle-Champions-EGS
 
 # Settings Documentation:
