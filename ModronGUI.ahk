@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "8/19/21"
+global ScriptDate := "8/26/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -11,17 +11,15 @@ CoordMode, Mouse, Client
 ;========================================
 ;variables to consider changing if restarts are causing issues
 global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
-global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to load pointer base into memory
+global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to read moduel base address from memory
 global ScriptSpeed := 25
 ;====================
 ;end of user settings
 ;====================
 
 /* Changes
-8/19/21 in progress
-1. Removed reliance on Shandie to confirm zone loads.
-2. Briv swapping is always enabled with no option to disable.
-3. Removed Modron reset checks.
+1. Comments
+2. Fixes to Loading Zone function
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -39,6 +37,9 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 ;pointer addresses and offsets
 #include IC_MemoryFunctions.ahk
+
+;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
+#include IC_ServerCallFunctions.ahk
 
 ;Thanks ThePuppy for the ini code
 ;Champions to level with Fkeys
@@ -136,7 +137,6 @@ global dtCurrentLevelTime :=
 ;globals for reset tracking
 global gFailedStacking := 0
 global gFailedStackConv := 0
-global ResetCount		:= 0
 ;globals used for stat tracking
 global gGemStart		:=
 global gCoreXPStart		:=
@@ -146,6 +146,7 @@ global gRedGemsStart	:=
 global gStackCountH	:=
 global gStackCountSB :=
 
+;define a new gui with tabs and buttons
 Gui, MyWindow:New
 Gui, MyWindow:+Resize -MaximizeBox
 Gui, MyWindow:Add, Button, x415 y25 w60 gSave_Clicked, Save
@@ -431,11 +432,9 @@ Gui, MyWindow:Add, Text, vInstanceIDID x+2 w300, % InstanceID
 Gui, MyWindow:Add, Text, x15 y+5, ActiveInstance:
 Gui, MyWindow:Add, Text, vActiveInstanceID x+2 w300, % ActiveInstance
 
-;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
-#include IC_ServerCallFunctions.ahk
-
 Gui, MyWindow:Show
 
+;GUI to input a new install path.
 Gui, InstallGUI:New
 Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+10 w300 r5, % gInstallPath
 Gui, InstallGUI:Add, Button, x15 y+25 gInstallOK_Clicked, Save and `Close
@@ -580,6 +579,7 @@ Pause
 gPrevLevelTime := A_TickCount
 return
 
+;a function that checks if IC is closed and restarts it. Then opens the process and reads the module base address, two necessary steps to read memory.
 SafetyCheck() 
 {
     While (Not WinExist("ahk_exe IdleDragons.exe")) 
@@ -596,23 +596,26 @@ SafetyCheck()
 			UpdateStatTimers()
 		}
         If (Not WinExist("ahk_exe IdleDragons.exe"))
-        Return
+          Return
 
-        GuiControl, MyWindow:, gloopID, Opening `Process
+        ;the script doesn't update GUI with elapsed time while IC is loading, opening the address, or readying base address, to minimize use of CPU.
+		GuiControl, MyWindow:, gloopID, Opening `Process
 		Sleep gOpenProcess
 		OpenProcess()
         GuiControl, MyWindow:, gloopID, Loading Module Base
 		Sleep gGetAddress
 		ModuleBaseAddress()
-	    ++ResetCount
-        GuiControl, MyWindow:, ResetCountID, % ResetCount
+
 		LoadingZoneREV()
 		if (gUlts)
-		DoUlts()
+		  DoUlts()
+		
+		;reset timer for checking if IC is stuck on a zone.
 		gPrevLevelTime := A_TickCount
     }
 }
 
+;A function that closes IC. If IC takes longer than 60 seconds to save and close then the script will force it closed.
 CloseIC()
 {
     PostMessage, 0x112, 0xF060,,, ahk_exe IdleDragons.exe
@@ -635,6 +638,7 @@ CloseIC()
 	}
 }
 
+;A function that checks if farmed SB stacks from previous run failed to convert to haste. If so, the script will manually end the adventure to attempt to covnert the stacks, close IC, use a servercall to restart the adventure, and restart IC.
 CheckForFailedConv()
 {
 	stacks := GetNumStacksFarmed()
@@ -796,7 +800,7 @@ LoadingZoneREV()
     GuiControl, MyWindow:, gloopID, Loading Zone
 	while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 60000)
 	{
-		DirectedInput("e")
+		DirectedInput("e{F5}e")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -808,9 +812,41 @@ LoadingZoneREV()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ReadChampBenchedByID(1,, 58) = 1 AND ElapsedTime < 60000)
+	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
 	{
 		DirectedInput("w{F5}w")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	if (ElapsedTime > 60000)
+	{
+		CheckifStuck(gprevLevel)
+	}
+}
+
+LoadingZoneOne()
+{
+	;look for Briv not benched when spamming 'q' formation.
+	StartTime := A_TickCount
+	ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Loading Zone
+	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
+	{
+		DirectedInput("q{F5}q")
+		ElapsedTime := UpdateElapsedTime(StartTime)
+		UpdateStatTimers()
+	}
+	if (ElapsedTime > 60000)
+	{
+		CheckifStuck(gprevLevel)
+	}
+	;look for Briv benched when spamming 'e' formation.
+	StartTime := A_TickCount
+	ElapsedTime := 0
+    GuiControl, MyWindow:, gloopID, Confirming Zone Load
+	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
+	{
+		DirectedInput("e{F5}e")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
@@ -1163,7 +1199,7 @@ GemFarm()
 		if (ReadResettting(1))
 		{
 			ModronReset()
-			LoadingZoneREV()
+			LoadingZoneOne()
 			UpdateStartLoopStats(gLevel_Number)
 			if (!gStackFail)
 			++gTotal_RunCount
