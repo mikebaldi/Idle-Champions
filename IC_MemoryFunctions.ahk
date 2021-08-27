@@ -1,6 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-;date of script: 6/28/21
-;IC Version v0.394
+;date of script: 8/11/21
+;IC Version v0.397
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 
@@ -57,7 +57,7 @@ ReadAreaLevel(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadGems(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x50, 0x12C]
+    pointerArray := [0x50, 0x130]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadGemsID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -67,7 +67,7 @@ ReadGems(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadGemsSpent(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x50, 0x130]
+    pointerArray := [0x50, 0x134]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadGemsSpentID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -77,7 +77,7 @@ ReadGemsSpent(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadRedGems(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x50, 0x18, 0x258]
+    pointerArray := [0x50, 0x18, 0x260]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadRedGemsID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -117,7 +117,7 @@ ReadTransitioning(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadSBStacks(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x50, 0x18, 0x2B8]
+    pointerArray := [0x50, 0x18, 0x2C0]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     {
@@ -130,7 +130,7 @@ ReadSBStacks(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadHasteStacks(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x50, 0x18, 0x2BC]
+    pointerArray := [0x50, 0x18, 0x2C4]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     {
@@ -163,7 +163,7 @@ ReadCoreXP(UpdateGUI := 0, GUIwindow := "MyWindow:")
 ReadCoreTargetArea(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
-    pointerArray := [0x8, 0x40, 0x1C, 0x30]
+    pointerArray := [0x50, 0x6C, 0x10, 0x8, 0x10, 0x30]
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadCoreTargetAreaID, %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -225,7 +225,7 @@ ReadChampLvlBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     pointerArray := [0x14, 0xC, 0x8]
     var := 0x10 + (slot * 0x4)
-    pointerArray.Push(var, 0x14, 0x194)
+    pointerArray.Push(var, 0x14, 0x1A8)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadChampLvlBySlotID, Slot: %slot% Lvl: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -237,7 +237,7 @@ ReadChampSeatBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     pointerArray := [0x14, 0xC, 0x8]
     var := 0x10 + (slot * 0x4)
-    pointerArray.Push(var, 0x14, 0x8, 0xC8)
+    pointerArray.Push(var, 0x14, 0xC, 0xD0)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadChampSeatBySlotID, Slot: %slot% Seat: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -249,7 +249,7 @@ ReadChampIDbySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     pointerArray := [0x14, 0xC, 0x8]
     var := 0x10 + (slot * 0x4)
-    pointerArray.Push(var, 0x14, 0x8, 0x8)
+    pointerArray.Push(var, 0x14, 0xC, 0x8)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadChampIDbySlotID, Slot: %slot% `ID: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
@@ -262,7 +262,7 @@ ReadChampLvlByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x194)
+    pointerArray.Push(var, 0x1A8)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -276,7 +276,7 @@ ReadChampSeatByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x8, 0xC8)
+    pointerArray.Push(var, 0xC, 0xD0)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -290,7 +290,7 @@ ReadChampSlotByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x16C)
+    pointerArray.Push(var, 0x180)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -304,7 +304,7 @@ ReadChampBenchedByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x178)
+    pointerArray.Push(var, 0x18C)
     var := idle.read(Controller, "Char", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -344,6 +344,7 @@ ReadMonstersOnScreen(UpdateGUI := 0, GUIWindow := "MyWindow:")
 }
 */
 
+;not used
 ReadClickFamiliarBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
 {
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
@@ -361,7 +362,7 @@ ReadHeroAliveBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     pointerArray := [0x14, 0xC, 0x8]
     var := 0x10 + (slot * 0x4)
-    pointerArray.Push(var, 0x139)
+    pointerArray.Push(var, 0x149)
     var := idle.read(Controller, "Char", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadHeroAliveBySlotID, slot: %Slot% heroAlive: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
