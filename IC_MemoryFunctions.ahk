@@ -362,7 +362,7 @@ ReadHeroAliveBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     Controller := idle.getAddressFromOffsets(pointerBaseController, arrayPointerOffsetsController*)
     pointerArray := [0x14, 0xC, 0x8]
     var := 0x10 + (slot * 0x4)
-    pointerArray.Push(var, 0x149)
+    pointerArray.Push(var, 0x151)
     var := idle.read(Controller, "Char", pointerArray*)
     if UpdateGUI
     GuiControl, %GUIwindow%, ReadHeroAliveBySlotID, slot: %Slot% heroAlive: %var% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec%
