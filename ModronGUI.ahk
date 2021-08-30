@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "8/26/21"
+global ScriptDate := "8/29/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,8 +18,7 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Comments
-2. Fixes to Loading Zone function
+1. Fixes to Loading Zone function
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -844,7 +843,7 @@ LoadingZoneOne()
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
+	while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 60000)
 	{
 		DirectedInput("e{F5}e")
 		ElapsedTime := UpdateElapsedTime(StartTime)
