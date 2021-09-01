@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "8/29/21"
+global ScriptDate := "9/1/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,7 +18,7 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Fixes to Loading Zone function
+1. Fixes to Loading Zone function to help with invalid instance issues.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -803,23 +803,29 @@ LoadingZoneREV()
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
+	;check if stuck function would fail here on some cases where game gets stuck in offline progress calc, common after invalid instance. memory would read as if progress was still happening.
 	if (ElapsedTime > 60000)
 	{
-		CheckifStuck(gprevLevel)
+		CloseIC()
+		Sleep, 1000
+		SafetyCheck()
 	}
 	;look for Briv no benched when spamming 'w' formation.
 	StartTime := A_TickCount
 	ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
-	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
+	while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 30000)
 	{
 		DirectedInput("w{F5}w")
 		ElapsedTime := UpdateElapsedTime(StartTime)
 		UpdateStatTimers()
 	}
-	if (ElapsedTime > 60000)
+	;check if stuck function would fail here on some cases where game gets stuck in offline progress calc, common after invalid instance. memory would read as if progress was still happening.
+	if (ElapsedTime > 30000)
 	{
-		CheckifStuck(gprevLevel)
+		CloseIC()
+		Sleep, 1000
+		SafetyCheck()
 	}
 }
 
