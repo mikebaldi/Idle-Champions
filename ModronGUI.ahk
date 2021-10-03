@@ -715,6 +715,7 @@ DoDashWait()
         StuffToSpam(0, 1, 0)
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
+        Sleep, 100
     }
     if (ReadQuestRemaining(1))
     FinishZone()
