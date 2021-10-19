@@ -715,7 +715,9 @@ DoDashWait()
         StuffToSpam(0, 1, 0)
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
-        Sleep, 100
+        ; without fkey or click leveling, this turns to busy loopi
+        ; and freezes script ui. Fix is by small sleep
+        Sleep, 10
     }
     if (ReadQuestRemaining(1))
     FinishZone()
