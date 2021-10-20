@@ -1,6 +1,6 @@
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-global mfScriptDate := "10/19/21"
-global mfScriptVer := "v0.407.1 untested"
+global mfScriptDate := "10/20/21"
+global mfScriptVer := "v0.408 untested"
 
 global idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
 
@@ -263,7 +263,7 @@ ReadChampLvlByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x1A8)
+    pointerArray.Push(var, 0x1AC)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -308,7 +308,7 @@ ReadChampSlotByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x180)
+    pointerArray.Push(var, 0x184)
     var := idle.read(Controller, "Int", pointerArray*)
     if UpdateGUI
     ++ChampID
@@ -322,7 +322,7 @@ ReadChampBenchedByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
     pointerArray := [0x50, 0x8, 0xC, 0x8]
     --ChampID
     var := 0x10 + (ChampID * 0x4)
-    pointerArray.Push(var, 0x18C)
+    pointerArray.Push(var, 0x190)
     var := idle.read(Controller, "Char", pointerArray*)
     if UpdateGUI
     ++ChampID
