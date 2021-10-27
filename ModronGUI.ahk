@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "9/26/21"
+global ScriptDate := "10/26/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,8 +18,7 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Fixes to Loading Zone function to help with invalid instance issues.
-2. Modify Set Formation function to disable Briv animation canceling after stack farming and before modron reset.
+1. Added code to fallback after normal stacking to allow familiars to be placed. Thanks ljmjollni for the code.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -995,6 +994,10 @@ StackNormal()
         if (ReadResettting(1) OR ReadCurrentZone(1) = 1)
          Return
     }
+    ;code from ljmjollni, untested by me, purpose: fall back to allow familiars to load when under attack.
+    DirectedInput("{Right}")
+    Sleep 100
+    DirectedInput("g")
 }
 
 StackFarm()
