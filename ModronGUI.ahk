@@ -1046,7 +1046,7 @@ StackFarm()
         }
     }
     ; Bugfix: Sleep to prevent getting stuck with no-mobs-spawning. Might need fiddling with to find the lowest safe number
-    Sleep 250
+    Sleep 500
     gPrevLevelTime := A_TickCount
     DirectedInput("g")
 }
