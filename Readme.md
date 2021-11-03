@@ -1,3 +1,5 @@
+#11/2/21 UPDATE INCLUDES TWO NEW FILES: IC_ArrayFunctions.AHK & IC_GameManagerClass.AHK
+
 ### Warning:
 This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
