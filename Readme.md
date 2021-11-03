@@ -4,7 +4,7 @@ This script reads system memory. I do not know CNE's stance on reading system me
 # Instructions for ModronGUI.AHK:
 1. Read and familiarize yourself with all topics covered in Maviin's FAQ: https://docs.google.com/document/d/1ek-66HsOT3VABWdBNh-5iMOSd7UP5ssTRjgS4xkO1To/edit#
 2. Download and install AutoHotkey: https://www.autohotkey.com/
-3. Download `ModronGUI.AHK`, `IC_MemoryFunctions.AHK`, `IC_ServerCallFunctions.AHK`, `json.AHK`, and `classMemory.AHK` to the same folder.
+3. Download `ModronGUI.AHK`, `IC_MemoryFunctions.AHK`, `IC_ArrayFunctions.AHK`, `IC_GameManagerClass.AHK`, `IC_ServerCallFunctions.AHK`, `json.AHK`, and `classMemory.AHK` to the same folder.
     * Occasionally, I may upload different versions of IC_MemoryFunctions.AHK for different versions of IC. Any Memory Function file with `_v###` has not been tested with the script by me and only tested for accurate memory reads. The file will need to be renamed, deleting the `_v###` portion.
 4. Scan all downloaded files with trusted antivirus software.
 5. Right click ModronGUI.AHK and select run script.
