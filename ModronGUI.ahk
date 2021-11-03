@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "10/26/21"
+global ScriptDate := "2021-10-22"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,7 +18,7 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Added code to fallback after normal stacking to allow familiars to be placed. Thanks ljmjollni for the code.
+1. Fixes to Loading Zone function to help with invalid instance issues.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -987,17 +987,13 @@ StackNormal()
         {
             DirectedInput("{Right}")
         }
-        Sleep 1000
+        Sleep 500
         stacks := GetNumStacksFarmed()
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
         if (ReadResettting(1) OR ReadCurrentZone(1) = 1)
          Return
     }
-    ;code from ljmjollni, untested by me, purpose: fall back to allow familiars to load when under attack.
-    DirectedInput("{Right}")
-    Sleep 100
-    DirectedInput("g")
 }
 
 StackFarm()
@@ -1022,6 +1018,35 @@ StackFarm()
     stacks := GetNumStacksFarmed()
     if (stacks < gSBTargetStacks)
     StackNormal()
+    gPrevLevelTime := A_TickCount
+    GuiControl, MyWindow:, gloopID, Loading Q Formation
+    DirectedInput( "q" )
+    Sleep, 100
+    ; Bugfix: Zone transition is required because familiars are no longer put on the screen while under attack.
+    while (ReadChampBenchedByID(1,, 47) != 0)
+    {
+        if (ReadResettting(1) OR ReadCurrentZone(1) < 10)
+            Break
+        GuiControl, MyWindow:, gloopID, Falling back to load Q Formation
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        While ( !ReadTransitioning( 1 ) AND ElapsedTime < 1000 )
+        {
+            DirectedInput( "q{Left}" )
+            ElapsedTime := UpdateElapsedTime(StartTime)
+            UpdateStatTimers()
+        }
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        While ( ReadTransitioning( 1 ) AND ElapsedTime < 1000 )
+        {
+            DirectedInput( "q" )
+            ElapsedTime := UpdateElapsedTime(StartTime)
+            UpdateStatTimers()
+        }
+    }
+    ; Bugfix: Sleep to prevent getting stuck with no-mobs-spawning. Might need fiddling with to find the lowest safe number
+    Sleep 500
     gPrevLevelTime := A_TickCount
     DirectedInput("g")
 }
