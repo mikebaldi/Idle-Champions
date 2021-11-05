@@ -142,12 +142,12 @@ ReadMonstersSpawned(UpdateGUI := 0, GUIwindow := "MyWindow:")
 
 ReadResettting(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
-    return GenericGetValue(UpdateGUI, GUIwindow, "ReadResettingID", g_gameManager.Game.GameInstance.Controller.ResetHandler.Resetting)
+    return GenericGetValue(UpdateGUI, GUIwindow, "ReadResettingID", g_gameManager.Game.GameInstance.ResetHandler.Resetting)
 }
 
 ReadResetting(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
-    ReadResettting(UpdateGUI, GUIwindow)
+    return ReadResettting(UpdateGUI, GUIwindow)
 }
 
 ReadTimeScaleMultiplier(UpdateGUI := 0, GUIwindow := "MyWindow:")

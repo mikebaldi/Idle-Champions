@@ -20,7 +20,7 @@ class GameManager
         this.Game.GameUser := New GameObjectStructure(this.Game,, [0x54])
         this.Game.GameInstance := New GameObjectStructure(this.Game,, [0x58, 0x8, 0x10])         ; Push - GameInstances._items.Item[0]
         this.Game.GameInstance.Controller := New GameObjectStructure(this.Game.GameInstance,, [0xC])
-        this.Game.GameInstance.Controller.ResetHandler := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x1C])
+        this.Game.GameInstance.ResetHandler := New GameObjectStructure(this.Game.GameInstance,, [0x1C])
         this.Game.GameInstance.Controller.UserData := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x50])
         this.Game.GameInstance.Controller.UserData.HeroHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x8])
         this.Game.GameInstance.Controller.UserData.StatHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x18])
@@ -30,7 +30,7 @@ class GameManager
         this.Game.GameStarted := New GameObjectStructure(this.Game, "Char", [0x7C])
         this.Game.GameInstance.Controller.Area:= New GameObjectStructure(this.Game.GameInstance.Controller,, [0xC])
         this.Game.GameInstance.Controller.Area.MonsterSpawned:= New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x148]) ; Push basicMonstersSpawnedThisArea
-        this.Game.GameInstance.Controller.ResetHandler.Resetting := New GameObjectStructure(this.Game.GameInstance.Controller.ResetHandler, "Char", [0x1C])
+        this.Game.GameInstance.ResetHandler.Resetting := New GameObjectStructure(this.Game.GameInstance.ResetHandler, "Char", [0x1C])
         this.GameManager.TimeScale := New GameObjectStructure(This.GameManager, "Float", [0x48]) 
         ;this.Game.GameInstance.Controller.TimeScale := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x8, 0xE8]) ; Push <GameInstance>k__BackingField, currentTimeScaleMultiplier
         this.Game.GameInstance.Controller.AreaTransition := New GameObjectStructure(this.Game.GameInstance.Controller, "Char", [0x20, 0x1C]) ; Push AreaTransitioner, <IsTransitioning>k__BackingField
