@@ -18,7 +18,7 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Fixes to Loading Zone function to help with invalid instance issues.
+1. Fixed typo, resetting only has two ts. Stats and resets should not work properly.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -991,7 +991,7 @@ StackNormal()
         stacks := GetNumStacksFarmed()
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
-        if (ReadResettting(1) OR ReadCurrentZone(1) = 1)
+        if (ReadResetting(1) OR ReadCurrentZone(1) = 1)
          Return
     }
 }
@@ -1025,7 +1025,7 @@ StackFarm()
     ; Bugfix: Zone transition is required because familiars are no longer put on the screen while under attack.
     while (ReadChampBenchedByID(1,, 47) != 0)
     {
-        if (ReadResettting(1) OR ReadCurrentZone(1) < 10)
+        if (ReadResetting(1) OR ReadCurrentZone(1) < 10)
             Break
         GuiControl, MyWindow:, gloopID, Falling back to load Q Formation
         StartTime := A_TickCount
@@ -1230,7 +1230,7 @@ GemFarm()
          
         StuffToSpam(1, gLevel_Number)
 
-        if (ReadResettting(1))
+        if (ReadResetting(1))
         {
             ModronReset()
             LoadingZoneOne()
@@ -1275,7 +1275,7 @@ ModronReset()
     StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Modron Reset
-    while (ReadResettting(1) AND ElapsedTime < 60000)
+    while (ReadResetting(1) AND ElapsedTime < 60000)
     {
         Sleep, 250
         ElapsedTime := UpdateElapsedTime(StartTime)
@@ -1319,7 +1319,7 @@ EndAdventure()
     StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Manually Ending Adventure
-    while(!ReadResettting(1) AND ElapsedTime < 30000)
+    while(!ReadResetting(1) AND ElapsedTime < 30000)
     {
         WinActivate, ahk_exe IdleDragons.exe
         MouseClick, Left, xClick, yClick, 1
