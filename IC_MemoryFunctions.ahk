@@ -147,7 +147,7 @@ ReadResettting(UpdateGUI := 0, GUIwindow := "MyWindow:")
 
 ReadResetting(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
-    ReadResettting(UpdateGUI, GUIwindow)
+    return ReadResettting(UpdateGUI, GUIwindow)
 }
 
 ReadTimeScaleMultiplier(UpdateGUI := 0, GUIwindow := "MyWindow:")
