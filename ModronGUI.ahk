@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "2021-10-22"
+global ScriptDate := "11/5/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,7 +18,8 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Fixed typo, resetting only has two ts. Stats and resets should not work properly.
+1. Fixed start of loop stats for real this time.
+2. Fixed sb and haste stacks not updating on stats page.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -909,11 +910,12 @@ CheckSetUpREV()
     return, 0
 }
 
-;thanks meviin for coming up with this solution
 GetNumStacksFarmed()
 {
     gStackCountSB := ReadSBStacks(1)
+    GuiControl, MyWindow:, gStackCountSBID, %gStackCountSB%
     gStackCountH := ReadHasteStacks(1)
+    GuiControl, MyWindow:, gStackCountHID, %gStackCountH%
     if (gRestartStackTime) 
     {
         return gStackCountH + gStackCountSB
@@ -987,7 +989,7 @@ StackNormal()
         {
             DirectedInput("{Right}")
         }
-        Sleep 500
+        Sleep 1000
         stacks := GetNumStacksFarmed()
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
@@ -1018,19 +1020,22 @@ StackFarm()
     stacks := GetNumStacksFarmed()
     if (stacks < gSBTargetStacks)
     StackNormal()
-    gPrevLevelTime := A_TickCount
+    QR := ReadQuestRemaining( 1 )
+    StartTime := A_TickCount
+    ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Loading Q Formation
-    DirectedInput( "q" )
-    Sleep, 100
-    ; Bugfix: Zone transition is required because familiars are no longer put on the screen while under attack.
-    while (ReadChampBenchedByID(1,, 47) != 0)
+    while ( QR == ReadQuestRemaining( 1 ) AND ElapsedTime < 3000 )
     {
-        if (ReadResetting(1) OR ReadCurrentZone(1) < 10)
-            Break
+        DirectedInput( "q{Right}" )
+        ElapsedTime := UpdateElapsedTime(StartTime)
+        UpdateStatTimers()
+    }
+    if ( ElapsedTime > 3000 )
+    {
         GuiControl, MyWindow:, gloopID, Falling back to load Q Formation
         StartTime := A_TickCount
         ElapsedTime := 0
-        While ( !ReadTransitioning( 1 ) AND ElapsedTime < 1000 )
+        While ( !ReadTransitioning( 1 ) AND ElapsedTime < 3000 )
         {
             DirectedInput( "q{Left}" )
             ElapsedTime := UpdateElapsedTime(StartTime)
@@ -1038,17 +1043,15 @@ StackFarm()
         }
         StartTime := A_TickCount
         ElapsedTime := 0
-        While ( ReadTransitioning( 1 ) AND ElapsedTime < 1000 )
+        While ( ReadTransitioning( 1 ) AND ElapsedTime < 3000 )
         {
             DirectedInput( "q" )
             ElapsedTime := UpdateElapsedTime(StartTime)
             UpdateStatTimers()
         }
     }
-    ; Bugfix: Sleep to prevent getting stuck with no-mobs-spawning. Might need fiddling with to find the lowest safe number
-    Sleep 500
     gPrevLevelTime := A_TickCount
-    DirectedInput("g")
+    DirectedInput("gq")
 }
 
 UpdateStartLoopStats(gLevel_Number)
