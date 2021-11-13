@@ -1,32 +1,30 @@
 #include IC_GameManagerClass.ahk
+#include IC_GameSettingsClass.ahk
+
+
+;Memory Structures
+global g_gameManager := new GameManager
+global g_gameSettings := new GameSettings
+
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
-global g_mfScriptDate := "11/02/21"
-global g_mfScriptVer := "v0.410"
 GetIC_MemoryFunctionsVersion()
 {
-    return "v1.0, 11/02/21, IC v0.410, Steam"
+    g_gameManager.GetVersion()
 }
-
-global g_idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-
-;Game Controller Structure
-global g_moduleBase :=
-global g_gameManager := new GameManager
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
 ;Also, if the target process is running as admin, then the script will also require admin rights!
-;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
-;hProcessCopy is an optional variable in which the opened handled is stored.
 OpenProcess()
 {
-    g_idle := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
+    g_gameManager.Refresh()
+    g_gameSettings.Refresh()
 }
 
 ModuleBaseAddress()
 {
-    g_moduleBase := g_idle.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
-    return g_moduleBase
+;   g_gameManager.Refresh()
+;   g_gameSettings.Refresh()
 }
 
 ;=================
@@ -38,11 +36,11 @@ GenericGetValue(UpdateGUI, GUIwindow, LblGUI, GameObject)
 {
     if(GameObject.ValueType == "UTF-16")
     {
-        var := g_idle.readstring(g_moduleBase, bytes := 0, GameObject.ValueType, (GameObject.GetOffsets())*)
+        var := g_gameManager.Main.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, (GameObject.GetOffsets())*)
     }
     else
     {
-        var := g_idle.read(g_moduleBase, GameObject.ValueType, (GameObject.GetOffsets())*)
+        var := g_gameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
     }
     if(GameObject.ValueType == "Double" or GameObject.ValueType == "Float")
     {
@@ -65,11 +63,11 @@ GenericGetListValue(UpdateGUI, GUIwindow, LblGUI, GameObject, ItemID, isListAlia
     }
     if(GameObject.ValueType == "UTF-16")
     {
-        var := g_idle.readstring(g_moduleBase, bytes := 0, GameObject.ValueType, offsets*)
+        var := g_gameManager.Main.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, offsets*)
     }
     else
     {
-        var := g_idle.read(g_moduleBase, GameObject.ValueType, offsets*)
+        var := g_gameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, offsets*)
     }
     if(GameObject.ValueType == "Double" or GameObject.ValueType == "Float")
     {
@@ -232,12 +230,12 @@ ReadChampSeatByID(UpdateGUI := 0, GUIwindow := "MyWindow:", ChampID := 0)
 
 ReadUserID(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
-    return GenericGetValue(UpdateGUI, GUIwindow, "ReadUserIDID", g_gameManager.Game.GameUser.ID)
+    return GenericGetValue(UpdateGUI, GUIwindow, "ReadUserIDID", g_gameSettings.GameSettings.UserID)
 }
 
 ReadUserHash(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
-    return GenericGetValue(UpdateGUI, GUIwindow, "ReadUserHashID", g_gameManager.Game.GameUser.Hash)
+    return GenericGetValue(UpdateGUI, GUIwindow, "ReadUserHashID", g_gameSettings.GameSettings.Hash)
 }
 
 ;==================================================
@@ -346,7 +344,7 @@ ReadFormationSaveBySlot( UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0, ig
     Formation := Array()
     loop, %_size%
     {
-        ;[Item[i]]
+        ;[Item[i]] ;mb-reminder-list starts at 0, but using A_index to iterate through list and that starts at 1
         tempObject := new GameObjectStructure(gameObject, "Int", [ getListItemOffset( A_Index, 1 )])
         champID := GenericGetValue(0,"","", tempObject)
         if (!ignoreEmptySlots or champID != -1)
@@ -367,6 +365,35 @@ ReadFormationNameBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
     var := GenericGetListValue(0, GUIwindow, "ReadFormationNameBySlotID", g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList.FormationNameAlias, slot, isAlias := 1, ItemOffset := 0)
     if UpdateGUI
         GuiControl, %GUIwindow%, ReadFormationNameBySlotID, slot: %slot% Name: %var%    
+    return var
+}
+
+;=========================================================================
+;Formation related memory reads (not save, but the in adventure formation)
+;=========================================================================
+ReadNumAttackingMonstersReached(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+    return GenericGetValue(UpdateGUI, GUIwindow, "ReadNumAttackingMonstersReachedID", g_gameManager.Game.GameInstance.Controller.Formation.numAttackingMonstersReached)
+}
+
+ReadNumRangedAttackingMonsters(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+    return GenericGetValue(UpdateGUI, GUIwindow, "NumRangedAttackingMonstersID", g_gameManager.Game.GameInstance.Controller.Formation.NumRangedAttackingMonsters)
+}
+
+ReadChampIDBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
+{
+    var := GenericGetListValue(0, GUIwindow, "ReadChampIDBySlotID", g_gameManager.Game.GameInstance.Controller.Formation.FormationList.ChampIDAlias, slot, isAlias := 1, ItemOffset := 0)
+    if UpdateGUI
+        GuiControl, %GUIwindow%, ReadChampIDBySlotID, slot: %slot% ID: %var%    
+    return var
+}
+
+ReadHeroAliveBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0)
+{
+    var := GenericGetListValue(0, GUIwindow, "ReadHeroAliveBySlotID", g_gameManager.Game.GameInstance.Controller.Formation.FormationList.HeroAliveAlias, slot, isAlias := 1, ItemOffset := 0)
+    if UpdateGUI
+        GuiControl, %GUIwindow%, ReadHeroAliveBySlotID, slot: %slot% Alive: %var%    
     return var
 }
 
@@ -393,6 +420,14 @@ ReadCoreTargetArea(UpdateGUI := 0, GUIwindow := "MyWindow:")
 {
     return GenericGetValue(UpdateGUI, GUIwindow, "ReadCoreTargetAreaID", g_gameManager.Game.GameInstance.OfflineProgressHandler.ModronSave.TargetArea)
 }
+;=================
+;UI
+;=================
+
+ReadAutoProgressToggled(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+    return GenericGetValue(UpdateGUI, GUIwindow, "ReadAutoProgressToggledID", g_gameManager.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled)
+}
 
 ;==============
 ;Helper Methods
@@ -411,3 +446,10 @@ ConvQuadToString(FirstEight, SecondEight)
     stringVar := Round((SubStr(var, 1 , 3) / 100), 2)  . "e" . Floor(exponent)  
     return stringVar 
 }
+
+ReadGameSettingsUserID(UpdateGUI := 0, GUIwindow := "MyWindow:")
+{
+    var := GenericGetValue(UpdateGUI, GUIwindow, "ReadGSUserID", g_gameSettings.GameSettings.UserID)
+    return var
+}
+
