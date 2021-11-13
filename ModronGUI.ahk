@@ -1,7 +1,7 @@
 #SingleInstance force
 ;Modron Automation Gem Farming Script
 ;by mikebaldi1980
-global ScriptDate := "11/5/21"
+global ScriptDate := "11/13/21"
 ;put together with the help from many different people. thanks for all the help.
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
@@ -18,8 +18,8 @@ global ScriptSpeed := 25
 ;====================
 
 /* Changes
-1. Fixed start of loop stats for real this time.
-2. Fixed sb and haste stacks not updating on stats page.
+"11/13/21"
+1. Added redundancy and checks for failed key inputs.
 */
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -693,10 +693,12 @@ LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
 DoDashWait()
 {
     LevelChampByID(47, 120, 5000, "q", 6)
-    DirectedInput("g")
+    ;DirectedInput("g")
+    ToggleAutoProgress( 0 )
     StartTime := A_TickCount
     ElapsedTime := 0
     LevelChampByID(58, 80, 5000, "q", 5)
+    ToggleAutoProgress( 0 )
     gTime := ReadTimeScaleMultiplier(1)
     if (gTime < 1)
     gTime := 1
@@ -722,13 +724,14 @@ DoDashWait()
     {
         DoUlts()
     }
-    DirectedInput("g")
-    SetFormation(1)
+    ;DirectedInput("{g}")
+    ToggleAutoProgress( 1 ) 
     StartTime := A_TickCount
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Finishing Zone 1
-    while (ReadCurrentZone(1) = 1 AND ElapsedTime < 5000)
+    while (ReadCurrentZone(1) == 1 AND ElapsedTime < 5000)
     {
+        SetFormation(1)
         DirectedInput("{Right}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
@@ -761,17 +764,17 @@ SetFormation(gLevel_Number)
 {
     if (gAvoidBosses AND !Mod(gLevel_Number, 5))
     {
-        DirectedInput("e")
+        DirectedInput("{e}")
     }
     else if (!ReadQuestRemaining(1) AND ReadTransitioning(1) AND gLevel_Number < gAreaLow)
     {
-        DirectedInput("e")
+        DirectedInput("{e}")
         StartTime := A_TickCount
         ElapsedTime := 0
         GuiControl, MyWindow:, gloopID, ReadTransitioning
         while (ElapsedTime < 5000 AND !ReadQuestRemaining(1))
         {
-            DirectedInput("{Right}")
+            DirectedInput("{e}{Right}")
             ElapsedTime := UpdateElapsedTime(StartTime)
             UpdateStatTimers()
         }
@@ -782,14 +785,14 @@ SetFormation(gLevel_Number)
         GuiControl, MyWindow:, gloopID, Still ReadTransitioning
         while (ElapsedTime < swapSleepMod AND ReadTransitioning(1))
         {
-            DirectedInput("{Right}")
+            DirectedInput("{e}{Right}")
             ElapsedTime := UpdateElapsedTime(StartTime)
             UpdateStatTimers()
         }
-        DirectedInput("q")
+        DirectedInput("{q}")
     }
     else
-    DirectedInput("q")
+    DirectedInput("{q}")
 }
 
 LoadingZoneREV()
@@ -893,7 +896,7 @@ CheckSetUpREV()
     GuiControl, MyWindow:, gloopID, Looking for no Briv
     while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 10000)
     {
-        DirectedInput("e")
+        DirectedInput("{e}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -939,7 +942,7 @@ StackRestart()
     GuiControl, MyWindow:, gloopID, Transitioning to Stack Restart
     while (ReadTransitioning(1))
     {
-        DirectedInput("w")
+        DirectedInput("{w}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -949,7 +952,7 @@ StackRestart()
     ;added due to issues with Loading Zone function, see notes therein
     while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 15000)
     {
-        DirectedInput("w")
+        DirectedInput("{w}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -973,7 +976,7 @@ StackRestart()
     SafetyCheck()
     ;Game may save "q" formation before restarting, creating an endless restart loop. LoadinZone() should bring "w" back before triggering a second restart, but monsters could spawn before it does.
     ;this doesn't appear to help the issue above.
-    DirectedInput("w")
+    DirectedInput("{w}")
 }
 
 StackNormal()
@@ -1009,17 +1012,18 @@ StackFarm()
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
-    DirectedInput("g")
+    ;DirectedInput("g")
+    ToggleAutoProgress( 0 )
     ;send input Left while on a boss zone
     while (!mod(ReadCurrentZone(1), 5))
     {
         DirectedInput("{Left}")
     }
     if gRestartStackTime
-    StackRestart()
+        StackRestart()
     stacks := GetNumStacksFarmed()
     if (stacks < gSBTargetStacks)
-    StackNormal()
+        StackNormal()
     QR := ReadQuestRemaining( 1 )
     StartTime := A_TickCount
     ElapsedTime := 0
@@ -1051,7 +1055,9 @@ StackFarm()
         }
     }
     gPrevLevelTime := A_TickCount
-    DirectedInput("gq")
+    ;DirectedInput("gq")
+    DirectedInput("{q}")
+    ToggleAutoProgress( 1 )
 }
 
 UpdateStartLoopStats(gLevel_Number)
@@ -1176,10 +1182,12 @@ GemFarm()
                 CheckForFailedConv()
                 if (gUlts)
                 {
-                    DirectedInput("g")
+                    ;DirectedInput("g")
+                    ToggleAutoProgress( 0 )
                     FinishZone()
                     DoUlts()
-                    DirectedInput("g")
+                    ;DirectedInput("g")
+                    ToggleAutoProgress( 1 )
                 }
                 else
                 FinishZone()
@@ -1187,10 +1195,12 @@ GemFarm()
             }
             Else if (gUlts)
             {
-                DirectedInput("g")
+                ToggleAutoProgress( 0 )
+                ;DirectedInput("g")
                 FinishZone()
                 DoUlts()
-                DirectedInput("g")
+                ;DirectedInput("g")
+                ToggleAutoProgress( 1 )
             }
         }
 
@@ -1227,9 +1237,11 @@ GemFarm()
 
         if (!Mod(gLevel_Number, 5) AND Mod(ReadHighestZone(1), 5) AND !ReadTransitioning(1))
         {
-            DirectedInput("g")
-            DirectedInput("g")
+            DirectedInput("{g}")
+            DirectedInput("{g}")
         }
+
+        ToggleAutoProgress( 1 )
          
         StuffToSpam(1, gLevel_Number)
 
@@ -1354,4 +1366,13 @@ StuffToSpam(SendRight := 1, gLevel_Number := 1, hew := 1, formation := "")
 
     DirectedInput(var)
     Return
+}
+
+;parameter should be 0 or 1, for off or on
+ToggleAutoProgress( toggleOn := 1 )
+{
+    if ( ReadAutoProgressToggled( 1 ) != toggleOn )
+    {
+        DirectedInput( "{g}" )
+    }
 }
