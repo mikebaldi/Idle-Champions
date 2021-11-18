@@ -1,3 +1,5 @@
+# 11/18/21 UPDATE TO COMBINE EGS AND STEAM POINTERS.
+This update should allow users to no longer need to download separate pointers/offsets when using Epic vs. Steam.  ModronGUI.ahk has been updated slightly so a full download is recommended.
 # 11/2/21 UPDATE INCLUDES TWO NEW FILES: IC_ArrayFunctions.AHK & IC_GameManagerClass.AHK
 
 ### Warning:
