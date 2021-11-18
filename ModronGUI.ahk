@@ -604,7 +604,6 @@ SafetyCheck()
         OpenProcess()
         GuiControl, MyWindow:, gloopID, Loading Module Base
         Sleep gGetAddress
-        ModuleBaseAddress()
 
         LoadingZoneREV()
         if (gUlts)
@@ -1149,7 +1148,6 @@ UpdateElapsedTime(StartTime)
 GemFarm() 
 {  
     OpenProcess()
-    ModuleBaseAddress()
     ;not sure why this one is here, commented out for now.
     ;GetUserDetails()
     UserID := ReadUserID(1)

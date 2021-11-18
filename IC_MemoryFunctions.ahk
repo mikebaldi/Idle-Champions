@@ -5,26 +5,38 @@
 ;Memory Structures
 global g_gameManager := new GameManager
 global g_gameSettings := new GameSettings
+global g_is64bit := false
 
 ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
 GetIC_MemoryFunctionsVersion()
 {
-    g_gameManager.GetVersion()
+    return "v1.1, 11/16/21, IC v0.412"  
 }
 
 ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
 ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
 ;Also, if the target process is running as admin, then the script will also require admin rights!
+;Automatically selects offsets used depending on if process is 64bit or not (epic or steam)
 OpenProcess()
 {
     g_gameManager.Refresh()
-    g_gameSettings.Refresh()
-}
+    if(!g_is64bit and g_gameManager.is64BBit())
+    {
+        g_gameManager := new GameManagerEGS
+        g_gameSettings := new GameSettingsEGS
+        g_is64bit := true
+    }
+    else if (g_is64bit and !g_gameManager.is64BBit())
+    {
+        g_gameManager := new GameManager
+        g_gameSettings := new GameSettings
+        g_is64bit := false
+    }
+    else
+    {
+        g_gameSettings.Refresh()
+    }
 
-ModuleBaseAddress()
-{
-;   g_gameManager.Refresh()
-;   g_gameSettings.Refresh()
 }
 
 ;=================
@@ -337,15 +349,32 @@ ReadFormationFavoriteIDBySlot(UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 
 ;when parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array
 ReadFormationSaveBySlot( UpdateGUI := 0, GUIwindow := "MyWindow:", slot := 0, ignoreEmptySlots := 0 )
 {
+    gameObject := ""
+    gameObjectSize := ""
     ;[ Item[ slot ], Formation, _items ]
-    gameObject := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[ getListItemOffset( slot, 0 ), 0xC, 0x8 ])
-    gameObjectSize := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[ getListItemOffset( slot, 0 ), 0xC, 0xC ])
+    if(!g_gameManager.is64BBit())
+    {
+        gameObject := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[ getListItemOffset( slot, 0 ), 0xC, 0x8 ])
+        gameObjectSize := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[ getListItemOffset( slot, 0 ), 0xc, 0xc ])
+    }
+    Else
+    {
+        gameObject := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[getListItemOffset( slot, 0 ), 0x18, 0x10 ])
+        gameObjectSize := new GameObjectStructure(g_gameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList,,[ getListItemOffset( slot, 0 ), 0x18, 0x18 ])
+    }
     _size := GenericGetValue(0,"","",gameObjectSize)
     Formation := Array()
     loop, %_size%
     {
         ;[Item[i]] ;mb-reminder-list starts at 0, but using A_index to iterate through list and that starts at 1
-        tempObject := new GameObjectStructure(gameObject, "Int", [ getListItemOffset( A_Index, 1 )])
+        if(!g_gameManager.is64BBit())
+        {
+            tempObject := new GameObjectStructure(gameObject, "Int", [ getListItemOffset( A_Index, 1 )])
+        }
+        else
+        {
+            tempObject := new GameObjectStructure(gameObject, "Int", [ 0x20 + ( (A_Index-1) * 0x4 )])
+        }        
         champID := GenericGetValue(0,"","", tempObject)
         if (!ignoreEmptySlots or champID != -1)
         {
@@ -436,14 +465,26 @@ ReadAutoProgressToggled(UpdateGUI := 0, GUIwindow := "MyWindow:")
 getListItemOffset( listItem, listStartValue )
 {
     listItem -= listStartValue
-    return 0x10 + ( listItem * 0x4 )
+    if(g_gameManager.is64BBit())
+    {
+        return 0x20 + ( listItem * 0x8 )
+    }
+    Else
+    {
+        return 0x10 + ( listItem * 0x4 )
+    }
+    
 }
 
 ConvQuadToString(FirstEight, SecondEight)
 {
     var := (FirstEight + (2.0**63)) * (2.0**SecondEight)
     exponent := log(var)
-    stringVar := Round((SubStr(var, 1 , 3) / 100), 2)  . "e" . Floor(exponent)  
+    stringVar := Round(var, 0) . ""
+    if(var >= 10000)
+    {
+        stringVar := Round((SubStr(var, 1 , 3) / 100), 2)  . "e" . Floor(exponent)  
+    }
     return stringVar 
 }
 
