@@ -1209,7 +1209,17 @@ GemFarm()
             StackFarm()
         }
 
-        if (gStackCountH < 50 AND gLevel_Number > gMinStackZone AND gStackFailRecovery AND gLevel_Number < gAreaLow)
+        if (gStackCountH < 50 AND stacks < gSBTargetStacks AND gStackFailRecovery AND gLevel_Number > gAreaLow - 10)
+        {
+            ; We're out of haste stacks less than 10 levels from the usual
+            ; stacking level, so let's just finish the run with a normal modron
+            ; reset instead of trying to Complete Adventure.
+            ; This can happen if you don't build in a buffer in your target
+            ; haste stacks, but it's better to just go through a
+            ; few levels without briv skip than to force a restart.
+            GuiControl, MyWindow:, gloopID, Slog to Modron Reset
+        }
+        else if (gStackCountH < 50 AND gLevel_Number > gMinStackZone AND gStackFailRecovery AND gLevel_Number < gAreaLow)
         {
             if (gStackCountSB < gSBTargetStacks)
             {
