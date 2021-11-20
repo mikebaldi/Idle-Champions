@@ -10,9 +10,18 @@ CoordMode, Mouse, Client
 ;User settings not accessible via the GUI
 ;========================================
 ;variables to consider changing if restarts are causing issues
-global gOpenProcess	:= 10000	;time in milliseconds for your PC to open Idle Champions
-global gGetAddress := 5000		;time in milliseconds after Idle Champions is opened for it to read moduel base address from memory
-global ScriptSpeed := 25
+
+;time in milliseconds for your PC to open Idle Champions
+IniRead, OpenProcessMillis, UserSettings.ini, Performance, OpenProcessMillis, 10000
+global gOpenProcess := OpenProcessMillis
+
+;time in milliseconds after Idle Champions is opened for it to read module base address from memory
+IniRead, GetAddressMillis, UserSettings.ini, Performance, GetAddressMillis, 5000
+global gGetAddress := GetAddressMillis
+
+;time in milliseconds between keyboard inputs
+IniRead, ScriptSpeedMillis, UserSettings.ini, Performance, ScriptSpeedMillis, 25
+global gScriptSpeed := ScriptSpeedMillis
 ;====================
 ;end of user settings
 ;====================
@@ -548,6 +557,10 @@ Save_Clicked:
     gSCGoldCount := 99
     GuiControl, MyWindow:, gSCGoldCountID, % gSCGoldCount
     IniWrite, %gSCGoldCount%, UserSettings.ini, Section1, SCGoldCount
+
+    IniWrite, %gOpenProcess%, UserSettings.ini, Performance, OpenProcessMillis
+    IniWrite, %gGetAddress%, UserSettings.ini, Performance, GetAddressMillis
+    IniWrite, %gScriptSpeed%, UserSettings.ini, Performance, ScriptSpeedMillis
     return
 }
 
