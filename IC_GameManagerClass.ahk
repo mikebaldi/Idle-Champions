@@ -23,7 +23,7 @@ class GameManager
 
     GetVersion()
     {
-        return "v1.0, 11/11/21, IC v0.412, Steam"
+        return "v1.1, 11/30/21, IC v0.414, Steam"
     }
 
     Refresh()
@@ -157,7 +157,7 @@ class GameManagerEGS
 
     GetVersion()
     {
-        return "v1.0, 11/16/21, IC v0.412, EGS"
+        return "v1.1, 11/30/21, IC v0.414, EGS"
     }
     
     is64BBit()
