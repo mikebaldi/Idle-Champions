@@ -679,7 +679,7 @@ LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
     ElapsedTime := 0
     GuiControl, MyWindow:, gloopID, Leveling Champ %ChampID% to %Lvl%
     var := "{F" . seat . "}"
-    var := var j
+    var := var . "{" . j . "}"
     while (ReadChampLvlByID(1,,ChampID) < Lvl AND ElapsedTime < i)
     {
         DirectedInput(var)
@@ -692,7 +692,7 @@ LevelChampByID(ChampID := 1, Lvl := 0, i := 5000, j := "q", seat := 1)
 DoDashWait()
 {
     LevelChampByID(47, 120, 5000, "q", 6)
-    ;DirectedInput("g")
+    ;DirectedInput("{g}")
     ToggleAutoProgress( 0 )
     StartTime := A_TickCount
     ElapsedTime := 0
@@ -802,7 +802,7 @@ LoadingZoneREV()
     GuiControl, MyWindow:, gloopID, Loading Zone
     while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 60000)
     {
-        DirectedInput("e{F5}e")
+        DirectedInput("{e}{F5}{e}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -819,7 +819,7 @@ LoadingZoneREV()
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
     while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 30000)
     {
-        DirectedInput("w{F5}w")
+        DirectedInput("{w}{F5}{w}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -840,7 +840,7 @@ LoadingZoneOne()
     GuiControl, MyWindow:, gloopID, Loading Zone
     while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 60000)
     {
-        DirectedInput("q{F5}q")
+        DirectedInput("{q}{F5}{q}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -854,7 +854,7 @@ LoadingZoneOne()
     GuiControl, MyWindow:, gloopID, Confirming Zone Load
     while (ReadChampBenchedByID(1,, 58) != 1 AND ElapsedTime < 60000)
     {
-        DirectedInput("e{F5}e")
+        DirectedInput("{e}{F5}{e}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -873,14 +873,14 @@ CheckSetUpREV()
     GuiControl, MyWindow:, gloopID, Looking for Briv
     Loop, 5
     {
-        DirectedInput("q{F5}q")
+        DirectedInput("{q}{F5}{q}")
         sleep, 100
         if (ReadChampBenchedByID(1,, 58) = 0)
           break
     }
     while (ReadChampBenchedByID(1,, 58) != 0 AND ElapsedTime < 10000)
     {
-        DirectedInput("q{F5}q")
+        DirectedInput("{q}{F5}{q}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -986,7 +986,7 @@ StackNormal()
     stacks := GetNumStacksFarmed()
     while (stacks < gSBTargetStacks AND ElapsedTime < gSBTimeMax)
     {
-        directedinput("w")
+        directedinput("{w}")
         if (ReadCurrentZone(1) <= gAreaLow) 
         {
             DirectedInput("{Right}")
@@ -1007,11 +1007,11 @@ StackFarm()
     GuiControl, MyWindow:, gloopID, Transitioning to Stack Farm
     while (ReadChampBenchedByID(1,, 47) != 1 AND ElapsedTime < 5000)
     {
-        DirectedInput("w")
+        DirectedInput("{w}")
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
-    ;DirectedInput("g")
+    ;DirectedInput("{g}")
     ToggleAutoProgress( 0 )
     ;send input Left while on a boss zone
     while (!mod(ReadCurrentZone(1), 5))
@@ -1029,7 +1029,7 @@ StackFarm()
     GuiControl, MyWindow:, gloopID, Loading Q Formation
     while ( QR == ReadQuestRemaining( 1 ) AND ElapsedTime < 3000 )
     {
-        DirectedInput( "q{Right}" )
+        DirectedInput( "{q}{Right}" )
         ElapsedTime := UpdateElapsedTime(StartTime)
         UpdateStatTimers()
     }
@@ -1040,7 +1040,7 @@ StackFarm()
         ElapsedTime := 0
         While ( !ReadTransitioning( 1 ) AND ElapsedTime < 3000 )
         {
-            DirectedInput( "q{Left}" )
+            DirectedInput( "{q}{Left}" )
             ElapsedTime := UpdateElapsedTime(StartTime)
             UpdateStatTimers()
         }
@@ -1048,13 +1048,13 @@ StackFarm()
         ElapsedTime := 0
         While ( ReadTransitioning( 1 ) AND ElapsedTime < 3000 )
         {
-            DirectedInput( "q" )
+            DirectedInput( "{q}" )
             ElapsedTime := UpdateElapsedTime(StartTime)
             UpdateStatTimers()
         }
     }
     gPrevLevelTime := A_TickCount
-    ;DirectedInput("gq")
+    ;DirectedInput("{g}{q}")
     DirectedInput("{q}")
     ToggleAutoProgress( 1 )
 }
@@ -1180,11 +1180,11 @@ GemFarm()
                 CheckForFailedConv()
                 if (gUlts)
                 {
-                    ;DirectedInput("g")
+                    ;DirectedInput("{g}")
                     ToggleAutoProgress( 0 )
                     FinishZone()
                     DoUlts()
-                    ;DirectedInput("g")
+                    ;DirectedInput("{g}")
                     ToggleAutoProgress( 1 )
                 }
                 else
@@ -1194,10 +1194,10 @@ GemFarm()
             Else if (gUlts)
             {
                 ToggleAutoProgress( 0 )
-                ;DirectedInput("g")
+                ;DirectedInput("{g}")
                 FinishZone()
                 DoUlts()
-                ;DirectedInput("g")
+                ;DirectedInput("{g}")
                 ToggleAutoProgress( 1 )
             }
         }
@@ -1235,8 +1235,8 @@ GemFarm()
 
         if (!Mod(gLevel_Number, 5) AND Mod(ReadHighestZone(1), 5) AND !ReadTransitioning(1))
         {
-            DirectedInput("{g}")
-            DirectedInput("{g}")
+            ;DirectedInput("{g}")
+            ;DirectedInput("{g}")
         }
 
         ToggleAutoProgress( 1 )
