@@ -1,0 +1,19 @@
+Jan 1, 2022
+    Updated some documentation.
+    Fix for reading incorrect game instance for BPH.
+    Added memory offset for CoreID (unused).
+    Updated OpenIC to hopefully prevent multiple instances of IC opening.
+
+Dec 31, 2021
+    Fixed class instantiations to not have ()
+    Added extended functions for Briv (RestartAdventure and SetUserCredetials)
+    Added CLR.ahk for interpreting and using managed DLLs (i.e. compiled in C#).
+    Included Ionic.Zlib.dll to compress/decompress data.
+    Created a DLL wrapper (GzipWrapper.dll) for Ionic that allows use of its static functions.
+    Included generic save string creation in GzipWrapper.
+    Created IC_SaveHelper_Class to manage compression and encryption for saves with gzip and md5.
+    Fix for closing after reset.
+    Fix for not recording stats when doing manual reset.
+
+Dec 29, 2021
+    Configuring for public release.

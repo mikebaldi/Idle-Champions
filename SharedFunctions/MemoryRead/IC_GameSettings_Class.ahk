@@ -1,6 +1,6 @@
-#include IC_GameObjectStructureClass.ahk
+#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
-class GameSettings
+class IC_GameSettings_Class
 {
     
     StaticOffset := 0xD20
@@ -11,7 +11,7 @@ class GameSettings
  
     GetVersion()
     {
-        return "v1.0, 11/16/21, IC v0.412, Steam"  
+        return "v1.0, 11/30/21, IC v0.414+, Steam"  
     }
 
     Refresh()
@@ -30,13 +30,13 @@ class GameSettings
         this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x30])
         this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x38]) ; Push MobileClientVersion
         this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x3C, 0xC])
-        this.GameSettings.GameSettingsInstanceLocation := new GameObjectStructure(this.GameSettings,,[this.StaticOffset, 0x0])
-        this.GameSettings.GameSettingsInstanceLocation.InstanceID := new GameObjectStructure(this.GameSettings.GameSettingsInstanceLocation,,[0x10])
+        this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
+        this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x10])
     }
 }
 
 ; EGS variation of GameSettings (Thanks to Fenume for updating offsets for 412)
-class GameSettingsEGS
+class IC_GameSettingsEGS_Class
 {
     
     StaticOffset := 0xE00
@@ -47,7 +47,7 @@ class GameSettingsEGS
 
     GetVersion()
     {
-        return "v1.0, 11/16/21, IC v0.412, EGS"  
+        return "v1.0, 11/30/21, IC v0.414+, EGS"  
     }
 
     Refresh()
@@ -66,7 +66,7 @@ class GameSettingsEGS
         this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x58])
         this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x68]) ; Push MobileClientVersion
         this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x70, 0x14])
-        this.GameSettings.GameSettingsInstanceLocation := new GameObjectStructure(this.GameSettings,,[this.StaticOffset, 0x0])
-        this.GameSettings.GameSettingsInstanceLocation.InstanceID := new GameObjectStructure(this.GameSettings.GameSettingsInstanceLocation,,[0x18])
+        this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
+        this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x18])
     }
 }

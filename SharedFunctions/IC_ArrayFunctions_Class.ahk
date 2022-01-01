@@ -1,4 +1,4 @@
-; Class that contains functions for dealing with 1 dimentional arrays
+; Class that contains functions for working with 1 dimentional arrays
 
 class ArrFnc
 {
@@ -51,6 +51,24 @@ class ArrFnc
             var .= Format("{:d}", array1[A_Index])
         }
         var .= " ]"
+        return var
+    }
+
+    ; Creates a string from an associative array of numbers showing the array in decimal format. e.g. {1:1, 2:2, 3:3}
+    GetDecFormattedAssocArrayString(array1)
+    {
+        itemCount := array1.Count()
+        var := "{ "
+        for k, v in array1
+        {
+            if IsObject(v)
+                var .= this.GetDecFormattedArrayString(v) . "] "
+            if ( A_Index < itemCount )
+                var .= k . ":" . Format("{:d}", v) . ", "
+            else
+            var .= k . ":" . Format("{:d}", v)
+        }
+        var .= " }"
         return var
     }
 }

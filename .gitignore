@@ -1,1 +1,9 @@
-UserSettings.ini
+*settings.json
+IC_Test*
+IC_*Extra*
+.gitignore
+Logging*LOG*
+.vscode*
+*Old.LOG*
+*LV_Functions.ahk
+eos*
