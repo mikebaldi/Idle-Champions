@@ -60,8 +60,6 @@ class IC_ServerCalls_Class
         URLtoCall := this.webRoot . "post.php?call=" . callName . parameters
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
         WR.SetTimeouts( "10000", "10000", "10000", "10000" )
-        HTTPREQUEST_PROXYSETTING_PROXY := 2
-        WR.SetProxy( HTTPREQUEST_PROXYSETTING_PROXY, "127.0.0.1:9877" )
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -208,8 +206,6 @@ class IC_ServerCalls_Class
         URLtoCall := this.webroot "post.php?call=saveuserdetails&"
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
         WR.SetTimeouts( "10000", "10000", "10000", "10000" )
-        HTTPREQUEST_PROXYSETTING_PROXY := 2
-        WR.SetProxy( HTTPREQUEST_PROXYSETTING_PROXY, "127.0.0.1:9877" )
         Try {
             WR.Open( "POST", URLtoCall, true )
             boundaryHeader = 
