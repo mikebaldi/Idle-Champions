@@ -570,7 +570,7 @@ class IC_MemoryFunctions_Class
         {
             testValue := this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID.GetGameObjectFromListValues(A_index - 1) )
             if(testValue == buffID)
-                return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NamePlural.GetGameObjectFromListValues(A_index - 1))
+                return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular.GetGameObjectFromListValues(A_index - 1))
         }
         return ""
     }

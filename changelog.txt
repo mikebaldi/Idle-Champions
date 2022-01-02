@@ -1,3 +1,6 @@
+Jan 2, 2022
+    Fix for inventory view on EGS not having names for all items.
+
 Jan 1, 2022
     Updated some documentation.
     Fix for reading incorrect game instance for BPH.
