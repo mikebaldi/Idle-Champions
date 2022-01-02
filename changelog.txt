@@ -1,5 +1,7 @@
 Jan 2, 2022
     Fix for inventory view on EGS not having names for all items.
+    When Havilar is detected in save formation 1, the script will attempt to level her and summon Dembo at the start of each run.
+        Note: When the script is started mid run, this may result in the incorrect ultimates being used.
 
 Jan 1, 2022
     Updated some documentation.
