@@ -948,6 +948,26 @@ class IC_SharedFunctions_Class
         return true
     }
 
+    ;a method to get the ultimate button number corresponding to a given champ
+    ;parameter: champID - the champion ID you want to match
+    ;returns button number on success, -1 on failure.
+    GetUltimateButtonByChampID(champID)
+    {
+        i := 0
+        loop, % this.Memory.ReadUltimateButtonListSize()
+        {
+            if (champID == this.Memory.ReadUltimateButtonChampIDByItem(i))
+            {
+                if (i < 9)
+                    return ++i
+                Else
+                    return 0
+            }
+            i++
+        }
+        return -1
+    }
+
     #include *i %A_LineFile%\..\IC_SharedFunctions_Extra.ahk
 }
 #include *i %A_LineFile%\..\IC_SharedFunctions_Extended.ahk

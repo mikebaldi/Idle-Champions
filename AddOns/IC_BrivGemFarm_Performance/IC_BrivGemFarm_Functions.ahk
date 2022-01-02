@@ -564,10 +564,12 @@ class IC_BrivGemFarm_Class
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
-        if(isHavilarInFormation AND g_SF.ConvQuadToDouble( g_SF.Memory.ReadGoldFirst8Bytes(), g_SF.Memory.ReadGoldSecond8Bytes() ) > 1e16 )
+        if(isHavilarInFormation)
         {
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
-            g_SF.DirectedInput(,, 1,2,3)
+            ultButton := g_SF.GetUltimateButtonByChampID(56)
+            if (ultButton != -1)
+                g_SF.DirectedInput(,, ultButton)
         }
         if(g_BrivUserSettings[ "Fkeys" ]) ; AND !g_SF.areChampionsUpgraded(formationFavorite1)
         {

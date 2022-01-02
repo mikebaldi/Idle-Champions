@@ -196,6 +196,12 @@ class IC_GameManager_Class
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x22C, 0x8]) ; Push activeBoxes._items
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x24C]) 
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0x70]) 
+        this.Game.GameInstance.Screen.uiController.ultimatesBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x14])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x220, 0x8]) ; Push ultimatesItems._items
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x220, 0xC]) ; Push ultimatesItems._size
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x218])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero,, [0xC])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x8])
         ;=========================================
         ;Shandie's Dash
         ;=========================================

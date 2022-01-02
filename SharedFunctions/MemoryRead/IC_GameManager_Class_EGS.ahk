@@ -180,7 +180,13 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar,, [0x318])
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x358, 0x10]) ; Push activeBoxes._items
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x398]) 
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0xA0])         
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0xA0])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x28])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x340, 0x10]) ; Push ultimatesItems._items
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x340, 0x18]) ; Push ultimatesItems._size
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x330])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero,, [0x18])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x10])    
         ;=========================================
         ;Shandie's Dash
         ;=========================================

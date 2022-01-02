@@ -470,6 +470,17 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled)
     }
 
+    ;reads the champ id associated with an ultimate button
+    ReadUltimateButtonChampIDByItem(item := 0)
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID.GetGameObjectFromListValues(item))
+    }
+
+    ReadUltimateButtonListSize()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize)
+    }
+
     ;======================
     ; Retrieving Formations
     ;======================
