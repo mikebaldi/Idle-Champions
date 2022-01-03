@@ -29,7 +29,6 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 
 class IC_BrivGemFarm_Class
 {
-    resetZoneBuffer := 41
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
     ;=====================================================
@@ -390,8 +389,8 @@ class IC_BrivGemFarm_Class
             stackfail := g_SF.RestartAdventure( "Briv ran out of jumps but has enough stacks for a new adventure" )
         ; stacks are more than the target stacks and party is more than 25 levels past stack zone, restart adventure
         ; (for restarting after stacking without going to modron reset level)
-        if ( stacks > g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + this.resetZoneBuffer)
-            stackfail := g_SF.RestartAdventure(" Stacks > target stacks & party > " . this.resetZoneBuffer . " levels past stack zone")
+        if ( stacks > g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+            stackfail := g_SF.RestartAdventure(" Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone")
         return stackfail
     }
 

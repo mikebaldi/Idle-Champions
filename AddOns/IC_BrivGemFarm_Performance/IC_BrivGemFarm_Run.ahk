@@ -49,11 +49,43 @@ Gui, BrivPerformanceGemFarm:New, -Resize
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
 Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
 Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
-Gui, BrivPerformanceGemFarm:Show,, Running Gem Farm...
+LoadBrivGemFarmSettings() ; load settings file.
+Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
 
 ReloadBrivGemFarmSettingsDisplay()
 {
+    ReloadBrivGemFarmSettings()
+    Gui, ListView, BrivFarmSettingsID
+    LV_Delete()
+    LV_Add(, "Using Fkeys? ", Fkeys ? "Yes" : "No")
+    LV_Add(, "Avoid Bosses? ", AvoidBosses ? "Yes" : "No")
+    LV_Add(, "Stack Fail Recovery? ", StackFailRecovery ? "Yes" : "No")
+    LV_Add(, "Stack Zone: ", g_BrivUserSettings[ "StackZone" ])
+    LV_Add(, "Min Stack Zone w/ can't reach Stack Zone: ", g_BrivUserSettings[ "MinStackZone" ])
+    LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
+    LV_Add(, "Stacking Restart wait time: ", g_BrivUserSettings[ "RestartStackTime" ])
+    LV_Add(, "Dash Wait Time: ", g_BrivUserSettings[ "DashSleepTime" ])
+    LV_Add(, "Briv Swap Sleep time: ", g_BrivUserSettings[ "SwapSleep" ])
+    LV_Add(, "Buy and open Chests? ", g_BrivUserSettings[ "DoChests" ] ? "Yes" : "No")
+    if(g_BrivUserSettings[ "DoChests" ])
+    {
+        LV_Add(, "Buy Silver? ", g_BrivUserSettings[ "BuySilvers" ] ? "Yes" : "No")
+        LV_Add(, "Buy Gold? ", g_BrivUserSettings[ "BuyGolds" ] ? "Yes" : "No")
+        LV_Add(, "Open Silver? ", g_BrivUserSettings[ "OpenSilvers" ] ? "Yes" : "No")
+        LV_Add(, "Open Gold? ", g_BrivUserSettings[ "OpenGolds" ] ? "Yes" : "No")
+        LV_Add(, "Required Gems to Buy: " g_BrivUserSettings[ "MinGemCount" ])
+    }
+    LV_ModifyCol()
+}
+
+ReloadBrivGemFarmSettings()
+{
     g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
+    If !IsObject( g_BrivUserSettings )
+    {
+        g_BrivUserSettings := {}
+        g_BrivUserSettings["WriteSettings"] := true
+    }
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
     Fkeys := g_BrivUserSettings[ "Fkeys" ]
@@ -85,28 +117,17 @@ ReloadBrivGemFarmSettingsDisplay()
         g_BrivUserSettings[ "OpenGolds" ] := 1
     if ( g_BrivUserSettings[ "MinGemCount" ] == "" )
         g_BrivUserSettings[ "MinGemCount" ] := 0
-
-    Gui, ListView, BrivFarmSettingsID
-    LV_Delete()
-    LV_Add(, "Using Fkeys? ", Fkeys ? "Yes" : "No")
-    LV_Add(, "Avoid Bosses? ", AvoidBosses ? "Yes" : "No")
-    LV_Add(, "Stack Fail Recovery? ", StackFailRecovery ? "Yes" : "No")
-    LV_Add(, "Stack Zone: ", g_BrivUserSettings[ "StackZone" ])
-    LV_Add(, "Min Stack Zone w/ can't reach Stack Zone: ", g_BrivUserSettings[ "MinStackZone" ])
-    LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
-    LV_Add(, "Stacking Restart wait time: ", g_BrivUserSettings[ "RestartStackTime" ])
-    LV_Add(, "Dash Wait Time: ", g_BrivUserSettings[ "DashSleepTime" ])
-    LV_Add(, "Briv Swap Sleep time: ", g_BrivUserSettings[ "SwapSleep" ])
-    LV_Add(, "Buy and open Chests? ", g_BrivUserSettings[ "DoChests" ] ? "Yes" : "No")
-    if(g_BrivUserSettings[ "DoChests" ])
+    if (g_BrivUserSettings[ "DashWaitBuffer" ] == "")    
+        g_BrivUserSettings[ "DashWaitBuffer" ] := 0
+    if ( g_BrivUserSettings[ "WindowXPositon" ] == "" )
+        g_BrivUserSettings[ "WindowXPositon" ] := 0
+    if ( g_BrivUserSettings[ "WindowYPositon" ] == "" )
+        g_BrivUserSettings[ "WindowYPositon" ] := 0
+    if(g_BrivUserSettings["WriteSettings"] := true)
     {
-        LV_Add(, "Buy Silver? ", g_BrivUserSettings[ "BuySilvers" ] ? "Yes" : "No")
-        LV_Add(, "Buy Gold? ", g_BrivUserSettings[ "BuyGolds" ] ? "Yes" : "No")
-        LV_Add(, "Open Silver? ", g_BrivUserSettings[ "OpenSilvers" ] ? "Yes" : "No")
-        LV_Add(, "Open Gold? ", g_BrivUserSettings[ "OpenGolds" ] ? "Yes" : "No")
-        LV_Add(, "Required Gems to Buy: " g_BrivUserSettings[ "MinGemCount" ])
-    }
-    LV_ModifyCol()
+        g_BrivUserSettings.Delete("WriteSettings")
+        g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )   
+    }     
 }
 
 
@@ -119,7 +140,6 @@ LoadBrivGemFarmSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
     }
 }
-LoadBrivGemFarmSettings() ; load settings file.
 ObjRegisterActive(g_SharedData, "{416ABC15-9EFC-400C-8123-D7D8778A2103}")
 ; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
 

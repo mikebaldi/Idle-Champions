@@ -12,15 +12,15 @@ g_DownAlign := g_DownAlign - 17 ; The line above changes the Y origin by 40. Aju
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 
+Gui, ICScriptHub:Tab, Briv Gem Farm
+Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
+
 ;check if first run
 If !IsObject( g_BrivUserSettings )
 {
     g_BrivUserSettings := {}
-    g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
+    g_BrivUserSettings["WriteSettings"] := true
 }
-
-Gui, ICScriptHub:Tab, Briv Gem Farm
-Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
 if ( g_BrivUserSettings[ "Fkeys" ] == "" )
     g_BrivUserSettings[ "Fkeys" ] := 1
@@ -56,6 +56,19 @@ if ( g_BrivUserSettings[ "OpenGolds" ] == "" )
 OpenGolds := g_BrivUserSettings[ "OpenGolds" ]
 if ( g_BrivUserSettings[ "MinGemCount" ] == "" )
     g_BrivUserSettings[ "MinGemCount" ] := 0
+if (g_BrivUserSettings[ "ResetZoneBuffer" ] == "")
+    g_BrivUserSettings[ "ResetZoneBuffer" ] := 41
+if (g_BrivUserSettings[ "DashWaitBuffer" ] == "")    
+    g_BrivUserSettings[ "DashWaitBuffer" ] := 0
+if ( g_UserSettings[ "WindowXPositon" ] == "" )
+        g_BrivUserSettings[ "WindowXPositon" ] := 0
+if ( g_UserSettings[ "WindowYPositon" ] == "" )
+        g_BrivUserSettings[ "WindowYPositon" ] := 0
+if(g_BrivUserSettings["WriteSettings"] := true)
+{
+    g_BrivUserSettings.Delete("WriteSettings")
+    g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
+}
 
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?

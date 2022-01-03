@@ -4,6 +4,9 @@ Jan 2, 2022
     Added an Addon that adds a button to BrivGemFarm to change the game's location. (Temporary solution)
     Updated some naming to be more consistent.
     Added an error if buying/opening chests has a bad response.
+    Added settings in Settings.json and BrivGemFarmSettings.json for setting window starting position top left of screen.
+    Add setting (LastZoneBuffer) to BrivGemFarmSettings for adjusting the amount of levels allowed after StackFarm before a manual reset occurs. (Default is 41)
+    Add setting (DashWaitBuffer) to BrivGemFarmSettings for adjusting the amount of time that will be added to Shandie's Dashwait (Default is 0).
 
 Jan 1, 2022
     Updated some documentation.

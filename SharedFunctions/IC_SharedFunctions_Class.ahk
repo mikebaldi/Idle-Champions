@@ -395,13 +395,13 @@ class IC_SharedFunctions_Class
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         StartTime := A_TickCount
         ElapsedTime := 0
-        Buffer := 2500
+        g_BrivUserSettings["DashWaitBuffer"] := 2500
         ;timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := this.Memory.ReadUncappedTimeScaleMultiplier()
         if (timeScale < 1)
             timeScale := 1
         DashSpeed := Min(timeScale * 1.24, 10.0) ;time scale multiplier caps at 10
-        modDashSleep := ( DashSleepTime + Buffer ) / timeScale
+        modDashSleep := ( DashSleepTime + g_BrivUserSettings["DashWaitBuffer"] ) / timeScale
         if (modDashSleep < 1)
             modDashSleep := DashSleepTime          
         while ( this.Memory.ReadUncappedTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < Floor(g_BrivUserSettings[ "StackZone" ] / 2))

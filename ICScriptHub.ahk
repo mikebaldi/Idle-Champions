@@ -57,11 +57,21 @@ g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 If !IsObject( g_UserSettings )
 {
     g_UserSettings := {}
-    if ( g_UserSettings[ "InstallPath" ] == "" )
-        g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
     g_UserSettings[ "ExeName"] := "IdleDragons.exe"
-    g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json", g_UserSettings )
+    g_UserSettings[ "WriteSettings" ] := true
 }
+if ( g_UserSettings[ "InstallPath" ] == "" )
+    g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+if ( g_UserSettings[ "WindowXPositon" ] == "" )
+    g_UserSettings[ "WindowXPositon" ] := 0
+if ( g_UserSettings[ "WindowYPositon" ] == "" )
+    g_UserSettings[ "WindowYPositon" ] := 0
+if(g_UserSettings[ "WriteSettings" ] := true)
+{
+    g_UserSettings.Delete("WriteSettings")
+    g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+}
+
 
 
 ;define a new gui with tabs and buttons
@@ -161,7 +171,7 @@ g_DownAlign := g_DownAlign + posH -5
 GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
     Gui, ICScriptHub:Color, % g_CustomColor
-Gui, ICScriptHub:Show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, IC Script Hub
+Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, IC Script Hub
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
 
 Reload_Clicked()
