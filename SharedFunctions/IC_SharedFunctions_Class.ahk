@@ -607,6 +607,7 @@ class IC_SharedFunctions_Class
             g_SharedData.LoopString := "Waiting for offline progress.."
             while( ElapsedTime < timeout AND !this.Memory.ReadOfflineDone())
             {
+                Sleep, 250
                 ElapsedTime := A_TickCount - timeoutTimerStart
             }
             ; finished before timeout
