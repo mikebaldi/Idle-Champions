@@ -11,7 +11,7 @@ Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 global g_InventoryView := new IC_InventoryView_Component()
 
 
-Gui, Tab, About
+Gui, ICScriptHub:Tab, About
 aboutRows := 17
 aboutGroupBoxHeight := aboutRows * 15
 Gui Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight%, Version Info: 

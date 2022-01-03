@@ -19,7 +19,7 @@ If !IsObject( g_BrivUserSettings )
     g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
 }
 
-Gui, Tab, Briv Gem Farm
+Gui, ICScriptHub:Tab, Briv Gem Farm
 Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
 if ( g_BrivUserSettings[ "Fkeys" ] == "" )
@@ -81,7 +81,7 @@ Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[
 if(g_isDarkMode)
     Gui, Font, cSilver
 
-Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked, %g_PlayButton%
+Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked, %g_StopButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked, %g_ConnectButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked, %g_SaveButton%

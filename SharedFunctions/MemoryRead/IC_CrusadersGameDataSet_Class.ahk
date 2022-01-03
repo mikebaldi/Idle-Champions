@@ -37,7 +37,7 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
         ;=========================================================
         this.CrusadersGameDataSet.ChestDefinesList.ID := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,,[0x8])
         this.CrusadersGameDataSet.ChestDefinesList.NamePlural := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0xC, 0xC]) ; Push NamePlura.Value
-        this.CrusadersGameDataSet.ChestDefinesList.NameSingle := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0xC, 0xC]) ; Push Name.Value
+        this.CrusadersGameDataSet.ChestDefinesList.NameSingular := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0xC, 0xC]) ; Push Name.Value
     }
 }
 
@@ -82,6 +82,6 @@ class IC_CrusadersGameDataSetEGS_Class
         ;=========================================================
         this.CrusadersGameDataSet.ChestDefinesList.ID := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,,[0x10]) 
         this.CrusadersGameDataSet.ChestDefinesList.NamePlural := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0x20, 0x14]) ; Push NamePlura.Value
-        this.CrusadersGameDataSet.ChestDefinesList.NameSingle := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0x18, 0x14]) ; Push Name.Value
+        this.CrusadersGameDataSet.ChestDefinesList.NameSingular := new GameObjectStructure(this.CrusadersGameDataSet.ChestDefinesList,"UTF-16",[0x18, 0x14]) ; Push Name.Value
     }
 }

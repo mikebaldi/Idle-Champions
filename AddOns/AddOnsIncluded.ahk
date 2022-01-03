@@ -6,6 +6,7 @@
 */
 
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Performance\IC_BrivGemFarm_Component.ahk
+#include *i %A_LineFile%\..\IC_GameLocationSettings\IC_GameLocationSettings_Component.ahk
 #include *i %A_LineFile%\..\IC_MemoryFunctions\IC_MemoryFunctions_Component.ahk
 #include *i %A_LineFile%\..\IC_InventoryView\IC_InventoryView_Component.ahk
 #include *i %A_LineFile%\..\IC_MemoryFunctionsFullRead\IC_MemoryFunctionsFullRead_Component.ahk

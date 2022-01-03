@@ -11,7 +11,7 @@ Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 global g_InventoryView := new IC_InventoryView_Component()
 
 ; Add GUI fields to this addon's tab.
-Gui, Tab, Inventory View
+Gui, ICScriptHub:Tab, Inventory View
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 y+15, Inventory:
 Gui, ICScriptHub:Font, w400

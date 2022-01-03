@@ -7,7 +7,7 @@ GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabCont
 Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 
 
-Gui, Tab, FullMemoryFunctions
+Gui, ICScriptHub:Tab, FullMemoryFunctions
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 y+15, `All Memory Functions:
 Gui, ICScriptHub:Font, w400

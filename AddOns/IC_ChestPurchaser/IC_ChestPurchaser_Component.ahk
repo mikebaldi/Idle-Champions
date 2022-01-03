@@ -9,7 +9,7 @@ GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabCont
 Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 
 global g_InventoryView := new IC_InventoryView_Component()
-Gui, Tab, Chests
+Gui, ICScriptHub:Tab, Chests
 Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to read chests into lists."
 Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only buy or open chests while game is closed. (Yes, this is a hassle.)"
 Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchaseID, Buy Chests: 
@@ -49,7 +49,7 @@ class IC_ChestPurchaser_Component
         loop, %size%
         {
             chestID := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.ID.GetGameObjectFromListValues(A_Index - 1))
-            chestName := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.NameSingle.GetGameObjectFromListValues(A_Index - 1))
+            chestName := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.NameSingular.GetGameObjectFromListValues(A_Index - 1))
             comboBoxOptions .= chestID . " " . chestName . "|"
         }
         g_SF.ResetServerCall()
@@ -69,6 +69,11 @@ class IC_ChestPurchaser_Component
         while(buyCount > 0)
         {
             response := g_ServerCall.CallBuyChests( chestID, buyCount )
+            if(!IsObject(response))
+            {
+                MsgBox % "Failed with response: " . response
+                return
+            }
             if (!response.okay)
             {
                 MsgBox % "Failed because " . response.failure_reason . response.fail_message
@@ -94,6 +99,11 @@ class IC_ChestPurchaser_Component
         while(openCount > 0)
         {
             response := g_ServerCall.CallOpenChests( chestID, openCount )
+            if(!IsObject(response))
+            {
+                MsgBox % "Failed with response: " . response
+                return
+            }
             if (!response.success)
             {
                 MsgBox % "Failed because " . response.failure_reason . response.fail_message

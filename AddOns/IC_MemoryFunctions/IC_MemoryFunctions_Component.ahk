@@ -4,7 +4,7 @@ g_TabList .= addedTabs
 StrReplace(g_TabList,"|",,tabCount)
 g_TabControlWidth := Max(Max(g_TabControlWidth,450), tabCount * 75)
 
-Gui, Tab, Memory View
+Gui, ICScriptHub:Tab, Memory View
 Gui, ICScriptHub:Add, Button, x255 y68 w100 gCheck_Clicked, Force Memory Check
 
 Check_Clicked()

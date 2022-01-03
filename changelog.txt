@@ -1,6 +1,9 @@
 Jan 2, 2022
     Fix for inventory view on EGS not having names for all items.
     When Havilar is detected in save formation 1, the script will attempt to level her and summon Dembo at the start of each run.
+    Added an Addon that adds a button to BrivGemFarm to change the game's location. (Temporary solution)
+    Updated some naming to be more consistent.
+    Added an error if buying/opening chests has a bad response.
 
 Jan 1, 2022
     Updated some documentation.
