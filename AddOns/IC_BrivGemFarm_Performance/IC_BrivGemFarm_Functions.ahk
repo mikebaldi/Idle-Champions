@@ -73,7 +73,7 @@ class IC_BrivGemFarm_Class
                 if g_BrivUserSettings[ "Fkeys" ]
                     keyspam := g_SF.GetFormationFKeys(formationQ)
                 doKeySpam := true
-                keyspam.Push("{``}")
+                keyspam.Push("{ClickDmg}")
                 this.DoPartySetup()
                 if(!g_SharedData.StackFail)
                     g_SharedData.StackFail := this.CheckForFailedConv()
@@ -103,7 +103,7 @@ class IC_BrivGemFarm_Class
                 if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.areChampionsUpgraded(formationQ))
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
-                    keyspam := ["{``}"]
+                    keyspam := ["{ClickDmg}"]
                     doKeySpam := false
                 }
                 g_SF.InitZone( keyspam )
@@ -573,7 +573,7 @@ class IC_BrivGemFarm_Class
         if(g_BrivUserSettings[ "Fkeys" ]) ; AND !g_SF.areChampionsUpgraded(formationFavorite1)
         {
             keyspam := g_SF.GetFormationFKeys(formationFavorite1) ; level other formation champions
-            keyspam.Push("{``}")
+            keyspam.Push("{ClickDmg}")
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
         if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )

@@ -1,3 +1,6 @@
+Jan 3, 2022
+    Added fix for click damage leveling not working for different keyboard layouts.
+
 Jan 2, 2022
     Fix for inventory view on EGS not having names for all items.
     When Havilar is detected in save formation 1, the script will attempt to level her and summon Dembo at the start of each run.

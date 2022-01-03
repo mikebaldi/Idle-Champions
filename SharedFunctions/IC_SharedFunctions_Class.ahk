@@ -440,8 +440,8 @@ class IC_SharedFunctions_Class
         Critical, On
         ;this.DirectedInput(hold := 0,, "{RCtrl}") ;extra release for safety
         ; ctrl level clickers
-        this.DirectedInput(,release := 0, ["{RCtrl}","{``}"]*) ;keysdown
-        this.DirectedInput(hold := 0,, ["{``}","{RCtrl}"]*) ;keysup
+        this.DirectedInput(,release := 0, ["{RCtrl}","{ClickDmg}"]*) ;keysdown
+        this.DirectedInput(hold := 0,, ["{ClickDmg}","{RCtrl}"]*) ;keysup
         ; turn Fkeys off/on again
         this.DirectedInput(hold := 0,, spam*) ;keysup
         this.DirectedInput(,release := 0, spam*) ;keysdown
