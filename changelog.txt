@@ -1,5 +1,6 @@
 Jan 3, 2022
     Added fix for click damage leveling not working for different keyboard layouts.
+    Added a potential fix for DashWait not working correctly on EGS clients.
 
 Jan 2, 2022
     Fix for inventory view on EGS not having names for all items.

@@ -397,14 +397,14 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         g_BrivUserSettings["DashWaitBuffer"] := 2500
         ;timeScale := this.Memory.ReadTimeScaleMultiplier()
-        timeScale := this.Memory.ReadUncappedTimeScaleMultiplier()
+        timeScale := this.Memory.ReadTimeScaleMultiplier()
         if (timeScale < 1)
             timeScale := 1
         DashSpeed := Min(timeScale * 1.24, 10.0) ;time scale multiplier caps at 10
         modDashSleep := ( DashSleepTime + g_BrivUserSettings["DashWaitBuffer"] ) / timeScale
         if (modDashSleep < 1)
             modDashSleep := DashSleepTime          
-        while ( this.Memory.ReadUncappedTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < Floor(g_BrivUserSettings[ "StackZone" ] / 2))
+        while ( this.Memory.ReadTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < Floor(g_BrivUserSettings[ "StackZone" ] / 2))
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
