@@ -763,11 +763,11 @@ class IC_SharedFunctions_Class
         seat := this.Memory.ReadChampSeatByID(ChampID)
         if(seat < 0)  
             return
+        var := ["{F" . seat . "}"] 
         if( IsObject(keys) ) 
             var.Push(keys*)
         else 
-            var.Push(keys) 
-        var := ["{F" . seat . "}"]            
+            var.Push(keys)            
         this.DirectedInput(,release := 0, var* ) ; keysdown
         champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
