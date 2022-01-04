@@ -93,9 +93,8 @@ Gui, Tab, Stats
 g_TabList .= "Stats|"
 global g_LeftAlign
 global g_DownAlign
-global g_wColLeft := 180
+global g_wColLeft := 180    ; Width of the left column
 
-;height groupbox
 Gui, ICScriptHub:Font, w700
 Gui Add, GroupBox, x+0 y+15 w450 h120 vCurrentRunGroupID, Current `Run:
 Gui, ICScriptHub:Font, w400
@@ -121,8 +120,6 @@ Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w50, % g_StackCountH
 GuiControlGet, pos, Pos, CurrentRunGroupID
 g_DownAlign := posY + posH +5
 
-;height groupbox
-hGB := 130
 Gui, ICScriptHub:Font, w700
 Gui Add, GroupBox, x6 y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
 Gui, ICScriptHub:Font, w400
