@@ -43,7 +43,7 @@ class IC_SharedData_Class
 
 class IC_SharedFunctions_Class
 {
-    Memory := "" 
+    Memory := ""
     Hwnd := 0
     PID := 0
     UserID := ""
@@ -57,7 +57,7 @@ class IC_SharedFunctions_Class
     {
         this.Memory := New IC_MemoryFunctions_Class
     }
-    
+
     ;=======================
     ;Script Helper Functions
     ;=======================
@@ -100,7 +100,7 @@ class IC_SharedFunctions_Class
             {
                 return true
             }
-        }   
+        }
         return false
     }
 
@@ -132,7 +132,7 @@ class IC_SharedFunctions_Class
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 this.DirectedInput(,, "{Left}" )
                 counter++
@@ -165,7 +165,7 @@ class IC_SharedFunctions_Class
         while(!this.Memory.ReadTransitioning() AND ElapsedTime < maxLoopTime)
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 this.DirectedInput(,, "{Left}" )
                 counter++
@@ -209,7 +209,7 @@ class IC_SharedFunctions_Class
         StartTime := A_TickCount
         ElapsedTime := keyCount:= 0
         sleepTime := 125
-        
+
         if ( forceToggle )
             this.DirectedInput(,, "{g}" )
         if ( this.Memory.ReadAutoProgressToggled() != isToggled )
@@ -246,7 +246,7 @@ class IC_SharedFunctions_Class
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 this.DirectedInput(,, "{q}" )
                 counter++
@@ -277,7 +277,7 @@ class IC_SharedFunctions_Class
         while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 if(IsObject(spam))
                     this.DirectedInput(,, spam* )
@@ -367,7 +367,7 @@ class IC_SharedFunctions_Class
         Critical, Off
         g_KeyPresses := TestVar
     }
- 
+
     ;Test to see if swapping is unneccessary. (Useful for skipping swaps on Tall Tales adventure)
     ShouldSkipSwap()
     {
@@ -403,12 +403,12 @@ class IC_SharedFunctions_Class
         DashSpeed := Min(timeScale * 1.24, 10.0) ;time scale multiplier caps at 10
         modDashSleep := ( DashSleepTime + g_BrivUserSettings["DashWaitBuffer"] ) / timeScale
         if (modDashSleep < 1)
-            modDashSleep := DashSleepTime          
+            modDashSleep := DashSleepTime
         while ( this.Memory.ReadTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < Floor(g_BrivUserSettings[ "StackZone" ] / 2))
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
-            isValueIncreased := g_SF.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount 
+            isValueIncreased := g_SF.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount
             ; TODO: Update Shandie Tests to be future compatible in case more speed is added.
             isValueOverExpected := g_SF.CountTimeScaleMultipliersOfValue(1.5) > 1 OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > 1
             if(isValueIncreased OR isValueOverExpected)
@@ -452,7 +452,7 @@ class IC_SharedFunctions_Class
         Critical, Off
     }
 
-    ;A test if stuck on current area. After 35s, toggles autoprogress every 5s. After 45s, attempts falling back up to 2 times. After 65s, restarts level. 
+    ;A test if stuck on current area. After 35s, toggles autoprogress every 5s. After 45s, attempts falling back up to 2 times. After 65s, restarts level.
     CheckifStuck()
     {
         static lastCheck := 0
@@ -495,7 +495,7 @@ class IC_SharedFunctions_Class
 
     /*  WaitForModronReset - A function that monitors a modron resetting process.
 
-        Returns: 
+        Returns:
         bool - true if completed successfully; returns false if reset does not occur within 75s
     */
     WaitForModronReset( timeout := 75000)
@@ -559,7 +559,7 @@ class IC_SharedFunctions_Class
             this.Hwnd := 0
             this.PID := 0
             while (!this.PID)
-            {        
+            {
                 StartTime := A_TickCount
                 ElapsedTime := 0
                 g_SharedData.LoopString := "Opening IC.."
@@ -585,7 +585,7 @@ class IC_SharedFunctions_Class
         else
             return 0
     }
-    
+
     ; Waits for the game to be in a ready state
     WaitForGameReady( timeout := 90000)
     {
@@ -634,13 +634,13 @@ class IC_SharedFunctions_Class
         while(!this.Memory.ReadAreaActive() AND ElapsedTime < 3000)
             ElapsedTime := A_TickCount - StartTime
         ; Briv stacks are finished updating shortly after ReadOfflineDone() completes. Give it a second.
-        ; Sleep, 1200 
+        ; Sleep, 1200
     }
 
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
     SafetyCheck()
     {
-        if (Not WinExist( "ahk_exe IdleDragons.exe" )) 
+        if (Not WinExist( "ahk_exe IdleDragons.exe" ))
         {
             if(this.OpenIC() == -1)
             {
@@ -660,7 +660,7 @@ class IC_SharedFunctions_Class
         static gameLoaded := false
         if(this.Memory.ReadCurrentZone() == "")
         {
-            if (Not WinExist( "ahk_exe IdleDragons.exe" )) 
+            if (Not WinExist( "ahk_exe IdleDragons.exe" ))
             {
                 gameLoaded := false
             }
@@ -673,10 +673,10 @@ class IC_SharedFunctions_Class
         return gameLoaded
     }
 
-    /* Function that does follow-up tasks when IC is opened. 
+    /* Function that does follow-up tasks when IC is opened.
     This function should be overridden by AddOns using ot to match their objective
 
-    The default functionality is to switch to Q formation (briv progression), or 
+    The default functionality is to switch to Q formation (briv progression), or
     fall back and switch to Q if being attacked
     */
     ; falls back zone until switching to Q formation can be done.
@@ -692,7 +692,7 @@ class IC_SharedFunctions_Class
         spam := ["{q}"]
         spam.Push(this.GetFormationFKeys(formationFavorite1)*)
         g_SharedData.LoopString := "Waiting for offline settings wipe..."
-        while(this.Memory.ReadNumAttackingMonstersReached() >= 95 AND ElapsedTime < timeout ) 
+        while(this.Memory.ReadNumAttackingMonstersReached() >= 95 AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
             this.DirectedInput(,, "{q}" )
@@ -743,7 +743,7 @@ class IC_SharedFunctions_Class
         this.UserHash := this.Memory.ReadUserHash()
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
-        this.TotalGems := this.Memory.ReadGems()         
+        this.TotalGems := this.Memory.ReadGems()
         this.TotalSilverChests := this.Memory.GetChestCountByID(1)
         this.TotalGoldChests := this.Memory.GetChestCountByID(2)
     }
@@ -761,26 +761,27 @@ class IC_SharedFunctions_Class
         counter := 0
         sleepTime := 34
         seat := this.Memory.ReadChampSeatByID(ChampID)
-        if(seat < 0)  
+        if(seat < 0)
             return
-        var := ["{F" . seat . "}"] 
-        if( IsObject(keys) ) 
+        var := ["{F" . seat . "}"]
+        if( IsObject(keys) )
             var.Push(keys*)
-        else 
-            var.Push(keys)            
+        else
+            var.Push(keys)
         this.DirectedInput(,release := 0, var* ) ; keysdown
         champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
             champLevel := this.Memory.ReadChampLvlByID( ChampID )
-            if( ElapsedTime > (counter * sleepTime) ) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime) ) ; input limiter..
             {
                 this.DirectedInput(hold:=0,, var* ) ;keysup
                 this.DirectedInput(,release := 0, var* ) ; keysdown
                 counter ++
             }
         }
+        this.DirectedInput(hold:=0,, var* ) ;keysup
         Critical, Off
         return
     }
@@ -902,8 +903,8 @@ class IC_SharedFunctions_Class
         }
         return CurrentObjID
     }
-    
-    /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it. 
+
+    /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 
     Parameters:
     formation - A list of champion ID values.
@@ -913,7 +914,7 @@ class IC_SharedFunctions_Class
     */
     ; Takes an array of champion IDs and creates a list of FKeys for their appropriate seat slots.
     GetFormationFKeys(formation)
-    { 
+    {
         Fkeys := {}
         for k, v in formation
         {
