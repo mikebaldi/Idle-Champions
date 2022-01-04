@@ -13,3 +13,4 @@
 #include *i %A_LineFile%\..\IC_Jimothy\IC_Jimothy_Component.ahk
 #include *i %A_LineFile%\..\IC_ChestPurchaser\IC_ChestPurchaser_Component.ahk
 #include *i %A_LineFile%\..\IC_About\IC_About_Component.ahk
+#include *i %A_LineFile%\..\IC_Jimothy\IC_Jimothy_Component.ahk
