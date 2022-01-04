@@ -214,12 +214,12 @@ class IC_BrivGemFarm_Class
         GuiControl, ICScriptHub:, g_StackCountHID, % g_SF.Memory.ReadHasteStacks()
 
         ;dtCurrentRunTime := Round( ( A_TickCount - g_RunStartTime ) / 60000, 2 )
-        dtCurrentRunTime := Round( ( A_TickCount - previousLoopStartTime ) / 60000, 2 )
-        GuiControl, ICScriptHub:, dtCurrentRunTimeID, % dtCurrentRunTime
+        dtCurrentRunTime := Round( ( A_TickCount - previousLoopStartTime ) / 1000 )
+        GuiControl, ICScriptHub:, dtCurrentRunTimeID, % g_SF.SecondsToText(dtCurrentRunTime)
 
         ;dtCurrentLevelTime := Round( ( A_TickCount - g_PreviousZoneStartTime ) / 1000, 2 )
-        dtCurrentLevelTime := Round( ( A_TickCount - previousZoneStartTime ) / 1000, 2 )
-        GuiControl, ICScriptHub:, dtCurrentLevelTimeID, % dtCurrentLevelTime
+        dtCurrentLevelTime := Round( ( A_TickCount - previousZoneStartTime ) / 1000)
+        GuiControl, ICScriptHub:, dtCurrentLevelTimeID, % g_SF.SecondsToText(dtCurrentLevelTime)
         Critical, Off
     }
 
@@ -293,13 +293,13 @@ class IC_BrivGemFarm_Class
                 InventoryViewRead.Call(TotalRunCount)
             }
             LastResetCount := g_SF.Memory.ReadResetsCount()
-            PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 60000, 2 )
-            GuiControl, ICScriptHub:, PrevRunTimeID, % PreviousRunTime
+            PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 1000 )
+            GuiControl, ICScriptHub:, PrevRunTimeID, % g_SF.SecondsToText(PreviousRunTime)
 
             if ( SlowRunTime < PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
+                GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := g_SF.SecondsToText(PreviousRunTime)
             if ( FastRunTime > PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
+                GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := g_SF.SecondsToText(PreviousRunTime)
             if ( StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
             {
                 GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
@@ -310,17 +310,17 @@ class IC_BrivGemFarm_Class
             }
 
             GuiControl, ICScriptHub:, TotalRunCountID, % TotalRunCount
-            dtTotalTime := (A_TickCount - ScriptStartTime) / 3600000
-            GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
-            GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / TotalRunCount ) * 60, 2 )
+            dtTotalTime := round((A_TickCount - ScriptStartTime) / 1000)
+            GuiControl, ICScriptHub:, dtTotalTimeID, % g_SF.SecondsToText(dtTotalTime)
+            GuiControl, ICScriptHub:, AvgRunTimeID, % g_SF.SecondsToText(Round(dtTotalTime / TotalRunCount ))
 
             if(g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance))
-                BossesPerHour := Round( ( ( g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance) - CoreXPStart ) / 5 ) / dtTotalTime, 2 )
+                BossesPerHour := Round( ( ( g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance) - CoreXPStart ) / 5 ) / dtTotalTime * 3600, 2 )
             GuiControl, ICScriptHub:, bossesPhrID, % BossesPerHour
 
             GemsTotal := ( g_SF.Memory.ReadGems() - GemStart ) + ( g_SF.Memory.ReadGemsSpent() - GemSpentStart )
             GuiControl, ICScriptHub:, GemsTotalID, % GemsTotal
-            GuiControl, ICScriptHub:, GemsPhrID, % Round( GemsTotal / dtTotalTime, 2 )
+            GuiControl, ICScriptHub:, GemsPhrID, % Round( GemsTotal / dtTotalTime *3600, 2 )
 
             if (IsObject(SharedRunData))
             {

@@ -105,9 +105,9 @@ GuiControlGet, pos, Pos, LoopAlignID
 g_LeftAlign := posX
 Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
 Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current Area Time (s):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current Area Time:
 Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current `Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current `Run Time:
 Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, SB Stack `Count:
@@ -123,21 +123,21 @@ g_DownAlign := posY + posH +5
 Gui, ICScriptHub:Font, w700
 Gui Add, GroupBox, x6 y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
 Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Previous Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Previous Run Time:
 Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Fastest Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Fastest Run Time:
 Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Slowest Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Slowest Run Time:
 Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w50,
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, Total Run `Count:
 Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Total Run Time (hr):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Total Run Time:
 Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Avg. Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Avg. Run Time:
 Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
 
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, Fail Run Time (min):
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, Fail Run Time:
 Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Failed Stack Conversion:
 Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,

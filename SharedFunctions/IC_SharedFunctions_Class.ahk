@@ -968,6 +968,16 @@ class IC_SharedFunctions_Class
         return -1
     }
 
+    ;a method to convent seconds to readable text output
+    ;parameter: NumberOfSeconds - the number of seconds you want to display
+    ;returns time in string format
+    SecondsToText(NumberOfSeconds){
+        time = 19990101  ; Midnight of an arbitrary date.
+        time += %NumberOfSeconds%, seconds
+        FormatTime, mmss, %time%, mm:ss
+        return NumberOfSeconds//3600 ":" mmss
+    }
+
     #include *i %A_LineFile%\..\IC_SharedFunctions_Extra.ahk
 }
 #include *i %A_LineFile%\..\IC_SharedFunctions_Extended.ahk
