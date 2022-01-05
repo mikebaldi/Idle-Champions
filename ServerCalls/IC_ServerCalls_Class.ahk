@@ -185,21 +185,6 @@ class IC_ServerCalls_Class
         return string
     }
 
-    ; forces an attempt for the server to remember stacks
-    CallPreventStackFail(item1, item2)
-    {
-        saveHelper := new IC_SaveHelper_Class
-        jsonObj := {}
-        statsObj := {}
-        statsObj["briv_steelbones_stacks"] := item1
-        StatsObj["briv_sprint_stacks"] := item2
-        jsonObj["stats"] := statsObj
-        saveString := JSON.stringify( jsonObj )
-        checksum := saveHelper.Md5Save(saveString)
-        save :=  saveHelper.CompressSave(savestring, checksum, this.userID, this.userHash, this.networkID, this.clientVersion, this.instanceID)
-        return this.ServerCallSave(save)
-    }
-
     ServerCallSave( saveBody ) 
     {
         response := ""
@@ -214,7 +199,7 @@ class IC_ServerCalls_Class
             )
             WR.SetRequestHeader( "Content-Type", boundaryHeader )
             WR.SetRequestHeader( "User-Agent", "BestHTTP" )
-            WR.SetRequestHeader( "Accept-Encoding", "gzip, identity" )
+            ;WR.SetRequestHeader( "Accept-Encoding", "identity" )
             WR.Send(saveBody)
             WR.WaitForResponse( -1 )
             data := WR.ResponseText
@@ -229,18 +214,11 @@ class IC_ServerCalls_Class
             }
             Catch
             {
-                return "Failed to fetch valid JSON response from server."
+                throw "Failed to fetch valid JSON response from server."
             }
         }
         return response
     }
 
-        ; standardHeaders();
-        ; client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-        ;HttpMethod.Post
-
-    
     #include  *i IC_ServerCalls_Class_Extra.ahk
 }
-
-#include *i %A_LineFile%\..\..\SharedFunctions\IC_SaveHelper_Class.ahk

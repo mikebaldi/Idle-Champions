@@ -7,7 +7,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
-            response := g_serverCall.CallPreventStackFail(0, this.sprint + this.steelbones)
+            response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
             response := g_ServerCall.CallEndAdventure()
             response := g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
             return 4
@@ -24,6 +24,43 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.TotalGoldChests := this.Memory.GetChestCountByID(2)
         this.sprint := this.Memory.ReadHasteStacks()
         this.steelbones := this.Memory.ReadSBStacks()
+    }
+
+        ; sets the user information used in server calls such as user_id, hash, active modron, etc.
+    ResetServerCall()
+    {
+        this.SetUserCredentials()
+        g_ServerCall := new IC_BrivServerCall_Class( this.UserID, this.UserHash, this.InstanceID )
+        version := this.Memory.ReadGameVersion()
+        if(version != "")
+            g_ServerCall.clientVersion := version
+        ; TODO: Update these values based on memory reads
+        g_ServerCall.networkID := 11 ;11 = steam
+        g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
+        g_ServerCall.activePatronID := 0 ; 0 = no patron
+        g_ServerCall.UpdateDummyData()
+    }
+}
+
+class IC_BrivServerCall_Class extends IC_ServerCalls_Class
+{
+    ; forces an attempt for the server to remember stacks
+    CallPreventStackFail(stacks)
+    {
+        response := ""
+        stacks := g_SaveHelper.GetEstimatedStackValue(stacks)
+        userData := g_SaveHelper.GetCompressedDataFromBrivStacks(stacks)
+        checksum := g_SaveHelper.GetSaveCheckSumFromBrivStacks(stacks)
+        save :=  g_SaveHelper.GetSave(userData, checksum, this.userID, this.userHash, this.networkID, this.clientVersion, this.instanceID)
+        try
+        {
+            response := this.ServerCallSave(save)
+        }
+        catch, ErrMsg
+        {
+            g_SharedData.LoopString := "Failed to save Briv stacks"
+        }
+        return response
     }
 }
 
@@ -46,6 +83,7 @@ class IC_BrivGemFarm_Class
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_SF.ResetServerCall()
+        g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationQ := g_SF.FindChampIDinSavedFormation( 1, "Speed", 1, 58 )
         formationW := g_SF.FindChampIDinSavedFormation( 2, "Stack Farm", 1, 58 )
         formationE := g_SF.FindChampIDinSavedFormation( 3, "Speed No Briv", 0, 58 )

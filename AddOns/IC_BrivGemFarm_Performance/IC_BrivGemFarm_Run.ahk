@@ -25,12 +25,14 @@ global g_BrivGemFarm := new IC_BrivGemFarm_Class
 global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
 global g_ServerCall
 global g_InputsSent := 0
+global g_SaveHelper := new IC_SaveHelper_Class
 
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
 #include %A_LineFile%\..\..\..\ServerCalls\IC_ServerCalls_Class.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\IC_SaveHelper_Class.ahk
 
 
 ;check if first run

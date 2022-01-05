@@ -1,3 +1,12 @@
+Jan 5, 2022
+    Removed pause hotkey that would close main GUI.
+    Fixed Gem Farm window's settings display for first three values.
+    Fixed spam keys not working during single champion leveling.
+    Added Jimothy Addon.
+    Removed DLL dependencies.
+    Created new functions for force converting Briv stacks on hard restarts (game closes to reset adventure).
+
+
 Jan 3, 2022
     Added fix for click damage leveling not working for different keyboard layouts.
     Added a potential fix for DashWait not working correctly on EGS clients.
