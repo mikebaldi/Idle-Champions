@@ -19,7 +19,7 @@ IC_KeyHelper_Class helps convert keystrokes to a virtual key code which is used 
 
 > IC_SaveHelper_Class.ahk
 
-IC_SaveHelper_Class is used for building save server call strings. It works through mediating interactions between managed DLLs and the rest of the script. Requires CLR.ahk, Ionic.Zlib.dll and GzipWrapper.dll.
+IC_SaveHelper_Class is used for building save server call strings. Currently mainly used to force stack conversion on resets.
 
 > IC_SharedFunctionsClass.ahk
 
