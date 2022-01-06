@@ -213,7 +213,3 @@ ICScriptHubGuiClose()
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()
 ;^LButton::WindowMouseDragMove()
-
-$SC045::
-ExitApp
-return 

@@ -597,7 +597,6 @@ class IC_BrivGemFarm_Class
     /*SetFormation - A function to swap between formations to cancel Briv's jump animation. Can also pull Briv on boss zones for 95%+ 4x/9x skip.
 
     Parameters:
-    CurrentZone - Exactly what it sounds like.
 
     Returns: Nothing
     */

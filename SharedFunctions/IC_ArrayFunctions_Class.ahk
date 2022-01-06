@@ -71,4 +71,22 @@ class ArrFnc
         var .= " }"
         return var
     }
+
+    ; Creates a string from an array. e.g. [1, F2, q, 6]
+    GetAlphaNumericArrayString(array1)
+    {
+        itemCount := array1.Count()
+        var := "[ "
+        loop, %itemCount%
+        {
+            if IsObject(array1[A_Index])
+                  var .= this.GetDecFormattedArrayString(array1[A_Index]) . "] "
+            if ( A_Index < itemCount )
+            var .= array1[A_Index] . ", "
+            else
+            var .= array1[A_Index]
+        }
+        var .= " ]"
+        return var
+    }
 }
