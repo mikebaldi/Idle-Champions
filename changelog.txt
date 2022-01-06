@@ -1,3 +1,10 @@
+Jan 6, 2022
+    Added UserSettings.ini to .gitignore.
+    Fixed numbers sorting incorrectly on Inventory ListView.
+    Removed release of keys used to level the champion after they reach their target level. (Allows them to continue leveling during Dashwait)
+    Added a setting to hide the Gem Farm Window. Set `"HiddenFarmWindow":1` In BrivGemFarmSettings.json
+    Added an Addon that adds sleeps to some functions to reduce CPU load on Potato PCs.
+
 Jan 5, 2022
     Removed pause hotkey that would close main GUI.
     Fixed Gem Farm window's settings display for first three values.
@@ -5,7 +12,6 @@ Jan 5, 2022
     Added Jimothy Addon.
     Removed DLL dependencies.
     Created new functions for force converting Briv stacks on hard restarts (game closes to reset adventure).
-
 
 Jan 3, 2022
     Added fix for click damage leveling not working for different keyboard layouts.
