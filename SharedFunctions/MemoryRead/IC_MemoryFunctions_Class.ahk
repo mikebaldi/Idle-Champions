@@ -225,6 +225,11 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat.GetGameObjectFromListValues(ChampID - 1))
     }
 
+    ReadChampNameByID(ChampID := 0)
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def.Name.GetGameObjectFromListValues(ChampID - 1))
+    }
+
     ;=============================
     ;GameUser - userid, hash, etc.
     ;=============================
