@@ -52,7 +52,8 @@ Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
 Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
 Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
 LoadBrivGemFarmSettings() ; load settings file.
-Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
+if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
+    Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
 
 ReloadBrivGemFarmSettingsDisplay()
 {
@@ -130,6 +131,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings.Delete("WriteSettings")
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )   
     }     
+    if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
+        g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
 }
 
 
