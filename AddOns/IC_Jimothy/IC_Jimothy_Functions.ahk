@@ -103,6 +103,10 @@ class Jimothy
             if (this.UseClick)
                 g_SF.DirectedInput(,,"{ClickDmg}")
         }
+        g_SF.WaitForTransition()
+        g_SF.DirectedInput(,,"{Left}")
+        while (g_SF.Memory.ReadHighestZone() <= g_SF.Memory.ReadCurrentZone())
+            g_SF.DirectedInput(,,"{Left}")
         if (this.UseMsgBox)
             MsgBox, % this.EndRunTxt . " Jimothy run over."
         return
