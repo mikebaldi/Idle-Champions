@@ -122,11 +122,11 @@ Gui, Tab, Stats
 Gui, ICScriptHub:Font, w700
 Gui Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
 Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Formation Swaps Made `This `Run:
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Run Formation Swaps:
 Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Boss Levels Hit `This `Run:
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Run Boss Zones Hit:
 Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Boss Levels Hit Since Start:
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Total Boss Zones Hit:
 Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
 GuiControlGet, pos, Pos, BrivGemFarmStatsID
 g_DownAlign := g_DownAlign + posH +5

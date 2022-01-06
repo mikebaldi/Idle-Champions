@@ -93,7 +93,7 @@ Gui, Tab, Stats
 g_TabList .= "Stats|"
 global g_LeftAlign
 global g_DownAlign
-global g_wColLeft := 180    ; Width of the left column
+global g_wColLeft := 120    ; Width of the left column
 
 Gui, ICScriptHub:Font, w700
 Gui Add, GroupBox, x+0 y+15 w450 h120 vCurrentRunGroupID, Current `Run:
@@ -108,7 +108,7 @@ Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current Area Time:
 Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current `Run Time:
-Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
+Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w60, % dtCurrentRunTime
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, SB Stack `Count:
 Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w50, % g_StackCountSB

@@ -972,11 +972,19 @@ class IC_SharedFunctions_Class
     ;a method to convent seconds to readable text output
     ;parameter: NumberOfSeconds - the number of seconds you want to display
     ;returns time in string format
-    SecondsToText(NumberOfSeconds){
+    MilliSecondsToText(NumberOfMilliSeconds,ShowMilliSeconds := 0){
         time = 19990101  ; Midnight of an arbitrary date.
+        Millies := Mod(NumberOfMilliSeconds,1000)
+        NumberOfSeconds := Floor(NumberOfMilliSeconds/1000)
         time += %NumberOfSeconds%, seconds
         FormatTime, mmss, %time%, mm:ss
-        return NumberOfSeconds//3600 ":" mmss
+        if(ShowMilliSeconds){
+            return NumberOfSeconds//3600 ":" mmss "." Millies
+        }
+        else {
+            return NumberOfSeconds//3600 ":" mmss
+        }
+        
     }
 
     #include *i %A_LineFile%\..\IC_SharedFunctions_Extra.ahk
