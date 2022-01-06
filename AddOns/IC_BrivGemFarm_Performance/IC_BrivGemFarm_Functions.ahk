@@ -302,7 +302,7 @@ class IC_BrivGemFarm_Class
                 GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := g_SF.MilliSecondsToText(PreviousRunTime)
             if ( StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
             {
-                GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
+                GuiControl, ICScriptHub:, FailRunTimeID, % g_SF.MilliSecondsToText(PreviousRunTime)
                 if ( StackFail == 1 OR StackFail == 3 )
                     GuiControl, ICScriptHub:, FailedStackingID, % ++FailedStacking
                 else if ( StackFail == 2 )
