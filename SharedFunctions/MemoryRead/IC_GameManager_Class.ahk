@@ -26,7 +26,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.92, 1/02/21, IC v0.415.1+, Steam"
+        return "v1.93, 1/06/2022, IC v0.415.1+, Steam"
     }
 
     is64Bit()
