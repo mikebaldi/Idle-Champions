@@ -33,6 +33,7 @@ global g_SaveHelper := new IC_SaveHelper_Class
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
 #include %A_LineFile%\..\..\..\ServerCalls\IC_ServerCalls_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SaveHelper_Class.ahk
+#include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 
 
 ;check if first run
@@ -126,13 +127,13 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "WindowXPositon" ] := 0
     if ( g_BrivUserSettings[ "WindowYPositon" ] == "" )
         g_BrivUserSettings[ "WindowYPositon" ] := 0
+    if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
+        g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )   
     }     
-    if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
-        g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
 }
 
 
