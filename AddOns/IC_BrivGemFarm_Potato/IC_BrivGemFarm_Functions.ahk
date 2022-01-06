@@ -37,6 +37,26 @@ class IC_BrivPotatoSharedFunctions_Class extends IC_BrivSharedFunctions_Class
         this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )
         return false
     }
+
+    ; Waits until stats are finished updating from offline progress calculations. (Currently just Sleep, 1200)
+    WaitForFinalStatUpdates()
+    {
+        g_SharedData.LoopString := "Waiting for offline progress (Area Active)..."
+        ; Starts as 1, turns to 0, back to 1 when active again.
+        StartTime := ElapsedTime := A_TickCount
+        while(this.Memory.ReadAreaActive() AND ElapsedTime < 1700)
+        {
+            Sleep, 100
+            ElapsedTime := A_TickCount - StartTime
+        }
+        while(!this.Memory.ReadAreaActive() AND ElapsedTime < 3000)
+        {
+            Sleep, 100
+            ElapsedTime := A_TickCount - StartTime
+        }
+        ; Briv stacks are finished updating shortly after ReadOfflineDone() completes. Give it a second.
+        ; Sleep, 1200
+    }
 }
 
 class IC_BrivPotatoGemFarm_Class extends IC_BrivGemFarm_Class
