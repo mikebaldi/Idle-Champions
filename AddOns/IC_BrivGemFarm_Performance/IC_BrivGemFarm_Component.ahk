@@ -64,13 +64,13 @@ if ( g_UserSettings[ "WindowXPositon" ] == "" )
         g_BrivUserSettings[ "WindowXPositon" ] := 0
 if ( g_UserSettings[ "WindowYPositon" ] == "" )
         g_BrivUserSettings[ "WindowYPositon" ] := 0
+if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
+    g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
 if(g_BrivUserSettings["WriteSettings"] := true)
 {
     g_BrivUserSettings.Delete("WriteSettings")
     g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
 }
-if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
-    g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
 
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?
