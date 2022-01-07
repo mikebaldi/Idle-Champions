@@ -759,28 +759,37 @@ class IC_BrivGemFarm_Class
         startTime := startTime ? startTime : A_TickCount
         var := ""
         var2 := ""
-        openSilverChestTimeEst := 3000
-        openGoldChestTimeEst := 7000
+        openSilverChestTimeEst := 3000 ; 3s
+        openGoldChestTimeEst := 7000 ; 7s
+        purchaseTime := 100 ; .1s
         gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-        if ( g_BrivUserSettings[ "BuySilvers" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime ) )
+        if ( g_BrivUserSettings[ "BuySilvers" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime) )
         {
             amount := Min(Floor(gems / 50), 100 )
             if(amount > 0)
             {
                 response := g_ServerCall.callBuyChests( chestID := 1, amount )
                 if(response.okay AND response.success)
-                    g_sharedData.PurchasedSilverChests += 100
+                {
+                    g_sharedData.PurchasedSilverChests += amount
+                    g_SF.TotalGems := response.currency_remaining
+                    gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
+                }
                 var .= " Bought " . amount . " silver chests."
             }
         }
-        if ( g_BrivUserSettings[ "BuyGolds" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime ) )
+        if ( g_BrivUserSettings[ "BuyGolds" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime) )
         {
             amount := Min(Floor(gems / 500) , 100 )
             if(amount > 0)
             {
                 response := g_ServerCall.callBuyChests( chestID := 2, amount:= 100 )
                 if(response.okay AND response.success)
-                    g_sharedData.PurchasedGoldChests += 100
+                {
+                    g_sharedData.PurchasedGoldChests += amount
+                    g_SF.TotalGems := response.currency_remaining
+                    gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
+                }
                 var .= " Bought " . amount . " gold chests."
             }
         }
@@ -789,7 +798,10 @@ class IC_BrivGemFarm_Class
             amount := Min(g_SF.TotalSilverChests, 99)
             chestResults := g_ServerCall.callOpenChests( chestID := 1, amount )
             if(chestResults.success)
+            {
                 g_sharedData.OpenedSilverChests += amount
+                g_SF.TotalSilverChests := chestResults.chests_remaining
+            }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
             g_sharedData.ShinyCount += var2
             var .= " Opened " . amount . " silver chests."
@@ -799,7 +811,10 @@ class IC_BrivGemFarm_Class
             amount := Min(g_SF.TotalGoldChests, 99)            
             chestResults := g_ServerCall.callOpenChests( chestID := 2, amount )
             if(chestResults.success)
+            {
                 g_sharedData.OpenedGoldChests += amount
+                g_SF.TotalGoldChests := chestResults.chests_remaining
+            }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
             g_sharedData.ShinyCount += var2
             var .= " Opened " . amount . " gold chests."
