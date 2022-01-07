@@ -123,7 +123,11 @@ class IC_MemoryFunctions_Class
 
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
-        timeScaleObject := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries, "Float", [0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
+        offset := Mod(index,2) ? 10
+        if (this.Is64Bit)
+            timeScaleObject := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries, "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
+        else
+            timeScaleObject := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries, "Float", [0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
         return Round(this.GenericGetValue(timeScaleObject), 2)
     }
 
