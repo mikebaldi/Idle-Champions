@@ -1,3 +1,8 @@
+Jan 7, 2022
+    Buying chests will now buy as many as you have gems for each offline stack farm (up to 100)
+    Opening chests will now open as many as you have available each reset (Up to 99) (Within Stack Reset time)
+    See new ``AddOns\IC_BrivGemFarm_Performance\SETTINGS.md`` for additional information on new chest buying/opening settings for advanced users.
+
 Jan 6, 2022
     Added UserSettings.ini to .gitignore.
     Fixed numbers sorting incorrectly on Inventory ListView.

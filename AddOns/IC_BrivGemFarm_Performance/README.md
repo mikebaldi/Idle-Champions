@@ -84,3 +84,5 @@ Opens 99 silver chests if you have at least 99 silver chests.
 
 **Open Silver Chests?:**  
 Opens 99 gold chests if you have at least 99 gold chests.
+
+> **Note:** See SETTINGS.md for advanced configuration settings.
