@@ -236,7 +236,11 @@ Jimothy_CheckBox_Clicked()
     else if (chk == 0 AND mod == 50)
     {
         i := mod(itm, 5)
+        if (i == 0)
+            i := 5
         j := mod(itm, 10)
+        if (j == 0)
+            j := 10
         GUiControl, ICScriptHub:, CbMod5Itm%i%, 0
         GuiControl, ICScriptHub:Enable, CbMod5Itm%i%
         GUiControl, ICScriptHub:, CbMod10Itm%j%, 0
@@ -246,6 +250,8 @@ Jimothy_CheckBox_Clicked()
     {
         ;check if mod5 cb should be checked
         i := mod(itm, 5)
+        if (i == 0)
+            i := 5
         iChkCount := 0
         loop, 10
         {
@@ -258,11 +264,15 @@ Jimothy_CheckBox_Clicked()
         if (iChkCount == 10)
         {
             i := mod(itm, 5)
+            if (i == 0)
+                i := 5
             GUiControl, ICScriptHub:, CbMod5Itm%i%, 1
             GuiControl, ICScriptHub:Disable, CbMod5Itm%i%
         }
         ;check if mod10 cb should be checked.
         i := mod(itm, 10)
+        if (i == 0)
+            i := 10
         iChkCount := 0
         loop, 5
         {
@@ -275,6 +285,8 @@ Jimothy_CheckBox_Clicked()
         if (iChkCount == 5)
         {
             i := mod(itm, 10)
+            if (i == 0)
+                i := 10
             GUiControl, ICScriptHub:, CbMod10Itm%i%, 1
             GuiControl, ICScriptHub:Disable, CbMod10Itm%i%
         }
