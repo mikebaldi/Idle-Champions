@@ -9,7 +9,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.92, 1/02/21, IC v0.415.1+, EGS"
+        return "v1.93, 1/06/2022, IC v0.415.1+, EGS"
     }
 
     is64Bit()
@@ -94,6 +94,7 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x28])        
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect,, [0x38])
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer.T := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer, "Double", [0x48])
+        this.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x3C]) ; 0 = right, 1 = left, 2 = static (instant)
         ;=================
         ;Screen Resolution
         ;=================
@@ -104,6 +105,8 @@ class IC_GameManagerEGS_Class
         ;herohandler - champion related information accessed by ID
         ;=========================================================
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler,"List", [0x18, 0x10]) ;Push heroes._items
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x18])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def.Name := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def, "UTF-16", [0x28, 0x14]) ;Push Name, Value
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x220, 0x30]) ; Push purchasedUpgradeIDs._count
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x350]) ; Alias 
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Slot := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x2F0]) ; Push slotId
@@ -196,7 +199,7 @@ class IC_GameManagerEGS_Class
         ;=========================================
         ;Background - Can Skip?
         ;=========================================
-        this.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x3C])
+        
     }
 }
 

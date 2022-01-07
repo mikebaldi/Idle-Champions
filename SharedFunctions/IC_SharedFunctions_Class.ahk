@@ -781,7 +781,10 @@ class IC_SharedFunctions_Class
                 counter ++
             }
         }
-        this.DirectedInput(hold:=0,, var* ) ;keysup
+        if( IsObject(keys) )
+            this.DirectedInput(hold:=0,, keys* ) ;keysup
+        else
+            this.DirectedInput(hold:=0,, keys ) ;keysup
         Critical, Off
         return
     }

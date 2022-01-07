@@ -25,12 +25,15 @@ global g_BrivGemFarm := new IC_BrivGemFarm_Class
 global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
 global g_ServerCall
 global g_InputsSent := 0
+global g_SaveHelper := new IC_SaveHelper_Class
 
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
 #include %A_LineFile%\..\..\..\ServerCalls\IC_ServerCalls_Class.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\IC_SaveHelper_Class.ahk
+#include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 
 
 ;check if first run
@@ -50,7 +53,8 @@ Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
 Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
 Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
 LoadBrivGemFarmSettings() ; load settings file.
-Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
+if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
+    Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
 
 ReloadBrivGemFarmSettingsDisplay()
 {
@@ -123,6 +127,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "WindowXPositon" ] := 0
     if ( g_BrivUserSettings[ "WindowYPositon" ] == "" )
         g_BrivUserSettings[ "WindowYPositon" ] := 0
+    if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
+        g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")

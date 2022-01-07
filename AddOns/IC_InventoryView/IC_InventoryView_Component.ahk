@@ -81,8 +81,10 @@ class IC_InventoryView_Component
             LV_Add(,buffID,itemName, itemAmount, change, perRunVal)
         }
         LV_ModifyCol()
-        LV_ModifyCol(4, 50)
-        LV_ModifyCol(5, 50)
+        LV_ModifyCol(1, "Integer")  
+        LV_ModifyCol(3, "Integer")
+        LV_ModifyCol(4, "50 Integer")
+        LV_ModifyCol(5, "50 Integer")
     }
     
     ; Reads the game memory for all chests in the inventory and their counts and shows it in the inventory view.
@@ -108,8 +110,10 @@ class IC_InventoryView_Component
             LV_Add(, chestID, itemName, itemAmount, "", "")
         }
         LV_ModifyCol()
-        LV_ModifyCol(4, 50)
-        LV_ModifyCol(5, 50)
+        LV_ModifyCol(1, "Integer")  
+        LV_ModifyCol(3, "Integer")
+        LV_ModifyCol(4, "50 Integer")
+        LV_ModifyCol(5, "50 Integer")
     }
 
     ; ClearFirstRead clears the first run values to start new tracking.

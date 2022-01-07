@@ -225,6 +225,11 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat.GetGameObjectFromListValues(ChampID - 1))
     }
 
+    ReadChampNameByID(ChampID := 0)
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def.Name.GetGameObjectFromListValues(ChampID - 1))
+    }
+
     ;=============================
     ;GameUser - userid, hash, etc.
     ;=============================
@@ -555,8 +560,16 @@ class IC_MemoryFunctions_Class
 
     ReadBoughtLastUpgrade( seat = 1)
     {
-        val := this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased.GetGameObjectFromListValues(seat - 1))
-        return val
+        ; The nextUpgrade pointer could be null if no upgrades are found.
+        if(this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.GetGameObjectFromListValues(seat - 1)))
+        {
+            val := this.GenericGetValue(this.GameManager.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased.GetGameObjectFromListValues(seat - 1))
+            return val
+        }
+        else
+        {
+            return True
+        }
     }
 
     GetInventoryBuffAmountByID(buffID)
