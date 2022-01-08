@@ -1,0 +1,3 @@
+* **I do not run Windows 10 and am getting an error when starting BrivGemFarm**   
+The script is using an icon from shell32.dll that might not be present in other operating systems (such as Windows 7). If you are having this issue, you can safely comment out the line that says ``Menu Tray, Icon, shell32.dll, -51380`` by putting a ``;`` in front of it
+(near the top of ``AddOns\IC_BrivGemFarm_Performance\IC_BrivGemFarm_Run.ahk``)

@@ -130,12 +130,11 @@ Briv_Save_Clicked()
     g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
     g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
     g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
-    g_BrivUserSettings[ "ExeName"] := g_BrivUserSettings[ "ExeName"] . ""
     g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
     try ; avoid thrown errors when comobject is not available.
     {
         local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-        SharedRunData.ReloadSettings("LoadBrivGemFarmSettings")
+        SharedRunData.ReloadSettings("ReloadBrivGemFarmSettingsDisplay")
     }
     return
 }

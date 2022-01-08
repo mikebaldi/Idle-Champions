@@ -1,3 +1,9 @@
+Jan 8, 2022
+    Fixed reading uncapped timescale on 64-bit game versions.
+    Fixed some settings bugs that popped up when changing how settings were loaded.
+    Added a potential fix and extra safety to ensure the party won't get stuck on bosses when swap to e formations setting is unchecked.
+    Jimothy Addon: attempt to fix freezing GUI.
+
 Jan 7, 2022
     Buying chests will now buy as many as you have gems for each offline stack farm (up to 100)
     Opening chests will now open as many as you have available each reset (Up to 99) (Within Stack Reset time)

@@ -468,6 +468,7 @@ class IC_SharedFunctions_Class
         if (dtCurrentZoneTime > 45 AND fallBackTries < 3 AND dtCurrentZoneTime - lastCheck > 15) ; second check - Fall back to previous zone and try to continue
         {
             this.FallBackFromZone()
+            this.DirectedInput(,, "{q}" ) ; safety for correct party
             this.ToggleAutoProgress(1, true)
             lastCheck := dtCurrentZoneTime
             fallBackTries++
