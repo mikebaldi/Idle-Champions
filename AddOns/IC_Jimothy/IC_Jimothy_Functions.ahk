@@ -95,18 +95,16 @@ class Jimothy
             if (this.CheckToEndRun())
                 break
             this.External.Update(this)
-            g_SF.ToggleAutoProgress()
+            g_SF.ToggleAutoProgress(1)
             if(this.UseFkeys)
                 g_SF.DirectedInput(,,this.KeySpam*)
             ;if (this.UseFkeys AND g_SF.areChampionsUpgraded(this.formationQ))
             ;    this.UseFkeys := false
             if (this.UseClick)
                 g_SF.DirectedInput(,,"{ClickDmg}")
+            Sleep, 10 ;an attempt to help with gui freezing
         }
-        g_SF.WaitForTransition()
-        g_SF.DirectedInput(,,"{Left}")
-        while (g_SF.Memory.ReadHighestZone() <= g_SF.Memory.ReadCurrentZone())
-            g_SF.DirectedInput(,,"{Left}")
+        g_SF.FallBackFromZone()
         if (this.UseMsgBox)
             MsgBox, % this.EndRunTxt . " Jimothy run over."
         return
@@ -270,7 +268,7 @@ class Jimothy
     ResetZone()
     {
         g_SF.FallBackFromZone()
-        g_SF.ToggleAutoProgress(,,true)
+        g_SF.ToggleAutoProgress(1)
     }
 
     CheckHewIsAlive()
