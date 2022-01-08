@@ -446,7 +446,7 @@ class IC_SharedFunctions_Class
         this.DirectedInput(hold := 0,, spam*) ;keysup
         this.DirectedInput(,release := 0, spam*) ;keysdown
         ; try to progress
-        this.DirectedInput("{Right}")
+        this.DirectedInput(,,"{Right}")
         this.ToggleAutoProgress(1)
         g_PreviousZoneStartTime := A_TickCount
         Critical, Off
