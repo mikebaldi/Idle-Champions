@@ -657,17 +657,20 @@ class IC_BrivGemFarm_Class
         if(g_SF.Memory.ReadChampLvlByID( 58 ) < 170) ; briv doesn't have jump+specialization yet - do setup stuff first
             return
         isJumpFormation := g_SF.Memory.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 1 ) )
+        ; Level complete, moving to next area.
         if ( !g_SF.Memory.ReadQuestRemaining() AND g_SF.Memory.ReadTransitioning() )  ; Important! Need both reads or swaps won't happen once per jump!
         {
             g_SharedData.LoopString := "Transitioning..."
             this.SwapFormationDuringTransition(g_SF.Memory.ReadCurrentZone())
             g_SharedData.LoopString := "Main `Loop"
         }
-        else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND Mod( g_SF.Memory.ReadHighestZone(), 5 )) ; Briv Jump formation when not on boss and not transitioning.
+        ; Swap to Briv Jump formation if not in it already when not transitioning. Only happens if avoid bosses is off, or not going to boss zone.
+        else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( g_SF.Memory.ReadHighestZone(), 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ])) 
         {
             g_SF.DirectedInput(,,["{q}"]*)
             lastKeyTime := A_TickCount
         }
+        ; Swap to non-Briv formation on boss zone if in Briv formation and if avoiding bosses. (when not transitioning)
         else if ( isJumpFormation AND g_BrivUserSettings[ "AvoidBosses" ] AND (A_TickCount - lastKeyTime > sleepTime) AND !Mod( g_SF.Memory.ReadHighestZone(), 5 ))
         {
             g_SF.DirectedInput(,,["{e}"]*)
