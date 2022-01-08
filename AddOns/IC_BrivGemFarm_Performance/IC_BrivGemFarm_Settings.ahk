@@ -13,7 +13,7 @@ ReloadBrivGemFarmSettings()
     if ( g_BrivUserSettings[ "StackFailRecovery" ] == "" )
         g_BrivUserSettings[ "StackFailRecovery" ] := 1
     if ( g_BrivUserSettings[ "StackZone" ] == "" )
-        g_BrivUserSettings[ "StackZone" ] := 2000
+        g_BrivUserSettings[ "StackZone" ] := 700
     if (g_BrivUserSettings[ "TargetStacks" ] == "")
         g_BrivUserSettings[ "TargetStacks" ] := 4000
     if ( g_BrivUserSettings[ "RestartStackTime" ] == "" )
@@ -21,7 +21,7 @@ ReloadBrivGemFarmSettings()
     if ( g_BrivUserSettings[ "DashSleepTime" ] == "" )
         g_BrivUserSettings[ "DashSleepTime" ] := 60000
     if ( g_BrivUserSettings[ "SwapSleep" ] == "" )
-        g_BrivUserSettings[ "SwapSleep" ] := 2500
+        g_BrivUserSettings[ "SwapSleep" ] := 1000
     if ( g_BrivUserSettings[ "DoChests" ] == "" )
         g_BrivUserSettings[ "DoChests" ] := 1
     if ( g_BrivUserSettings[ "BuySilvers" ] == "" )
