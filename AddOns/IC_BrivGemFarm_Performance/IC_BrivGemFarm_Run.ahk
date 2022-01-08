@@ -77,7 +77,7 @@ ReloadBrivGemFarmSettingsDisplay()
         LV_Add(, "Buy Gold? ", g_BrivUserSettings[ "BuyGolds" ] ? "Yes" : "No")
         LV_Add(, "Open Silver? ", g_BrivUserSettings[ "OpenSilvers" ] ? "Yes" : "No")
         LV_Add(, "Open Gold? ", g_BrivUserSettings[ "OpenGolds" ] ? "Yes" : "No")
-        LV_Add(, "Required Gems to Buy: " g_BrivUserSettings[ "MinGemCount" ])
+        LV_Add(, "Required Gems to Buy: ", g_BrivUserSettings[ "MinGemCount" ])
     }
     LV_ModifyCol()
 }
