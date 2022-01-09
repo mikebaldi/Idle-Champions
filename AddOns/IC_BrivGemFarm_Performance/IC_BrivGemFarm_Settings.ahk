@@ -35,7 +35,7 @@ ReloadBrivGemFarmSettings()
     if ( g_BrivUserSettings[ "MinGemCount" ] == "" )
         g_BrivUserSettings[ "MinGemCount" ] := 0
     if (g_BrivUserSettings[ "DashWaitBuffer" ] == "")    
-        g_BrivUserSettings[ "DashWaitBuffer" ] := 0
+        g_BrivUserSettings[ "DashWaitBuffer" ] := 30
     if ( g_BrivUserSettings[ "WindowXPositon" ] == "" )
         g_BrivUserSettings[ "WindowXPositon" ] := 0
     if ( g_BrivUserSettings[ "WindowYPositon" ] == "" )

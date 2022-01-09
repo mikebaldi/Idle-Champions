@@ -657,7 +657,7 @@ class IC_BrivGemFarm_Class
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
         if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
-            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ],0, Max(g_SF.modronResetZone - 30, 0) )
+            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ], Max(g_SF.modronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         ;g_SF.FinishZone()
         g_SF.ToggleAutoProgress( 1, false, true )
     }

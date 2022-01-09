@@ -1,3 +1,13 @@
+Jan 9, 2022
+    Updated some default settings.
+    Fixed gems not showing in correct column on Briv Gem Farm window
+    Added an option to turn off pressing Ctrl when leveling clicks. (See "NoCtrlKeyPress" in Settings.json)
+    Added more spam reduction when returning to the game from offline stacking.
+    Dashwait has changed from not activating when over halfway to the stack zone to not activating within 30 zones of the stack zone.
+    DashWaitBuffer setting in BrivGemFarmSettings.json has been changed to modify the default value of 30.
+        WARNING: If currently using a previous verson, this setting will need to be edited or DashWait will likely never activate.
+    StackFail protection is not activated on every reset (manual or modron). This should help stop lost stacks when in Q formation beyond stack zone. (Testing for verification needed)
+
 Jan 8, 2022
     Fixed reading uncapped timescale on 64-bit game versions.
     Fixed some settings bugs that popped up when changing how settings were loaded.

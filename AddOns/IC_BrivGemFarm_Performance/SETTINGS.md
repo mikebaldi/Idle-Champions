@@ -5,7 +5,10 @@ These are the currently available advanced settings for this AddOn. These are ar
 ## Settings: 
   
 * **DashWaitBuffer** - 0-? (time in ms)  
-Sometimes DashWait timer ends before Shandie gains dash. This setting adds a value in ms to the already set DashWait time. (Largely unnecessary as you can just increase your DashWait time.)
+**Updated:** DashWaitBuffer has been repurposed to be a distance from your modron's reset zone where dashwait will stop being activated. Default is 30.
+e.g. WIth the default value DashWait will not trigger if the script is started at 280 and then reset area is 305.
+~~Sometimes DashWait timer ends before Shandie gains dash. This setting adds a value in ms to the already set DashWait time. (Largely unnecessary as you can just increase your DashWait time.)~~
+
 * **DoChestsContinuous**: 0 / 1  
 If you are not satisfied with only 100/99 Buy/Open chests per run you can set this to 1. The script will buy and open as many as it can within the stack sleep time set. 
 
