@@ -79,7 +79,20 @@ Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
 GuiControlGet, pos, Pos, BrivGemFarmStatsID
 g_DownAlign := g_DownAlign + posH +5
 
+UpdateGUICheckBoxes()
 GuiControl, Choose, ModronTabControl, BrivGemFarm
+
+UpdateGUICheckBoxes()
+{
+    GuiControl,, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
+    GuiControl,, AvoidBossesCheck, % g_BrivUserSettings[ "AvoidBosses" ]
+    GuiControl,, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
+    GuiControl,, DoChestsCheck, % g_BrivUserSettings[ "DoChests" ]
+    GuiControl,, BuySilversCheck, % g_BrivUserSettings[ "BuySilvers" ]
+    GuiControl,, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
+    GuiControl,, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
+    GuiControl,, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
+}
 
 Briv_Run_Clicked()
 {
