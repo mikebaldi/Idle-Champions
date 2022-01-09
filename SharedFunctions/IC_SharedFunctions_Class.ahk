@@ -396,7 +396,7 @@ class IC_SharedFunctions_Class
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime, DashWaitBuffer := 0, DashWaitMaxZone := 2000  )
+    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000  )
     {
         this.ToggleAutoProgress( 0, false, true )
         specializedCount := g_SF.CountTimeScaleMultipliersOfValue(1.5)
