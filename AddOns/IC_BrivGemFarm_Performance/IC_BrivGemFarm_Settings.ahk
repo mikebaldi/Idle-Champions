@@ -46,6 +46,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "DoChestsContinuous" ] := 0
     if ( g_BrivUserSettings[ "ResetZoneBuffer" ] == "" )
         g_BrivUserSettings[ "ResetZoneBuffer" ] := 41
+    if ( g_BrivUserSettings[ "Autoposition" ] == "" )
+        g_BrivUserSettings[ "Autoposition" ] := "Off"       
     if ( g_BrivUserSettings[ "MinStackZone" ] == "" )
         g_BrivUserSettings[ "MinStackZone" ] := 200
     if(g_BrivUserSettings["WriteSettings"] := true)

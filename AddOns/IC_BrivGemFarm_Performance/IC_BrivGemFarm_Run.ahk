@@ -50,12 +50,37 @@ Menu Tray, Icon, shell32.dll, -51380
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
-Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
-Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
-ReloadBrivGemFarmSettingsDisplay() ; load settings file.
-if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
-    Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
+Gui BrivPerformanceGemFarm:Add, GroupBox, w300 h315, BrivFarm Settings: 
+Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w270 h270 vBrivFarmSettingsID -HDR, Setting|Value
 
+ReloadBrivGemFarmSettingsDisplay() ; load settings file.
+
+if ( !g_BrivUserSettings[ "HiddenFarmWindow" ]){
+    if (g_BrivUserSettings["Autoposition"]="Right"){
+        if(WinExist("ahk_exe IdleDragons.exe")){
+            WinGetPos, xpos, ypos, width,, ahk_exe IdleDragons.exe
+        }
+        else{
+            WinGetPos, xpos, ypos, width, height, IC Script Hub
+        }
+        xpos := xpos + width - 10
+        Gui, BrivPerformanceGemFarm:Show, X%xpos% Y%ypos% , Running Gem Farm...
+    }
+    else if (g_BrivUserSettings["Autoposition"]="Left"){
+        if(WinExist("ahk_exe IdleDragons.exe")){
+            WinGetPos, xpos, ypos, width,, ahk_exe IdleDragons.exe
+        }
+        else{
+            WinGetPos, xpos, ypos, width, height, IC Script Hub
+        }
+        xpos := xpos - 310 ; width of 300 with extra 10 px
+        Gui, BrivPerformanceGemFarm:Show, X%xpos% Y%ypos% , Running Gem Farm...
+    }
+    else {
+        Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
+    }
+}
+    
 ReloadBrivGemFarmSettingsDisplay()
 {
     ReloadBrivGemFarmSettings()

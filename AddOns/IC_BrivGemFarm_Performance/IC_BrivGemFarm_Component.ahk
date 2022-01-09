@@ -39,6 +39,8 @@ Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck Checked%OpenGolds% x15 y+5, Open
 if(g_isDarkMode)
     Gui, Font, g_CustomColor
 Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
+Gui, ICScriptHub:Add, DropDownList, vAutoposition x15 y+10 w50, Off|Left|Right
+GuiControl, ICScriptHub:ChooseString, Autoposition, % g_BrivUserSettings[ "Autoposition" ]
 if(g_isDarkMode)
     Gui, Font, cSilver
 
@@ -61,10 +63,15 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Maximum time (ms) script will wait for Dash (0 disables)
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Briv Jump Timer (ms)
+
 GuiControlGet, xyVal, Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
+GuiControlGet, xyVal, Pos, Autoposition
+xyValX += 55
+xyValY += 5
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Gem Farm window auto position
 
 Gui, Tab, Stats
 Gui, ICScriptHub:Font, w700
@@ -143,6 +150,7 @@ Briv_Save_Clicked()
     g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
     g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
     g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
+    g_BrivUserSettings[ "Autoposition" ] := AutoPosition
     g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
     try ; avoid thrown errors when comobject is not available.
     {
