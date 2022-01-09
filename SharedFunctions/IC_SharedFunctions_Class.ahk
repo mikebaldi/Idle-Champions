@@ -464,6 +464,7 @@ class IC_SharedFunctions_Class
         ; try to progress
         this.DirectedInput(,,"{Right}")
         this.ToggleAutoProgress(1)
+        this.modronResetZone := this.Memory.GetCoreTargetAreaByInstance(this.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
         g_PreviousZoneStartTime := A_TickCount
         Critical, Off
     }
