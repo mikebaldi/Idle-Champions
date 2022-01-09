@@ -40,6 +40,37 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_ServerCall.activePatronID := 0 ; 0 = no patron
         g_ServerCall.UpdateDummyData()
     }
+
+    
+    /*  WaitForModronReset - A function that monitors a modron resetting process.
+
+        Returns:
+        bool - true if completed successfully; returns false if reset does not occur within 75s
+    */
+    WaitForModronReset( timeout := 75000)
+    {
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        g_SharedData.LoopString := "Modron Resetting..."
+        this.SetUserCredentials()
+        if(this.sprint + this.steelbones < 190000)
+            response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
+        while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
+        {
+            ElapsedTime := A_TickCount - StartTime
+        }
+        g_SharedData.LoopString := "Loading z1..."
+        Sleep, 50
+        while(!this.Memory.ReadUserIsInited() AND ElapsedTime < timeout)
+        {
+            ElapsedTime := A_TickCount - StartTime
+        }
+        if (ElapsedTime >= timeout)
+        {
+            return false
+        }
+        return true
+    }
 }
 
 class IC_BrivServerCall_Class extends IC_ServerCalls_Class
@@ -626,7 +657,7 @@ class IC_BrivGemFarm_Class
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
         if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
-            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ],0, Max(g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) - 10, 0) )
+            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ],0, Max(g_SF.modronResetZone - 30, 0) )
         ;g_SF.FinishZone()
         g_SF.ToggleAutoProgress( 1, false, true )
     }
@@ -655,7 +686,6 @@ class IC_BrivGemFarm_Class
         static lastKeyTime := 0
         sleepTime := 67
         highestZone := g_SF.Memory.ReadHighestZone()
-        tempBrivJumpValue := 11
         if(g_SF.Memory.ReadChampLvlByID( 58 ) < 170) ; briv doesn't have jump+specialization yet - do setup stuff first
             return
         isJumpFormation := g_SF.Memory.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 1 ) )
@@ -669,8 +699,7 @@ class IC_BrivGemFarm_Class
         ; Swap to Briv Jump formation if not in it already when not transitioning. Only happens if avoid bosses is off, or not going to boss zone.
         else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( highestZone, 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ])) 
         {
-            if(g_SF.Memory.ReadCurrentZone() < g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) - tempBrivJumpValue)
-                g_SF.DirectedInput(,,["{q}"]*)
+            g_SF.DirectedInput(,,["{q}"]*)
             lastKeyTime := A_TickCount
         }
         ; Swap to non-Briv formation on boss zone if in Briv formation and if avoiding bosses. (when not transitioning)
@@ -697,7 +726,6 @@ class IC_BrivGemFarm_Class
         sleepTime := 68
         timeout := 5000
         isBrivInCurrentFormation := false
-        tempBrivJumpValue := 11
         swapSleepMod := g_BrivUserSettings[ "SwapSleep" ] / g_SF.Memory.ReadTimeScaleMultiplier()
         isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
         ; Swap briv out and wait until next zone (Happens same time as QuestsRemaining goes back to 0)
@@ -738,14 +766,7 @@ class IC_BrivGemFarm_Class
             isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0) 
             if( ElapsedTime > (counter * sleepTime) AND !isBrivInCurrentFormation) ; input limiter.. 
             {
-                if(g_SF.Memory.ReadCurrentZone() < g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) - tempBrivJumpValue)
-                {
-                    g_SF.DirectedInput(,, ["{q}"]*)
-                }
-                else
-                {
-                    g_SF.DirectedInput(,, ["{e}"]*)
-                }
+                g_SF.DirectedInput(,, ["{q}"]*)
                 counter++
             }
         }
