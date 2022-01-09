@@ -127,7 +127,7 @@ class IC_SharedFunctions_Class
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 20
+        sleepTime := 67
         g_SharedData.LoopString := "Falling back from boss zone."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
@@ -154,13 +154,22 @@ class IC_SharedFunctions_Class
     FallBackFromZone( maxLoopTime := 5000 )
     {
         fellBack := 0
-        while(this.Memory.ReadCurrentZone() == -1)
-            CurrentZone := this.Memory.ReadCurrentZone()
-        CurrentZone := this.Memory.ReadCurrentZone()
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
         sleepTime := 100
+        while(this.Memory.ReadCurrentZone() == -1)
+        {
+            ElapsedTime := A_TickCount - StartTime
+            if( ElapsedTime > (counter * sleepTime))
+            {
+                CurrentZone := this.Memory.ReadCurrentZone()
+                counter++
+            }
+        }
+        CurrentZone := this.Memory.ReadCurrentZone()
+        StartTime := A_TickCount
+        ElapsedTime := counter := 0
         g_SharedData.LoopString := "Falling back from zone.."
         while(!this.Memory.ReadTransitioning() AND ElapsedTime < maxLoopTime)
         {
@@ -387,7 +396,7 @@ class IC_SharedFunctions_Class
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime )
+    DoDashWait( DashSleepTime, DashWaitBuffer := 0, DashWaitMaxZone := 2000  )
     {
         this.ToggleAutoProgress( 0, false, true )
         specializedCount := g_SF.CountTimeScaleMultipliersOfValue(1.5)
@@ -395,16 +404,15 @@ class IC_SharedFunctions_Class
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         StartTime := A_TickCount
         ElapsedTime := 0
-        g_BrivUserSettings["DashWaitBuffer"] := 2500
         ;timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         if (timeScale < 1)
             timeScale := 1
         DashSpeed := Min(timeScale * 1.24, 10.0) ;time scale multiplier caps at 10
-        modDashSleep := ( DashSleepTime + g_BrivUserSettings["DashWaitBuffer"] ) / timeScale
+        modDashSleep := ( DashSleepTime ) / timeScale
         if (modDashSleep < 1)
             modDashSleep := DashSleepTime
-        while ( this.Memory.ReadTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < Floor(g_BrivUserSettings[ "StackZone" ] / 2))
+        while ( this.Memory.ReadTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone )
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
@@ -439,9 +447,17 @@ class IC_SharedFunctions_Class
     {
         Critical, On
         ;this.DirectedInput(hold := 0,, "{RCtrl}") ;extra release for safety
-        ; ctrl level clickers
-        this.DirectedInput(,release := 0, ["{RCtrl}","{ClickDmg}"]*) ;keysdown
-        this.DirectedInput(hold := 0,, ["{ClickDmg}","{RCtrl}"]*) ;keysup
+        if(g_UserSettings[ "NoCtrlKeypress" ])
+        {
+            this.DirectedInput(,release := 0, "{ClickDmg}") ;keysdown
+            this.DirectedInput(hold := 0,, "{ClickDmg}") ;keysup
+        }
+        else
+        {
+            ; ctrl level clickers
+            this.DirectedInput(,release := 0, ["{RCtrl}","{ClickDmg}"]*) ;keysdown
+            this.DirectedInput(hold := 0,, ["{ClickDmg}","{RCtrl}"]*) ;keysup
+        }
         ; turn Fkeys off/on again
         this.DirectedInput(hold := 0,, spam*) ;keysup
         this.DirectedInput(,release := 0, spam*) ;keysdown
@@ -688,30 +704,36 @@ class IC_SharedFunctions_Class
         counter := 0
         sleepTime := 67
         timeout := 10000
-        formationFavorite1 := this.Memory.GetFormationByFavorite( 1 )
         isCurrentFormation := false
         spam := ["{q}"]
-        spam.Push(this.GetFormationFKeys(formationFavorite1)*)
         g_SharedData.LoopString := "Waiting for offline settings wipe..."
         while(this.Memory.ReadNumAttackingMonstersReached() >= 95 AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
-            this.DirectedInput(,, "{q}" )
+            if(ElapsedTime > sleepTime * counter)
+            {
+                this.DirectedInput(,, "{q}" )
+                counter++
+            }
         }
         g_SharedData.LoopString := "Waiting for formation swap..."
+        formationFavorite1 := this.Memory.GetFormationByFavorite( 1 )
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
             ElapsedTime := A_TickCount - StartTime
             isCurrentFormation := this.IsCurrentFormation( formationFavorite1 )
-            this.DirectedInput(,, spam* )
+            if(ElapsedTime > sleepTime * counter)
+            {
+                this.DirectedInput(,, "{q}" )
+                counter++
+            }
         }
+        ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
             g_SharedData.LoopString := "Under attack. Retreating to change formations..."
-        ElapsedTime := counter := 0
         while(this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() AND ElapsedTime < 2 * timeout)
         {
-            ElapsedTime := A_TickCount - StartTime
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
