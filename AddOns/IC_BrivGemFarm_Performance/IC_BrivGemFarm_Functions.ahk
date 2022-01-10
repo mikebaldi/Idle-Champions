@@ -348,16 +348,8 @@ class IC_BrivGemFarm_Class
         }
 
         testReadAreaActive := g_SF.Memory.ReadAreaActive()
-        if (IsObject(SharedRunData))
-        {
-            StackFail := Max(StackFail, SharedRunData.StackFail)
-            TriggerStart := SharedRunData.TriggerStart
-        }
-        else
-        {
-            TriggerStart := LastTriggerStart
-        }
-
+        StackFail := IsObject(SharedRunData) ? Max(StackFail, SharedRunData.StackFail) : StackFail
+        TriggerStart := IsObject(SharedRunData) ? SharedRunData.TriggerStart : LastTriggerStart
         if ( g_SF.Memory.ReadResetsCount() > LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND LastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart) )
         {
             while(!g_SF.Memory.ReadOfflineDone() AND IsObject(SharedRunData) AND SharedRunData.TriggerStart)
@@ -869,7 +861,7 @@ class IC_BrivGemFarm_Class
                 g_SF.TotalSilverChests := chestResults.chests_remaining
             }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
-            g_sharedData.ShinyCount += var2
+            g_sharedData.ShinyCount := g_ServerCall.shinies
             var .= " Opened " . amount . " silver chests."
         }
         if ( g_BrivUserSettings[ "OpenGolds" ] AND g_SF.TotalGoldChests > 0 AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openGoldChestTimeEst) )
@@ -882,7 +874,7 @@ class IC_BrivGemFarm_Class
                 g_SF.TotalGoldChests := chestResults.chests_remaining
             }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
-            g_sharedData.ShinyCount += var2
+            g_sharedData.ShinyCount := g_ServerCall.shinies
             var .= " Opened " . amount . " gold chests."
         }
         if ( var == "" )
