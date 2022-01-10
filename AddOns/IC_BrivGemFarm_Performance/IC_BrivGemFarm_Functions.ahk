@@ -832,7 +832,7 @@ class IC_BrivGemFarm_Class
             amount := Min(Floor(gems / 500) , 100 )
             if(amount > 0)
             {
-                response := g_ServerCall.callBuyChests( chestID := 2, amount:= 100 )
+                response := g_ServerCall.callBuyChests( chestID := 2, amount )
                 if(response.okay AND response.success)
                 {
                     g_sharedData.PurchasedGoldChests += amount
