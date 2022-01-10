@@ -46,12 +46,14 @@ If !IsObject( g_UserSettings )
     g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
 }
 
+global isAdvancedBrivSettings := false
 Menu Tray, Icon, shell32.dll, -51380
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
 Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
 Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
+Gui, BrivPerformanceGemFarm:Add, Checkbox, vAdvancedBrivSettingsCheck Checked%isAdvancedBrivSettings% gReloadSettingsView_Click x55 y+5, See Advanced (All) Settings.
 ReloadBrivGemFarmSettingsDisplay() ; load settings file.
 if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
     Gui, BrivPerformanceGemFarm:Show,% "x" . g_BrivUserSettings[ "WindowXPositon" ] " y" . g_BrivUserSettings[ "WindowYPositon" ], Running Gem Farm...
@@ -80,6 +82,29 @@ ReloadBrivGemFarmSettingsDisplay()
         LV_Add(, "Required Gems to Buy: ", g_BrivUserSettings[ "MinGemCount" ])
     }
     LV_ModifyCol()
+}
+
+ReloadAdvancedBrivGemFarmSettingsDisplay()
+{
+    ReloadBrivGemFarmSettings()
+    columns := 0
+    Gui, ListView, BrivFarmSettingsID
+    LV_Delete()
+    for k,v in g_BrivUserSettings
+    {
+        LV_Add(, k, v)
+        columns += 1
+    }
+    LV_ModifyCol()
+}
+
+ReloadSettingsView_Click()
+{
+    if(isAdvancedBrivSettings)
+        ReloadBrivGemFarmSettingsDisplay()
+    else
+        ReloadAdvancedBrivGemFarmSettingsDisplay()
+    isAdvancedBrivSettings := !isAdvancedBrivSettings
 }
 
 ObjRegisterActive(g_SharedData, "{416ABC15-9EFC-400C-8123-D7D8778A2103}")
