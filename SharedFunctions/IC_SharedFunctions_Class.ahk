@@ -52,6 +52,7 @@ class IC_SharedFunctions_Class
     CurrentAdventure := 30 ; default cursed farmer
     ErrorKeyDown := 0
     ErrorKeyUp := 0
+    GameStartFormation := 1
 
     __new()
     {
@@ -667,7 +668,7 @@ class IC_SharedFunctions_Class
             }
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
-            this.RecoverFromGameClose()
+            this.RecoverFromGameClose(this.GameStartFormation)
             return false
         }
         return true
@@ -698,7 +699,7 @@ class IC_SharedFunctions_Class
     fall back and switch to Q if being attacked
     */
     ; falls back zone until switching to Q formation can be done.
-    RecoverFromGameClose()
+    RecoverFromGameClose(formationFavorite := 1)
     {
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -713,7 +714,12 @@ class IC_SharedFunctions_Class
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter)
             {
-                this.DirectedInput(,, "{q}" )
+                if(formationFavorite == 1)
+                    this.DirectedInput(,, "{q}" )
+                else if(formationFavorite == 2)
+                    this.DirectedInput(,, "{w}" )
+                else if(formationFavorite == 3)
+                    this.DirectedInput(,, "{e}" )
                 counter++
             }
         }
@@ -726,7 +732,12 @@ class IC_SharedFunctions_Class
             isCurrentFormation := this.IsCurrentFormation( formationFavorite1 )
             if(ElapsedTime > sleepTime * counter)
             {
-                this.DirectedInput(,, "{q}" )
+                if(formationFavorite == 1)
+                    this.DirectedInput(,, "{q}" )
+                else if(formationFavorite == 2)
+                    this.DirectedInput(,, "{w}" )
+                else if(formationFavorite == 3)
+                    this.DirectedInput(,, "{e}" )
                 counter++
             }
         }

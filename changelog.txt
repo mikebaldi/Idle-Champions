@@ -1,6 +1,10 @@
 Jan 10, 2022
     Added additional troubleshooting options to message boxes when required champions are not found in the formation.
     Jimothy Addon: Can now be used with non Jimothy formations.
+    Fixed gold chest purchases always buying 100, even if only gem limit only allows purchase of 1. (fix by Envy)
+    Added a swap to E formation option for helping users deal with stacks failing to convert on modron reset. (``BrivJumpBuffer`` in ``BrivGemFarmSettings.json``)
+    Added checks to prevent as many errors as popping up when GUI can't read from Gem Farm Script. (One intentionally left in for debugging purposes.)
+    Added a fix for resets triggered ResetZoneBuffer not resetting the current run timer.
 
 Jan 9, 2022
     Updated some default settings.
@@ -10,7 +14,9 @@ Jan 9, 2022
     Dashwait has changed from not activating when over halfway to the stack zone to not activating within 30 zones of the stack zone.
     DashWaitBuffer setting in BrivGemFarmSettings.json has been changed to modify the default value of 30.
         WARNING: If currently using a previous verson, this setting will need to be edited or DashWait will likely never activate.
-    StackFail protection is not activated on every reset (manual or modron). This should help stop lost stacks when in Q formation beyond stack zone. (Testing for verification needed)
+    StackFail protection is now activated on every reset (manual or modron). This should help stop lost stacks when in Q formation beyond stack zone. (Testing for verification needed)
+    Fixed haste/sb stacks disappearing when game closes (Fix by msde)
+    Fixed MemoryRead tab populating with blank data when game closes.
 
 Jan 8, 2022
     Fixed reading uncapped timescale on 64-bit game versions.

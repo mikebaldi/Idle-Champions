@@ -114,6 +114,7 @@ class IC_BrivGemFarm_Class
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_SF.ResetServerCall()
+        g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationQ := g_SF.FindChampIDinSavedFormation( 1, "Speed", 1, 58 )
         formationW := g_SF.FindChampIDinSavedFormation( 2, "Stack Farm", 1, 58 )
@@ -255,10 +256,16 @@ class IC_BrivGemFarm_Class
         static lastResetCount := 0
         static sbStackMessage := ""
         static hasteStackMessage := ""
+        static LastTriggerStart := false
+
+        if (IsObject(SharedRunData))
+            TriggerStart := SharedRunData.TriggerStart
+        else
+            TriggerStart := LastTriggerStart
 
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
-        if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadAreaActive() AND lastResetCount != 0 ) ) ; Modron or Manual reset happend
+        if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadAreaActive() AND lastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart)) ; Modron or Manual reset happend
         {
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
@@ -353,7 +360,7 @@ class IC_BrivGemFarm_Class
 
         if ( g_SF.Memory.ReadResetsCount() > LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND LastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart) )
         {
-            while(!g_SF.Memory.ReadOfflineDone() AND SharedRunData.TriggerStart)
+            while(!g_SF.Memory.ReadOfflineDone() AND IsObject(SharedRunData) AND SharedRunData.TriggerStart)
             {
                 Sleep, 50
             }
@@ -407,11 +414,11 @@ class IC_BrivGemFarm_Class
 
             if (IsObject(SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + SharedRunData.OpenedSilverChests
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + SharedRunData.OpenedGoldChests
-                GuiControl, ICScriptHub:, SilversOpenedID, % SharedRunData.OpenedSilverChests
-                GuiControl, ICScriptHub:, GoldsOpenedID, % SharedRunData.OpenedGoldChests
-                GuiControl, ICScriptHub:, ShiniesID, % SharedRunData.ShinyCount
+                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : 0
+                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : 0
+                GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : SilversOpenedID
+                GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : GoldsOpenedID
+                GuiControl, ICScriptHub:, ShiniesID, SharedRunData.ShinyCount
             }
 
             ++TotalRunCount
@@ -713,7 +720,8 @@ class IC_BrivGemFarm_Class
         ; Swap to Briv Jump formation if not in it already when not transitioning. Only happens if avoid bosses is off, or not going to boss zone.
         else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( highestZone, 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ]))
         {
-            g_SF.DirectedInput(,,["{q}"]*)
+            if(g_SF.Memory.ReadCurrentZone() < g_SF.ModronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ])
+                g_SF.DirectedInput(,,["{q}"]*)
             lastKeyTime := A_TickCount
         }
         ; Swap to non-Briv formation on boss zone if in Briv formation and if avoiding bosses. (when not transitioning)
@@ -772,17 +780,23 @@ class IC_BrivGemFarm_Class
         g_SharedData.LoopString := "Transitioning (Briv Formation)"
         g_SF.DirectedInput(,, ["{q}"]*)
         isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
+        maxSwapArea := g_SF.modronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ]
         ; After level change, while transitioning try to swap briv back. If it fails, rely on SetFormation to get him back in.
         ; Note: monsters spawned resets to 0 after transitioning turns to 1, and increases > 0 barely before transitioning becomes 0. Do not wait until transitioning complete to swap in briv!
-        while (g_SF.Memory.ReadTransitioning() AND ElapsedTime < timeout AND !isBrivInCurrentFormation )
+        while (g_SF.Memory.ReadTransitioning() AND ElapsedTime < timeout)
         {
-            ElapsedTime := A_TickCount - StartTime
-            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-            if( ElapsedTime > (counter * sleepTime) AND !isBrivInCurrentFormation) ; input limiter..
+            if( ElapsedTime > (counter * sleepTime) )
             {
-                g_SF.DirectedInput(,, ["{q}"]*)
                 counter++
+                
+                if(!isBrivInCurrentFormation AND CurrentZone < maxSwapArea)
+                    g_SF.DirectedInput(,, ["{q}"]*)
+                else if(isBrivInCurrentFormation AND CurrentZone >= maxSwapArea)
+                    g_SF.DirectedInput(,, ["{e}"]*)
+                else
+                    break
             }
+            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
         }
         g_SharedData.SwapsMadeThisRun++
         Critical, Off
