@@ -109,9 +109,9 @@ Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current `Run Time (min):
 Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, SB Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w50, % g_StackCountSB
+Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w50, % g_StackCountH
+Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
 
 ; Gui, ICScriptHub:Add, Text, x15 y+10, Inputs Sent:
 ; Gui, ICScriptHub:Add, Text, vg_InputsSentID x+2 w50, % g_InputsSent
