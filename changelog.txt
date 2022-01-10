@@ -4,7 +4,7 @@ Jan 10, 2022
     Fixed gold chest purchases always buying 100, even if only gem limit only allows purchase of 1. (fix by Envy)
     Added a swap to E formation option for helping users deal with stacks failing to convert on modron reset. (``BrivJumpBuffer`` in ``BrivGemFarmSettings.json``)
     Added checks to prevent as many errors as popping up when GUI can't read from Gem Farm Script. (One intentionally left in for debugging purposes.)
-    Added a fix for resets triggered ResetZoneBuffer not resetting the current run timer.
+    Added a fix for resets triggered by ResetZoneBuffer not resetting the current run timer.
     Added Advanced Settings view option to gem farm script's window.
 
 Jan 9, 2022
