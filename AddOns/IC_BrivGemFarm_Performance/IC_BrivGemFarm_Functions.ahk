@@ -19,7 +19,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.UserHash := this.Memory.ReadUserHash()
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
-        this.TotalGems := this.Memory.ReadGems()         
+        this.TotalGems := this.Memory.ReadGems()
         this.TotalSilverChests := this.Memory.GetChestCountByID(1)
         this.TotalGoldChests := this.Memory.GetChestCountByID(2)
         this.sprint := this.Memory.ReadHasteStacks()
@@ -41,7 +41,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_ServerCall.UpdateDummyData()
     }
 
-    
+
     /*  WaitForModronReset - A function that monitors a modron resetting process.
 
         Returns:
@@ -162,8 +162,8 @@ class IC_BrivGemFarm_Class
             if ( g_SF.Memory.ReadResetting() )
                 this.ModronResetCheck()
             if(CurrentZone > PreviousZone) ; needs to be greater than because offline could stacking getting stuck in descending zones.
-            {  
-                PreviousZone := CurrentZone  
+            {
+                PreviousZone := CurrentZone
                 if(!Mod( g_SF.Memory.ReadHighestZone(), 5 ))
                 {
                     g_SharedData.TotalBossesHit++
@@ -198,16 +198,8 @@ class IC_BrivGemFarm_Class
         SetTimer, %fncToCallOnTimer%, 200, 0
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
         SetTimer, %fncToCallOnTimer%, 3000, 0
-        if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
-        {
-            fncToCallOnTimer := ObjBindMethod(ReadMemoryFunctionsExtended, "CheckReads")
-            SetTimer, %fncToCallOnTimer%, 250, 0
-        }
-        else if(IsFunc(Func("ReadMemoryFunctions.CheckReads")))
-        {
-            fncToCallOnTimer := ObjBindMethod(ReadMemoryFunctions, "CheckReads")
-            SetTimer, %fncToCallOnTimer%, 250, 0
-        } 
+        fncToCallOnTimer :=  Func("Check_Clicked")
+        SetTimer, %fncToCallOnTimer%, 250, 0
         if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
         {
             fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
@@ -238,7 +230,7 @@ class IC_BrivGemFarm_Class
             fncToCallOnTimer := ObjBindMethod(ReadMemoryFunctions, "CheckReads")
             SetTimer, %fncToCallOnTimer%, Off
             SetTimer, %fncToCallOnTimer%, Delete
-        } 
+        }
         if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
         {
             fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
@@ -335,7 +327,7 @@ class IC_BrivGemFarm_Class
         static GoldChestCountStart := 0
         static LastTriggerStart := false
         static ActiveGameInstance := 1
-        
+
         Critical, On
         if !isStarted
         {
@@ -347,7 +339,7 @@ class IC_BrivGemFarm_Class
         {
             SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
         }
-        
+
         testReadAreaActive := g_SF.Memory.ReadAreaActive()
         if (IsObject(SharedRunData))
         {
@@ -365,11 +357,11 @@ class IC_BrivGemFarm_Class
             {
                 Sleep, 50
             }
-            ; CoreXP starting on FRESH run. 
+            ; CoreXP starting on FRESH run.
             if(!TotalRunCount)
             {
                 ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
-                CoreXPStart := g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance) 
+                CoreXPStart := g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance)
                 GemStart := g_SF.Memory.ReadGems()
                 GemSpentStart := g_SF.Memory.ReadGemsSpent()
                 LastResetCount := g_SF.Memory.ReadResetsCount()
@@ -421,7 +413,7 @@ class IC_BrivGemFarm_Class
                 GuiControl, ICScriptHub:, GoldsOpenedID, % SharedRunData.OpenedGoldChests
                 GuiControl, ICScriptHub:, ShiniesID, % SharedRunData.ShinyCount
             }
-            
+
             ++TotalRunCount
             StackFail := 0
             RunStartTime := A_TickCount
@@ -470,7 +462,7 @@ class IC_BrivGemFarm_Class
         stacks := this.GetNumStacksFarmed()
         stackfail := 0
         ; passed stack zone, start stack farm
-        if ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] ) 
+        if ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
             this.StackFarm()
         ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
         else if ( stackfail := (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] ))
@@ -526,9 +518,9 @@ class IC_BrivGemFarm_Class
         sleepTime := 50
         g_SharedData.LoopString := "Setting stack farm formation."
         while ( !g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 2 )) AND ElapsedTime < 5000 )
-        {            
+        {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 g_SF.DirectedInput(,,inputValues)
                 counter++
@@ -638,7 +630,7 @@ class IC_BrivGemFarm_Class
         {
             stacks := this.GetNumStacksFarmed()
             If (g_SF.Memory.ReadHasteStacks() < g_BrivUserSettings[ "TargetStacks" ] AND stacks > g_BrivUserSettings[ "TargetStacks" ])
-            {                
+            {
                 g_SF.RestartAdventure( "Failed Conversion" )
                 g_SF.SafetyCheck()
                 return 2
@@ -719,7 +711,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.LoopString := "Main `Loop"
         }
         ; Swap to Briv Jump formation if not in it already when not transitioning. Only happens if avoid bosses is off, or not going to boss zone.
-        else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( highestZone, 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ])) 
+        else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( highestZone, 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ]))
         {
             g_SF.DirectedInput(,,["{q}"]*)
             lastKeyTime := A_TickCount
@@ -731,7 +723,7 @@ class IC_BrivGemFarm_Class
             lastKeyTime := A_TickCount
         }
     }
-        
+
     /* SwapFormationDuringTransition - A function to swap between formations to cancel Briv's jump animation.
 
     Parameters:
@@ -740,7 +732,7 @@ class IC_BrivGemFarm_Class
     */
     SwapFormationDuringTransition(CurrentZone)
     {
-        Critical, On        
+        Critical, On
         if(g_SF.ShouldSkipSwap() AND !(g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0))
             return
         StartTime := A_TickCount
@@ -757,7 +749,7 @@ class IC_BrivGemFarm_Class
         {
             ElapsedTime := A_TickCount - StartTime
             isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-            if( ElapsedTime > (counter * sleepTime) AND isBrivInCurrentFormation) ; input limiter.. 
+            if( ElapsedTime > (counter * sleepTime) AND isBrivInCurrentFormation) ; input limiter..
             {
                 g_SF.DirectedInput(,,["{e}","{Right}"]*)
                 counter++
@@ -779,14 +771,14 @@ class IC_BrivGemFarm_Class
         }
         g_SharedData.LoopString := "Transitioning (Briv Formation)"
         g_SF.DirectedInput(,, ["{q}"]*)
-        isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0) 
+        isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
         ; After level change, while transitioning try to swap briv back. If it fails, rely on SetFormation to get him back in.
         ; Note: monsters spawned resets to 0 after transitioning turns to 1, and increases > 0 barely before transitioning becomes 0. Do not wait until transitioning complete to swap in briv!
         while (g_SF.Memory.ReadTransitioning() AND ElapsedTime < timeout AND !isBrivInCurrentFormation )
         {
             ElapsedTime := A_TickCount - StartTime
-            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0) 
-            if( ElapsedTime > (counter * sleepTime) AND !isBrivInCurrentFormation) ; input limiter.. 
+            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
+            if( ElapsedTime > (counter * sleepTime) AND !isBrivInCurrentFormation) ; input limiter..
             {
                 g_SF.DirectedInput(,, ["{q}"]*)
                 counter++
@@ -808,7 +800,7 @@ class IC_BrivGemFarm_Class
         If no calls were made, will return a string noting so.
         On success opening or buying, will return string noting so.
         On success and shinies found, will return a string noting so.
-        
+
         Note: First line is ignoring fact that once every 49 days this func can potentially be called w/ startTime at 0 ms.
     */
     BuyOrOpenChests( startTime := 0 )
@@ -865,7 +857,7 @@ class IC_BrivGemFarm_Class
         }
         if ( g_BrivUserSettings[ "OpenGolds" ] AND g_SF.TotalGoldChests > 0 AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openGoldChestTimeEst) )
         {
-            amount := Min(g_SF.TotalGoldChests, 99)            
+            amount := Min(g_SF.TotalGoldChests, 99)
             chestResults := g_ServerCall.callOpenChests( chestID := 2, amount )
             if(chestResults.success)
             {

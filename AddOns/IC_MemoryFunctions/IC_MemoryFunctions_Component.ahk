@@ -9,13 +9,14 @@ Gui, ICScriptHub:Add, Button, x255 y68 w100 gCheck_Clicked, Force Memory Check
 
 Check_Clicked()
 {
-    Critical, On
     g_SF.Memory.OpenProcessReader()
-    if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
-        ReadMemoryFunctionsExtended.CheckReads()
-    else if (IsFunc(Func("ReadMemoryFunctions.CheckReads")))
-        ReadMemoryFunctions.CheckReads()
-    Critical, Off
+    if(g_SF.Memory.ReadCurrentZone() != "" AND g_SF.Memory.ReadGems() != "")
+    {
+        if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
+            ReadMemoryFunctionsExtended.CheckReads()
+        else if (IsFunc(Func("ReadMemoryFunctions.CheckReads")))
+            ReadMemoryFunctions.CheckReads()
+    }
     return
 }
 
