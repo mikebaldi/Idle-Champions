@@ -1,3 +1,6 @@
+Jan 10, 2022
+    Added additional troubleshooting options to message boxes when required champions are not found in the formation.
+
 Jan 9, 2022
     Updated some default settings.
     Fixed gems not showing in correct column on Briv Gem Farm window

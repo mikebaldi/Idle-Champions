@@ -833,9 +833,13 @@ class IC_SharedFunctions_Class
         memoryVersion := this.Memory.GameManager.GetVersion()
         formationSaveSlot := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
         ; Test Favorite Exists
+        txtCheck := "1. Check the correct memory file is being used. Current version: " . memoryVersion
+        txtcheck .= "`n`n2. If IC is running with admin privelages, then the script will also require admin privlages."
+        if (this.Memory.GameManager.is64bit())
+            txtcheck .= "`n`n3. Check AHK is 64bit."
         while ( formationSaveSlot == -1 )
         {
-            MsgBox, 5,, Please confirm a formation is saved in favorite slot %FavoriteSlot% or the correct memory file is being used. `nCurrent version: %memoryVersion%
+            MsgBox, 5,, Please confirm a formation is saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
             IfMsgBox, Retry
             {
                 this.Memory.OpenProcessReader()
@@ -852,7 +856,7 @@ class IC_SharedFunctions_Class
         ; Test that the formation has champions
         while !var
         {
-            MsgBox, 5,, Please confirm your %team% team is saved in favorite slot %FavoriteSlot% or the correct memory file is being used. `nCurrent version: %memoryVersion%
+            MsgBox, 5,, Please confirm your %team% team is saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
             IfMsgBox, Retry
             {
                 this.Memory.OpenProcessReader()
@@ -866,11 +870,12 @@ class IC_SharedFunctions_Class
             }
         }
         foundChamp := this.IsChampInFormation(champID, formation)
+        foundChampName := this.Memory.ReadChampNameByID(champID)
         stateText := findChamp ? "is" : "isn't"
         ; Test that the specific champions is in the formation
         while ( foundChamp != findChamp )
         {
-            MsgBox, 5,, Please confirm ChampID: %champID% %stateText% saved in favorite slot %FavoriteSlot% or the correct memory file is being used. `nCurrent version: %memoryVersion%
+            MsgBox, 5,, Please confirm %foundChampName% %stateText% saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
             IfMsgBox, Retry
             {
                 this.Memory.OpenProcessReader()
