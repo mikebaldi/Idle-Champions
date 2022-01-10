@@ -1,5 +1,6 @@
 Jan 10, 2022
     Added additional troubleshooting options to message boxes when required champions are not found in the formation.
+    Jimothy Addon: Can now be used with non Jimothy formations.
 
 Jan 9, 2022
     Updated some default settings.

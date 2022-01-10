@@ -73,27 +73,14 @@ class Jimothy
     */
     Jimothy()
     {
-        init := this.Initialize()
-        if (init == 0)
-        {
-            if (this.UseMsgBox)
-                MsgBox, % this.EndRunTxt . " Jimothy run over."
-            return
-        }
-        if (init == 1)
-        {
-            this.EndRunTxt := "Could not find Hew's slot."
-            if (this.UseMsgBox)
-                MsgBox, %  this.EndRunTxt . " Jimothy run over."
-            return
-        }
+        this.Initialize()
         this.DoPartySetup()
         Loop
         {
-            this.SetFormation()
-            this.CheckToResetZone()
             if (this.CheckToEndRun())
                 break
+            this.SetFormation()
+            this.CheckToResetZone()
             this.External.Update(this)
             g_SF.ToggleAutoProgress(1)
             if(this.UseFkeys)
@@ -104,6 +91,7 @@ class Jimothy
                 g_SF.DirectedInput(,,"{ClickDmg}")
             Sleep, 10 ;an attempt to help with gui freezing
         }
+        g_SF.WaitForTransition()
         g_SF.FallBackFromZone()
         if (this.UseMsgBox)
             MsgBox, % this.EndRunTxt . " Jimothy run over."
@@ -114,19 +102,19 @@ class Jimothy
     {
         g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
         g_SF.Memory.OpenProcessReader()
-        if (this.CheckSetup() == 0)
-            return 0
+        this.CheckSetup()
         this.formationQ := g_SF.Memory.GetFormationByFavorite(1)
         g_SF.LevelChampByID( 75, 10, 7000, "{q}") ; level hew once
         this.HewSlot := this.GetHewSlot()
-        if (this.HewSlot == -1)
-            return 1
+        this.EndRunTxt := "Could not find Hew's slot."
+        if (this.UseMsgBox AND this.HewSlot == -1)
+            MsgBox, %  this.EndRunTxt
         if (this.UseFkeys)
         {
             this.KeySpam := g_SF.GetFormationFKeys(this.formationQ)
             this.KeySpamTxt := ArrFnc.GetAlphaNumericArrayString(this.KeySpam)
         }
-        return 2
+        return
     }
 
     DoPartySetup()
@@ -205,27 +193,31 @@ class Jimothy
 
     CheckSetup()
     {
+        this.EndRunTxt := ""
         if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 75) == "") ;hew
         {
-            this.EndRunTxt := "Could not find Hew in favorite formation 1."
-            return 0
+            this.EndRunTxt .= "Could not find Hew in favorite formation 1. "
+            ;return 0
         }
         if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 48) == "") ;jim
         {
-            this.EndRunTxt := "Could not find Jim in favorite formation 1."
-            return 0
+            this.EndRunTxt .= "Could not find Jim in favorite formation 1. "
+            ;return 0
         }
         if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 58) == "") ;briv
         {
-            this.EndRunTxt := "Could not find Briv in favorite formation 1."
-            return 0
+            this.EndRunTxt .= "Could not find Briv in favorite formation 1. "
+            ;return 0
         }
         if (g_SF.FindChampIDinSavedFormation(3, "Jimothy No Briv", 0, 58) == "") ;no briv
         {
-            this.EndRunTxt := "Found Briv in favorite formation 3."
-            return 0
+            this.EndRunTxt .= "Found Briv in favorite formation 3. "
+            ;return 0
         }
-        return 1
+        if (this.EndRunTxt == "")
+            return 1
+        else
+            return 0
     }
 
     GetHewSlot()
