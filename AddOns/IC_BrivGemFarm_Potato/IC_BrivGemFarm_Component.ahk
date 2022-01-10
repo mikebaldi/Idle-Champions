@@ -7,5 +7,3 @@ UpdateBrivGemFarmType()
 }
 
 UpdateBrivGemFarmType()
-
-

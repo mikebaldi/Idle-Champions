@@ -699,7 +699,7 @@ class IC_SharedFunctions_Class
     fall back and switch to Q if being attacked
     */
     ; falls back zone until switching to Q formation can be done.
-    RecoverFromGameClose(formationFavorite := 1)
+    RecoverFromGameClose(formationFavoriteNum := 1)
     {
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -724,12 +724,12 @@ class IC_SharedFunctions_Class
             }
         }
         g_SharedData.LoopString := "Waiting for formation swap..."
-        formationFavorite1 := this.Memory.GetFormationByFavorite( 1 )
+        formationFavorite := this.Memory.GetFormationByFavorite( formationFavoriteNum )
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
             ElapsedTime := A_TickCount - StartTime
-            isCurrentFormation := this.IsCurrentFormation( formationFavorite1 )
+            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
             if(ElapsedTime > sleepTime * counter)
             {
                 if(formationFavorite == 1)

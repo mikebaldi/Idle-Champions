@@ -418,7 +418,7 @@ class IC_BrivGemFarm_Class
                 GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : 0
                 GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : SilversOpenedID
                 GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : GoldsOpenedID
-                GuiControl, ICScriptHub:, ShiniesID, SharedRunData.ShinyCount
+                GuiControl, ICScriptHub:, ShiniesID, % SharedRunData.ShinyCount
             }
 
             ++TotalRunCount
@@ -778,9 +778,12 @@ class IC_BrivGemFarm_Class
             ElapsedTime := A_TickCount - StartTime
         }
         g_SharedData.LoopString := "Transitioning (Briv Formation)"
-        g_SF.DirectedInput(,, ["{q}"]*)
         isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
         maxSwapArea := g_SF.modronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ]
+        if(!isBrivInCurrentFormation AND CurrentZone < maxSwapArea)
+            g_SF.DirectedInput(,, ["{q}"]*)
+        else if(isBrivInCurrentFormation AND CurrentZone >= maxSwapArea)
+            g_SF.DirectedInput(,, ["{e}"]*)
         ; After level change, while transitioning try to swap briv back. If it fails, rely on SetFormation to get him back in.
         ; Note: monsters spawned resets to 0 after transitioning turns to 1, and increases > 0 barely before transitioning becomes 0. Do not wait until transitioning complete to swap in briv!
         while (g_SF.Memory.ReadTransitioning() AND ElapsedTime < timeout)
