@@ -230,6 +230,8 @@ class IC_BrivGemFarm_Class
         static previousLoopStartTime := A_TickCount
         static lastZone := -1
         static lastResetCount := 0
+        static sbStackMessage := ""
+        static hasteStackMessage := ""
 
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
@@ -248,8 +250,28 @@ class IC_BrivGemFarm_Class
             lastZone := currentZone
         }
 
-        GuiControl, ICScriptHub:, g_StackCountSBID, % g_SF.Memory.ReadSBStacks()
-        GuiControl, ICScriptHub:, g_StackCountHID, % g_SF.Memory.ReadHasteStacks()
+        sbStacks := g_SF.Memory.ReadSBStacks()
+        if (sbStacks == "")
+        {
+            if (SubStr(sbStackMessage, 1, 1) != "[")
+            {
+                sbStackMessage := "[" . sbStackMessage . "] last seen"
+            }
+        } else {
+            sbStackMessage := sbStacks
+        }
+        hasteStacks := g_SF.Memory.ReadHasteStacks()
+        if (hasteStacks == "")
+        {
+            if (SubStr(hasteStackMessage, 1, 1) != "[")
+            {
+                hasteStackMessage := "[" . hasteStackMessage . "] last seen"
+            }
+        } else {
+            hasteStackMessage := hasteStacks
+        }
+        GuiControl, ICScriptHub:, g_StackCountSBID, % sbStackMessage
+        GuiControl, ICScriptHub:, g_StackCountHID, % hasteStackMessage
 
         ;dtCurrentRunTime := Round( ( A_TickCount - g_RunStartTime ) / 60000, 2 )
         dtCurrentRunTime :=  A_TickCount - previousLoopStartTime 

@@ -75,7 +75,7 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Gem Farm window auto positio
 
 Gui, Tab, Stats
 Gui, ICScriptHub:Font, w700
-Gui Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+Gui Add, GroupBox, x10 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Run Formation Swaps:
 Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 

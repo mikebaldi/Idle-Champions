@@ -96,7 +96,7 @@ global g_DownAlign
 global g_wColLeft := 120    ; Width of the left column
 
 Gui, ICScriptHub:Font, w700
-Gui Add, GroupBox, x+0 y+15 w450 h120 vCurrentRunGroupID, Current `Run:
+Gui Add, GroupBox, x10 y+15 w450 h120 vCurrentRunGroupID, Current `Run:
 Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Font, w700
@@ -111,9 +111,9 @@ Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Current `Run
 Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w60, % dtCurrentRunTime
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%g_wColLeft% Right, SB Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w50, % g_StackCountSB
+Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%g_wColLeft% Right, Haste Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w50, % g_StackCountH
+Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
 
 ; Gui, ICScriptHub:Add, Text, x15 y+10, Inputs Sent:
 ; Gui, ICScriptHub:Add, Text, vg_InputsSentID x+2 w50, % g_InputsSent
@@ -121,7 +121,7 @@ GuiControlGet, pos, Pos, CurrentRunGroupID
 g_DownAlign := posY + posH +5
 
 Gui, ICScriptHub:Font, w700
-Gui Add, GroupBox, x6 y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
+Gui Add, GroupBox, x10 y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%g_wColLeft% Right, Previous Run Time:
 Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
