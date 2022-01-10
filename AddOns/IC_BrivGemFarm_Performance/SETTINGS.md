@@ -3,6 +3,9 @@
 These are the currently available advanced settings for this AddOn. These are are for advanced users and must be set from within the ``BrivGemFarmSettings.json`` file.
 
 ## Settings: 
+
+* **BrivJumpBuffer** - 0-2000 (zones/areas)  
+This value tells the script how many areas before a modron reset zone that switching to e formation over q formation is desired. The value should be greater than the stack zone value, but less than the modron reset value. This helps resolve issues of Briv Stacks not being converted properly on modron resets.
   
 * **DashWaitBuffer** - 0-? (time in ms)  
 **Updated:** DashWaitBuffer has been repurposed to be a distance from your modron's reset zone where dashwait will stop being activated. Default is 30.
