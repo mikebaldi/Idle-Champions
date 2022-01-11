@@ -33,7 +33,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.8, 12/28/2021, IC v0.415.1+"
+        return "v1.9, 01/10/2022, IC v0.415.1+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -235,7 +235,7 @@ class IC_MemoryFunctions_Class
     }
 
     ;=============================
-    ;GameUser - userid, hash, etc.
+    ;ServerCall Related - userid, hash, etc.
     ;=============================
 
     ReadUserID()
@@ -252,6 +252,17 @@ class IC_MemoryFunctions_Class
     {
         return this.GenericGetValue(this.GameSettings.GameSettings._Instance.InstanceID)
     }
+
+    ReadWebRoot()
+    {
+        return this.GenericGetValue(this.Enginesettings.EngineSettings.WebRoot) 
+    }
+
+    ReadPlatform()
+    {
+        return this.GenericGetValue(this.GameSettings.GameSettings.Platform) 
+    }
+    
     
     ;==================================================
     ;userData - gems, red rubies, SB/Haste stacks, etc.

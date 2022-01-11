@@ -66,7 +66,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.3, 01/01/2022"
+        return "v2.4, 01/10/2022"
     }
 
     ;Gets data from JSON file
@@ -915,7 +915,8 @@ class IC_SharedFunctions_Class
         if(version != "")
             g_ServerCall.clientVersion := version
         ; TODO: Update these values based on memory reads
-        g_ServerCall.networkID := 11 ;11 = steam
+        g_ServerCall.webroot := this.Memory.ReadWebRoot() ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
+        g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
         g_ServerCall.activePatronID := 0 ; 0 = no patron
         g_ServerCall.UpdateDummyData()

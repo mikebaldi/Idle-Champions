@@ -8,7 +8,9 @@ Jan 10, 2022
     Added Advanced Settings view option to gem farm script's window.
     Fixed bug where gained chests were showing opened chests instead of purchased chests.
     Fixed bug where first chests opened/bought during the first run were counted in stats when stats should not start until after the first run.
-
+    Fixed two bugs causing shinies to not be counted correctly.
+    Server calls should now correctly use the same server as the client.
+    Server calls should now correctly use the same platform/network_id as the client.    
 
 Jan 9, 2022
     Updated some default settings.
