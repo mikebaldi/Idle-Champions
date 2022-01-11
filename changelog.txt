@@ -1,3 +1,6 @@
+Jan 11, 2022
+    Added new setting to return dashwaiting capability when at max speed. See (ForceDashWait) to BrivGemFarmSettings.json
+
 Jan 10, 2022
     Added additional troubleshooting options to message boxes when required champions are not found in the formation.
     Jimothy Addon: Can now be used with non Jimothy formations.
@@ -11,6 +14,7 @@ Jan 10, 2022
     Fixed two bugs causing shinies to not be counted correctly.
     Server calls should now correctly use the same server as the client.
     Server calls should now correctly use the same platform/network_id as the client.    
+    Added bypass for game recovery when game loads on zone 1.
 
 Jan 9, 2022
     Updated some default settings.

@@ -397,7 +397,7 @@ class IC_SharedFunctions_Class
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000  )
+    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000, forceWait := false  )
     {
         this.ToggleAutoProgress( 0, false, true )
         specializedCount := g_SF.CountTimeScaleMultipliersOfValue(1.5)
@@ -413,7 +413,11 @@ class IC_SharedFunctions_Class
         modDashSleep := ( DashSleepTime ) / timeScale
         if (modDashSleep < 1)
             modDashSleep := DashSleepTime
-        while ( this.Memory.ReadTimeScaleMultiplier() < DashSpeed AND ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone )
+        ; Loop escape conditions:
+        ;   does full sleep duration
+        ;   past highest accepted dashwait triggering area
+        ;   timescale multiplier reaches dash speed and not forcewaiting (Forcwait is for situations where speed can be 10x but drop later e.g. Potion Bleed)
+        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND (this.Memory.ReadTimeScaleMultiplier() < DashSpeed OR forceWait) ) 
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)

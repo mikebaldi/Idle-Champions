@@ -50,6 +50,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "MinStackZone" ] := 200
     if ( g_BrivUserSettings[ "BrivJumpBuffer" ] == "" )
         g_BrivUserSettings[ "BrivJumpBuffer" ] := 0
+    if ( g_BrivUserSettings[ "ForceDashWait" ] == "" )
+        g_BrivUserSettings[ "ForceDashWait" ] := false
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")
