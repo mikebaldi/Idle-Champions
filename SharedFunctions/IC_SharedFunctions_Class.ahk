@@ -707,19 +707,23 @@ class IC_SharedFunctions_Class
         sleepTime := 67
         timeout := 10000
         isCurrentFormation := false
-        spam := ["{q}"]
+        if(this.Memory.ReadCurrentZone() == 1)
+            return
+        if(formationFavorite == 1)
+            spam := ["{q}"]
+        else if(formationFavorite == 2)
+            spam := ["{w}"]
+        else if(formationFavorite == 3)
+            spam := ["{e}"]
+        else
+            spam := ""
         g_SharedData.LoopString := "Waiting for offline settings wipe..."
         while(this.Memory.ReadNumAttackingMonstersReached() >= 95 AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
-            if(ElapsedTime > sleepTime * counter)
+            if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                if(formationFavorite == 1)
-                    this.DirectedInput(,, "{q}" )
-                else if(formationFavorite == 2)
-                    this.DirectedInput(,, "{w}" )
-                else if(formationFavorite == 3)
-                    this.DirectedInput(,, "{e}" )
+                this.DirectedInput(,, spam* ) 
                 counter++
             }
         }
@@ -730,14 +734,9 @@ class IC_SharedFunctions_Class
         {
             ElapsedTime := A_TickCount - StartTime
             isCurrentFormation := this.IsCurrentFormation( formationFavorite )
-            if(ElapsedTime > sleepTime * counter)
+            if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                if(formationFavorite == 1)
-                    this.DirectedInput(,, "{q}" )
-                else if(formationFavorite == 2)
-                    this.DirectedInput(,, "{w}" )
-                else if(formationFavorite == 3)
-                    this.DirectedInput(,, "{e}" )
+                this.DirectedInput(,, spam* ) 
                 counter++
             }
         }
