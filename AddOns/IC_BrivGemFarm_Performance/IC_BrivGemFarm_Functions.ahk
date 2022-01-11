@@ -660,9 +660,9 @@ class IC_BrivGemFarm_Class
     {
         formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
         isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
+        g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
         if(isShandieInFormation)
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
-        g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
         if(isHavilarInFormation)
         {
