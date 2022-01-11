@@ -2,7 +2,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 {
     steelbones := ""
     sprint := ""
-    ;Uses server calls to test for being on world map, and if so, start an adventure (CurrentObjID). If force is declared, will use server calls to stop/start adventure.
+    
     RestartAdventure( reason := "" )
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
@@ -26,7 +26,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.steelbones := this.Memory.ReadSBStacks()
     }
 
-        ; sets the user information used in server calls such as user_id, hash, active modron, etc.
+    ; sets the user information used in server calls such as user_id, hash, active modron, etc.
     ResetServerCall()
     {
         this.SetUserCredentials()
