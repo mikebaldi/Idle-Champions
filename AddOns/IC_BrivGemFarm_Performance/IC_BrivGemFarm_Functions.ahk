@@ -677,8 +677,9 @@ class IC_BrivGemFarm_Class
             keyspam.Push("{ClickDmg}")
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
-        if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
-            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ], Max(g_SF.modronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0), g_BrivUserSettings[ "ForceDashWait"] )
+        g_SF.ModronResetZone := g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
+        if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
+            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ], Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0), g_BrivUserSettings[ "ForceDashWait"] )
         ;g_SF.FinishZone()
         g_SF.ToggleAutoProgress( 1, false, true )
     }
@@ -779,7 +780,7 @@ class IC_BrivGemFarm_Class
         }
         g_SharedData.LoopString := "Transitioning (Briv Formation)"
         isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-        maxSwapArea := g_SF.modronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ]
+        maxSwapArea := g_SF.ModronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ]
         if(!isBrivInCurrentFormation AND CurrentZone < maxSwapArea)
             g_SF.DirectedInput(,, ["{q}"]*)
         else if(isBrivInCurrentFormation AND CurrentZone >= maxSwapArea)

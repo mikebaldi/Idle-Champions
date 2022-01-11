@@ -53,6 +53,7 @@ class IC_SharedFunctions_Class
     ErrorKeyDown := 0
     ErrorKeyUp := 0
     GameStartFormation := 1
+    ModronResetZone := 0
 
     __new()
     {
@@ -417,14 +418,14 @@ class IC_SharedFunctions_Class
         ;   does full sleep duration
         ;   past highest accepted dashwait triggering area
         ;   timescale multiplier reaches dash speed and not forcewaiting (Forcwait is for situations where speed can be 10x but drop later e.g. Potion Bleed)
-        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND (this.Memory.ReadTimeScaleMultiplier() < DashSpeed OR forceWait) ) 
+        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND (this.Memory.ReadTimeScaleMultiplier() < DashSpeed OR forceWait) )
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
             isValueIncreased := g_SF.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount
             ; TODO: Update Shandie Tests to be future compatible in case more speed is added.
             isValueOverExpected := g_SF.CountTimeScaleMultipliersOfValue(1.5) > 1 OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > 1
-            if(isValueIncreased OR isValueOverExpected)
+            if((isValueIncreased OR isValueOverExpected) AND !forceWait)
                 break
             this.SafetyCheck()
             ElapsedTime := A_TickCount - StartTime
@@ -469,7 +470,7 @@ class IC_SharedFunctions_Class
         ; try to progress
         this.DirectedInput(,,"{Right}")
         this.ToggleAutoProgress(1)
-        this.modronResetZone := this.Memory.GetCoreTargetAreaByInstance(this.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
+        this.ModronResetZone := this.Memory.GetCoreTargetAreaByInstance(this.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
         g_PreviousZoneStartTime := A_TickCount
         Critical, Off
     }
