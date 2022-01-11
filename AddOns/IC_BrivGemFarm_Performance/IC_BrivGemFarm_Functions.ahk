@@ -366,6 +366,14 @@ class IC_BrivGemFarm_Class
                 LastResetCount := g_SF.Memory.ReadResetsCount()
                 SilverChestCountStart := g_SF.Memory.GetChestCountByID(1)
                 GoldChestCountStart := g_SF.Memory.GetChestCountByID(2)
+                
+                ; start count after first run since total chest count is counted after first run
+                if(IsObject(SharedRunData)) 
+                {
+                    SharedRunData.PurchasedGoldChests := 0
+                    SharedRunData.PurchasedSilverChests := 0    
+                }
+                
                 FastRunTime := 1000
                 ScriptStartTime := A_TickCount
             }
@@ -406,13 +414,12 @@ class IC_BrivGemFarm_Class
 
             if (IsObject(SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : 0
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : 0
-                GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : SilversOpenedID
-                GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : GoldsOpenedID
-                GuiControl, ICScriptHub:, ShiniesID, % SharedRunData.ShinyCount
+                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + (IsObject(SharedRunData) ? SharedRunData.PurchasedSilverChests : SilversPurchasedID)
+                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + (IsObject(SharedRunData) ? SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
+                GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : SilversOpenedID)
+                GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : GoldsOpenedID)
+                GuiControl, ICScriptHub:, ShiniesID, % (IsObject(SharedRunData) ? SharedRunData.ShinyCount : ShiniesID)
             }
-
             ++TotalRunCount
             StackFail := 0
             RunStartTime := A_TickCount
