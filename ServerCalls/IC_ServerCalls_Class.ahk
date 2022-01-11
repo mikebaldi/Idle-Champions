@@ -173,6 +173,7 @@ class IC_ServerCalls_Class
 
     ParseChestResults( chestResults )
     {
+        this.shinies := 0
         string := ""
         for k, v in chestResults.loot_details
         {

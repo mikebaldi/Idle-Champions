@@ -868,7 +868,7 @@ class IC_BrivGemFarm_Class
                 g_SF.TotalSilverChests := chestResults.chests_remaining
             }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
-            g_sharedData.ShinyCount := g_ServerCall.shinies
+            g_sharedData.ShinyCount += g_ServerCall.shinies
             var .= " Opened " . amount . " silver chests."
         }
         if ( g_BrivUserSettings[ "OpenGolds" ] AND g_SF.TotalGoldChests > 0 AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openGoldChestTimeEst) )
@@ -881,7 +881,7 @@ class IC_BrivGemFarm_Class
                 g_SF.TotalGoldChests := chestResults.chests_remaining
             }
             var2 .= g_ServerCall.ParseChestResults( chestResults )
-            g_sharedData.ShinyCount := g_ServerCall.shinies
+            g_sharedData.ShinyCount += g_ServerCall.shinies
             var .= " Opened " . amount . " gold chests."
         }
         if ( var == "" )
