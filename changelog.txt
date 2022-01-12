@@ -6,6 +6,7 @@ Jan 12, 2022
         GetActiveModronFormation
         GetModronFormationsSaveIDByFormationCampaignID
         GetCurrentModronSaveSlot
+    NEW: FKeys now uses the champions in the formation of the active Modron instead of champions in formation Q to do leveling in BrivGemFarm.
 
 Jan 11, 2022
     Added new setting to return dashwaiting capability when at max speed. See (ForceDashWait) to BrivGemFarmSettings.json

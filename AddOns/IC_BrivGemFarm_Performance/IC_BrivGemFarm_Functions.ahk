@@ -117,6 +117,7 @@ class IC_BrivGemFarm_Class
         g_SF.ResetServerCall()
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
+        formationModron := g_SF.Memory.GetActiveModronFormation()
         formationQ := g_SF.FindChampIDinSavedFormation( 1, "Speed", 1, 58 )
         formationW := g_SF.FindChampIDinSavedFormation( 2, "Stack Farm", 1, 58 )
         formationE := g_SF.FindChampIDinSavedFormation( 3, "Speed No Briv", 0, 58 )
@@ -142,7 +143,7 @@ class IC_BrivGemFarm_Class
                 g_SF.WaitForFirstGold()
                 keyspam := Array()
                 if g_BrivUserSettings[ "Fkeys" ]
-                    keyspam := g_SF.GetFormationFKeys(formationQ)
+                    keyspam := g_SF.GetFormationFKeys(formationModron)
                 doKeySpam := true
                 keyspam.Push("{ClickDmg}")
                 this.DoPartySetup()
@@ -673,7 +674,7 @@ class IC_BrivGemFarm_Class
         }
         if(g_BrivUserSettings[ "Fkeys" ]) ; AND !g_SF.areChampionsUpgraded(formationFavorite1)
         {
-            keyspam := g_SF.GetFormationFKeys(formationFavorite1) ; level other formation champions
+            keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
             keyspam.Push("{ClickDmg}")
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
