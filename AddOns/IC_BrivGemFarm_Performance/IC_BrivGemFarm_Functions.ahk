@@ -348,7 +348,7 @@ class IC_BrivGemFarm_Class
             SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
         }
 
-        testReadAreaActive := g_SF.Memory.ReadAreaActive()
+        ;testReadAreaActive := g_SF.Memory.ReadAreaActive()
         StackFail := IsObject(SharedRunData) ? Max(StackFail, SharedRunData.StackFail) : StackFail
         TriggerStart := IsObject(SharedRunData) ? SharedRunData.TriggerStart : LastTriggerStart
         if ( g_SF.Memory.ReadResetsCount() > LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND LastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart) )
