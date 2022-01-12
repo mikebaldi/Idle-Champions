@@ -1,5 +1,6 @@
 Jan 11, 2022
     Added new setting to return dashwaiting capability when at max speed. See (ForceDashWait) to BrivGemFarmSettings.json
+    AddOn: Dash Check. A test/proof of concept of a potential alternative method to check of Dash is on. Steam only further testing.
 
 Jan 10, 2022
     Added additional troubleshooting options to message boxes when required champions are not found in the formation.

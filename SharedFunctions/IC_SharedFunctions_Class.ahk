@@ -448,6 +448,19 @@ class IC_SharedFunctions_Class
         return total
     }
 
+    ; Searches TimeScale dictionary objects for TimeScaleWhenNotAttackedHandler (Shandie's Dash)
+    IsDashActive()
+    {
+        multipliersCount := this.Memory.ReadTimeScaleMultipliersCount()
+        loop, % multipliersCount
+        {
+            ;should this if be an OR? Will the floating point number always be exactly 1.5?
+            if(this.Memory.ReadTimeScaleMultiplierByIndex(A_Index - 1) == 1.5 AND this.Memory.ReadTimeScaleMultipliersKeyByIndex(A_Index - 1) == 2774)
+                return true
+        }
+        return false
+    }
+
     ; Does once per zone tasks like pressing leveling keys
     InitZone( spam )
     {

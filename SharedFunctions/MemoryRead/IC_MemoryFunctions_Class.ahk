@@ -131,6 +131,16 @@ class IC_MemoryFunctions_Class
         return Round(this.GenericGetValue(timeScaleObject), 2)
     }
 
+    ;this read will only return a valid key if it is reading from TimeScaleWhenNotAttackedHandler object
+    ReadTimeScaleMultipliersKeyByIndex(index := 0)
+    {
+        ;if (this.Is64Bit)
+        ;    timeScaleObject := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries, "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
+        ;else
+            key := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries,, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
+        return this.GenericGetValue(key)
+    }
+
     ReadTimeScaleMultipliersCount()
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Count)
