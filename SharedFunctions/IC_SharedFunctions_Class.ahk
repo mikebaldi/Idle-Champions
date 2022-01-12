@@ -727,11 +727,11 @@ class IC_SharedFunctions_Class
         isCurrentFormation := false
         if(this.Memory.ReadCurrentZone() == 1)
             return
-        if(formationFavorite == 1)
+        if(formationFavoriteNum == 1)
             spam := ["{q}"]
-        else if(formationFavorite == 2)
+        else if(formationFavoriteNum == 2)
             spam := ["{w}"]
-        else if(formationFavorite == 3)
+        else if(formationFavoriteNum == 3)
             spam := ["{e}"]
         else
             spam := ""
