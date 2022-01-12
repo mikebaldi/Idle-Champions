@@ -102,7 +102,7 @@ Briv_Run_Clicked()
     scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
     GuiControl, Choose, ModronTabControl, Stats
     g_BrivFarm.StartTimedFunctions()
-    Run, %A_AhkPath% %scriptLocation%
+    Run, %A_AhkPath% "%scriptLocation%"
 }
 
 Briv_Run_Stop_Clicked()
