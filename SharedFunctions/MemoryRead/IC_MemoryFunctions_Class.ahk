@@ -381,7 +381,7 @@ class IC_MemoryFunctions_Class
 
     ;reads if a formation save is a favorite
     ;0 = not a favorite, 1 = favorite slot 1 (q), 2 = 2 (w), 3 = 3 (e)
-    ReadFormationFavoriteIDBySlot(slot := 0 )
+    ReadFormationFavoriteIDBySlot(slot := 0)
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList.Favorite.GetGameObjectFromListValues(slot))
     }
@@ -389,6 +389,18 @@ class IC_MemoryFunctions_Class
     ReadFormationNameBySlot(slot := 0)
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList.FormationName.GetGameObjectFromListValues(slot)) 
+    }
+
+    ; Reads the SaveID for the FormationSaves index passed in.
+    ReadFormationSaveIDBySlot(slot := 0)
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.FormationSaveHandler.FormationSavesList.SaveID.GetGameObjectFromListValues(slot))
+    }
+
+    ; Reads the FormationCampaignID for the FormationSaves index passed in.
+    ReadFormationCampaignID()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.FormationSaveHandler.FormationCampaignID)
     }
 
     ;=========================================================================
@@ -597,6 +609,80 @@ class IC_MemoryFunctions_Class
         }
     }
 
+    ; Returns the formation array of the formation used in the currently active modron.
+    GetActiveModronFormation()
+    {
+        formation := ""
+        ; Find the Campaign ID (e.g. 1 is Sword Cost, 2 is Tomb, 1400001 is Sword Coast with Zariel Patron, etc. )
+        formationCampaignID := this.ReadFormationCampaignID()
+        ; Find the SaveID associated to the Campaign ID 
+        formationSaveID := this.GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
+        ; Find the list index (slot) of the formation with the correct SaveID
+        ;formationSaveID := 132
+        formationSavesSize := this.ReadFormationSavesSize()
+        formationSaveSlot := -1
+        loop, %formationSavesSize%
+        {
+            if (this.ReadFormationSaveIDBySlot(A_Index - 1) == formationSaveID)
+            {
+                formationSaveSlot := A_Index - 1
+                Break
+            }
+        }
+        ; Get the formation using the list index (slot)
+        if(formationSaveSlot >= 0)
+            formation := this.GetFormationSaveBySlot(formationSaveSlot)
+        return formation
+    }
+
+    ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
+    GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
+    {
+        ; note: current best interpretation of a <int,int> dictionary.
+        formationSaveSlot := ""
+        ; Find which modron core is being used
+        modronSavesSlot := this.GetCurrentModronSaveSlot()
+        ; Find SaveID for given formationCampaignID
+        modronFormationsSavesSize := this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionarySize.GetGameObjectFromListValues(modronSavesSlot))
+        loop, %modronFormationsSavesSize%
+        {
+            if(this.Is64Bit)
+                testIndex := 0x20 + (A_index - 1) * 0x10 
+            else
+                testIndex := 0x10 + (A_Index - 1) * 0x10
+            testValueObject := new GameObjectStructure(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionary.GetGameObjectFromListValues(modronSavesSlot),,[testIndex])
+            ;testValueObjectOffsets := ArrFnc.GetHexFormattedArrayString(testValueObject.GetOffsets())
+            testValue := this.GenericGetValue(testValueObject)
+            if (testValue == formationCampaignID)
+            {
+                testIndex := testIndex + 0xC ; same for 64/32 bit
+                testValueObject := new GameObjectStructure(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionary.GetGameObjectFromListValues(modronSavesSlot),,[testIndex])
+                formationSaveSlot := this.GenericGetValue(testValueObject)
+                break
+            }
+        }
+        return formationSaveSlot
+    }
+
+    ; Finds the index of the current modron in ModronHandlers
+    GetCurrentModronSaveSlot()
+    {
+        modronSavesSlot := ""
+        activeGameInstance := this.ReadActiveGameInstance()
+        moronSavesSize := this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesListSize)
+        loop, %moronSavesSize%
+        {
+            if (this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.InstanceID.GetGameObjectFromListValues(A_Index - 1)) == activeGameInstance)
+            {
+                modronSavesSlot := A_Index - 1
+                return (A_Index - 1)
+            }
+        }
+    }
+
+    ;======================
+    ; Inventory...
+    ;======================
     GetInventoryBuffAmountByID(buffID)
     {
         size := this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsListSize)

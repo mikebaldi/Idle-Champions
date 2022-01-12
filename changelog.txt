@@ -1,3 +1,12 @@
+Jan 12, 2022
+    Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in teh FormationSaveHandler.
+    Added memory functions:
+        ReadFormationSaveIDBySlot
+        ReadFormationCampaignID
+        GetActiveModronFormation
+        GetModronFormationsSaveIDByFormationCampaignID
+        GetCurrentModronSaveSlot
+
 Jan 11, 2022
     Added new setting to return dashwaiting capability when at max speed. See (ForceDashWait) to BrivGemFarmSettings.json
     AddOn: Dash Check. A test/proof of concept of a potential alternative method to check of Dash is on. Steam only further testing.
