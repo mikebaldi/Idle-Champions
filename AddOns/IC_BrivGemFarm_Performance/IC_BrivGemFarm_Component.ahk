@@ -1,12 +1,6 @@
 addedTabs := "Briv Gem Farm|"
 g_TabList := addedTabs . g_TabList
-;Removed because GemFarmUnified.ahk has a hack in place to make it unneccessary.
-    ;g_TabList .= addedTabs
-    ;GuiControl,,ModronTabControl, % addedTabs
-StrReplace(g_TabList,"|",,tabCount)
-g_TabControlWidth := Max(g_TabControlWidth, tabCount * 75)
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
+;Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 g_DownAlign := g_DownAlign - 17 ; The line above changes the Y origin by 40. Ajust for it.
 ;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )

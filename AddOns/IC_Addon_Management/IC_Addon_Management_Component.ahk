@@ -11,7 +11,7 @@ AddonManagement.CheckDependencies()
 ; ############################################################
 ;                    Add tab to the GUI
 ; ############################################################
-AddTab("Addons|")
+GUIFunctions.AddTab("Addons")
 
 ; ############################################################
 ;               Create the Gui of the tab here

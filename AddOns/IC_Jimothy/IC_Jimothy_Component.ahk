@@ -1,11 +1,5 @@
-; Add tab to the GUI
-addedTabs := "Jimothy|"
-GuiControl,,ModronTabControl, % addedTabs
-g_TabList .= addedTabs
-; Increase UI width to accommodate new tab.
-g_TabControlWidth += 50
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
+g_TabControlHeight := g_TabControlHeight >= 700 ? g_TabControlHeight : 700
+GUIFunctions.AddTab("Jimothy")
 
 global g_JimothySettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\JimothySettings.json" )
 

@@ -1,12 +1,4 @@
-; Add tab to the GUI
-addedTabs := "Inventory View|"
-GuiControl,,ModronTabControl, % addedTabs
-g_TabList .= addedTabs
-; Increase UI width to accommodate new tab.
-StrReplace(g_TabList,"|",,tabCount)
-g_TabControlWidth := Max(Max(g_TabControlWidth,475), tabCount * 75)
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
+GUIFunctions.AddTab("Inventory View")
 
 global g_InventoryView := new IC_InventoryView_Component()
 

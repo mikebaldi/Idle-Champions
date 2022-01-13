@@ -1,21 +1,14 @@
-addedTabs := "FullMemoryFunctions|"
-GuiControl,,ModronTabControl, % addedTabs
-g_TabList .= addedTabs
-StrReplace(g_TabList,"|",,tabCount)
-g_TabControlWidth := Max(Max(g_TabControlWidth,475), tabCount * 75)
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
-
+GUIFunctions.AddTab("FullMemoryFunctions")
 
 Gui, ICScriptHub:Tab, FullMemoryFunctions
+Gui, ICScriptHub:Add, Button, x+220 w160 gIC_MemoryFunctionsFullRead_Component.ReadAllFunctions, Load Memory Functions
 Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, Text, x15 y+15, `All Memory Functions:
+Gui, ICScriptHub:Add, Text, x15 yp+5, `All Memory Functions:
 Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Button, x155 y60 w160 gIC_MemoryFunctionsFullRead_Component.ReadAllFunctions, Load Memory Functions
 
 if(g_isDarkMode)
     Gui, Font, g_CustomColor
-Gui Add, ListView, x15 y+15 w450 h450 vMemoryFunctionsViewID, Function|x|Value
+Gui Add, ListView, x15 y+8 w450 h450 vMemoryFunctionsViewID, Function|x|Value
 if(g_isDarkMode)
 {
     GuiControl, +Background888888, MemoryFunctionsViewID

@@ -34,7 +34,7 @@ GetModronGUIVersion()
 global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
 global g_ServerCall
 global g_UserSettings := {}
-global g_TabControlHeight := 600
+global g_TabControlHeight := 630
 global g_TabControlWidth := 430
 global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 global g_InputsSent := 0
@@ -208,6 +208,7 @@ ICScriptHubGuiClose()
 #include %A_ScriptDir%\SharedFunctions\IC_SharedFunctions_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_ArrayFunctions_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_KeyHelper_Class.ahk
+#include %A_ScriptDir%\SharedFunctions\IC_GUIFunctions_Class.ahk
 
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()
