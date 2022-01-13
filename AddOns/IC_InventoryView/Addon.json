@@ -2,7 +2,7 @@
 	"Name":"Inventory View",
 	"Version": "v0.1.",
     "Includes" : "IC_InventoryView_Component.ahk",
-    "Author" : "Team",
+    "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_InventoryView",
     "Info" : "This AddOn will load all buffs from the inventory and show their ID, name, and count. BrivGemFarm will update this automatically on every reset and add change and per run values as well.",
     "Dependencies" : {}

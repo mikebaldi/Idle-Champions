@@ -2,7 +2,7 @@
 	"Name":"Chest Purchaser",
 	"Version": "v0.1.",
     "Includes" : "IC_ChestPurchaser_Component.ahk",
-    "Author" : "Team",
+    "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_ChestPurchaser",
     "Info" : "This Addon allows for purchasing and opening of chests.",
     "Dependencies" : {}

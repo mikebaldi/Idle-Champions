@@ -2,8 +2,8 @@
 	"Name":"About",
 	"Version": "v0.1.",
     "Includes" : "IC_About_Component.ahk",
-    "Author" : "Team",
+    "Author" : "Antilectual & mikebaldi1980",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_About",
-    "Info" : "This is an addon that provides and about view",
+    "Info" : "This is an addon that provides an about view",
     "Dependencies" : {}
 }
