@@ -646,10 +646,8 @@ class IC_MemoryFunctions_Class
         modronFormationsSavesSize := this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionarySize.GetGameObjectFromListValues(modronSavesSlot))
         loop, %modronFormationsSavesSize%
         {
-            if(this.Is64Bit)
-                testIndex := 0x20 + (A_index - 1) * 0x10 
-            else
-                testIndex := 0x10 + (A_Index - 1) * 0x10
+            ; 64 bit starts values at offset 0x20, 32 bit at 0x10
+            testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
             testValueObject := new GameObjectStructure(this.GameManager.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionary.GetGameObjectFromListValues(modronSavesSlot),,[testIndex])
             ;testValueObjectOffsets := ArrFnc.GetHexFormattedArrayString(testValueObject.GetOffsets())
             testValue := this.GenericGetValue(testValueObject)

@@ -5,8 +5,8 @@
 global AddonManagement := new AddonManagement
 AddonManagement.GetAvailableAddons()
 AddonManagement.GetAddonManagementSettings()
+AddonManagement.FirstRunCheck()
 AddonManagement.CheckDependencies()
-
 
 ; ############################################################
 ;                    Add tab to the GUI

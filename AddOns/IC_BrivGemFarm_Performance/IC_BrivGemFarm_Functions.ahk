@@ -201,8 +201,11 @@ class IC_BrivGemFarm_Class
         SetTimer, %fncToCallOnTimer%, 200, 0
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
         SetTimer, %fncToCallOnTimer%, 3000, 0
-        fncToCallOnTimer :=  Func("IC_MemoryFunctions_ReadMemory")
-        SetTimer, %fncToCallOnTimer%, 250, 0
+        if(IsFunc(Func("IC_MemoryFunctions_ReadMemory")))
+        {
+            fncToCallOnTimer :=  Func("IC_MemoryFunctions_ReadMemory")
+            SetTimer, %fncToCallOnTimer%, 250, 0
+        }
         if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
         {
             fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")

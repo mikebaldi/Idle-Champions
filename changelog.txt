@@ -1,3 +1,8 @@
+Jan 13, 2022
+    Added Addon Manager by nyze. Now addons can be enabled/disabled easily through the GUI.
+    Fix for BrivGemFarm required MemoryFunctions addon.
+    Added a first run check for Addon Manager.
+
 Jan 12, 2022
     Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in teh FormationSaveHandler.
     Added memory functions:

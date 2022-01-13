@@ -242,6 +242,18 @@ Class AddonManagement
             Reload
     }
 
+    FirstRunCheck()
+    {
+        generatedIncludesLoc := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
+        if(!FileExist(generatedIncludesLoc))
+        {
+            this.GenerateIncludeFile()
+            MsgBox, 36, Restart, This looks like your first time running Script Hub. `nSettings have been updated. `nDo you wish to reload now?
+            IfMsgBox, Yes
+                Reload
+        }
+    }
+
 }
 
 Class Addon
