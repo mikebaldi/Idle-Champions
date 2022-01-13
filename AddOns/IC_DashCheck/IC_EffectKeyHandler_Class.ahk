@@ -1,10 +1,41 @@
+
+/*  A series of classes for reading memory from specific Effect Key Handlers
+
+    Usage:
+    global g_HandlerInstance := new HandlerClass ; Create an instance of the handler class. It doesn't have to be global.
+    init := g_HandlerInstance.Initialize() ; Initialize the instance of the class, this has to be done every time the game restarts, 
+        possibly after modron resets, and possibly through runs. Returns -1 if champ not leveled, -2 if can't find effect key name, 0 if likely success.
+    isCorrect := g_HandlerInstance.IsBaseAddressCorrect() ; Check if the base address to the handler is correct, returns true or false. If false 
+        call Initialize() method.
+    field := g_HandlerInstance.GetFieldValue() ; Returns memory value associated with 'Field', see below for fields.
+
+    Handlers and Fields:
+
+    TimeScaleWhenNotAttackedHandler ;Shandie's Dash ability.
+        active ; The handler, not Dash.
+        scaleActive ; True or false for Dash ability is active.
+        effectTimeValue ; Starts at 0 and counts up. At 60 Dash scaleActive should be truen and Dash on.
+    
+    OminContractualObligationsHandler
+        numContractsFufilled ; Number of contracts fullfilled.
+        secondsOnGoldFind ; Seconds remaining for Contractual Obligations gold find boost. Value is set to -1 when no boost is active.
+    
+    BrivUnnaturalHasteHandler
+        stackCount ; Unnatural Haste stack count.
+        areasSkipped ; Areas skipped this run. There are bugs where this doesn't always reset between runs.
+        areaSkipChance ; Chance for Briv to skip his maximum amount of areas in one jump.
+        areaSkipAmount ; Maximum amount of areas Briv will skip in one jump.
+        alwaysSkipOneLess ; True or false if Briv will at least skip one less than his maximum amount of areas in one jump.
+        stacksToConsume ; This one doesn't appear to do anything.
+*/
+
 class EffectKeyHandler
 {
     DictIndex := ""
     BaseAddress := ""
     Initialized := false
 
-    ;returns -1 if champ not leveled, -2 if can't find effect key name, 0 if likely success
+    ; Returns -1 if champ not leveled, -2 if can't find effect key name, 0 if likely success.
     Initialize()
     {
         this.Initialized := this.CheckChampLevel()
