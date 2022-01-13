@@ -105,6 +105,46 @@ Class AddonManagement
         this.Addons.Push(Addon)
     }
 
+    CheckDependencies(){
+        for k,v in this.Addons {
+            if (this.AddonSettings[v.Name][v.Version]["Enabled"]){
+                ; check if the dependencies exist and are enabled
+                for i, j in v.Dependencies {
+                    ; check if dependency exists
+                    DepExists := 0
+                    for y,z in this.Addons {
+                        if(z.Name = i){
+                            DepExists := 1
+                            break
+                        }
+                    }
+                    if(DepExists){
+                        if(!this.AddonSettings[i][j]["Enabled"]){
+                            MsgBox, 52, Warning, % "Addon " . i . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . i . "`nNo: disable " . v.Name
+                            IfMsgBox Yes 
+                            {
+                                this.EnableAddon(y)
+                                this.GenerateIncludeFile()
+                                this.WriteAddonManagementSettings()
+                            }
+                            else{
+                                this.DisableAddon(k)
+                                this.GenerateIncludeFile()
+                                this.WriteAddonManagementSettings()                                
+                            }
+                        }
+                    }
+                    else{
+                        MsgBox, 48, Warning, % "Can't find the addon " . i . " required by " . v.Name . "`n" . v.Name . " will be disabled"
+                        this.DisableAddon(k)
+                        this.GenerateIncludeFile()
+                        this.WriteAddonManagementSettings()    
+                    }
+                }
+            }
+        }
+    }
+
     CheckIfAddon(AddonBaseFolder,AddonFolder){
         if FileExist(AddonBaseFolder . AddonFolder . "\Addon.json"){
             AddonSettings := g_SF.LoadObjectFromJSON(AddonBaseFolder . AddonFolder . "\Addon.json")
@@ -115,13 +155,17 @@ Class AddonManagement
             }
         }
         return 0
-        
     }
 
     DisableAddon(AddonNumber){
         Addon := this.Addons[AddonNumber]
-        this.AddonSettings[Addon.Name] := { Addon.Version : { "Enabled" : 0}}
-        this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+        if(Addon.Name != "Addon Management"){
+            this.AddonSettings[Addon.Name] := { Addon.Version : { "Enabled" : 0}}
+            this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+        }
+        else{
+            MsgBox, 48, Warning, Can't disable the Addon Manager
+        }
     }
     EnableAddon(AddonNumber){
         Addon := this.Addons[AddonNumber]
@@ -168,7 +212,6 @@ Class AddonManagement
         loop, 4{
             LV_ModifyCol(A_Index, "AutoHdr")
         }
-        
     }
 
     Remove(){
@@ -183,13 +226,18 @@ Class AddonManagement
         GuiControl, AddonInfo: , AddonInfoUrlID, % Addon.Url
         GuiControl, AddonInfo: , AddonInfoAuthorID, % Addon.Author
         GuiControl, AddonInfo: , AddonInfoInfoID, % Addon.Info
+        DependenciesText := ""
+        for k,v in Addon.Dependencies {
+            DependenciesText .= "- " . k . ": " . v "`n"
+        }
+        GuiControl, AddonInfo: , AddonInfoDependenciesID, % DependenciesText
         Gui, AddonInfo:Show
     }
 
     WriteAddonManagementSettings(){
         g_SF.WriteObjectToJSON(A_LineFile . "\..\AddonManagement.json", this.AddonSettings)
         this.GenerateIncludeFile()
-        MsgBox, 36, Restart, To make change to addon loading active you do need to restart the script.`nDo you want to do this now?
+        MsgBox, 36, Restart, To make change to addon loading\deloading active you do need to restart the script.`nDo you want to do this now?
         IfMsgBox, Yes
             Reload
     }
