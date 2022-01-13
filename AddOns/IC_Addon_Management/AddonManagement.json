@@ -1,17 +1,17 @@
 {
 	"About":{
-		"v0.1":{
+		"v0.1.":{
 			"Enabled":1
 		}
 	},
 	"Addon Management":{
-		"v0.1":{
+		"v0.1.":{
 			"Enabled":1
 		}
 	},
 	"Briv Gem Farm":{
 		"v1.0.":{
-			"Enabled":0
+			"Enabled":1
 		}
 	},
 	"BrivGemFarm Preformance":{
@@ -20,38 +20,38 @@
 		}
 	},
 	"Chest Purchaser":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Dash Check":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Game Location Settings":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Inventory View":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Jimothy":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Memory Functions":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	},
 	"Memory Functions Full Read":{
-		"v0.1":{
-			"Enabled":1
+		"v0.1.":{
+			"Enabled":0
 		}
 	}
 }
