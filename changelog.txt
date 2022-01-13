@@ -7,6 +7,7 @@ Jan 12, 2022
         GetModronFormationsSaveIDByFormationCampaignID
         GetCurrentModronSaveSlot
     NEW: FKeys now uses the champions in the formation of the active Modron instead of champions in formation Q to do leveling in BrivGemFarm.
+    AddOn: Dash Check. A test/proof of concept for a new system of Effect Key Handlers. Hast test options for Dash, Haste, and Contractual Obligations. Steam only.
 
 Jan 11, 2022
     Added new setting to return dashwaiting capability when at max speed. See (ForceDashWait) to BrivGemFarmSettings.json
