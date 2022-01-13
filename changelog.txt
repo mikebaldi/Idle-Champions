@@ -3,6 +3,9 @@ Jan 13, 2022
     Fix for BrivGemFarm required MemoryFunctions addon.
     Added a first run check for Addon Manager.
     EffectKeyHandler classes may now be compatible with EGS.
+    Added warning when closing gem farm script. 
+    Gem Farm script can now be minimized to the tray when clicking x (choose "no" on prompt).
+    Gem Farm script GUI will be shown again when pressing the play button if it is already open.
 
 Jan 12, 2022
     Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in teh FormationSaveHandler.

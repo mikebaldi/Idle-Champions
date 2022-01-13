@@ -39,6 +39,11 @@ class IC_SharedData_Class
         reloadFunc := Func(ReloadSettingsFunc)
         reloadFunc.Call()
     }
+
+    ShowGUI()
+    {
+        Gui, show
+    }
 }
 
 class IC_SharedFunctions_Class

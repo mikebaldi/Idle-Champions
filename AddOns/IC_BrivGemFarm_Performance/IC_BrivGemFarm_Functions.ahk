@@ -441,6 +441,10 @@ class IC_BrivGemFarm_Class
         try ; avoid thrown errors when comobject is not available.
         {
             SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            if(!g_isDarkMode)
+                GuiControl, ICScriptHub: +cBlack, LoopID, 
+            else
+                GuiControl, ICScriptHub: +cSilver, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % SharedRunData.SwapsMadeThisRun
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
@@ -448,7 +452,8 @@ class IC_BrivGemFarm_Class
         }
         catch
         {
-            GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script."
+            GuiControl, ICScriptHub: +cRed, LoopID, 
+            GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script [Closed Script?]."
         }
     }
 

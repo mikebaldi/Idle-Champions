@@ -90,13 +90,22 @@ UpdateGUICheckBoxes()
 
 Briv_Run_Clicked()
 {
-    ;g_BrivGemFarm.GemFarm()
-    g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
-    g_SF.Memory.OpenProcessReader()
-    scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
-    GuiControl, Choose, ModronTabControl, Stats
-    g_BrivFarm.StartTimedFunctions()
-    Run, %A_AhkPath% "%scriptLocation%"
+    try
+    {
+        SharedData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+        SharedData.ShowGui()
+        Briv_Connect_Clicked()
+    }
+    catch
+    {
+        ;g_BrivGemFarm.GemFarm()
+        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+        g_SF.Memory.OpenProcessReader()
+        scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
+        GuiControl, Choose, ModronTabControl, Stats
+        g_BrivFarm.StartTimedFunctions()
+        Run, %A_AhkPath% "%scriptLocation%"
+    }
 }
 
 Briv_Run_Stop_Clicked()
