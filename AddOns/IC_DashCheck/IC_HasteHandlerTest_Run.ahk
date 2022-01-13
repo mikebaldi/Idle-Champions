@@ -59,14 +59,16 @@ init := g_HasteHandler.Initialize()
 
 loop
 {
-    if (!g_SF.SafetyCheck())
+    g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+    g_SF.Memory.OpenProcessReader()
+    ;if (!g_SF.SafetyCheck())
         init := g_HasteHandler.Initialize()
     
-    if (init == -1)
-    {
-        g_SF.LevelChampByID(58, 80,, "")
-        init := g_HasteHandler.Initialize()
-    }
+    ;if (init == -1)
+    ;{
+    ;    g_SF.LevelChampByID(58, 80,, "")
+    ;    init := g_HasteHandler.Initialize()
+    ;}
 
     if (!g_HasteHandler.IsBaseAddressCorrect())
         init := g_HasteHandler.Initialize()

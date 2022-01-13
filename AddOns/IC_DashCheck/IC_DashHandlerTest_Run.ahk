@@ -56,14 +56,16 @@ init := g_DashHandler.Initialize()
 
 loop
 {
-    if (!g_SF.SafetyCheck())
+    g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+    g_SF.Memory.OpenProcessReader()
+    ;if (!g_SF.SafetyCheck())
         init := g_DashHandler.Initialize()
     
-    if (init == -1)
-    {
-        g_SF.LevelChampByID(47, 120,, "")
-        init := g_DashHandler.Initialize()
-    }
+    ;if (init == -1)
+    ;{
+    ;    g_SF.LevelChampByID(47, 120,, "")
+    ;    init := g_DashHandler.Initialize()
+    ;}
 
     if (!g_DashHandler.IsBaseAddressCorrect())
         init := g_DashHandler.Initialize()

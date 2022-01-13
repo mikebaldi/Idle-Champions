@@ -55,14 +55,16 @@ init := g_COhandler.Initialize()
 
 loop
 {
-    if (!g_SF.SafetyCheck())
+    g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+    g_SF.Memory.OpenProcessReader()
+    ;if (!g_SF.SafetyCheck())
         init := g_COhandler.Initialize()
     
-    if (init == -1)
-    {
-        g_SF.LevelChampByID(65, 210,, "")
-        init := g_COhandler.Initialize()
-    }
+    ;if (init == -1)
+    ;{
+    ;    g_SF.LevelChampByID(65, 210,, "")
+    ;    init := g_COhandler.Initialize()
+    ;}
 
     if (!g_COhandler.IsBaseAddressCorrect())
         init := g_COhandler.Initialize()
