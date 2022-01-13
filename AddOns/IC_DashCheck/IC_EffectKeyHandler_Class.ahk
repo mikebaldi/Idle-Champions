@@ -63,7 +63,7 @@ class EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x14
+                return 0x28
             Else
                 return 0x14
         }
@@ -74,14 +74,13 @@ class EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return [0x8, 0x8, 0xC, 0x8]
+                return [0x10, 0x10, 0x18, 0x10]
             Else
                 return [0x8, 0x8, 0xC, 0x8]
         }
     }
 }
 
-;EGS offsets need to be updated
 class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
 {
     ChampID := 47
@@ -94,7 +93,7 @@ class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x10
+                return 0x20
             Else
                 return 0x10
         }
@@ -110,7 +109,7 @@ class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xD0
+                return 0x108
             Else
                 return 0xD0
         }
@@ -126,7 +125,7 @@ class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xD8
+                return 0x110
             Else
                 return 0xD8
         }
@@ -138,7 +137,6 @@ class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
     }    
 }
 
-;EGS offsets need to be updated
 class OminContractualObligationsHandler extends EffectKeyHandler
 {
     ChampID := 65
@@ -146,12 +144,12 @@ class OminContractualObligationsHandler extends EffectKeyHandler
     RequiredLevel := 210
     EffectKeyID := 4110
 
-    numContractsFufilled[]
+    numContractsFufilledOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x38
+                return 0x70
             Else
                 return 0x38
         }
@@ -159,15 +157,15 @@ class OminContractualObligationsHandler extends EffectKeyHandler
 
     GetNumContractsFufilledValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.numContractsFufilled, "int")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.numContractsFufilledOffset, "int")
     }
 
-    secondsOnGoldFind[]
+    secondsOnGoldFindOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x5C
+                return 0x94
             Else
                 return 0x5C
         }
@@ -175,7 +173,7 @@ class OminContractualObligationsHandler extends EffectKeyHandler
 
     GetSecondsOnGoldFindValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.secondsOnGoldFind, "float")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.secondsOnGoldFindOffset, "float")
     }
 
     effectKeyOffset[]
@@ -183,14 +181,13 @@ class OminContractualObligationsHandler extends EffectKeyHandler
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x18
+                return 0x30
             Else
                 return 0x18
         }
     } 
 }
 
-;EGS offsets need to be updated
 class BrivUnnaturalHasteHandler extends EffectKeyHandler
 {
     ChampID := 58
@@ -199,23 +196,23 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
     EffectKeyID := 3452
 
     ;this is a pointer
-    sprintStacks[]
+    sprintStacksOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x18
+                return 0x30
             Else
                 return 0x18
         }
     }
 
-    stackCount[]
+    stackCountOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x58
+                return 0x98
             Else
                 return 0x58
         }
@@ -223,15 +220,15 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetStackCountValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.sprintStacks, "double", BrivUnnaturalHasteHandler.stackCount)
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.sprintStacksOffset, "double", BrivUnnaturalHasteHandler.stackCountOffset)
     }
 
-    areasSkipped[]
+    areasSkippedOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x2C
+                return 0x58
             Else
                 return 0x2C
         }
@@ -239,15 +236,15 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetAreasSkippedValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areasSkipped, "int")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areasSkippedOffset, "int")
     }
 
-    areaSkipChance[]
+    areaSkipChanceOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x34
+                return 0x60
             Else
                 return 0x34
         }
@@ -255,15 +252,15 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetAreaSkipChanceValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipChance, "float")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipChanceOffset, "float")
     }
 
-    areaSkipAmount[]
+    areaSkipAmountOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x38
+                return 0x64
             Else
                 return 0x38
         }
@@ -271,15 +268,15 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetAreaSkipAmountValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipAmount, "int")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipAmountOffset, "int")
     }
 
-    alwaysSkipOneLess[]
+    alwaysSkipOneLessOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x3C
+                return 0x68
             Else
                 return 0x3C
         }
@@ -287,15 +284,15 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetAlwaysSkipOneLessValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.alwaysSkipOneLess, "char")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.alwaysSkipOneLessOffset, "char")
     }
 
-    stacksToConsume[]
+    stacksToConsumeOffset[]
     {
         get 
         {
             if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x40
+                return 0x6C
             Else
                 return 0x40
         }
@@ -303,6 +300,6 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
 
     GetStacksToConsumeValue()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.stacksToConsume, "int")
+        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.stacksToConsumeOffset, "int")
     }
 }
