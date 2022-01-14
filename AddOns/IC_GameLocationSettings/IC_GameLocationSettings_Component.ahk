@@ -16,8 +16,8 @@ Gui, InstallGUI:Add, Button, x15 y+15 vButtonSaveGameLocationSettings, Save and 
 Gui, InstallGUI:Add, Button, x+100 vButtonCancelGameLocationSettings, `Cancel
 SaveGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallOK_Clicked")
 CancelGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallCancel_Clicked")
-GuiControl,ICScriptHub: +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
-GuiControl,ICScriptHub: +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
+GuiControl,InstallGUI: +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
+GuiControl,InstallGUI: +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
 
 ; Switch back to main GUI
 Gui, ICScriptHub:Default
