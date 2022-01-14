@@ -1,3 +1,11 @@
+Jan 14, 2022
+    Updated GUI instructions to ensure they are affecting the correct GUI.
+    Removed AddonManagement.json from the repo to prevent overwriting on updates.
+    Updated Addon Management to create a new AddonManagement.json on first run.
+    Removed Stats from being Required in Script Hub
+    Added new Addon to replace required stats tab.
+    Updated how ScriptHub prioritizes BrivGemFarm/Stats tab ordering.
+
 Jan 13, 2022
     Added Addon Manager by nyze. Now addons can be enabled/disabled easily through the GUI.
     Fix for BrivGemFarm required MemoryFunctions addon.

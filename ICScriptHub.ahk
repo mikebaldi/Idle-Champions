@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetModronGUIVersion()
 {
-    return "v3.1, 01/02/2022"
+    return "v3.21, 01/14/2022"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -38,7 +38,7 @@ global g_TabControlHeight := 630
 global g_TabControlWidth := 430
 global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 global g_InputsSent := 0
-global g_TabList := "|"
+global g_TabList := ""
 global g_CustomColor := 0x333333
 global g_isDarkMode := false
 global g_PlayButton := A_LineFile . "\..\Images\play-100x100.png"
@@ -74,8 +74,6 @@ if(g_UserSettings[ "WriteSettings" ] := true)
     g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
 }
 
-
-
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
 Gui, ICScriptHub:+Resize -MaximizeBox
@@ -86,90 +84,15 @@ Gui, ICScriptHub:Add, Picture, x+5 h25 w25 gReload_Clicked, %g_ReloadButton%
 ; TODO: Fix this hack so addons do it themselves (if possible)
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver ;
+; Needed to add tabs
+Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, %g_TabList%
+; Set specific tab ordering for prioritized scripts.
 if(IsObject(IC_BrivGemFarm_Class))
-    Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, Briv Gem Farm|Stats|
-else
-    Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, Stats|
+    GUIFunctions.AddTab("Briv Gem Farm")
+if (IsObject(IC_BrivGemFarm_Stats_Component))
+    GUIFunctions.AddTab("Stats")
 
-Gui, ICScriptHub:Tab, Stats
-g_TabList .= "Stats|"
-global g_LeftAlign
-global g_DownAlign
-Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, GroupBox, x+0 y+15 w450 h130 vCurrentRunGroupID, Current `Run:
-Gui, ICScriptHub:Font, w400
-
-Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, Text, vLoopAlignID xp+15 yp+25 , `Loop:
-GuiControlGet, pos, ICScriptHub:Pos, LoopAlignID
-g_LeftAlign := posX
-Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
-Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current Area Time (s):
-Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current `Run Time (min):
-Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
-
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, SB Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
-Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
-
-; Gui, ICScriptHub:Add, Text, x15 y+10, Inputs Sent:
-; Gui, ICScriptHub:Add, Text, vg_InputsSentID x+2 w50, % g_InputsSent
-GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
-g_DownAlign := posY + posH -5
-Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
-Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Previous Run Time (min):
-Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fastest Run Time (min):
-Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Slowest Run Time (min):
-Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w50,
-
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Run `Count:
-Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Total Run Time (hr):
-Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Avg. Run Time (min):
-Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
-
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
-Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
-Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking:
-Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w50,
-
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
-Gui, ICScriptHub:Add, Text, vSilversPurchasedID x+2 w200, 0
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silvers Opened:
-Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w200, 0
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Gained:
-Gui, ICScriptHub:Add, Text, vGoldsPurchasedID x+2 w200, 0
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Opened:
-Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w200, 0
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
-Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
-
-Gui, ICScriptHub:Font, cBlue w700
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
-Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w50, % bossesPhr
-
-Gui, ICScriptHub:Font, cGreen
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
-Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
-Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
-if(g_isDarkMode)
-    Gui, ICScriptHub:Font, cSilver w400
-else
-    Gui, ICScriptHub:Font, cDefault w400
-GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
-g_DownAlign := g_DownAlign + posH -5
-
+; Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, g_TabList
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
     Gui, ICScriptHub:Color, % g_CustomColor

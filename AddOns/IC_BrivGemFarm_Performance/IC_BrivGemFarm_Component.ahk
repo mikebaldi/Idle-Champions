@@ -1,5 +1,3 @@
-addedTabs := "Briv Gem Farm|"
-g_TabList := addedTabs . g_TabList
 ;Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 g_DownAlign := g_DownAlign - 17 ; The line above changes the Y origin by 40. Ajust for it.
 ;Load user settings

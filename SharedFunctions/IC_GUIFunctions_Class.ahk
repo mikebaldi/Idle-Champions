@@ -3,6 +3,7 @@ class GUIFunctions
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
+        ; TODO: contain tablist
         g_TabList .= addedTabs
         ; Increase UI width to accommodate new tab.
         StrReplace(g_TabList,"|",,tabCount)
