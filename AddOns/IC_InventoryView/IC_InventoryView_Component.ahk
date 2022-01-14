@@ -10,22 +10,22 @@ Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Add, Button, x+15 yp+0 w60 vButtonReadInventory, Load
 InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadInventory")
-GuiControl, +g, ButtonReadInventory, % InventoryViewRead
+GuiControl,ICScriptHub: +g, ButtonReadInventory, % InventoryViewRead
 
 
 Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonReadChests, View Chests
 InventoryViewChests := ObjBindMethod(g_InventoryView, "ReadChests")
-GuiControl, +g, ButtonReadChests, % InventoryViewChests
+GuiControl,ICScriptHub: +g, ButtonReadChests, % InventoryViewChests
 
 Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+5 w225, % "Last Updated: "
 
 if(g_isDarkMode)
-    Gui, Font, g_CustomColor
-Gui Add, ListView, x15 y+5 w450 h450 vInventoryViewID, `ID|Name|Amount|Change|Per `Run
+    Gui, ICScriptHub:Font, g_CustomColor
+Gui, ICScriptHub:Add, ListView, x15 y+5 w450 h450 vInventoryViewID, `ID|Name|Amount|Change|Per `Run
 if(g_isDarkMode)
 {
-    GuiControl, +Background888888, InventoryViewID
-    Gui, Font, cSilver
+    GuiControl,ICScriptHub: +Background888888, InventoryViewID
+    Gui, ICScriptHub:Font, cSilver
 }
 
 ; Highly recommended to use classes to reduce chance of interference with other addons/code.

@@ -10,7 +10,7 @@ Gui, ICScriptHub:Add, Picture, x+35 h18 w18 vButtonRefreshChestPurchaser, %g_Rel
 Gui, ICScriptHub:Add, Edit, x30 y+15 w75 vChestPurchaseCountID, % "99"
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserBuyChests, Buy
 
-GuiControlGet, xyVal, Pos, GroupBoxChestPurchaseID
+GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestPurchaseID
 xyValY += 150
 Gui, ICScriptHub:Add, GroupBox, x15 y%xyValY% w425 h150 vGroupBoxChestOpenID, Open Chests: 
 Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestOpenComboBoxID
@@ -18,11 +18,11 @@ Gui, ICScriptHub:Add, Edit, y+15 w75 vChestOpenCountID, % "99"
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserOpenChests, Open
 
 buyChestsFunc := Func("IC_ChestPurchaser_Component.BuyChests")
-GuiControl, +g, ButtonChestPurchaserBuyChests, % buyChestsFunc
+GuiControl, ICScriptHub: +g, ButtonChestPurchaserBuyChests, % buyChestsFunc
 openChestsFunc := Func("IC_ChestPurchaser_Component.OpenChests")
-GuiControl, +g, ButtonChestPurchaserOpenChests, % openChestsFunc
+GuiControl, ICScriptHub: +g, ButtonChestPurchaserOpenChests, % openChestsFunc
 chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.ReadChests")
-GuiControl, +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
+GuiControl, ICScriptHub: +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
 
 IC_ChestPurchaser_Component.ReadChests()
 
@@ -45,8 +45,8 @@ class IC_ChestPurchaser_Component
             comboBoxOptions .= chestID . " " . chestName . "|"
         }
         g_SF.ResetServerCall()
-        GuiControl,, ChestOpenComboBoxID, %comboBoxOptions%
-        GuiControl,, ChestPurchaseComboBoxID, %comboBoxOptions%
+        GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
+        GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
     }
 
     BuyChests()

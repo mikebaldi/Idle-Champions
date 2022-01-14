@@ -1,4 +1,4 @@
-Gui, Tab, Memory View
+Gui, ICScriptHub:Tab, Memory View
 ;GuiControl, Choose, ModronTabControl, MemoryView
 
 Gui, ICScriptHub:Font, w700
