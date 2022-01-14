@@ -18,28 +18,28 @@ GUIFunctions.AddTab("Addons")
 ; ############################################################
 Gui, ICScriptHub:Tab, Addons
 
-TabWidth := 450
+AddonTabWidth := 450
 
 ; Build Listview of available Addons
 Gui, ICScriptHub:Font, w700
 Gui Add, Text, , Available Addons
 Gui, ICScriptHub:Font, w400
 
-Gui, ICScriptHub:Add, ListView ,w%TabWidth% vAddonsAvailableID hWndhLV,  Active|Name|Version|Folder
+Gui, ICScriptHub:Add, ListView ,w%AddonTabWidth% vAddonsAvailableID hWndhLV,  Active|Name|Version|Folder
 AddonManagement.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
-LVM_CalculateSize(hLV,-1,AddonLVWidth,AddonLVHeight)
+GUIFunctions.LVM_CalculateSize(hLV,-1,AddonLVWidth,AddonLVHeight)
 AddonLVWidth+=4
 AddonLVHeight+=4
 ControlMove,,,,,AddonLVHeight,ahk_id %hLV%
 
 
-NumberOfButtons := 4
-ButtonWidth := (TabWidth - (5 * (NumberOfButtons - 1))) / NumberOfButtons
+AddonNumberOfButtons := 4
+AddonButtonWidth := (AddonTabWidth - (5 * (AddonNumberOfButtons - 1))) / AddonNumberOfButtons
 AddonButtonYIncrease := AddonLVHeight + 5
-Gui, ICScriptHub:Add, Button , yp+%AddonButtonYIncrease% w%ButtonWidth% gAddonsEnableClicked, Enable
-Gui, ICScriptHub:Add, Button , x+5 w%ButtonWidth% gAddonsDisableClicked, Disable
-Gui, ICScriptHub:Add, Button , x+5 w%ButtonWidth% gAddonsInfoClicked, Info
-Gui, ICScriptHub:Add, Button , x+5 w%ButtonWidth% gAddonsSaveClicked, Save
+Gui, ICScriptHub:Add, Button , yp+%AddonButtonYIncrease% w%AddonButtonWidth% gAddonsEnableClicked, Enable
+Gui, ICScriptHub:Add, Button , x+5 w%AddonButtonWidth% gAddonsDisableClicked, Disable
+Gui, ICScriptHub:Add, Button , x+5 w%AddonButtonWidth% gAddonsInfoClicked, Info
+Gui, ICScriptHub:Add, Button , x+5 w%AddonButtonWidth% gAddonsSaveClicked, Save
 
 AddonsEnableClicked(){
 	Gui, ICScriptHub:ListView, AddonsAvailableID
