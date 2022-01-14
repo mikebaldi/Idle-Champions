@@ -1,3 +1,7 @@
+# 01/14/22 END OF LIFE UPDATE.
+The current version of ModronGUI is no longer being updated. IC Script Hub is being developed as the replacement to ModronGUI and will soon be replacing ModronGUI the near future. 
+We encourage you to check it out (currently located at https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public and soon to be located at https://github.com/mikebaldi/Idle-Champions/ ). 
+
 # 11/18/21 UPDATE TO COMBINE EGS AND STEAM POINTERS.
 This update should allow users to no longer need to download separate pointers/offsets when using Epic vs. Steam.  ModronGUI.ahk has been updated slightly so a full download is recommended.
 # 11/2/21 UPDATE INCLUDES TWO NEW FILES: IC_ArrayFunctions.AHK & IC_GameManagerClass.AHK
