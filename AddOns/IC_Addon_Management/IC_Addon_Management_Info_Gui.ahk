@@ -16,9 +16,9 @@ Gui, AddonInfo:Add, Text, x10 y+5 w%AddonInfowColLeft% Right, Foldername:
 Gui, AddonInfo:Add, Text, vAddonInfoFoldernameID x+2 w600,
 
 Gui, AddonInfo:Add, Text, x10 y+2 w%AddonInfowColLeft% Right, Url:
-Gui, Font, underline 
+Gui, AddonInfo:Font, underline 
 Gui, AddonInfo:Add, Text, gAddonInfoVisitUrl vAddonInfoUrlID x+2 w600 cBlue ,
-Gui, Font, norm
+Gui, AddonInfo:Font, norm
 Gui, AddonInfo:Add, Text, x10 y+2 w%AddonInfowColLeft% Right, Author: 
 Gui, AddonInfo:Add, Text, vAddonInfoAuthorID x+2 w600,
 
