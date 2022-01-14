@@ -19,3 +19,13 @@ Many advanced settings are hidden from the UI to make the new user experience mo
 
 * **The BrivGemFarm addon is using a lot of CPU. Is there some way I can reduce its load on my computer?**  
 See the readme for the ``IC_GemFarm_Potato`` addon [here](./Addons/IC_BrivGemFarm_Potato/README.md)
+
+* **How does BrivGemFarm handle buying and opening chests?**  
+The logic works like this:
+  * If there is at least .1 seconds left during stack restart and your gems are higher than the maintenance level, it will **buy** between 0 and 100 **silver chests** depending on what you can afford.
+  * THEN if there is still at least .1 seconds left during stack restart and your gems are higher than the maintenance level, it will **buy** between 0 and 100 **gold chests** depending on what you can afford.
+  * THEN if there is still at least 3 seconds left during stack restart and you have unopened silvers, it will **open** between 0-99 **silver chests** depending on how many you have.
+  * THEN if there is still at least 3 seconds left during stack restart and you have unopened golds, it will **open** between 0-99 **gold chests** depending on how many you have.
+
+  If the advanced setting ``DoChestsContinuous`` is set to 1, it will repeat this process as long as there is time during the Stack Reset.  
+  > **WARNING:** Be careful setting this value to 1. MANY purchases can happen during a reset and gems will seemingly evaporate.  
