@@ -427,6 +427,12 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Formation.FormationList.HeroAlive.GetGameObjectFromListValues(slot))
     }
 
+    ; should read 1 if briv jump animation override is loaded to list, 0 otherwise
+    ReadTransitionOverrideSize()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Formation.TransitionOverrides.ActionListSize)
+    }
+
     ;==============================
     ;offlineprogress and modronsave
     ;==============================
