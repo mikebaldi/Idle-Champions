@@ -1,5 +1,3 @@
-;Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
-g_DownAlign := g_DownAlign - 17 ; The line above changes the Y origin by 40. Ajust for it.
 ;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
@@ -58,18 +56,21 @@ xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
 
-Gui, ICScriptHub:Tab, Stats
-Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
-Gui, ICScriptHub:Font, w400
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
-Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
-Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
-Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
-GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
-g_DownAlign := g_DownAlign + posH -5
+if(IsObject(IC_BrivGemFarm_Stats_Component))
+{
+    Gui, ICScriptHub:Tab, Stats
+    Gui, ICScriptHub:Font, w700
+    Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+    Gui, ICScriptHub:Font, w400
+    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
+    Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
+    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
+    Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
+    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
+    Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
+    GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
+    g_DownAlign := g_DownAlign + posH -5
+}
 
 UpdateGUICheckBoxes()
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
