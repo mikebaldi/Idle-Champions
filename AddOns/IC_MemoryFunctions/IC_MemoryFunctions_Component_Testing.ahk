@@ -20,7 +20,7 @@ g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 65
 ; Gui, ICScriptHub:Add, Text, x15 y+5, BrivFormationSlot: 
 ; Gui, ICScriptHub:Add, Text, vSwapTimingBrivInFormationID x+2 w300,
 
-Gui, Tab, Memory View
+Gui, ICScriptHub:Tab, Memory View
 Gui, ICScriptHub:Font, w700
 if(IsFunc(Func("ReadMemoryFunctions.MainReads")))
     Gui, ICScriptHub:Add, Text, x15 y530, Current Tests:

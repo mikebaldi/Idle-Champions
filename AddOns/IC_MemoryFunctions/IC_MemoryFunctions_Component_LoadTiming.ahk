@@ -3,7 +3,7 @@
 */
 
 g_TabControlHeight += 135
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 ;Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 
 Gui, Tab, Memory View

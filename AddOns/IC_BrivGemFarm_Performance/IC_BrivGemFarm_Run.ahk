@@ -62,7 +62,7 @@ if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
 ReloadBrivGemFarmSettingsDisplay()
 {
     ReloadBrivGemFarmSettings()
-    Gui, ListView, BrivFarmSettingsID
+    Gui, BrivPerformanceGemFarm:ListView, BrivFarmSettingsID
     LV_Delete()
     LV_Add(, "Using Fkeys? ", g_BrivUserSettings[ "Fkeys" ] ? "Yes" : "No")
     LV_Add(, "Avoid Bosses? ", g_BrivUserSettings[ "AvoidBosses" ] ? "Yes" : "No")
@@ -89,7 +89,7 @@ ReloadAdvancedBrivGemFarmSettingsDisplay()
 {
     ReloadBrivGemFarmSettings()
     columns := 0
-    Gui, ListView, BrivFarmSettingsID
+    Gui, BrivPerformanceGemFarm:ListView, BrivFarmSettingsID
     LV_Delete()
     for k,v in g_BrivUserSettings
     {
@@ -131,7 +131,7 @@ BrivPerformanceGemFarmGuiClose()
     IfMsgBox, Yes
         ExitApp
     IfMsgBox, No
-        Gui, hide
+        Gui, BrivPerformanceGemFarm:hide
     IfMsgBox, Cancel
         return true
 }

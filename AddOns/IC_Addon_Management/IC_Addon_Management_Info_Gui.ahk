@@ -26,10 +26,10 @@ Gui, AddonInfo:Add, Text, x10 y+10 w%AddonInfowColLeft% Right, Dependencies:
 Gui, AddonInfo:Add, Text, x20 y+2 vAddonInfoDependenciesID w600 h50,
 
 AddonInfoVisitUrl(){
-    GuiControlGet, UrlToRun, , AddonInfoUrlID
+    GuiControlGet, UrlToRun, AddonInfo:, AddonInfoUrlID
     If RegExMatch(UrlToRun, "^(https?://|www\.)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$")
         Run % UrlToRun 
 }
 
 ; Going back to the ICScripthub gui 
-Gui, ICScriptHub:Default
+;Gui, ICScriptHub:Default

@@ -8,11 +8,11 @@ Gui, ICScriptHub:Font, w400
 
 if(g_isDarkMode)
     Gui, Font, g_CustomColor
-Gui Add, ListView, x15 y+8 w450 h450 vMemoryFunctionsViewID, Function|x|Value
+Gui, ICScriptHub:Add, ListView, x15 y+8 w450 h450 vMemoryFunctionsViewID, Function|x|Value
 if(g_isDarkMode)
 {
-    GuiControl, +Background888888, MemoryFunctionsViewID
-    Gui, Font, cSilver
+    GuiControl,ICScriptHub: +Background888888, MemoryFunctionsViewID
+    Gui, ICScriptHub:Font, cSilver
 }
 
 class IC_MemoryFunctionsFullRead_Component

@@ -91,17 +91,17 @@ if(IsObject(IC_BrivGemFarm_Class))
 else
     Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, Stats|
 
-Gui, Tab, Stats
+Gui, ICScriptHub:Tab, Stats
 g_TabList .= "Stats|"
 global g_LeftAlign
 global g_DownAlign
 Gui, ICScriptHub:Font, w700
-Gui Add, GroupBox, x+0 y+15 w450 h130 vCurrentRunGroupID, Current `Run:
+Gui, ICScriptHub:Add, GroupBox, x+0 y+15 w450 h130 vCurrentRunGroupID, Current `Run:
 Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, vLoopAlignID xp+15 yp+25 , `Loop:
-GuiControlGet, pos, Pos, LoopAlignID
+GuiControlGet, pos, ICScriptHub:Pos, LoopAlignID
 g_LeftAlign := posX
 Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
 Gui, ICScriptHub:Font, w400
@@ -117,10 +117,10 @@ Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
 
 ; Gui, ICScriptHub:Add, Text, x15 y+10, Inputs Sent:
 ; Gui, ICScriptHub:Add, Text, vg_InputsSentID x+2 w50, % g_InputsSent
-GuiControlGet, pos, Pos, CurrentRunGroupID
+GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
 g_DownAlign := posY + posH -5
 Gui, ICScriptHub:Font, w700
-Gui Add, GroupBox, x6 y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
+Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Previous Run Time (min):
 Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
@@ -167,10 +167,10 @@ if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver w400
 else
     Gui, ICScriptHub:Font, cDefault w400
-GuiControlGet, pos, Pos, OnceRunGroupID
+GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
 
-GuiControl, Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
     Gui, ICScriptHub:Color, % g_CustomColor
 Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, IC Script Hub

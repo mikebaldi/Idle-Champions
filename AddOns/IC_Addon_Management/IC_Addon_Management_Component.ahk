@@ -22,7 +22,7 @@ AddonTabWidth := 450
 
 ; Build Listview of available Addons
 Gui, ICScriptHub:Font, w700
-Gui Add, Text, , Available Addons
+Gui, ICScriptHub:Add, Text, , Available Addons
 Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Add, ListView ,w%AddonTabWidth% vAddonsAvailableID hWndhLV,  Active|Name|Version|Folder

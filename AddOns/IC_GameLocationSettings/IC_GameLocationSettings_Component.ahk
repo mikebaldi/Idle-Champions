@@ -1,10 +1,10 @@
 ;Add GUI fields to this addon's tab.
 Gui, ICScriptHub:Tab, Briv Gem Farm
-GuiControlGet, pos, Pos, BrivGemFarmPlayButton
+GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmPlayButton
 posY += 65
 Gui, ICScriptHub:Add, Button, x15 y%posY% w160 vButtonOpenInstallGui, Change Game Location
 OpenGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "ChangeInstallLocation_Clicked")
-GuiControl, +g, ButtonOpenInstallGui, % OpenGameLocationSettingUpdate
+GuiControl,ICScriptHub: +g, ButtonOpenInstallGui, % OpenGameLocationSettingUpdate
 
 ;GUI to input a new install path.
 Gui, InstallGUI:New
@@ -16,8 +16,8 @@ Gui, InstallGUI:Add, Button, x15 y+15 vButtonSaveGameLocationSettings, Save and 
 Gui, InstallGUI:Add, Button, x+100 vButtonCancelGameLocationSettings, `Cancel
 SaveGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallOK_Clicked")
 CancelGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallCancel_Clicked")
-GuiControl, +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
-GuiControl, +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
+GuiControl,ICScriptHub: +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
+GuiControl,ICScriptHub: +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
 
 ; Switch back to main GUI
 Gui, ICScriptHub:Default

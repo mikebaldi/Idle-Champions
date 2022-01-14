@@ -7,7 +7,7 @@ global g_InventoryView := new IC_InventoryView_Component()
 Gui, ICScriptHub:Tab, About
 aboutRows := 17
 aboutGroupBoxHeight := aboutRows * 15
-Gui Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight%, Version Info: 
+Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight%, Version Info: 
 Gui, ICScriptHub:Add, Text, vVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
 
 class IC_About_Component
