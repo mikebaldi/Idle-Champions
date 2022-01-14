@@ -5,6 +5,7 @@ Jan 14, 2022
     Removed Stats from being Required in Script Hub
     Added new Addon to replace required stats tab.
     Updated how ScriptHub prioritizes BrivGemFarm/Stats tab ordering.
+    Added basic starting FAQ.
 
 Jan 13, 2022
     Added Addon Manager by nyze. Now addons can be enabled/disabled easily through the GUI.

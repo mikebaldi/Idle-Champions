@@ -81,7 +81,6 @@ Gui, ICScriptHub:+Resize -MaximizeBox
 ;Gui, ICScriptHub:Add, Button, x+20 gLaunch_Clicked, Launch IC
 Gui, ICScriptHub:Add, Picture, x4 y5 h25 w25 gLaunch_Clicked, %g_GameButton%
 Gui, ICScriptHub:Add, Picture, x+5 h25 w25 gReload_Clicked, %g_ReloadButton%
-; TODO: Fix this hack so addons do it themselves (if possible)
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver ;
 ; Needed to add tabs
@@ -92,7 +91,6 @@ if(IsObject(IC_BrivGemFarm_Class))
 if (IsObject(IC_BrivGemFarm_Stats_Component))
     GUIFunctions.AddTab("Stats")
 
-; Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, g_TabList
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
     Gui, ICScriptHub:Color, % g_CustomColor
