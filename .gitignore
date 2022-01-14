@@ -8,5 +8,7 @@ Logging*LOG*
 *LV_Functions.ahk
 eos*
 UserSettings.ini
-*GeneratedAddonInclude.ahk
+
+#AddonManagement Addon ignores
+AddOns/GeneratedAddonInclude.ahk
 AddOns/IC_Addon_Management/AddonManagement.json
