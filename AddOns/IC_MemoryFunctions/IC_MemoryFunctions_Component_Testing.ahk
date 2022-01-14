@@ -4,7 +4,7 @@
 
 g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 65
 
-; Gui, Tab, Stats
+; Gui, ICScriptHub:Tab, Stats
 ; Gui, ICScriptHub:Font, w700
 ; Gui, ICScriptHub:Add, Text, x15 y490, SwapTiming Reads:
 ; Gui, ICScriptHub:Font, w400

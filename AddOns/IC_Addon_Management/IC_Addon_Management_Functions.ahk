@@ -77,7 +77,7 @@ Class AddonManagement
         Addon := this.Addons[AddonNumber]
         if(Addon.Name != "Addon Management"){
             this.AddonSettings[Addon.Name] := { Addon.Version : { "Enabled" : 0}}
-            this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+            LV_Modify(AddonNumber,,"no")
         }
         else{
             MsgBox, 48, Warning, Can't disable the Addon Manager
@@ -90,7 +90,7 @@ Class AddonManagement
     EnableAddon(AddonNumber){
         Addon := this.Addons[AddonNumber]
         this.AddonSettings[Addon.Name] := { Addon.Version : { "Enabled" : 1}}
-        this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+        LV_Modify(AddonNumber,,"yes")
     }
 
     ; Get the parameters of the addons to load

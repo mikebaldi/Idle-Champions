@@ -10,7 +10,7 @@ If !IsObject( g_JimothySettings )
     g_SF.WriteObjectToJSON( A_LineFile . "\..\JimothySettings.json" , g_JimothySettings )
 }
 
-Gui, Tab, Jimothy
+Gui, ICScriptHub:Tab, Jimothy
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 y68 w120, What is happening:
 Gui, ICScriptHub:Font, w400

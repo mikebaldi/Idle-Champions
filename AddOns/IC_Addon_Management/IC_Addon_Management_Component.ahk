@@ -43,14 +43,14 @@ Gui, ICScriptHub:Add, Button , x+5 w%AddonButtonWidth% gAddonsSaveClicked, Save
 
 AddonsEnableClicked(){
 	Gui, ICScriptHub:ListView, AddonsAvailableID
-	if(SelectedRow := LV_GetNext()){
+	while(SelectedRow := LV_GetNext(SelectedRow)){
 		AddonManagement.EnableAddon(SelectedRow)
 	}
 }
 
 AddonsDisableClicked(){
 	Gui, ICScriptHub:ListView, AddonsAvailableID
-	if(SelectedRow := LV_GetNext()){
+	while(SelectedRow := LV_GetNext(SelectedRow)){
 		AddonManagement.DisableAddon(SelectedRow)
 	}
 }
