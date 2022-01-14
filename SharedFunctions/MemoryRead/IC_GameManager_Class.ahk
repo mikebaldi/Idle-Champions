@@ -185,6 +185,12 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.Formation.FormationListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xC, 0xC]) ; Push _size
         this.Game.GameInstance.Controller.Formation.FormationList.ChampID := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.FormationList,, [0x14, 0xC, 0x8]) ; Push hero.def.ID
         this.Game.GameInstance.Controller.Formation.FormationList.HeroAlive := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.FormationList,, [0x151])
+        this.Game.GameInstance.Controller.Formation.TransitionOverrides := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0x54]) ;this is a dict
+        ;ActionListSize is a count of how many transition overrides have been added to the action list within the dictionary TransitionOverrides.
+        ;When this value increases from 0 to 1 a briv jump animation can occur. It is possible a future transtiion override occurs increasing the Count
+        ; to a value greater than 1. But for standard gem farm team should be goood for a while.
+        ; quick transitions increment from 0 to 1, but more quickly.
+        this.Game.GameInstance.Controller.Formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.TransitionOverrides,, [0xC, 0x1C, 0xC]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
         this.Game.GameInstance.Controller.Formation.numAttackingMonstersReached := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xEC])
         this.Game.GameInstance.Controller.Formation.numRangedAttackingMonsters := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xF0])
         ;==============================
