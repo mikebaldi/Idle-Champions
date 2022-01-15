@@ -818,9 +818,11 @@ class IC_SharedFunctions_Class
         counter := 0
         sleepTime := 34
         seat := this.Memory.ReadChampSeatByID(ChampID)
-        if(seat < 0)
+        if ( seat < 0 )
+        {
             Critical, Off
             return
+        }
         var := ["{F" . seat . "}"]
         if( IsObject(keys) )
             var.Push(keys*)

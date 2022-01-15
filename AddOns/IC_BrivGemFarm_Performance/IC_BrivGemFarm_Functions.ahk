@@ -754,8 +754,10 @@ class IC_BrivGemFarm_Class
     {
         Critical, On
         if(g_SF.ShouldSkipSwap() AND !(g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0))
+        {
             Critical, Off
             return
+        }
         StartTime := A_TickCount
         ElapsedTime := counter := 0
         sleepTime := 68
