@@ -72,7 +72,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.4, 01/10/2022"
+        return "v2.4, 2022-01-10"
     }
 
     ;Gets data from JSON file
@@ -818,8 +818,11 @@ class IC_SharedFunctions_Class
         counter := 0
         sleepTime := 34
         seat := this.Memory.ReadChampSeatByID(ChampID)
-        if(seat < 0)
+        if ( seat < 0 )
+        {
+            Critical, Off
             return
+        }
         var := ["{F" . seat . "}"]
         if( IsObject(keys) )
             var.Push(keys*)
