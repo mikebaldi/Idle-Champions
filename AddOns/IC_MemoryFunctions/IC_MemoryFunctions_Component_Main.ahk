@@ -10,6 +10,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, ReadHighestZone:
 Gui, ICScriptHub:Add, Text, vReadHighestZoneID x+2 w100,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTimeScaleMultiplier:
 Gui, ICScriptHub:Add, Text, vReadTimeScaleMultiplierID x+2 w200,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadUncappedTimeScaleMultiplier:
+Gui, ICScriptHub:Add, Text, vReadUncappedTimeScaleMultiplierID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadQuestRemainin:
 Gui, ICScriptHub:Add, Text, vReadQuestRemainingID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitioning:
@@ -70,6 +72,7 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadHighestZoneID, % g_SF.Memory.ReadHighestZone()
         GuiControl, ICScriptHub:, ReadQuestRemainingID, % g_SF.Memory.ReadQuestRemaining()
         GuiControl, ICScriptHub:, ReadTimeScaleMultiplierID, % g_SF.Memory.ReadTimeScaleMultiplier()
+        GuiControl, ICScriptHub:, ReadUncappedTimeScaleMultiplierID, % g_SF.Memory.ReadUncappedTimeScaleMultiplier()
         GuiControl, ICScriptHub:, ReadTransitioningID, % g_SF.Memory.ReadTransitioning()
         GuiControl, ICScriptHub:, ReadSBStacksID, % g_SF.Memory.ReadSBStacks()
         GuiControl, ICScriptHub:, ReadHasteStacksID, % g_SF.Memory.ReadHasteStacks()
