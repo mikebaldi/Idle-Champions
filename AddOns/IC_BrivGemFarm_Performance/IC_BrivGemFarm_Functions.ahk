@@ -359,7 +359,9 @@ class IC_BrivGemFarm_Class
         {
             while(!g_SF.Memory.ReadOfflineDone() AND IsObject(SharedRunData) AND SharedRunData.TriggerStart)
             {
+                Critical, Off
                 Sleep, 50
+                Critical, On
             }
             ; CoreXP starting on FRESH run.
             if(!TotalRunCount)
@@ -752,6 +754,7 @@ class IC_BrivGemFarm_Class
     {
         Critical, On
         if(g_SF.ShouldSkipSwap() AND !(g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0))
+            Critical, Off
             return
         StartTime := A_TickCount
         ElapsedTime := counter := 0
@@ -776,6 +779,7 @@ class IC_BrivGemFarm_Class
         ; Don't swap to Briv if current highest zone is a boss zone.
         if ( g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0 )
         {
+            Critical, Off
             return
         }
         StartTime := A_TickCount
