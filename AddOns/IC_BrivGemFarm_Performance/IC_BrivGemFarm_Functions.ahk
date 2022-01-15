@@ -719,7 +719,7 @@ class IC_BrivGemFarm_Class
         highestZone := g_SF.Memory.ReadHighestZone()
         if(g_SF.Memory.ReadChampLvlByID( 58 ) < 170) ; briv doesn't have jump+specialization yet - do setup stuff first
             return
-        isJumpFormation := g_SF.Memory.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 1 ) )
+        isJumpFormation := g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 1 ) )
         ; Level complete, moving to next area.
         if ( !g_SF.Memory.ReadQuestRemaining() AND g_SF.Memory.ReadTransitioning() )  ; Important! Need both reads or swaps won't happen once per jump!
         {
