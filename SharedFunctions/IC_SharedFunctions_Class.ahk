@@ -257,7 +257,7 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         counter := 0
         sleepTime := 250
-        g_SF.DirectedInput(,, "{q}")
+        this.DirectedInput(,, "{q}")
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
@@ -406,8 +406,8 @@ class IC_SharedFunctions_Class
     DoDashWait( DashSleepTime, DashWaitMaxZone := 2000, forceWait := false  )
     {
         this.ToggleAutoProgress( 0, false, true )
-        specializedCount := g_SF.CountTimeScaleMultipliersOfValue(1.5)
-        unSpecializedCount := g_SF.CountTimeScaleMultipliersOfValue(1.25)
+        specializedCount := this.CountTimeScaleMultipliersOfValue(1.5)
+        unSpecializedCount := this.CountTimeScaleMultipliersOfValue(1.25)
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -427,9 +427,9 @@ class IC_SharedFunctions_Class
         {
             this.ToggleAutoProgress(0)
             ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
-            isValueIncreased := g_SF.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount
+            isValueIncreased := this.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR this.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount
             ; TODO: Update Shandie Tests to be future compatible in case more speed is added.
-            isValueOverExpected := g_SF.CountTimeScaleMultipliersOfValue(1.5) > 1 OR g_SF.CountTimeScaleMultipliersOfValue(1.25) > 1
+            isValueOverExpected := this.CountTimeScaleMultipliersOfValue(1.5) > 1 OR this.CountTimeScaleMultipliersOfValue(1.25) > 1
             if((isValueIncreased OR isValueOverExpected) AND !forceWait)
                 break
             this.SafetyCheck()
