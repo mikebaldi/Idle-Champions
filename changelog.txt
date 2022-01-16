@@ -1,3 +1,9 @@
+Jan 16, 2022
+    Dash wait method has been revised to verify Dash is active directly from the ability handler in memory.
+    The method used to cancel Briv's jump animation has been revised to no longer require swap sleep setting, the setting has been removed.
+    The aforementioned method has been relocated to the Shared Function class.
+    EffectKeyHandler classes have been reorganized and relocated to the SharedFunctions/Memory folder.
+
 Jan 14, 2022
     Updated GUI instructions to ensure they are affecting the correct GUI.
     Removed AddonManagement.json from the repo to prevent overwriting on updates.

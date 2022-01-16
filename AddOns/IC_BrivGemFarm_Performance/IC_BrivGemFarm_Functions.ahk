@@ -135,7 +135,7 @@ class IC_BrivGemFarm_Class
                 g_SF.ToggleAutoProgress( 1, false, true ) ; Turn on autoprogress after a restart
                 g_SharedData.TriggerStart := true
             }
-            this.SetFormation()
+            g_SF.SetFormation(g_BrivUserSettings)
             if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
                 g_SharedData.BossesHitThisRun := 0
@@ -690,7 +690,7 @@ class IC_BrivGemFarm_Class
         }
         g_SF.ModronResetZone := g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
         if ( g_BrivUserSettings[ "DashSleepTime" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
-            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ], Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0), g_BrivUserSettings[ "ForceDashWait"] )
+            g_SF.DoDashWait( g_BrivUserSettings[ "DashSleepTime" ], Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         ;g_SF.FinishZone()
         g_SF.ToggleAutoProgress( 1, false, true )
     }
@@ -707,42 +707,6 @@ class IC_BrivGemFarm_Class
     ;===========================================================
     ;functions for speeding up progression through an adventure.
     ;===========================================================
-    /*SetFormation - A function to swap between formations to cancel Briv's jump animation. Can also pull Briv on boss zones for 95%+ 4x/9x skip.
-
-    Parameters:
-
-    Returns: Nothing
-    */
-    SetFormation()
-    {
-        static lastZone := 0
-        static lastKeyTime := 0
-        sleepTime := 67
-        highestZone := g_SF.Memory.ReadHighestZone()
-        if(g_SF.Memory.ReadChampLvlByID( 58 ) < 170) ; briv doesn't have jump+specialization yet - do setup stuff first
-            return
-        isJumpFormation := g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 1 ) )
-        ; Level complete, moving to next area.
-        if ( !g_SF.Memory.ReadQuestRemaining() AND g_SF.Memory.ReadTransitioning() )  ; Important! Need both reads or swaps won't happen once per jump!
-        {
-            g_SharedData.LoopString := "Transitioning..."
-            this.SwapFormationDuringTransition(g_SF.Memory.ReadCurrentZone())
-            g_SharedData.LoopString := "Main `Loop"
-        }
-        ; Swap to Briv Jump formation if not in it already when not transitioning. Only happens if avoid bosses is off, or not going to boss zone.
-        else if ( !isJumpFormation AND (A_TickCount - lastKeyTime > sleepTime) AND (Mod( highestZone, 5 ) OR !g_BrivUserSettings[ "AvoidBosses" ]))
-        {
-            if(g_SF.Memory.ReadCurrentZone() < g_SF.ModronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ])
-                g_SF.DirectedInput(,,["{q}"]*)
-            lastKeyTime := A_TickCount
-        }
-        ; Swap to non-Briv formation on boss zone if in Briv formation and if avoiding bosses. (when not transitioning)
-        else if ( isJumpFormation AND g_BrivUserSettings[ "AvoidBosses" ] AND (A_TickCount - lastKeyTime > sleepTime) AND !Mod( highestZone, 5 ))
-        {
-            g_SF.DirectedInput(,,["{e}"]*)
-            lastKeyTime := A_TickCount
-        }
-    }
 
     /* SwapFormationDuringTransition - A function to swap between formations to cancel Briv's jump animation.
 

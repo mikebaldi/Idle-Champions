@@ -14,6 +14,8 @@ global g_SharedData := new IC_SharedData_Class
 #include %A_LineFile%\..\IC_ArrayFunctions_Class.ahk
 #include %A_LineFile%\..\IC_UserDetails_Class.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
+;Shandie's Dash handler
+#include %A_LineFile%\..\MemoryRead\EffectKeyHandlers\TimeScaleWhenNotAttackedHandler.ahk
 
 class IC_SharedData_Class
 {
@@ -400,39 +402,33 @@ class IC_SharedFunctions_Class
 
         Parameters:
         DashSleepTime ;Maximum time, in milliseconds, the loop will continue. This value is modified by the time scale multiplier at the start of the loop.
+        DashWaitMaxZone ;Maximum zone to attempt to Dash wait.
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000, forceWait := false  )
+    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000 )
     {
         this.ToggleAutoProgress( 0, false, true )
-        specializedCount := this.CountTimeScaleMultipliersOfValue(1.5)
-        unSpecializedCount := this.CountTimeScaleMultipliersOfValue(1.25)
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         StartTime := A_TickCount
         ElapsedTime := 0
-        ;timeScale := this.Memory.ReadTimeScaleMultiplier()
+        dash := new TimeScaleWhenNotAttackedHandler ; create a new Dash Handler object.
+        dash.Initialize()
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         if (timeScale < 1)
             timeScale := 1
-        DashSpeed := Min(timeScale * 1.24, 10.0) ;time scale multiplier caps at 10
         modDashSleep := ( DashSleepTime ) / timeScale
         if (modDashSleep < 1)
             modDashSleep := DashSleepTime
         ; Loop escape conditions:
         ;   does full sleep duration
         ;   past highest accepted dashwait triggering area
-        ;   timescale multiplier reaches dash speed and not forcewaiting (Forcwait is for situations where speed can be 10x but drop later e.g. Potion Bleed)
-        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND (this.Memory.ReadTimeScaleMultiplier() < DashSpeed OR forceWait) )
+        ;   dash is active, dash.GetScaleActiveValue() toggles to true when dash is active and returns "" if fails to read.
+        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
         {
             this.ToggleAutoProgress(0)
-            ; Temporary Shandie test. 1.5 can be from: Modron, Shandie.  1.25 can be from Small Speed Potion, Shandie (No specialization)
-            isValueIncreased := this.CountTimeScaleMultipliersOfValue(1.5) > specializedCount OR this.CountTimeScaleMultipliersOfValue(1.25) > unSpecializedCount
-            ; TODO: Update Shandie Tests to be future compatible in case more speed is added.
-            isValueOverExpected := this.CountTimeScaleMultipliersOfValue(1.5) > 1 OR this.CountTimeScaleMultipliersOfValue(1.25) > 1
-            if((isValueIncreased OR isValueOverExpected) AND !forceWait)
-                break
-            this.SafetyCheck()
+            if !(this.SafetyCheck()) OR !(dash.IsBaseAddressCorrect())
+                dash.Initialize()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . modDashSleep
         }
@@ -567,6 +563,63 @@ class IC_SharedFunctions_Class
     {
         g_SharedData.LoopString := "Zone is -1. At world map?"
         this.RestartAdventure( "Zone is -1. At world map? Forcing Restart." )
+    }
+
+    ; a method to swap formations and cancel briv's jump animation.
+    SetFormation(settings := "")
+    {
+        ;only send input messages if necessary
+        brivBenched := this.Memory.ReadChampBenchedByID(58)
+        ;check to bench briv
+        if (!brivBenched AND this.BenchBrivConditions(settings))
+        {
+            this.DirectedInput(,,["{e}"]*)
+            g_SharedData.SwapsMadeThisRun++
+        }
+        ;check to unbench briv
+        else if (brivBenched AND this.UnBenchBrivConditions(settings))
+        {
+            this.DirectedInput(,,["{q}"]*)
+            g_SharedData.SwapsMadeThisRun++
+        }
+    }
+
+    BenchBrivConditions(settings)
+    {
+        ;bench briv if jump animation override is added to list and it isn't a quick transition
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2)
+            return true
+        ;bench briv if avoid bosses setting is on and on a boss zone
+        if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
+            return true
+        ;perform no other checks if 'Briv Jump Buffer' setting is disabled
+        if !(settings[ "BrivJumpBuffer" ])
+            return false
+        ;bench briv if within the 'Briv Jump Buffer'-supposedly this reduces chances of failed conversions by having briv on bench during modron reset.
+        maxSwapArea := this.ModronResetZone - settings[ "BrivJumpBuffer" ]
+        if (this.Memory.ReadCurrentZone() >= maxSwapArea)
+            return true
+
+        return false
+    }
+
+    UnBenchBrivConditions(settings)
+    {
+        ;unbench briv if 'Briv Jump Buffer' setting is disabled and a jump animation override isn't added to the list
+        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadTransitionOverrideSize() != 1)
+            return true
+        ;perform no other checks if 'Briv Jump Buffer' setting is disabled
+        else if !(settings[ "BrivJumpBuffer" ])
+            return false
+        ;keep briv benched if within the 'Briv Jump Buffer'-supposedly this reduces chances of failed conversions by having briv on bench during modron reset.
+        maxSwapArea := this.ModronResetZone - settings[ "BrivJumpBuffer" ]
+        if (this.Memory.ReadCurrentZone() >= maxSwapArea)
+            return false
+        ;unbench briv if outside the 'Briv Jump Buffer' and a jump animation override isn't added to the list
+        else if (this.Memory.ReadTransitionOverrideSize() != 1)
+            return true
+
+        return false
     }
 
     ;===================================

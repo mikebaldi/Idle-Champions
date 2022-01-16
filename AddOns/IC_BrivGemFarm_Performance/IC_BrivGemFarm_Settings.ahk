@@ -20,8 +20,6 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "RestartStackTime" ] := 12000
     if ( g_BrivUserSettings[ "DashSleepTime" ] == "" )
         g_BrivUserSettings[ "DashSleepTime" ] := 60000
-    if ( g_BrivUserSettings[ "SwapSleep" ] == "" )
-        g_BrivUserSettings[ "SwapSleep" ] := 1000
     if ( g_BrivUserSettings[ "DoChests" ] == "" )
         g_BrivUserSettings[ "DoChests" ] := 1
     if ( g_BrivUserSettings[ "BuySilvers" ] == "" )

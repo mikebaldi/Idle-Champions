@@ -18,7 +18,6 @@ Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[
 Gui, ICScriptHub:Add, Edit, vNewTargetStacks x15 y+10 w50, % g_BrivUserSettings[ "TargetStacks" ]
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
 Gui, ICScriptHub:Add, Edit, vNewDashSleepTime x15 y+10 w50, % g_BrivUserSettings[ "DashSleepTime" ]
-Gui, ICScriptHub:Add, Edit, vNewSwapSleep x15 y+10 w50, % g_BrivUserSettings[ "SwapSleep" ]
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver
 Gui, ICScriptHub:Add, Checkbox, vDoChestsCheck Checked%DoChests% x15 y+20, Enable server calls to buy and open chests during stack restart?
@@ -50,7 +49,6 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Maximum time (ms) script will wait for Dash (0 disables)
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Briv Jump Timer (ms)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
@@ -138,7 +136,6 @@ Briv_Save_Clicked()
     g_BrivUserSettings[ "TargetStacks" ] := NewTargetStacks
     g_BrivUserSettings[ "RestartStackTime" ] := NewRestartStackTime
     g_BrivUserSettings[ "DashSleepTime" ] := NewDashSleepTime
-    g_BrivUserSettings[ "SwapSleep" ] := NewSwapSleep
     g_BrivUserSettings[ "DoChests" ] := DoChestsCheck
     g_BrivUserSettings[ "BuySilvers" ] := BuySilversCheck
     g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
