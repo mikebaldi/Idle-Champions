@@ -1,4 +1,4 @@
-[< Return to the Readme](../readme.md)
+[< Return to the Readme](../Readme.md)
 
 # Getting started with IC Script Hub using Git
 ## Introduction
