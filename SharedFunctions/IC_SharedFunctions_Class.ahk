@@ -605,6 +605,9 @@ class IC_SharedFunctions_Class
 
     UnBenchBrivConditions(settings)
     {
+        ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
+        if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
+            return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and a jump animation override isn't added to the list
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadTransitionOverrideSize() != 1)
             return true
