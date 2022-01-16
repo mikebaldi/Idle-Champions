@@ -2,7 +2,7 @@
     Memory Reads Testing
 */
 
-g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 65
+g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 85
 
 ; Gui, ICScriptHub:Tab, Stats
 ; Gui, ICScriptHub:Font, w700
@@ -23,7 +23,7 @@ g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 65
 Gui, ICScriptHub:Tab, Memory View
 Gui, ICScriptHub:Font, w700
 if(IsFunc(Func("ReadMemoryFunctions.MainReads")))
-    Gui, ICScriptHub:Add, Text, x15 y530, Current Tests:
+    Gui, ICScriptHub:Add, Text, x15 y550, Current Tests:
 else
     Gui, ICScriptHub:Add, Text, x15 y55, Current Tests:
 Gui, ICScriptHub:Font, w400
@@ -46,6 +46,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite2:
 Gui, ICScriptHub:Add, Text, vFormationFavorite2ID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite3: 
 Gui, ICScriptHub:Add, Text, vFormationFavorite3ID x+2 w400,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionOverrideSize: 
+Gui, ICScriptHub:Add, Text, vReadTransitionOverrideSizeID x+2 w400,
 
 class ReadMemoryFunctionsExtended
 {
@@ -71,6 +73,8 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, NumAttackingMonstersReachedLblID, % g_SF.Memory.ReadNumAttackingMonstersReached()
         GuiControl, ICScriptHub:, NumRangedAttackingMonsterLblID, % g_SF.Memory.ReadNumRangedAttackingMonsters()
         ;GuiControl, ICScriptHub:, g_InputsSentID, % g_InputsSent
+        GuiControl, ICScriptHub:, ReadTransitionOverrideSizeID, % g_SF.Memory.ReadTransitionOverrideSize() ; g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game)
+        
     }
 
     ReadSwapTimings()
@@ -84,13 +88,17 @@ class ReadMemoryFunctionsExtended
 
     GetMultipliersString()
     {
-        multipliersString := ""
+        multipliersString := "["
         multiplierTotal := 1
+        size := g_SF.Memory.ReadTimeScaleMultipliersCount()
         i := 0
-        loop, % g_SF.Memory.ReadTimeScaleMultipliersCount()
+        loop, %size%
         {
             value := g_SF.Memory.ReadTimeScaleMultiplierByIndex(i)
-            multipliersString .= i . "`:`:" . value . " "
+            if(i == size - 1)
+                multipliersString .= value . "]"
+            else
+                multipliersString .= value . ", "
             multiplierTotal *= Max(1.0, value)
             i++
         }
