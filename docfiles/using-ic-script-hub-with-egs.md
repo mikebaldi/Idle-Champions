@@ -1,4 +1,4 @@
-[< Return to the Readme](../readme.md)
+[< Return to the Readme](../Readme.md)
 
 # Setting Idle Champions game location for EGS
 
