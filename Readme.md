@@ -1,22 +1,59 @@
 # IC Script Hub
-Welcome to 2022 and happy new year!  
+## Introduction
+
+> "This is your last chance. After this, there is no turning back. You take the blue pill—the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes. Remember: all I'm offering is the truth. Nothing more." 
+>  
+> --- Morpheus 
+
+
+> "I feel the need, the need for speed!"
+> 
+> --- Maverick
+
+Welcome to 2022 and Happy New Year!  
+
 New year, new script. We hope you like it.   
   
-This script is the successor to ModronGUI.  
+This script is the successor to ModronGUI.
 
-### Warning:
+**Warning**:
 This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.  
 
 
-# Instructions:
-1. Read and familiarize yourself with all topics covered in Maviin's FAQ: https://docs.google.com/document/d/1ek-66HsOT3VABWdBNh-5iMOSd7UP5ssTRjgS4xkO1To/edit#
-2. Download and install AutoHotkey: https://www.autohotkey.com/
-3. Download all files by clicking the `Code` button on github and then clicking "Download Zip". Extract **all** files from the zip to a directory of your choosing.
-    * Occasionally, I may upload different versions of IC_MemoryFunctions.AHK for different versions of IC. Any Memory Function file with `_v###` has not been tested with the script by me and only tested for accurate memory reads. The file will need to be renamed, deleting the `_v###` portion.
-4. Scan all downloaded files with trusted antivirus software.
-5. Updating `Settings.json` with correct location to your game.
-6. Right click Launcher.AHK and select run script.
+## Prerequisites
 
-## Recommended Additional Steps:
-Review AutoHotkey tutorials and documentation.  
-**Review README.md files included with each AddOn in ./AddOns/ folder.**
+You need AutoHotKey installed to be able to use `IC Script Hub`. The version of AutoHotKey installed also needs to support the switch command. 
+
+[Download AutoHotKey](https://www.autohotkey.com/)
+
+It is recommended that you set up Git and pull `IC Script Hub` via Git. 
+
+This will be the easiest way for you to keep up to date with any changes made in the future. There is a little bit more to do upfront, but you will save so much time in the long run (kinda like scripting the game in the first place).
+
+You may use any Git client you wish. [Here is a step-by-step guide](docfiles/getting-started-with-ic-script-hub-using-git.md) to installing and using Git Desktop with `IC Script Hub`.
+
+If you would rather grab the latest version of the code manually, [head over here to learn how to do that](docfiles/getting-started-with-ic-script-hub-using-zip.md). I really don't recommend it though, as you will have to repeat this entire process every single time as opposed to simply opening an application and clicking a button.
+
+## I know Git Fu!
+
+You now have the latest version of `IC Script Hub` on your machine.
+
+Let's go down the rabbit hole and see what awaits.
+
+Where do you play the game?
+
+[I play on Steam](docfiles/using-ic-script-hub-with-steam.md) 
+
+[I play on EGS](docfiles/using-ic-script-hub-with-egs.md)
+
+## Reading this documentation offline
+
+You can open Readme.md (this file) in any Markdown editor on Windows that has a preview function. I use VS Code. 
+
+1. Open the repository folder in VS Code
+2. Open Readme.md
+3. Press `Control+Shift+V` or right click on the file tab and pick `Open Preview`
+4. Read and navigate using the preview pane that just opened
+
+
+
