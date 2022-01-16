@@ -120,7 +120,7 @@ If you worked out that your Briv could get stacks on 51 and above, you would put
 
 ### Target haste stacks for next run
 
-Calculate this number using [https://ic.byteglow.com/speed](IC Byteglow Utilities).
+Calculate this number using [IC Byteglow Utilities](https://ic.byteglow.com/speed/).
 
 Link up your account to get your Briv info automatically (or enter the data into the form on that page), and then put your desired Target Area into the form.
 
