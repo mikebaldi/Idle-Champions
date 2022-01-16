@@ -19,9 +19,6 @@ If you are not satisfied with only 100/99 Buy/Open chests per run you can set th
 
 > **WARNING:** Chest purchases happen very quickly. If the maintain gems setting is set incorrectly and this option is turned on, all gems could easily be spent, especially when buying gold chests.
 
-* **ForceDashWait**: 0 / 1  
-When enabled (set to 1), this will always wait the DashWait time when calling DoDashWait.
-
 * **HiddenFarmWindow**: 0 / 1  
 You can enable or disable the visibility of the second script window (the one that does the farming) by setting this value. 0 will have it show when it is run. 1 will hide it so only an icon in the tray appears.
 
