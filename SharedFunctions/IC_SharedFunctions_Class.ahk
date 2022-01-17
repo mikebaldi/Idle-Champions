@@ -401,12 +401,11 @@ class IC_SharedFunctions_Class
     /*  DoDashWait - A function that will wait for Dash ability to activate by reading the current time scale multiplier.
 
         Parameters:
-        DashSleepTime ;Maximum time, in milliseconds, the loop will continue. This value is modified by the time scale multiplier at the start of the loop.
         DashWaitMaxZone ;Maximum zone to attempt to Dash wait.
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000 )
+    DoDashWait( DashWaitMaxZone := 2000 )
     {
         this.ToggleAutoProgress( 0, false, true )
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
@@ -415,22 +414,19 @@ class IC_SharedFunctions_Class
         dash := new TimeScaleWhenNotAttackedHandler ; create a new Dash Handler object.
         dash.Initialize()
         timeScale := this.Memory.ReadTimeScaleMultiplier()
-        if (timeScale < 1)
-            timeScale := 1
-        modDashSleep := ( DashSleepTime ) / timeScale
-        if (modDashSleep < 1)
-            modDashSleep := DashSleepTime
+        timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
+        timeout := 80000 / timeScale ; 80 seconds / timescale (8s at 10x)
         ; Loop escape conditions:
-        ;   does full sleep duration
+        ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
         ;   dash is active, dash.GetScaleActiveValue() toggles to true when dash is active and returns "" if fails to read.
-        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
+        while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
         {
             this.ToggleAutoProgress(0)
             if !(this.SafetyCheck()) OR !(dash.IsBaseAddressCorrect())
                 dash.Initialize()
             ElapsedTime := A_TickCount - StartTime
-            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . modDashSleep
+            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . timeout
         }
         g_PreviousZoneStartTime := A_TickCount
         return
@@ -802,7 +798,7 @@ class IC_SharedFunctions_Class
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                this.DirectedInput(,, spam* ) 
+                this.DirectedInput(,, spam* )
                 counter++
             }
         }
@@ -815,7 +811,7 @@ class IC_SharedFunctions_Class
             isCurrentFormation := this.IsCurrentFormation( formationFavorite )
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                this.DirectedInput(,, spam* ) 
+                this.DirectedInput(,, spam* )
                 counter++
             }
         }
