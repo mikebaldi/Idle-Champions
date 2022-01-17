@@ -500,6 +500,7 @@ class IC_SharedFunctions_Class
         }
         if (dtCurrentZoneTime > 45 AND fallBackTries < 3 AND dtCurrentZoneTime - lastCheck > 15) ; second check - Fall back to previous zone and try to continue
         {
+            this.OpenIC() ; reset memory values in case they missed an update.
             this.FallBackFromZone()
             this.DirectedInput(,, "{q}" ) ; safety for correct party
             this.ToggleAutoProgress(1, true)
@@ -651,7 +652,8 @@ class IC_SharedFunctions_Class
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
-            this.PID := 0
+            Process, Exist, IdleDragons.exe ; allows generalized OpenIC to be used as a safetycheck.
+            this.PID := ErrorLevel
             while (!this.PID)
             {
                 StartTime := A_TickCount
