@@ -5,10 +5,6 @@
 	},
 	"Addon Order":[
 		{
-			"Name":"Addon Management",
-			"Version":"v0.2."
-		},
-		{
 			"Name":"About",
 			"Version":"v0.1."
 		},
@@ -17,16 +13,20 @@
 			"Version":"v0.1."
 		},
 		{
-			"Name":"Briv Gem Farm Stats",
-			"Version":"v1.0."
+			"Name":"Addon Management",
+			"Version":"v0.2."
+		},
+		{
+			"Name":"Chest Purchaser",
+			"Version":"v0.1."
 		},
 		{
 			"Name":"Briv Gem Farm",
 			"Version":"v1.0."
 		},
 		{
-			"Name":"Chest Purchaser",
-			"Version":"v0.1."
+			"Name":"Briv Gem Farm Stats",
+			"Version":"v1.0."
 		},
 		{
 			"Name":"Dash Check",
@@ -56,9 +56,5 @@
 	"Briv Gem Farm":{
 		"Enabled":1,
 		"Version":"v1.0."
-	},
-	"Inventory View":{
-		"Enabled":1,
-		"Version":"v0.1."
 	}
 }

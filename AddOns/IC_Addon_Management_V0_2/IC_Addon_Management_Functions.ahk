@@ -14,53 +14,82 @@ Class AddonManagement
     Add(AddonSettings){
         Addon := new Addon(AddonSettings)
         this.Addons.Push(Addon)
-        ;AddonName :=Addon["Name"]
-        ;AddonVersion := Addon["Version"]
-        ;Temp := []
-        ;if(IsObject(this.Addons[AddonName]))
-        ;    Temp :=this.Addons[AddonName]   
-        ;Temp[AddonVersion] := Addon
-        ;this.addons[AddonName] := Temp
     }
 
-    CheckDependencies(){
+    CheckDependenciesEnabled(Name, Version){
         for k,v in this.Addons {
-            if (this.AddonSettings[v.Name][v.Version]["Enabled"]){
-                ; check if the dependencies exist and are enabled
-                for i, j in v.Dependencies {
-                    ; check if dependency exists
-                    DepExists := 0
+            if (v.Name=Name AND v.Version=Version){
+                ; Check the dependencies
+                for i, j in v.Dependencies{
+                    ;First check if the dependencies DepExists
+                    DependancieFound:=0
                     for y,z in this.Addons {
-                        if(z.Name = i){
-                            DepExists := 1
-                            break
-                        }
-                    }
-                    if(DepExists){
-                        if(!this.AddonSettings[i][j]["Enabled"]){
-                            MsgBox, 52, Warning, % "Addon " . i . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . i . "`nNo: disable " . v.Name
-                            IfMsgBox Yes 
-                            {
-                                this.EnableAddon(y)
-                                this.GenerateIncludeFile()
+                        if(z.Name = j.Name AND z.Version = j.Version){
+                            ; Check if the dependencie is enabled
+                            DependancieFound:=1
+                            if (!z.Enabled){
+                                MsgBox, 52, Warning, % "Addon " . j.Name . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . j.Name . "`nNo: disable " . v.Name
+                                IfMsgBox Yes 
+                                {
+                                    this.EnableAddon(j.Name,j.Version)
+                                }
+                                Else
+                                {
+                                    this.DisableAddon(v.Name,v.Version)
+                                }
                                 this.WriteAddonManagementSettings()
                             }
                             else{
-                                this.DisableAddon(k)
-                                this.GenerateIncludeFile()
-                                this.WriteAddonManagementSettings()                                
+                                break
                             }
                         }
                     }
+                    if(DependancieFound){
+                        if(k<y){
+                            this.SwitchOrderAddons(k,y)
+                            this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+                        }
+                    }
                     else{
-                        MsgBox, 48, Warning, % "Can't find the addon " . i . " required by " . v.Name . "`n" . v.Name . " will be disabled"
-                        this.DisableAddon(k)
-                        this.GenerateIncludeFile()
-                        this.WriteAddonManagementSettings()    
+                        MsgBox, 48, Warning, % "Can't find the addon " . j.Name . " required by " . v.Name . "`n" . v.Name . " will be disabled"
+                        this.DisableAddon(v.Name,v.Version)
+                        this.WriteAddonManagementSettings()
+                        return 0
                     }
                 }
             }
         }
+        return 1
+    }
+
+    CheckDependencieOrder(AddonNumber,PositionWanted){
+        if(AddonNumber > PositionWanted){
+            ; moving Up
+            LoopCounter:=PositionWanted
+            for k, v in this.Addons[AddonNumber]["Dependencies"]{
+                while(LoopCounter<AddonNumber){
+                    if(v.Name=this.Addons[Loopcounter]["Name"] AND v.Version=this.Addons[Loopcounter]["Version"]){
+                        Return 0
+                    }
+                    ++LoopCounter
+                }
+            }
+            Return 1
+        }
+        else if(AddonNumber<PositionWanted){
+            ; moving down
+            LoopCounter:=AddonNumber+1
+            While(LoopCounter<=PositionWanted){
+                for k, v in this.Addons[LoopCounter]["Dependencies"]{
+                    if(this.Addons[AddonNumber]["Name"]=v.Name AND this.Addons[AddonNumber]["Version"]=v.Version){
+                        return 0
+                    }
+                }
+                ++LoopCounter
+            }
+            return 1
+        }
+
     }
 
     ; Checks if a folder in the addons folder is an addon
@@ -79,14 +108,16 @@ Class AddonManagement
     }
 
     ; Disable an addon in the addonsettings, will only be persisting if combined with WriteAddonManagementSettings()
-    ; Parameters: none
-    ; Result : object this.AddonSettings  
-    DisableAddon(AddonNumber){
-
-        Addon := this.Addons[AddonNumber]
-        if(Addon.Name != "Addon Management"){
-            this.AddonSettings[Addon.Name] := { Addon.Version : { "Enabled" : 0}}
-            LV_Modify(AddonNumber,,"no")
+    ; Parameters:   Name: the name of the addon
+    ;               Version: the version of the addon
+    DisableAddon(Name, Version){
+        if(Name!="Addon Management"){
+            for k, v in this.Addons {
+                if (v.Name=Name AND v.Version=Version){
+                    v.disable()
+                    break
+                }
+            }
         }
         else{
             MsgBox, 48, Warning, Can't disable the Addon Manager
@@ -97,70 +128,83 @@ Class AddonManagement
     ; Parameters:   Name: the name of the addon
     ;               Version: the version of the addon
     EnableAddon(Name, Version){
-        for k, v in this.Addons {
-            if (v.Name=Name AND v.Version=Version){
-                v.enable()
-                break
+        if(this.CheckDependenciesEnabled(Name,Version)){
+            for k, v in this.Addons {
+                if (v.Name=Name AND v.Version=Version){
+                    v.enable()
+                    break
+                }
             }
         }
+
     }
 
     ; Get the parameters of the addons to load
     ; Parameters: none
-    ; Result : object this.AddonSettings   
     GetAddonManagementSettings(){
         ; If the file does not exist we should create it with the default settings
         if(!FileExist(this.AddonManagementConfigFile)) {
             ; Here we load the Addons that are required on first startup
-            ;this.AddonSettings["Addon Management"] := { "v0.1." : { "Enabled" : 1}}
-            ;this.AddonSettings["Briv Gem Farm"] := { "v1.0." : { "Enabled" : 1}}
-            this.WriteAddonManagementSettings()
+            ;EnabledAddons:=[]
+            ;EnabledAddons["Addon Management"]:=[]
+            ;EnabledAddons["Addon Management"]:=Object("Version","v0.2.","Enabled",1)
+            EnabledAddons:=Object("Addon Management",Object("Version","v0.2.","Enabled",1),"Briv Gem Farm",Object("Version","v1.0.","Enabled",1))
+            g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, EnabledAddons)
+            this.GenerateIncludeFile()
         }
-        else {
-            ;this.AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
-            ;if (!IsObject(this.AddonSettings))
-            ;    this.AddonSettings := []
-
-            ; here we will enable all addons that needed to be added
-            AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
-            for k,v in AddonSettings {
-                if (k = "Addon Order"){
-                    this.AddonOrder := v
-                }
-                else {
-                    if (v.Enabled){
-                        this.EnableAddon(k,v.Version)
-                    }     
-                }
+        ; here we will enable all addons that needed to be added
+        AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
+        for k,v in AddonSettings {
+            if (k = "Addon Order"){
+                this.AddonOrder := v
             }
+            else {
+                if (v.Enabled){
+                    this.EnableAddon(k,v.Version)
+                }     
+            }
+        }
 
-            if(IsObject(this.AddonOrder)){
-                for k, v in this.AddonOrder {
-                    ; Search for the correct Addon
-                    for i, j in this.Addons{
-                        if(j.Name=v.Name AND j.Version=v.Version){
-                            ; put the addons in order
-                            if (k<>i){
-                                this.SwitchOrderAddons(i,k)
-                            }
+        if(IsObject(this.AddonOrder)){
+            for k, v in this.AddonOrder {
+                ; Search for the correct Addon
+                for i, j in this.Addons{
+                    if(j.Name=v.Name AND j.Version=v.Version){
+                        ; put the addons in order
+                        if (k<>i){
+                            this.SwitchOrderAddons(i,k)
                         }
                     }
                 }
             }
         }
+        
     }
 
     SwitchOrderAddons(AddonNumber,Position){
-        NumberOfAddons:=this.Addons.Count()
-
-        temp:=this.Addons[AddonNumber]
-        Loopnumber := AddonNumber
-        While(Loopnumber > Position) {
-            this.Addons[Loopnumber]:=this.Addons[Loopnumber-1]
-            --Loopnumber
+        if(this.CheckDependencieOrder(AddonNumber,Position)){
+            NumberOfAddons:=this.Addons.Count()
+            temp:=this.Addons[AddonNumber]
+            if(AddonNumber > Position){
+                Loopnumber := AddonNumber
+                While(Loopnumber > Position) {
+                    this.Addons[Loopnumber]:=this.Addons[Loopnumber-1]
+                    --Loopnumber
+                }
+            }
+            else if(AddonNumber < Position){
+                Loopnumber := AddonNumber
+                While(Loopnumber < Position) {
+                    this.Addons[Loopnumber]:=this.Addons[Loopnumber+1]
+                    ++Loopnumber
+                }
+            }
+            this.Addons[Position]:=temp
+            return 1
         }
-        this.Addons[Position]:=temp
-
+        else{
+            return 0
+        }
     }
 
     ; Get a list of all available addons in the Addon folder
@@ -184,8 +228,8 @@ Class AddonManagement
             FileDelete, %IncludeFile%
         FileAppend, `;Automatic generated by Addon Management`n, %IncludeFile%
         for k,v in this.Addons {
-            if (this.AddonSettings[v.Name][v.Version]["Enabled"] AND this.AddonSettings[v.Name] != "Addon Management"){
-                IncludeLine := "#include *i " . A_LineFile "\..\..\" . v.Dir . "\" . v.Includes
+            if (v.Enabled AND v.Name != "Addon Management"){
+                IncludeLine := "#include *i " . g_AddonFolder . v.Dir . "\" . v.Includes
                 FileAppend, %IncludeLine%`n, %IncludeFile%
             }
         }
@@ -246,13 +290,10 @@ Class AddonManagement
         ThingsToWrite:=EnabledAddons
         ThingsToWrite["Addon Order"]:=Order
         g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, ThingsToWrite)
-        
-
-        ;g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, this.AddonSettings)
-        ;this.GenerateIncludeFile()
-        ;MsgBox, 36, Restart, To make change to addon loading\deloading active you do need to restart the script.`nDo you want to do this now?
-        ;IfMsgBox, Yes
-        ;    Reload
+        this.GenerateIncludeFile()
+        MsgBox, 36, Restart, To make change to addon loading\deloading active you do need to restart the script.`nDo you want to do this now?
+        IfMsgBox, Yes
+            Reload
     }
 
     FirstRunCheck()
