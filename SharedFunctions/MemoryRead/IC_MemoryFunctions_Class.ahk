@@ -174,6 +174,12 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection)
     }
 
+    ; 0 = OnFromLeft, 1 = OnFromRight, 2 = OffToLeft, 3 = OffToRight
+    ReadFormationTransitionDir()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Formation.transitionDir)
+    }
+
     ReadSecondsSinceAreaStart()
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.SecondsSinceStarted)

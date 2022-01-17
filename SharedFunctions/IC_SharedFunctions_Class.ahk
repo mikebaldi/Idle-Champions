@@ -582,8 +582,8 @@ class IC_SharedFunctions_Class
 
     BenchBrivConditions(settings)
     {
-        ;bench briv if jump animation override is added to list and it isn't a quick transition
-        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2)
+        ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
             return true
         ;bench briv if avoid bosses setting is on and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
@@ -605,7 +605,7 @@ class IC_SharedFunctions_Class
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and a jump animation override isn't added to the list
-        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadTransitionOverrideSize() != 1)
+        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0) ; this.Memory.ReadTransitionOverrideSize() != 1) ;
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         else if !(settings[ "BrivJumpBuffer" ])
@@ -876,10 +876,8 @@ class IC_SharedFunctions_Class
             return
         }
         var := ["{F" . seat . "}"]
-        if( IsObject(keys) )
-            var.Push(keys*)
-        else
-            var.Push(keys)
+        keys := !IsObject(keys) ? [keys] : keys
+        this.DirectedInput(,, keys* )
         this.DirectedInput(,release := 0, var* ) ; keysdown
         champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
@@ -890,13 +888,11 @@ class IC_SharedFunctions_Class
             {
                 this.DirectedInput(hold:=0,, var* ) ;keysup
                 this.DirectedInput(,release := 0, var* ) ; keysdown
+                if(!Mod(counter, 10))
+                    this.DirectedInput(,, keys* )
                 counter ++
             }
         }
-        if( IsObject(keys) )
-            this.DirectedInput(hold:=0,, keys* ) ;keysup
-        else
-            this.DirectedInput(hold:=0,, keys ) ;keysup
         Critical, Off
         return
     }

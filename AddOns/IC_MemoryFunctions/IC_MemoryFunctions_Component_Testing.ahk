@@ -2,7 +2,7 @@
     Memory Reads Testing
 */
 
-g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 85
+g_TabControlHeight += g_TabControlHeight - Max(g_TabControlHeight, 600) + 105
 
 ; Gui, ICScriptHub:Tab, Stats
 ; Gui, ICScriptHub:Font, w700
@@ -48,6 +48,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite3:
 Gui, ICScriptHub:Add, Text, vFormationFavorite3ID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionOverrideSize: 
 Gui, ICScriptHub:Add, Text, vReadTransitionOverrideSizeID x+2 w400,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionDirection: 
+Gui, ICScriptHub:Add, Text, vReadTransitionDirectionID x+2 w400,
 
 class ReadMemoryFunctionsExtended
 {
@@ -74,7 +76,7 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, NumRangedAttackingMonsterLblID, % g_SF.Memory.ReadNumRangedAttackingMonsters()
         ;GuiControl, ICScriptHub:, g_InputsSentID, % g_InputsSent
         GuiControl, ICScriptHub:, ReadTransitionOverrideSizeID, % g_SF.Memory.ReadTransitionOverrideSize() ; g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game)
-        
+        GuiControl, ICScriptHub:, ReadTransitionDirectionID, % g_SF.Memory.ReadTransitionDirection()      
     }
 
     ReadSwapTimings()
