@@ -62,6 +62,15 @@ Class AddonManagement
         return 1
     }
 
+    CheckIfEnabled(Name,Version){
+        for k,v in this.Addons{
+            if (v.Name = Name AND v.Version=Version) {
+                return v.Enabled
+            }
+        }
+        return 0
+    }
+
     CheckIsDependedOn(Name,Version){
         for k,v in this.Addons{
             for i,j in v.Dependencies{
