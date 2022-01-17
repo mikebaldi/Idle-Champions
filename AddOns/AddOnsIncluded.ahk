@@ -5,6 +5,6 @@
 
 ; Inclusion of an Addon Manager this will control the includes of other addons.
 ; If you don't want to use the Addon Manager, you can include other addons manually here
-#include *i %A_LineFile%\..\IC_Addon_Management\IC_Addon_Management_Includes.ahk
+#include *i %A_LineFile%\..\IC_Addon_Management_V0_2\IC_Addon_Management_Includes.ahk
 
 
