@@ -74,7 +74,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.4, 2022-01-10"
+        return "v2.4.1, 2022-01-17"
     }
 
     ;Gets data from JSON file
@@ -401,12 +401,11 @@ class IC_SharedFunctions_Class
     /*  DoDashWait - A function that will wait for Dash ability to activate by reading the current time scale multiplier.
 
         Parameters:
-        DashSleepTime ;Maximum time, in milliseconds, the loop will continue. This value is modified by the time scale multiplier at the start of the loop.
         DashWaitMaxZone ;Maximum zone to attempt to Dash wait.
 
         Returns: nothing
     */
-    DoDashWait( DashSleepTime, DashWaitMaxZone := 2000 )
+    DoDashWait( DashWaitMaxZone := 2000 )
     {
         this.ToggleAutoProgress( 0, false, true )
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
@@ -415,22 +414,19 @@ class IC_SharedFunctions_Class
         dash := new TimeScaleWhenNotAttackedHandler ; create a new Dash Handler object.
         dash.Initialize()
         timeScale := this.Memory.ReadTimeScaleMultiplier()
-        if (timeScale < 1)
-            timeScale := 1
-        modDashSleep := ( DashSleepTime ) / timeScale
-        if (modDashSleep < 1)
-            modDashSleep := DashSleepTime
+        timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
+        timeout := 80000 / timeScale ; 80 seconds / timescale (8s at 10x)
         ; Loop escape conditions:
-        ;   does full sleep duration
+        ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
         ;   dash is active, dash.GetScaleActiveValue() toggles to true when dash is active and returns "" if fails to read.
-        while ( ElapsedTime < modDashSleep AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
+        while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
         {
             this.ToggleAutoProgress(0)
             if !(this.SafetyCheck()) OR !(dash.IsBaseAddressCorrect())
                 dash.Initialize()
             ElapsedTime := A_TickCount - StartTime
-            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . modDashSleep
+            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . timeout
         }
         g_PreviousZoneStartTime := A_TickCount
         return
@@ -504,6 +500,7 @@ class IC_SharedFunctions_Class
         }
         if (dtCurrentZoneTime > 45 AND fallBackTries < 3 AND dtCurrentZoneTime - lastCheck > 15) ; second check - Fall back to previous zone and try to continue
         {
+            this.OpenIC() ; reset memory values in case they missed an update.
             this.FallBackFromZone()
             this.DirectedInput(,, "{q}" ) ; safety for correct party
             this.ToggleAutoProgress(1, true)
@@ -586,8 +583,8 @@ class IC_SharedFunctions_Class
 
     BenchBrivConditions(settings)
     {
-        ;bench briv if jump animation override is added to list and it isn't a quick transition
-        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2)
+        ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
             return true
         ;bench briv if avoid bosses setting is on and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
@@ -608,8 +605,8 @@ class IC_SharedFunctions_Class
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return false
-        ;unbench briv if 'Briv Jump Buffer' setting is disabled and a jump animation override isn't added to the list
-        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadTransitionOverrideSize() != 1)
+        ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
+        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0) 
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         else if !(settings[ "BrivJumpBuffer" ])
@@ -655,7 +652,8 @@ class IC_SharedFunctions_Class
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
-            this.PID := 0
+            Process, Exist, IdleDragons.exe ; allows generalized OpenIC to be used as a safetycheck.
+            this.PID := ErrorLevel
             while (!this.PID)
             {
                 StartTime := A_TickCount
@@ -802,7 +800,7 @@ class IC_SharedFunctions_Class
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                this.DirectedInput(,, spam* ) 
+                this.DirectedInput(,, spam* )
                 counter++
             }
         }
@@ -815,7 +813,7 @@ class IC_SharedFunctions_Class
             isCurrentFormation := this.IsCurrentFormation( formationFavorite )
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
-                this.DirectedInput(,, spam* ) 
+                this.DirectedInput(,, spam* )
                 counter++
             }
         }
@@ -880,10 +878,8 @@ class IC_SharedFunctions_Class
             return
         }
         var := ["{F" . seat . "}"]
-        if( IsObject(keys) )
-            var.Push(keys*)
-        else
-            var.Push(keys)
+        keys := !IsObject(keys) ? [keys] : keys
+        this.DirectedInput(,, keys* )
         this.DirectedInput(,release := 0, var* ) ; keysdown
         champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
@@ -894,13 +890,11 @@ class IC_SharedFunctions_Class
             {
                 this.DirectedInput(hold:=0,, var* ) ;keysup
                 this.DirectedInput(,release := 0, var* ) ; keysdown
+                if(!Mod(counter, 10))
+                    this.DirectedInput(,, keys* )
                 counter ++
             }
         }
-        if( IsObject(keys) )
-            this.DirectedInput(hold:=0,, keys* ) ;keysup
-        else
-            this.DirectedInput(hold:=0,, keys ) ;keysup
         Critical, Off
         return
     }

@@ -60,8 +60,8 @@ This is the minimum zone number that your "W" formation can farm Steelbones stac
 **Target Haste stacks for next run:**  
 When farming Steelbones stacks, the script will attempt to farm enough to have this amount of Haste stacks for the next run. You will have to calculate how many Haste stacks you need to complete your gem farm runs. This site provides an excellent stack calculator: https://ic.byteglow.com/speed  
 
-**Maximum time (ms) script will wait for Dash (0 disables):**  
-With a high enough ilvl Melf or Hew it can be faster to idle on zone one until Shandie's Dash ability activates. The script will attempt to detect this on its own, but if more than the amount of time passes input here (in milliseconds) then it will proceed. Note, the time here is modified based on the in game time scale multiplier when potions are used. Entering 0 (zero) will disable waiting on zone one until Shandie's Dash ability activates.  
+**Disable Dash Wait:**  
+The script will attempt to wait for Shandie's dash to activate if she is in the formation before progressing the run. Enabling this setting will disable the attempt to wait entirely.
 
 **Briv Jump Timer (ms) client remains closed for Briv Restart Stack (0 disables):**  
 After passing the zone set as part of 'Farm SB stacks AFTER this zone', the script will close the Idle Champions client for this amount of time, in milliseconds. With this value properly set, upon restarting the client an offline progress catch up mechanic will trigger and 5 minutes of time will be simulated, generally providing more stacks in less time when compared to stacking in game manually (by setting this value to 0). Recommended value range is 9000 to 15000. Longer durations do not provide more stacks, but too low of a duration may prevent the catch up mechanic from triggering resulting in few or no stacks.

@@ -18,8 +18,6 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "TargetStacks" ] := 4000
     if ( g_BrivUserSettings[ "RestartStackTime" ] == "" )
         g_BrivUserSettings[ "RestartStackTime" ] := 12000
-    if ( g_BrivUserSettings[ "DashSleepTime" ] == "" )
-        g_BrivUserSettings[ "DashSleepTime" ] := 60000
     if ( g_BrivUserSettings[ "DoChests" ] == "" )
         g_BrivUserSettings[ "DoChests" ] := 1
     if ( g_BrivUserSettings[ "BuySilvers" ] == "" )
@@ -48,8 +46,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "MinStackZone" ] := 200
     if ( g_BrivUserSettings[ "BrivJumpBuffer" ] == "" )
         g_BrivUserSettings[ "BrivJumpBuffer" ] := 0
-    if ( g_BrivUserSettings[ "ForceDashWait" ] == "" )
-        g_BrivUserSettings[ "ForceDashWait" ] := false
+    if ( g_BrivUserSettings[ "DisableDashWait" ] == "" )
+        g_BrivUserSettings[ "DisableDashWait" ] := false
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")

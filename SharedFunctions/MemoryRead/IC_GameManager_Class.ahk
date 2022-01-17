@@ -191,6 +191,8 @@ class IC_GameManager_Class
         ; to a value greater than 1. But for standard gem farm team should be goood for a while.
         ; quick transitions increment from 0 to 1, but more quickly.
         this.Game.GameInstance.Controller.Formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.TransitionOverrides,, [0xC, 0x1C, 0xC]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
+        this.Game.GameInstance.Controller.Formation.transitionDir := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xE0])
+        this.Game.GameInstance.Controller.Formation.inAreaTransition := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xE4])
         this.Game.GameInstance.Controller.Formation.numAttackingMonstersReached := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xEC])
         this.Game.GameInstance.Controller.Formation.numRangedAttackingMonsters := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xF0])
         ;==============================

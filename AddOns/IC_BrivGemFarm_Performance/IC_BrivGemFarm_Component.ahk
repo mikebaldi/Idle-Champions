@@ -11,13 +11,13 @@ ReloadBrivGemFarmSettings()
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
+Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, g_CustomColor
 Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+5 w50, % g_BrivUserSettings[ "StackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[ "MinStackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewTargetStacks x15 y+10 w50, % g_BrivUserSettings[ "TargetStacks" ]
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
-Gui, ICScriptHub:Add, Edit, vNewDashSleepTime x15 y+10 w50, % g_BrivUserSettings[ "DashSleepTime" ]
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver
 Gui, ICScriptHub:Add, Checkbox, vDoChestsCheck Checked%DoChests% x15 y+20, Enable server calls to buy and open chests during stack restart?
@@ -48,7 +48,6 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zo
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Maximum time (ms) script will wait for Dash (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
@@ -83,6 +82,7 @@ UpdateGUICheckBoxes()
     GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
     GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
     GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
+    GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ] 
 }
 
 Briv_Run_Clicked()
@@ -135,7 +135,7 @@ Briv_Save_Clicked()
     g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
     g_BrivUserSettings[ "TargetStacks" ] := NewTargetStacks
     g_BrivUserSettings[ "RestartStackTime" ] := NewRestartStackTime
-    g_BrivUserSettings[ "DashSleepTime" ] := NewDashSleepTime
+    g_BrivUserSettings[ "DisableDashWait" ] := DisableDashWaitCheck
     g_BrivUserSettings[ "DoChests" ] := DoChestsCheck
     g_BrivUserSettings[ "BuySilvers" ] := BuySilversCheck
     g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
