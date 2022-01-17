@@ -50,6 +50,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionOverrideSize:
 Gui, ICScriptHub:Add, Text, vReadTransitionOverrideSizeID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionDirection: 
 Gui, ICScriptHub:Add, Text, vReadTransitionDirectionID x+2 w400,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadFormationTransitionDir: 
+Gui, ICScriptHub:Add, Text, vReadFormationTransitionDirID x+2 w400,
 
 class ReadMemoryFunctionsExtended
 {
@@ -77,6 +79,7 @@ class ReadMemoryFunctionsExtended
         ;GuiControl, ICScriptHub:, g_InputsSentID, % g_InputsSent
         GuiControl, ICScriptHub:, ReadTransitionOverrideSizeID, % g_SF.Memory.ReadTransitionOverrideSize() ; g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game)
         GuiControl, ICScriptHub:, ReadTransitionDirectionID, % g_SF.Memory.ReadTransitionDirection()      
+        GuiControl, ICScriptHub:, ReadFormationTransitionDirID, % g_SF.Memory.ReadFormationTransitionDir()      
     }
 
     ReadSwapTimings()
