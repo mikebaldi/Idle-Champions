@@ -62,6 +62,20 @@ Class AddonManagement
         return 1
     }
 
+    CheckIsDependedOn(Name,Version){
+        for k,v in this.Addons{
+            for i,j in v.Dependencies{
+                if (j.Name = Name AND j.Version = Version) {
+                    ;We have a addon who depends on the name, now check it it's enabled
+                    if(this.Addons[k]["Enabled"]){
+                        return k
+                    }
+                }
+            }
+        }
+        return 0
+    }
+
     CheckDependencieOrder(AddonNumber,PositionWanted){
         if(AddonNumber > PositionWanted){
             ; moving Up
@@ -82,12 +96,12 @@ Class AddonManagement
             While(LoopCounter<=PositionWanted){
                 for k, v in this.Addons[LoopCounter]["Dependencies"]{
                     if(this.Addons[AddonNumber]["Name"]=v.Name AND this.Addons[AddonNumber]["Version"]=v.Version){
-                        return 0
+                        return k
                     }
                 }
                 ++LoopCounter
             }
-            return 1
+            return 0
         }
 
     }
@@ -111,16 +125,23 @@ Class AddonManagement
     ; Parameters:   Name: the name of the addon
     ;               Version: the version of the addon
     DisableAddon(Name, Version){
-        if(Name!="Addon Management"){
-            for k, v in this.Addons {
-                if (v.Name=Name AND v.Version=Version){
-                    v.disable()
-                    break
+        if(Name!="Addon Management" AND Name != "Briv Gem Farm"){
+            if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
+                MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
+
+            }
+            else{
+                    for k, v in this.Addons {
+                    if (v.Name=Name AND v.Version=Version){
+                        v.disable()
+                        break
+                    }
                 }
             }
+
         }
         else{
-            MsgBox, 48, Warning, Can't disable the Addon Manager
+            MsgBox, 48, Warning, Can't disable the Addon Manager or Briv Gem Farm
         }
     }
 
@@ -128,6 +149,13 @@ Class AddonManagement
     ; Parameters:   Name: the name of the addon
     ;               Version: the version of the addon
     EnableAddon(Name, Version){
+        ; Check if another version is allready enabled
+        for k,v in this.Addons {
+            if(v.Name = Name AND v.Version != Version AND v.Enabled){
+                MsgBox, 48, Warning, Another version of this script is allready enabled, please disable that addon first!
+                return
+            }
+        }
         if(this.CheckDependenciesEnabled(Name,Version)){
             for k, v in this.Addons {
                 if (v.Name=Name AND v.Version=Version){
