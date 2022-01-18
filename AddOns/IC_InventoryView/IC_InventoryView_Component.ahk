@@ -1,6 +1,6 @@
 GUIFunctions.AddTab("Inventory View")
 
-global g_InventoryView := new IC_InventoryView_Component()
+global g_InventoryView := new IC_InventoryView_Component
 
 ; Add GUI fields to this addon's tab.
 Gui, ICScriptHub:Tab, Inventory View

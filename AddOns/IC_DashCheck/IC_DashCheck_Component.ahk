@@ -1,7 +1,5 @@
 GUIFunctions.AddTab("Dash Check")
 
-global g_InventoryView := new IC_InventoryView_Component()
-
 ; Add GUI fields to this addon's tab.
 Gui, ICScriptHub:Tab, Dash Check
 Gui, ICScriptHub:Font, w700
