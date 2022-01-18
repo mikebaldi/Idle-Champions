@@ -700,7 +700,8 @@ class IC_BrivGemFarm_Class
     {
         modronResetTimeout := 75000
         if(!g_SF.WaitForModronReset(modronResetTimeout))
-            g_SF.CloseIC( "ModronReset, resetting exceeded " . Floor(modronResetTimeout/1000) . "s" )
+            g_SF.CheckifStuck()
+            ;g_SF.CloseIC( "ModronReset, resetting exceeded " . Floor(modronResetTimeout/1000) . "s" )
         g_PreviousZoneStartTime := A_TickCount
     }
 
