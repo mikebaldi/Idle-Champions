@@ -1,21 +1,51 @@
-; functions to be added
-
-
-
-
+    ; ############################################################
+    ;                   Class AddonManagement
+    ; ############################################################
 Class AddonManagement
 {
+    ; ############################################################
+    ;                        Variables
+    ; ############################################################
+    ; Addons
+    ;   Object containing all addons
+    ; AddonOrder
+    ;   Object containing the oder in which de addons need to be loaded
+    ; AddonManagementConfigFile
+    ;   Link to the AddonManagement Configuration File
+    ; GeneratedAddonIncludeFile
+    ;   Link to the GeneratedAddonInclude File    
     Addons := []
-    AddonSettings := []
     AddonOrder := []
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
 
+    ; ############################################################
+    ;                        Functions
+    ; ############################################################
+
+    ; ------------------------------------------------------------
+    ;   
+    ;   Function: Add(AddonSettings)
+    ;               Adds an Addon to the Addons object
+    ; Parameters: Object containing Addon settings
+    ;     Return: Updates the Addons object
+    ;
+    ; ------------------------------------------------------------
     Add(AddonSettings){
         Addon := new Addon(AddonSettings)
         this.Addons.Push(Addon)
     }
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: CheckDependenciesEnabled(Name, Version)
+    ;               Checks if the Dependencies of an addon are enabled
+    ; Parameters:    Name: Name of the addon as defined in the Addon.json
+    ;             Version: Version of the addon as defined in the Addon.json
+    ;     Return: 1: All dependencies are enabled
+    ;             0: One or more dependencies are not enabled
+    ;                The script will ask to enable them
+    ;
+    ; ------------------------------------------------------------
     CheckDependenciesEnabled(Name, Version){
         for k,v in this.Addons {
             if (v.Name=Name AND v.Version=Version){
@@ -61,7 +91,16 @@ Class AddonManagement
         }
         return 1
     }
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: CheckIfEnabled(Name,Version)
+    ;               Returns if the addon is enabled or not
+    ; Parameters:    Name: Name of the addon as defined in the Addon.json
+    ;             Version: Version of the addon as defined in the Addon.json
+    ;     Return: 1: Addon is enabled
+    ;             0: Addon is disabled
+    ;
+    ; ------------------------------------------------------------
     CheckIfEnabled(Name,Version){
         for k,v in this.Addons{
             if (v.Name = Name AND v.Version=Version) {
@@ -70,7 +109,16 @@ Class AddonManagement
         }
         return 0
     }
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: CheckIsDependedOn(Name,Version)
+    ;               Checks if an enabled Addon is depending on the given addon
+    ; Parameters:    Name: Name of the addon as defined in the Addon.json
+    ;             Version: Version of the addon as defined in the Addon.json
+    ;     Return: 1: Addon is required by another enabled addon
+    ;             0: Addon is not required by another enabled addon
+    ;
+    ; ------------------------------------------------------------
     CheckIsDependedOn(Name,Version){
         for k,v in this.Addons{
             for i,j in v.Dependencies{
@@ -84,7 +132,17 @@ Class AddonManagement
         }
         return 0
     }
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: CheckDependencieOrder(AddonNumber,PositionWanted)
+    ;               Checks if an addon can be moved to the wanted position.
+    ;               As an addon that requires another addon needs to be loaded after the dependency
+    ; Parameters:    AddonNumber: Key of the addon in object Addons
+    ;             PositionWanted: Position wanted in the object Addons
+    ;     Return: <number>: Key of addon that is the problem
+    ;             0: No problem
+    ;
+    ; ------------------------------------------------------------
     CheckDependencieOrder(AddonNumber,PositionWanted){
         if(AddonNumber > PositionWanted){
             ; moving Up
@@ -92,12 +150,12 @@ Class AddonManagement
             for k, v in this.Addons[AddonNumber]["Dependencies"]{
                 while(LoopCounter<AddonNumber){
                     if(v.Name=this.Addons[Loopcounter]["Name"] AND v.Version=this.Addons[Loopcounter]["Version"]){
-                        Return 0
+                        Return Loopcounter
                     }
                     ++LoopCounter
                 }
             }
-            Return 1
+            Return 0
         }
         else if(AddonNumber<PositionWanted){
             ; moving down
@@ -114,10 +172,16 @@ Class AddonManagement
         }
 
     }
-
-    ; Checks if a folder in the addons folder is an addon
-    ; Parameters: none
-    ; Result : returns Addon settings 
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: CheckIfAddon(AddonBaseFolder,AddonFolder)
+    ;               Checks if an folder contains an addon by looking for the addon.json file
+    ; Parameters: AddonBaseFolder: Base folder where the addons are stored
+    ;                 AddonFolder: Folder where the addon is stored
+    ;     Return: Object containing the settings from the addon.json file
+    ;             0: Folder not found
+    ;
+    ; ------------------------------------------------------------
     CheckIfAddon(AddonBaseFolder,AddonFolder){
         if FileExist(AddonBaseFolder . AddonFolder . "\Addon.json"){
             AddonSettings := g_SF.LoadObjectFromJSON(AddonBaseFolder . AddonFolder . "\Addon.json")
@@ -137,7 +201,6 @@ Class AddonManagement
         if(Name!="Addon Management" AND Name != "Briv Gem Farm"){
             if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
                 MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
-
             }
             else{
                     for k, v in this.Addons {
@@ -219,7 +282,7 @@ Class AddonManagement
     }
 
     SwitchOrderAddons(AddonNumber,Position){
-        if(this.CheckDependencieOrder(AddonNumber,Position)){
+        if(!this.CheckDependencieOrder(AddonNumber,Position)){
             NumberOfAddons:=this.Addons.Count()
             temp:=this.Addons[AddonNumber]
             if(AddonNumber > Position){
