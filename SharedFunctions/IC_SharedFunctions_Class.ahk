@@ -579,6 +579,12 @@ class IC_SharedFunctions_Class
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
         }
+        ; check to swap briv from favorite 2 to favorite 1 (W to Q)
+        else if (!brivBenched AND this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)))
+        {
+            this.DirectedInput(,,["{q}"]*)
+            g_SharedData.SwapsMadeThisRun++
+        }
     }
 
     BenchBrivConditions(settings)
