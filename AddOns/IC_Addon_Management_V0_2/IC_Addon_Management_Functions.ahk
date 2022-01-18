@@ -193,10 +193,15 @@ Class AddonManagement
         }
         return 0
     }
-
-    ; Disable an addon in the addonsettings, will only be persisting if combined with WriteAddonManagementSettings()
-    ; Parameters:   Name: the name of the addon
-    ;               Version: the version of the addon
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: DisableAddon(Name, Version)
+    ;               Disables the given addon
+    ; Parameters:    Name: Name of the addon as defined in the Addon.json
+    ;             Version: Version of the addon as defined in the Addon.json
+    ;     Return: Disables in the addon in the Addons object
+    ;
+    ; ------------------------------------------------------------
     DisableAddon(Name, Version){
         if(Name!="Addon Management" AND Name != "Briv Gem Farm"){
             if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
@@ -216,10 +221,15 @@ Class AddonManagement
             MsgBox, 48, Warning, Can't disable the Addon Manager or Briv Gem Farm
         }
     }
-
-    ; Enable an addon in the addonsettings, will only be persisting if combined with WriteAddonManagementSettings()
-    ; Parameters:   Name: the name of the addon
-    ;               Version: the version of the addon
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: EnableAddon(Name, Version)
+    ;               Enables the given addon
+    ; Parameters:    Name: Name of the addon as defined in the Addon.json
+    ;             Version: Version of the addon as defined in the Addon.json
+    ;     Return: Enables in the addon in the Addons object
+    ;
+    ; ------------------------------------------------------------
     EnableAddon(Name, Version){
         ; Check if another version is allready enabled
         for k,v in this.Addons {
@@ -280,7 +290,16 @@ Class AddonManagement
         }
         
     }
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: SwitchOrderAddons(AddonNumber,Position)
+    ;               Tries to switch the given addon to the position wanted
+    ;               The function will check for dependencies
+    ; Parameters: AddonNumber: key of the addon in Object Addons to move
+    ;                Position: Postition where we want the Addon to get
+    ;     Return: Moves the Addons to wanted position if possible
+    ;
+    ; ------------------------------------------------------------
     SwitchOrderAddons(AddonNumber,Position){
         if(!this.CheckDependencieOrder(AddonNumber,Position)){
             NumberOfAddons:=this.Addons.Count()
@@ -306,10 +325,14 @@ Class AddonManagement
             return 0
         }
     }
-
-    ; Get a list of all available addons in the Addon folder
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: GetAvailableAddons()
+    ;               Fills the object Addons with all available addons
     ; Parameters: none
-    ; Result : object this.Addons 
+    ;     Return: object Addons
+    ;
+    ; ------------------------------------------------------------
     GetAvailableAddons(){
         Loop, Files, % g_AddonFolder . "*" , D 
         {
@@ -319,9 +342,14 @@ Class AddonManagement
         }
     }
 
-    ; Generatates the Include File for the addons that need to be loaded
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: GenerateIncludeFile()
+    ;               Generates the include files for the enabled addons in the addons object
     ; Parameters: none
-    ; Result : object this.AddonSettings  
+    ;     Return: Generated include file
+    ;
+    ; ------------------------------------------------------------
     GenerateIncludeFile(){
         IncludeFile := this.GeneratedAddonIncludeFile
         IfExist, %IncludeFile%
@@ -335,7 +363,15 @@ Class AddonManagement
         }
     }
 
-
+    ; ------------------------------------------------------------
+    ;
+    ;   Function: GenerateListViewContent(GuiWindowName, ListViewName)
+    ;               Generates the contents of a ListView
+    ; Parameters: GuiWindowName : Windowname of the parent window of the listvies
+    ;              ListViewName : Name of the ListView object
+    ;     Return: Generates the content of the listview
+    ;
+    ; ------------------------------------------------------------
     GenerateListViewContent(GuiWindowName, ListViewName){
         Gui, %GuiWindowName%:ListView, %ListViewName%
         LV_Delete()
@@ -346,10 +382,6 @@ Class AddonManagement
         loop, 4{
             LV_ModifyCol(A_Index, "AutoHdr")
         }
-    }
-
-    Remove(){
-
     }
 
     ShowAddonInfo(AddonNumber){
