@@ -52,6 +52,12 @@ Use the same familiar setup as your Q formation here.
 
 Set your Modron core to the level you wish to restart your farm at. It should (at the very most) be almost exactly what the formula `7.6 x your Gold Find e number` returns.
 
+First ensure your game is in scientific notation by going into the settings (Escape) and checking the box:
+
+![Scientific notation setting](../docimages/scientific-notation.png)
+
+Now we can see the e number for our gold find.
+
 ![Where to find the e number](../docimages/figuring-out-gem-farm-ending-point.png)
 
 Here we can see the gold find is 4.58e96%, so the number we plug into the formula above is 96. 
@@ -69,6 +75,8 @@ It's time to configure the Gem Farm script now that you have your formations and
 Here's a reminder of the Gem Farm setup screen (along with an explanation of what the image buttons do):
 
 ![Gem Farm setup screen](../docimages/gem-farm-screen.png)
+
+The screenshot is indicative only as `IC Script Hub` is going through rapid development right now.
 
 ### Level Champions with Fkeys?
 
@@ -144,7 +152,7 @@ Most people can leave this as the default. This can be set to 0 when you are usi
 
 ### Briv Jump Timer (ms)
 
-Leave this as the default initially. You may notice that you're seeing a lot of Briv's jump animation. You would want to reduce this value (in small increments) while watching your game screen to find the best setting for your machine.
+This value no longer exists in the latest GUI and this entry will be removed when the screenshot is updated.
 
 ### Enable server calls to buy and open chests during stack restart?
 

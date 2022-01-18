@@ -21,6 +21,30 @@ You should see the `IC Script Hub` window and it should look something like this
 You may need to [install or update AutoHotKey](https://www.autohotkey.com/) if you receive an error at this point.
 
 ## Setting the EGS game location
+### Step 0: Make sure your addons are enabled
+
+You'll want to make sure you have the game shortcut addon enabled. Click into the addons tab and ensure the addon highlighted by the green arrow is enabled and saved.
+
+I recommend making sure the ones with the yellow arrow are also enabled too.
+
+![Addons tab](../docimages/addons-tab.png)
+
+If you don't even see the Addons tab, open the `AddonManagement.json` file in a text editor at location `\AddOns\IC_Addon_Management` and find the following block of code:
+
+```
+    "Addon Management":{
+		"v0.1.":{
+			"Enabled":0
+		}
+	},
+```
+
+change "Enabled":0 to "Enabled":1 and save the file.
+
+Reload your Script Hub and you should now see the Addons tab:
+
+![Reload button](../docimages/reload-script-hub.png)
+
 ### Step 1: Grab the shortcut you need
 
 1. Open the `EGS client`
