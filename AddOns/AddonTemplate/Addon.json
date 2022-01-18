@@ -1,0 +1,9 @@
+{
+	"Name":"Addon Template",
+	"Version": "v0.1.",
+    "Includes" : "Template_Includes.ahk",
+    "Author" : "<your name here>",
+    "Url" : "https://google.com",
+    "Info" : "<more info about the addon>",
+    "Dependencies" : {}
+}
