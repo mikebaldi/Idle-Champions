@@ -19,6 +19,7 @@ global g_SharedData := new IC_SharedData_Class
 
 class IC_SharedData_Class
 {
+    StackFailStats := new StackFailStates
     LoopString := ""
     TotalBossesHit := 0
     BossesHitThisRun := 0
@@ -46,6 +47,25 @@ class IC_SharedData_Class
     {
         Gui, show
     }
+}
+
+class StackFailStates
+{
+    ; StackFail Types: 
+    ; 1.  Ran out of stacks when ( > min stack zone AND < target stack zone). only reported when fail recovery is on
+    ;       Will stack farm - only a warning. Configuration likely incorrect            
+    ; 2.  Failed stack conversion (Haste <= 50, SB > target stacks). Forced Reset
+    ; 3.  Game was stuck (checkifstuck), forced reset
+    ; 4.  Ran out of haste and steelbones > target, forced reset
+    ; 5.  Failed stack conversion, all stacks lost.
+    ; 6.  Modron not resetting, forced reset
+    FAILED_TO_REACH_STACK_ZONE := 1
+    FAILED_TO_CONVERT_STACKS := 2
+    FAILED_TO_PROGRESS := 3
+    FAILED_TO_REACH_STACK_ZONE_HARD:= 4
+    FAILED_TO_KEEP_STACKS := 5
+    FAILED_TO_RESET_MODRON := 6
+    TALLY := [0,0,0,0,0,0]
 }
 
 class IC_SharedFunctions_Class
