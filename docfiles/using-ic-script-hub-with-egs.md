@@ -29,19 +29,7 @@ I recommend making sure the ones with the yellow arrow are also enabled too.
 
 ![Addons tab](../docimages/addons-tab.png)
 
-If you don't even see the Addons tab, open the `AddonManagement.json` file in a text editor at location `\AddOns\IC_Addon_Management` and find the following block of code:
-
-```
-    "Addon Management":{
-		"v0.1.":{
-			"Enabled":0
-		}
-	},
-```
-
-change "Enabled":0 to "Enabled":1 and save the file.
-
-Reload your Script Hub and you should now see the Addons tab:
+It should reload your Script Hub for you but should you ever want to do a manual reload (to reset the stats screen for instance, just remember to reconnect to your Gem Farm script if you do this) hit the reload button:
 
 ![Reload button](../docimages/reload-script-hub.png)
 
