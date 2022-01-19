@@ -12,7 +12,6 @@ global g_SharedData := new IC_SharedData_Class
 
 #include %A_LineFile%\..\IC_KeyHelper_Class.ahk
 #include %A_LineFile%\..\IC_ArrayFunctions_Class.ahk
-#include %A_LineFile%\..\IC_UserDetails_Class.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 ;Shandie's Dash handler
 #include %A_LineFile%\..\MemoryRead\EffectKeyHandlers\TimeScaleWhenNotAttackedHandler.ahk

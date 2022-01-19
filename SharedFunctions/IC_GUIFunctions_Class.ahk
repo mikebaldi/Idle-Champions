@@ -93,7 +93,7 @@ class GUIFunctions
         r_Height:=(ErrorLevel>>16)+4    ;-- HIWORD
         Return r_Height<<16|r_Width
     }
-
+    
     ;=========================================
     ; from https://www.autohotkey.com/boards/viewtopic.php?f=6&t=4732
     ; CreateGUID()
@@ -112,26 +112,27 @@ class GUIFunctions
     LV_Scope(gui, lv) {
         return new ListviewScope(gui, lv)
     }
+}
+
     
-    class ListviewScope {
-        __New(gui, lv) {
-            ; Save previous default GUI
-            this.oldgui := A_DefaultGui
-            ; Set new default GUI
-            Gui % gui ":Default"
-            this.gui := gui
-            ; Save previous default LV of new default GUI
-            this.lv := A_DefaultListView
-            ; Set new default LV
-            Gui ListView, % lv
-        }
-        __Delete() {
-            ; Restore settings of our GUI
-            Gui % this.gui ":Default"
-            if this.lv
-                Gui ListView, % this.lv
-            ; Restore previous default GUI
-            Gui % this.oldgui ":Default"
-        }
+class ListviewScope {
+    __New(gui, lv) {
+        ; Save previous default GUI
+        this.oldgui := A_DefaultGui
+        ; Set new default GUI
+        Gui % gui ":Default"
+        this.gui := gui
+        ; Save previous default LV of new default GUI
+        this.lv := A_DefaultListView
+        ; Set new default LV
+        Gui ListView, % lv
+    }
+    __Delete() {
+        ; Restore settings of our GUI
+        Gui % this.gui ":Default"
+        if this.lv
+            Gui ListView, % this.lv
+        ; Restore previous default GUI
+        Gui % this.oldgui ":Default"
     }
 }

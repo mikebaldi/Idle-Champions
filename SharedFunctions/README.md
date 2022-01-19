@@ -17,6 +17,8 @@ Contains functions for copying arrays and for viewing decimal and hex number arr
 
 Contains expanded functions for handling or updating GUI elements. If this file is included, a script may access these functions through **GUIFunctions.[FunctionName]\(\)**
 
+`LV_Scope` is used whenever a listview is updated in order to ensure the correct listview gets updated. 
+
 > IC_KeyHelper_Class.ahk  
 
 IC_KeyHelper_Class helps convert keystrokes to a virtual key code which is used in SendMessage and PostMessage commands. It allows for expanded  compatability for international keyboards and more control than standard Send and SendInput ahk commands.
@@ -45,7 +47,6 @@ json is a library that allows for common json functionality such as loading and 
 ObjRegisterActive contains various functions written primarily by ahk's lexikos that expand functionality of AHK.
 
 `ObjRegisterActive` creates a comobject that can be used to interact directly with the script from another script.  
-`LV_Scope` is used whenever a listview is updated in order to ensure the correct listview gets updated.  
 
 > MemoryRead\classMemory.ahk
 
