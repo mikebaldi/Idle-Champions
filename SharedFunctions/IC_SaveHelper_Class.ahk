@@ -147,9 +147,9 @@ class IC_SaveHelper_Class
                 val := (9*val + 5046)
             }
         }
-        else if (val <= 47)
+        else if (val <= 48)
         {
-            val := 47
+            val := 48
         }
         return val
     }

@@ -45,10 +45,12 @@ Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
 Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
-Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking:
-Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w50,
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time Total (min):
+Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w50,
+; Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
+; Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
+Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
 Gui, ICScriptHub:Add, Text, vSilversPurchasedID x+2 w200, 0

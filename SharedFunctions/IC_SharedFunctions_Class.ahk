@@ -19,6 +19,7 @@ global g_SharedData := new IC_SharedData_Class
 
 class IC_SharedData_Class
 {
+    ; Note stats vs States. Confusing, but intended.
     StackFailStats := new StackFailStates
     LoopString := ""
     TotalBossesHit := 0
@@ -59,12 +60,12 @@ class StackFailStates
     ; 4.  Ran out of haste and steelbones > target, forced reset
     ; 5.  Failed stack conversion, all stacks lost.
     ; 6.  Modron not resetting, forced reset
-    FAILED_TO_REACH_STACK_ZONE := 1
-    FAILED_TO_CONVERT_STACKS := 2
-    FAILED_TO_PROGRESS := 3
-    FAILED_TO_REACH_STACK_ZONE_HARD:= 4
-    FAILED_TO_KEEP_STACKS := 5
-    FAILED_TO_RESET_MODRON := 6
+    static FAILED_TO_REACH_STACK_ZONE := 1
+    static FAILED_TO_CONVERT_STACKS := 2
+    static FAILED_TO_PROGRESS := 3
+    static FAILED_TO_REACH_STACK_ZONE_HARD:= 4
+    static FAILED_TO_KEEP_STACKS := 5
+    static FAILED_TO_RESET_MODRON := 6
     TALLY := [0,0,0,0,0,0]
 }
 
@@ -94,7 +95,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.4.1, 2022-01-17"
+        return "v2.5.0, 2022-01-18"
     }
 
     ;Gets data from JSON file
@@ -187,7 +188,7 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         counter := 0
         sleepTime := 100
-        while(this.Memory.ReadCurrentZone() == -1)
+        while(this.Memory.ReadCurrentZone() == -1 AND ElapsedTime < maxLoopTime)
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime))
