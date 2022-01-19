@@ -393,7 +393,7 @@ class IC_BrivGemFarm_Class
             {
                 GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
                 FailRunTime += PreviousRunTime
-                GuiControl, ICScriptHub:, TotalFailRunTimeID, % FailRunTime
+                GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( FailRunTime, 2 )
                 GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(SharedRunData.StackFailStats.TALLY)
             }
 
