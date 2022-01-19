@@ -13,6 +13,10 @@ CLR contains various functions that allow for use with managed libraries (writte
 
 Contains functions for copying arrays and for viewing decimal and hex number arrays as strings. If this file is included, a script may access these functions through **ArrFnc.[FunctionName]\(\)**
 
+> IC_GUIFunctions_Class.ahk
+
+Contains expanded functions for handling or updating GUI elements. If this file is included, a script may access these functions through **GUIFunctions.[FunctionName]\(\)**
+
 > IC_KeyHelper_Class.ahk  
 
 IC_KeyHelper_Class helps convert keystrokes to a virtual key code which is used in SendMessage and PostMessage commands. It allows for expanded  compatability for international keyboards and more control than standard Send and SendInput ahk commands.
