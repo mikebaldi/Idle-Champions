@@ -382,15 +382,6 @@ class IC_SharedFunctions_Class
         ; g_KeyPresses := TestVar
     }
 
-    ;Test to see if swapping is unneccessary. (Useful for skipping swaps on Tall Tales adventure)
-    ShouldSkipSwap()
-    {
-        ; 0 = right, 1 = left, 2 = static (instant)
-        if(this.Memory.ReadTransitionDirection() == 2)
-            return true
-        return false
-    }
-
     ;================================
     ;Functions mostly for gem farming
     ;================================
