@@ -13,6 +13,7 @@ class GUIFunctions
     }
 
     AddButton(Picture,FunctionToCall){
+        Gui, Tab
         Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall%, %Picture%
         g_MenuBarXPos+=30
     }
