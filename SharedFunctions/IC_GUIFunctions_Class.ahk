@@ -12,6 +12,12 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
+    AddButton(Picture,FunctionToCall){
+        Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall%, %Picture%
+        g_MenuBarXPos+=30
+    }
+    
+
     ;------------------------------
     ;
     ; Function: LVM_CalculateSize

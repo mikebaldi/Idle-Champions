@@ -79,8 +79,10 @@ Gui, ICScriptHub:New
 Gui, ICScriptHub:+Resize -MaximizeBox
 ;Gui, ICScriptHub:Add, Button, x4 y5 w50 gReload_Clicked, `Reload
 ;Gui, ICScriptHub:Add, Button, x+20 gLaunch_Clicked, Launch IC
-Gui, ICScriptHub:Add, Picture, x4 y5 h25 w25 gLaunch_Clicked, %g_GameButton%
-Gui, ICScriptHub:Add, Picture, x+5 h25 w25 gReload_Clicked, %g_ReloadButton%
+global g_MenuBarXPos:=4
+GUIFunctions.AddButton(g_GameButton,"Launch_Clicked")
+GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked")
+
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver ;
 ; Needed to add tabs
