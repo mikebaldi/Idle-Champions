@@ -32,10 +32,6 @@ Some examples include:
 `CloseIC` - Closes the game. Forces it closed after 10 seconds.  
 `SetUserCredentials` - Stores UserID, Hash, InstanceID and some commonly used user data for use in server calls.
 
-> IC_UserDetails_Class.ahk  
-
-IC_UserDetails_Class allows for simpler use of some commonly used data that is retrieved from a getuserdetails call. 
-
 > json.ahk  
 
 json is a library that allows for common json functionality such as loading and saving json to files. It has been expanded from the original to include json formatting functions.
