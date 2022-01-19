@@ -21,8 +21,13 @@ Gui, AddonManagement:Add, Button , x+5 w%AddonButtonWidth% gAddonManagementMoveD
 Gui, AddonManagement:Add, Button , x+5 w%AddonButtonWidth% gAddonManagementInfoClicked, Info
 Gui, AddonManagement:Add, Button , x+5 w%AddonButtonWidth% gAddonManagementSaveClicked, Save
 
-
-
+AddonManagementGuiClose(){
+	if(AddonManagement.NeedSave){
+		MsgBox, 36, Save, Looks like you didn't save your changes, would you like to do this now?
+        IfMsgBox, Yes
+            AddonManagementSaveClicked()
+	}
+}
 
 AddonManagementEnableClicked(){
 	Gui, AddonManagement:ListView, AddonsAvailableID
@@ -50,6 +55,7 @@ AddonManagementMoveUpClicked(){
 		if(SelectedRow > 1){
 			WantedRow := SelectedRow -1
 			if(AddonManagement.SwitchOrderAddons(SelectedRow,WantedRow)){
+				AddonManagement.NeedSave:=1
 				AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 				LV_Modify(WantedRow, "Select")
 			}
@@ -66,6 +72,7 @@ AddonManagementMoveDownClicked(){
 		if(SelectedRow < LV_GetCount()){
 			WantedRow := SelectedRow + 1
 			if(AddonManagement.SwitchOrderAddons(SelectedRow,WantedRow)){
+				AddonManagement.NeedSave:=1
 				AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 				LV_Modify(WantedRow, "Select")
 			}

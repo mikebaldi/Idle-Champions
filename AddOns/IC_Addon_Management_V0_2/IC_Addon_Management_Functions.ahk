@@ -16,6 +16,7 @@ Class AddonManagement
     ;   Link to the GeneratedAddonInclude File    
     Addons := []
     AddonOrder := []
+    NeedSave := 0
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
 
@@ -210,6 +211,7 @@ Class AddonManagement
             else{
                     for k, v in this.Addons {
                     if (v.Name=Name AND v.Version=Version){
+                        this.NeedSave:=1
                         v.disable()
                         break
                     }
@@ -241,6 +243,7 @@ Class AddonManagement
         if(this.CheckDependenciesEnabled(Name,Version)){
             for k, v in this.Addons {
                 if (v.Name=Name AND v.Version=Version){
+                    this.NeedSave:=1
                     v.enable()
                     break
                 }

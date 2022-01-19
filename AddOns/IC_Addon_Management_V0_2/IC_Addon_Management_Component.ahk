@@ -5,6 +5,7 @@
 global AddonManagement := new AddonManagement		; Creation of the AddonManagement
 global g_AddonFolder := "Addons\" 					; Relative to A_ScriptDir
 
+AddonManagement.NeedSave := 0
 AddonManagement.GetAvailableAddons()
 AddonManagement.GetAddonManagementSettings()
 AddonManagement.FirstRunCheck()
@@ -18,6 +19,7 @@ GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked")
 
 AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()
+	AddonManagement.NeedSave := 0
 	Gui, AddonManagement:Show
 }
 
