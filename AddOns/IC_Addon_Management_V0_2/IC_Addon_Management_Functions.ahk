@@ -260,7 +260,6 @@ Class AddonManagement
             ;EnabledAddons["Addon Management"]:=Object("Version","v0.2.","Enabled",1)
             EnabledAddons:=Object("Addon Management",Object("Version","v0.2.","Enabled",1),"Briv Gem Farm",Object("Version","v1.0.","Enabled",1))
             g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, EnabledAddons)
-            this.GenerateIncludeFile()
         }
         ; here we will enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
@@ -274,6 +273,8 @@ Class AddonManagement
                 }     
             }
         }
+
+        this.GenerateIncludeFile()
 
         if(IsObject(this.AddonOrder)){
             for k, v in this.AddonOrder {
@@ -351,6 +352,10 @@ Class AddonManagement
     ;
     ; ------------------------------------------------------------
     GenerateIncludeFile(){
+        if(!FileExist(this.GeneratedAddonIncludeFile))
+        {
+            FirstRun:=1
+        }
         IncludeFile := this.GeneratedAddonIncludeFile
         IfExist, %IncludeFile%
             FileDelete, %IncludeFile%
@@ -360,6 +365,11 @@ Class AddonManagement
                 IncludeLine := "#include *i " . g_AddonFolder . v.Dir . "\" . v.Includes
                 FileAppend, %IncludeLine%`n, %IncludeFile%
             }
+        }
+        if(FirstRun){
+            MsgBox, 36, Restart, This looks like your first time running Script Hub. `nSettings have been updated. `nDo you wish to reload now?
+            IfMsgBox, Yes
+                Reload
         }
     }
 
@@ -430,13 +440,7 @@ Class AddonManagement
 
     FirstRunCheck()
     {
-        if(!FileExist(this.GeneratedAddonIncludeFile))
-        {
-            this.GenerateIncludeFile()
-            MsgBox, 36, Restart, This looks like your first time running Script Hub. `nSettings have been updated. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
+
     }
 
 }
