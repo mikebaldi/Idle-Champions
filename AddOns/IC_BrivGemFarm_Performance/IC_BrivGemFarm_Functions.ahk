@@ -195,10 +195,9 @@ class IC_BrivGemFarm_Class
     ;===========================================
     ;Functions for updating GUI stats and timers
     ;===========================================
-
-    ; Starts functions that need to be run in a separate thread such as GUI Updates.
-    StartTimedFunctions()
+    CreateTimedFunctions()
     {
+        this.TimedFunctions := {}
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
         this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
@@ -215,11 +214,15 @@ class IC_BrivGemFarm_Class
         }
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
+    }
+
+    ; Starts functions that need to be run in a separate thread such as GUI Updates.
+    StartTimedFunctions()
+    {
         for k,v in this.TimerFunctions
         {
             SetTimer, %k%, %v%, 0
         }
-        ;SetTimer, %fncToCallOnTimer%, 100, 0
     }
 
     StopTimedFunctions()

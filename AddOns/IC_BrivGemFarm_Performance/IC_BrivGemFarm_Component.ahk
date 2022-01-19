@@ -100,6 +100,7 @@ Briv_Run_Clicked()
         g_SF.Memory.OpenProcessReader()
         scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
         GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
+        g_BrivFarm.CreateTimedFunctions()
         g_BrivFarm.StartTimedFunctions()
         Run, %A_AhkPath% "%scriptLocation%"
     }
@@ -119,6 +120,7 @@ Briv_Connect_Clicked()
 {    
     g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
     g_SF.Memory.OpenProcessReader()
+    g_BrivFarm.CreateTimedFunctions()
     g_BrivFarm.StartTimedFunctions()
     GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
 }
