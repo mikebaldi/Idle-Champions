@@ -546,13 +546,6 @@ class IC_SharedFunctions_Class
         return true
     }
 
-    ; Forces an adventure restart through closing IC and using server calls
-    WorldMapRestart()
-    {
-        g_SharedData.LoopString := "Zone is -1. At world map?"
-        this.RestartAdventure( "Zone is -1. At world map? Forcing Restart." )
-    }
-
     ; a method to swap formations and cancel briv's jump animation.
     SetFormation(settings := "")
     {
@@ -578,6 +571,7 @@ class IC_SharedFunctions_Class
         }
     }
 
+    ; True/False on whether Briv should be benched based on game conditions.
     BenchBrivConditions(settings)
     {
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
@@ -597,6 +591,7 @@ class IC_SharedFunctions_Class
         return false
     }
 
+    ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
@@ -642,6 +637,7 @@ class IC_SharedFunctions_Class
         return
     }
 
+    ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
         loadingDone := false
@@ -748,7 +744,7 @@ class IC_SharedFunctions_Class
     }
 
     /* Function that does follow-up tasks when IC is opened.
-    This function should be overridden by AddOns using ot to match their objective
+    This function should be overridden by AddOns using it to match their objective
 
     The default functionality is to switch to Q formation (briv progression), or
     fall back and switch to Q if being attacked
@@ -837,6 +833,13 @@ class IC_SharedFunctions_Class
         this.TotalGoldChests := this.Memory.GetChestCountByID(2)
     }
 
+    ; Forces an adventure restart through closing IC and using server calls
+    WorldMapRestart()
+    {
+        g_SharedData.LoopString := "Zone is -1. At world map?"
+        this.RestartAdventure( "Zone is -1. At world map? Forcing Restart." )
+    }
+
     ;=================================
     ;Functions for leveling a champion
     ;=================================
@@ -877,9 +880,9 @@ class IC_SharedFunctions_Class
         return
     }
 
-    ;=====================================================
-    ;Functions for finding and loading formation save data
-    ;=====================================================
+    ;=========================================================
+    ;Functions for testing if Automated script is ready to run
+    ;=========================================================
     /* A function to search a saved formation for a particular champ.
 
         Parameters:
@@ -954,6 +957,28 @@ class IC_SharedFunctions_Class
         }
         return formation
     }
+    
+    ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
+    ; Returns -1 if failed to load adventure id. Returns current adventure's ID if successful in finding adventure.
+    VerifyAdventureLoaded()
+    {
+        CurrentObjID := this.Memory.ReadCurrentObjID()
+        while ( CurrentObjID == "" OR CurrentObjID <= 0 )
+        {
+            MsgBox, 5,, % "Please load into a valid adventure or confirm the correct memory file is being used. `nCurrent version: " . this.Memory.GameManager.GetVersion() . "`nDebug Value: " CurrentObjID
+            IfMsgBox, Retry
+            {
+                this.Memory.OpenProcessReader()
+                CurrentObjID := this.Memory.ReadCurrentObjID()
+            }
+            IfMsgBox, Cancel
+            {
+                MsgBox, Stopping run.
+                return -1
+            }
+        }
+        return CurrentObjID
+    }
 
     ;======================
     ; Server Calls
@@ -979,28 +1004,6 @@ class IC_SharedFunctions_Class
     ; New Helper Functions
     ;======================
 
-    ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
-    ; Returns -1 if failed to load adventure id. Returns current adventure's ID if successful in finding adventure.
-    VerifyAdventureLoaded()
-    {
-        CurrentObjID := this.Memory.ReadCurrentObjID()
-        while ( CurrentObjID == "" OR CurrentObjID <= 0 )
-        {
-            MsgBox, 5,, % "Please load into a valid adventure or confirm the correct memory file is being used. `nCurrent version: " . this.Memory.GameManager.GetVersion() . "`nDebug Value: " CurrentObjID
-            IfMsgBox, Retry
-            {
-                this.Memory.OpenProcessReader()
-                CurrentObjID := this.Memory.ReadCurrentObjID()
-            }
-            IfMsgBox, Cancel
-            {
-                MsgBox, Stopping run.
-                return -1
-            }
-        }
-        return CurrentObjID
-    }
-
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 
     Parameters:
@@ -1023,7 +1026,7 @@ class IC_SharedFunctions_Class
         return Fkeys
     }
 
-    /*  areChampionsUpgraded - Tests to see if all seats in formation are upgraded to max.
+    /*  AreChampionsUpgraded - Tests to see if all seats in formation are upgraded to max.
 
     Parameters:
     formation - A list of champion ID values from the formation currently on the field.
@@ -1032,7 +1035,7 @@ class IC_SharedFunctions_Class
     True if all seats are fully upgraded. False otherwise.
     */
     ; Takes an array of champion IDs and determines if the slots they are in (NOT the champions themselves) are fully upgraded.
-    areChampionsUpgraded(formation)
+    AreChampionsUpgraded(formation)
     {
         for k, v in formation
         {

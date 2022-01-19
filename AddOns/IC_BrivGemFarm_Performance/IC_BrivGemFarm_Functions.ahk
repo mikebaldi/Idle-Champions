@@ -173,7 +173,7 @@ class IC_BrivGemFarm_Class
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
                 }
-                if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.areChampionsUpgraded(formationQ))
+                if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationQ))
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
                     keyspam := ["{ClickDmg}"]
@@ -670,7 +670,7 @@ class IC_BrivGemFarm_Class
             if (ultButton != -1)
                 g_SF.DirectedInput(,, ultButton)
         }
-        if(g_BrivUserSettings[ "Fkeys" ]) ; AND !g_SF.areChampionsUpgraded(formationFavorite1)
+        if(g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
             keyspam.Push("{ClickDmg}")
