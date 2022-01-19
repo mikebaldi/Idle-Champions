@@ -453,17 +453,6 @@ class IC_BrivGemFarm_Class
         }
     }
 
-    CloseFarmRun()
-    {
-        static SharedRunData
-        ;activeObjects := GetActiveObjects()
-        try ; avoid thrown errors when comobject is not available.
-        {
-            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-            SharedRunData.CloseRun()
-        }
-    }
-
     ;=====================================================
     ;Functions for Briv Stack farming, mostly for gem runs
     ;=====================================================
@@ -720,83 +709,6 @@ class IC_BrivGemFarm_Class
     ;===========================================================
     ;functions for speeding up progression through an adventure.
     ;===========================================================
-
-    /* SwapFormationDuringTransition - A function to swap between formations to cancel Briv's jump animation.
-
-    Parameters:
-    swapSleepMod - A time in ms to wait while between the point of reading quests and finishing transitioning
-                   before swapping formations back.
-    */
-    SwapFormationDuringTransition(CurrentZone)
-    {
-        Critical, On
-        if(g_SF.ShouldSkipSwap() AND !(g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0))
-        {
-            Critical, Off
-            return
-        }
-        StartTime := A_TickCount
-        ElapsedTime := counter := 0
-        sleepTime := 68
-        timeout := 5000
-        isBrivInCurrentFormation := false
-        swapSleepMod := g_BrivUserSettings[ "SwapSleep" ] / g_SF.Memory.ReadTimeScaleMultiplier()
-        isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-        ; Swap briv out and wait until next zone (Happens same time as QuestsRemaining goes back to 0)
-        g_SharedData.LoopString := "Transitioning (Read Quests)"
-        test1 := g_SF.Memory.ReadQuestRemaining()
-        while ( !g_SF.Memory.ReadQuestRemaining() AND ElapsedTime < timeout )
-        {
-            ElapsedTime := A_TickCount - StartTime
-            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-            if( ElapsedTime > (counter * sleepTime) AND isBrivInCurrentFormation) ; input limiter..
-            {
-                g_SF.DirectedInput(,,["{e}","{Right}"]*)
-                counter++
-            }
-        }
-        ; Don't swap to Briv if current highest zone is a boss zone.
-        if ( g_BrivUserSettings[ "AvoidBosses" ] AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) == 0 )
-        {
-            Critical, Off
-            return
-        }
-        StartTime := A_TickCount
-        ElapsedTime := counter := 0
-        ; wait extra swapSleep time to remove briv landing animation
-        ; TODO: find a read value that finds this. Using Champion travel time from screen edge to slot location?
-        g_SharedData.LoopString := "Transitioning (Swap `Sleep)"
-        while ( ElapsedTime < swapSleepMod AND ElapsedTime >= 0 ) ; >= 0 used to handle 50 day out of bounds
-        {
-            ElapsedTime := A_TickCount - StartTime
-        }
-        g_SharedData.LoopString := "Transitioning (Briv Formation)"
-        isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-        maxSwapArea := g_SF.ModronResetZone - g_BrivUserSettings[ "BrivJumpBuffer" ]
-        if(!isBrivInCurrentFormation AND CurrentZone < maxSwapArea)
-            g_SF.DirectedInput(,, ["{q}"]*)
-        else if(isBrivInCurrentFormation AND CurrentZone >= maxSwapArea)
-            g_SF.DirectedInput(,, ["{e}"]*)
-        ; After level change, while transitioning try to swap briv back. If it fails, rely on SetFormation to get him back in.
-        ; Note: monsters spawned resets to 0 after transitioning turns to 1, and increases > 0 barely before transitioning becomes 0. Do not wait until transitioning complete to swap in briv!
-        while (g_SF.Memory.ReadTransitioning() AND ElapsedTime < timeout)
-        {
-            if( ElapsedTime > (counter * sleepTime) )
-            {
-                counter++
-                
-                if(!isBrivInCurrentFormation AND CurrentZone < maxSwapArea)
-                    g_SF.DirectedInput(,, ["{q}"]*)
-                else if(isBrivInCurrentFormation AND CurrentZone >= maxSwapArea)
-                    g_SF.DirectedInput(,, ["{e}"]*)
-                else
-                    break
-            }
-            isBrivInCurrentFormation := (g_SF.Memory.ReadChampSlotByID(ChampID := 58) >= 0)
-        }
-        g_SharedData.SwapsMadeThisRun++
-        Critical, Off
-    }
 
     ;=====================================================
     ;Functions for direct server calls between runs
