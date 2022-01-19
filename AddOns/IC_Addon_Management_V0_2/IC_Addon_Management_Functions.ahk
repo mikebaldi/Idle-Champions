@@ -234,7 +234,7 @@ Class AddonManagement
         ; Check if another version is allready enabled
         for k,v in this.Addons {
             if(v.Name = Name AND v.Version != Version AND v.Enabled){
-                MsgBox, 48, Warning, Another version of this script is allready enabled, please disable that addon first!
+                MsgBox, 48, Warning, % "Another version of " . v.Name . " is allready enabled, please disable that addon first!"
                 return
             }
         }
