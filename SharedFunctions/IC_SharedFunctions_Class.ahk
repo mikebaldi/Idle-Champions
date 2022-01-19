@@ -780,7 +780,7 @@ class IC_SharedFunctions_Class
         }
         return true
     }
-    
+
     /* Function that does follow-up tasks when IC is opened.
     This function should be overridden by AddOns using ot to match their objective
 

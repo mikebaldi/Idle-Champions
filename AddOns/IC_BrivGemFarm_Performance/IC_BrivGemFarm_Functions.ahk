@@ -98,6 +98,7 @@ class IC_BrivServerCall_Class extends IC_ServerCalls_Class
 
 class IC_BrivGemFarm_Class
 {
+    TimerFunctions := {}
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
     ;=====================================================
@@ -199,52 +200,35 @@ class IC_BrivGemFarm_Class
     StartTimedFunctions()
     {
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
-        SetTimer, %fncToCallOnTimer%, 200, 0
+        this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
-        SetTimer, %fncToCallOnTimer%, 3000, 0
+        this.TimerFunctions[fncToCallOnTimer] := 3000
         if(IsFunc(Func("IC_MemoryFunctions_ReadMemory")))
         {
             fncToCallOnTimer :=  Func("IC_MemoryFunctions_ReadMemory")
-            SetTimer, %fncToCallOnTimer%, 250, 0
+            this.TimerFunctions[fncToCallOnTimer] := 250
         }
         if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
         {
             fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
-            SetTimer, %fncToCallOnTimer%, 250, 0
+            this.TimerFunctions[fncToCallOnTimer] := 250
         }
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
-        SetTimer, %fncToCallOnTimer%, 100, 0
+        this.TimerFunctions[fncToCallOnTimer] := 100
+        for k,v in this.TimerFunctions
+        {
+            SetTimer, %k%, %v%, 0
+        }
+        ;SetTimer, %fncToCallOnTimer%, 100, 0
     }
 
     StopTimedFunctions()
     {
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
-        SetTimer, %fncToCallOnTimer%, Off
-        SetTimer, %fncToCallOnTimer%, Delete
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
-        SetTimer, %fncToCallOnTimer%, Off
-        SetTimer, %fncToCallOnTimer%, Delete
-        if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
+        for k,v in This.TimerFunctions
         {
-            fncToCallOnTimer := ObjBindMethod(ReadMemoryFunctionsExtended, "CheckReads")
-            SetTimer, %fncToCallOnTimer%, Off
-            SetTimer, %fncToCallOnTimer%, Delete
+            SetTimer, %k%, Off
+            SetTimer, %k%, Delete
         }
-        else if(IsFunc(Func("ReadMemoryFunctions.CheckReads")))
-        {
-            fncToCallOnTimer := ObjBindMethod(ReadMemoryFunctions, "CheckReads")
-            SetTimer, %fncToCallOnTimer%, Off
-            SetTimer, %fncToCallOnTimer%, Delete
-        }
-        if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
-        {
-            fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
-            SetTimer, %fncToCallOnTimer%, Off
-            SetTimer, %fncToCallOnTimer%, Delete
-        }
-        fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
-        SetTimer, %fncToCallOnTimer%, Off
-        SetTimer, %fncToCallOnTimer%, Delete
     }
 
     ;Updates GUI dtCurrentRunTimeID and dtCurrentLevelTimeID
