@@ -16,21 +16,15 @@ Pick the right-hand spec.
 
 Recommendation: **Highly recommended**
 
-### `Havilar` (Slot 10)
+### `Widdle` (Slot 2)
 
-`Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill Hew, such as "Cursed Farmer".
+`Widdle` increases the spawn rate of mobs. Useful to a certain degree and worth a spot in your Gem Farm. A better scaling version of Deekin.
 
-Recommendation: **Situational**
+Use the better geared champion you have between Widdle and Deekin.
 
-### `Hew Maan` (Slot 8)
+Pick the middle spec.
 
-`Hew Maan` is also a strongly recommended champion. Their ability to massively increase the number of quest rewards you gain per kill is the reason why Gem Farms can get very fast.
-
-If you're serious about your gem farming, you'll want to get Hew to as close to zone completion with 1 kill as you can. Sentry can help out here.
-
-Pick the right-hand spec.
-
-Recommendation: **Strongly recommended**
+Recommendations: **Highly recommended**
 
 ### `Sentry` (Slot 4)
 
@@ -48,15 +42,21 @@ Pick the left-hand spec.
 
 Recommendation: **Strongly recommended**
 
-### `Widdle` (Slot 2)
+### `Hew Maan` (Slot 8)
 
-`Widdle` increases the spawn rate of mobs. Useful to a certain degree and worth a spot in your Gem Farm. A better scaling version of Deekin.
+`Hew Maan` is also a strongly recommended champion. Their ability to massively increase the number of quest rewards you gain per kill is the reason why Gem Farms can get very fast.
 
-Use the better geared champion you have between Widdle and Deekin.
+If you're serious about your gem farming, you'll want to get Hew to as close to zone completion with 1 kill as you can. Sentry can help out here.
 
-Pick the middle spec.
+Pick the right-hand spec.
 
-Recommendations: **Highly recommended**
+Recommendation: **Strongly recommended**
+
+### `Havilar` (Slot 10)
+
+`Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill Hew, such as "Cursed Farmer".
+
+Recommendation: **Situational**
 
 ## Other notable champions (or classes of champions)
 ### Gold find champions
@@ -67,11 +67,10 @@ It can be useful to increase the distance your Gem Farm can run for before hitti
 
 This is just a list of Gold farm champions:
 
-* `Rust` - Slot 11 - Good when you have the right-hand spec, and no familiar on his Ultimate ability, as long as Rust manages to pick up his gold coin during your run. This RNG aspect may put some people off.
 * `Jarlaxle` - Slot 4 - Has a solid 50% gold find feat.
-* `Baeloth` - Slot 4 - Has a 25% gold find feat. Hampered by the fact he shares a slot with Jarlaxle.
+* `Ellywick` - Slot 10 - Increases gold find when you use her right-hand spec.
+* `Rust` - Slot 11 - Good when you have the right-hand spec, and no familiar on his Ultimate ability, as long as Rust manages to pick up his gold coin during your run. This RNG aspect may put some people off.
 * `Azaka` - Slot 12 - Her Ultimate ability will summon a pair of tigers that cause mobs to drop gold with each attack when you use her right-hand spec. 
-* `Freely` - Slot 7 - Luck of Yondalla: Requisition causes extra gold to drop on mob kills. Also has two feats that can increase this skill.
 
 ### Health-share tanks
 
