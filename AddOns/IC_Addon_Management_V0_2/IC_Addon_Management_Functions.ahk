@@ -274,6 +274,25 @@ Class AddonManagement
             }
         }
 
+        ; Check if all addons in Addon Order are still available
+        For k,v in this.AddonOrder{
+            FoundAddon:=0
+            for i, j in this.Addons{
+                if(j.Name=v.Name AND j.Version=v.Version){
+                    FoundAddon:=1
+                    break
+                }
+            }
+            if(!FoundAddon){
+                NumberOfAddons:=this.AddonOrder.Count()             
+                While(k<NumberOfAddons){
+                    this.AddonOrder[k]:=this.AddonOrder[k+1]
+                    ++k
+                }
+                this.AddonOrder.Delete(NumberOfAddons)
+            }
+        }
+
         this.GenerateIncludeFile()
 
         if(IsObject(this.AddonOrder)){
