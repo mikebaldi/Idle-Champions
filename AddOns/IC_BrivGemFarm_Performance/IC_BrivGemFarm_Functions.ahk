@@ -195,6 +195,16 @@ class IC_BrivGemFarm_Class
     ;===========================================
     ;Functions for updating GUI stats and timers
     ;===========================================
+
+    BuildTooltips()
+    {
+        WinGet ICScriptHub_ID, ID, A
+        AddToolTip(ICScriptHub_ID, "BrivGemFarmPlayButton", "Start Gem Farm")
+        AddToolTip(ICScriptHub_ID, "BrivGemFarmStopButton", "Stop Gem Farm")
+        AddToolTip(ICScriptHub_ID, "BrivGemFarmConnectButton", "Reconnect to Gem Farm Script. [If the stats have stopped updating, click this to start updating them again]")
+        AddToolTip(ICScriptHub_ID, "BrivGemFarmSaveButton", "Save Gem Farm Settings")
+    }
+
     CreateTimedFunctions()
     {
         this.TimedFunctions := {}
