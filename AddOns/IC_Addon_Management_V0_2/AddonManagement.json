@@ -1,13 +1,13 @@
 {
+	"About":{
+		"Enabled":1,
+		"Version":"v0.1."
+	},
 	"Addon Management":{
 		"Enabled":1,
 		"Version":"v0.2."
 	},
 	"Addon Order":[
-		{
-			"Name":"About",
-			"Version":"v0.1."
-		},
 		{
 			"Name":"Addon Management",
 			"Version":"v0.1."
@@ -15,6 +15,14 @@
 		{
 			"Name":"Addon Management",
 			"Version":"v0.2."
+		},
+		{
+			"Name":"About",
+			"Version":"v0.1."
+		},
+		{
+			"Name":"Inventory View",
+			"Version":"v0.1."
 		},
 		{
 			"Name":"Chest Purchaser",
@@ -25,20 +33,12 @@
 			"Version":"v1.0."
 		},
 		{
-			"Name":"Briv Gem Farm Stats",
-			"Version":"v1.0."
-		},
-		{
-			"Name":"Dash Check",
-			"Version":"v0.1."
-		},
-		{
 			"Name":"Game Location Settings",
 			"Version":"v0.1."
 		},
 		{
-			"Name":"Inventory View",
-			"Version":"v0.1."
+			"Name":"Briv Gem Farm Stats",
+			"Version":"v1.0."
 		},
 		{
 			"Name":"Jimothy",
@@ -51,10 +51,18 @@
 		{
 			"Name":"Memory Functions Full Read",
 			"Version":"v0.1."
+		},
+		{
+			"Name":"Addon Template",
+			"Version":"v0.1."
 		}
 	],
 	"Briv Gem Farm":{
 		"Enabled":1,
 		"Version":"v1.0."
+	},
+	"Inventory View":{
+		"Enabled":1,
+		"Version":"v0.1."
 	}
 }

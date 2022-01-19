@@ -77,7 +77,7 @@ Class AddonManagement
                     if(DependancieFound){
                         if(k<y){
                             this.SwitchOrderAddons(k,y)
-                            this.GenerateListViewContent("ICScriptHub", "AddonsAvailableID")
+                            this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
                         }
                     }
                     else{
@@ -203,7 +203,7 @@ Class AddonManagement
     ;
     ; ------------------------------------------------------------
     DisableAddon(Name, Version){
-        if(Name!="Addon Management" AND Name != "Briv Gem Farm"){
+        if(Name!="Addon Management"){
             if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
                 MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
             }
@@ -218,7 +218,7 @@ Class AddonManagement
 
         }
         else{
-            MsgBox, 48, Warning, Can't disable the Addon Manager or Briv Gem Farm
+            MsgBox, 48, Warning, Can't disable the Addon Manager
         }
     }
     ; ------------------------------------------------------------
@@ -402,7 +402,7 @@ Class AddonManagement
 
     WriteAddonManagementSettings(){
         ; Get the order of the Addons
-        Gui, ICScriptHub:ListView, AddonsAvailableID
+        Gui, AddonManagement:ListView, AddonsAvailableID
         Order:=[]
         Loop % LV_GetCount()
         {
