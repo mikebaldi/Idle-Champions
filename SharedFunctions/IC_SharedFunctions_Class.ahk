@@ -316,11 +316,11 @@ class IC_SharedFunctions_Class
     DirectedInput(hold := 1, release := 1, s* )
     {
         Critical, On
-        TestVar := {}
-        for k,v in g_KeyPresses
-        {
-            TestVar[k] := v
-        }
+        ; TestVar := {}
+        ; for k,v in g_KeyPresses
+        ; {
+        ;     TestVar[k] := v
+        ; }
         timeout := 33
         directedInputStart := A_TickCount
         ;hwnd := "ahk_exe IdleDragons.exe"
@@ -337,9 +337,9 @@ class IC_SharedFunctions_Class
                 for k, v in values
                 {
                     g_InputsSent++
-                    if TestVar[v] == ""
-                        TestVar[v] := 0
-                    TestVar[v] += 1
+                    ; if TestVar[v] == ""
+                    ;     TestVar[v] := 0
+                    ; TestVar[v] += 1
                     key := g_KeyMap[v]
                     SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
                     if ErrorLevel
@@ -365,9 +365,9 @@ class IC_SharedFunctions_Class
             if(hold)
             {
                 g_InputsSent++
-                if TestVar[v] == ""
-                    TestVar[v] := 0
-                TestVar[v] += 1
+                ; if TestVar[v] == ""
+                ;     TestVar[v] := 0
+                ; TestVar[v] += 1
                 SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
                 if ErrorLevel
                     this.ErrorKeyDown++
@@ -379,7 +379,7 @@ class IC_SharedFunctions_Class
             ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
         }
         Critical, Off
-        g_KeyPresses := TestVar
+        ; g_KeyPresses := TestVar
     }
 
     ;Test to see if swapping is unneccessary. (Useful for skipping swaps on Tall Tales adventure)
