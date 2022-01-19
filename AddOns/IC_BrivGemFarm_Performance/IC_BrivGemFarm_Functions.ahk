@@ -212,8 +212,6 @@ class IC_BrivGemFarm_Class
             fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
             SetTimer, %fncToCallOnTimer%, 250, 0
         }
-        fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
-        SetTimer, %fncToCallOnTimer%, 200, 0
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         SetTimer, %fncToCallOnTimer%, 100, 0
     }
@@ -244,9 +242,6 @@ class IC_BrivGemFarm_Class
             SetTimer, %fncToCallOnTimer%, Off
             SetTimer, %fncToCallOnTimer%, Delete
         }
-        fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
-        SetTimer, %fncToCallOnTimer%, Off
-        SetTimer, %fncToCallOnTimer%, Delete
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         SetTimer, %fncToCallOnTimer%, Off
         SetTimer, %fncToCallOnTimer%, Delete

@@ -780,25 +780,7 @@ class IC_SharedFunctions_Class
         }
         return true
     }
-
-    MonitorIsGameClosed()
-    {
-        static gameLoaded := false
-        if(this.Memory.ReadCurrentZone() == "")
-        {
-            if (Not WinExist( "ahk_exe IdleDragons.exe" ))
-            {
-                gameLoaded := false
-            }
-            else if (!gameLoaded)
-            {
-                this.Memory.OpenProcessReader()
-                gameLoaded := true
-            }
-        }
-        return gameLoaded
-    }
-
+    
     /* Function that does follow-up tasks when IC is opened.
     This function should be overridden by AddOns using ot to match their objective
 
