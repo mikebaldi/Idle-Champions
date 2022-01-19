@@ -1,9 +1,6 @@
 ; Add tab to the GUI
 GUIFunctions.AddTab("About")
 
-global g_InventoryView := new IC_InventoryView_Component()
-
-
 Gui, ICScriptHub:Tab, About
 aboutRows := 17
 aboutGroupBoxHeight := aboutRows * 15

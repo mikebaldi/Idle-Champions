@@ -23,6 +23,18 @@ You should see the `IC Script Hub` window and it should look something like this
 You may need to [install or update AutoHotKey](https://www.autohotkey.com/) if you receive an error at this point.
 
 ## Setting the Steam game location
+### Step 0: Make sure your addons are enabled
+
+You'll want to make sure you have the game shortcut addon enabled. Click into the addons tab and ensure the addon highlighted by the green arrow is enabled and saved.
+
+I recommend making sure the ones with the yellow arrow are also enabled too.
+
+![Addons tab](../docimages/addons-tab.png)
+
+It should reload your Script Hub for you but should you ever want to do a manual reload (to reset the stats screen for instance, just remember to reconnect to your Gem Farm script if you do this) hit the reload button:
+
+![Reload button](../docimages/reload-script-hub.png)
+
 ### Step 1: Grab the shortcut you need
 
 1. Open the `Steam client`

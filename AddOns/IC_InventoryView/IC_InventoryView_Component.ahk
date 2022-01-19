@@ -1,6 +1,6 @@
 GUIFunctions.AddTab("Inventory View")
 
-global g_InventoryView := new IC_InventoryView_Component()
+global g_InventoryView := new IC_InventoryView_Component
 
 ; Add GUI fields to this addon's tab.
 Gui, ICScriptHub:Tab, Inventory View
@@ -9,13 +9,17 @@ Gui, ICScriptHub:Add, Text, x15 y+15, Inventory:
 Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Add, Button, x+15 yp+0 w60 vButtonReadInventory, Load
-InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadInventory")
-GuiControl,ICScriptHub: +g, ButtonReadInventory, % InventoryViewRead
+buttonFunc := ObjBindMethod(g_InventoryView, "ReadInventory")
+GuiControl,ICScriptHub: +g, ButtonReadInventory, % buttonFunc
 
 
 Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonReadChests, View Chests
-InventoryViewChests := ObjBindMethod(g_InventoryView, "ReadChests")
-GuiControl,ICScriptHub: +g, ButtonReadChests, % InventoryViewChests
+buttonFunc := ObjBindMethod(g_InventoryView, "ReadChests")
+GuiControl,ICScriptHub: +g, ButtonReadChests, % buttonFunc
+
+Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonResetInventory, Reset
+buttonFunc := ObjBindMethod(g_InventoryView, "ResetInventory")
+GuiControl,ICScriptHub: +g, ButtonResetInventory, % buttonFunc
 
 Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+5 w225, % "Last Updated: "
 
@@ -77,6 +81,12 @@ class IC_InventoryView_Component
         LV_ModifyCol(3, "Integer")
         LV_ModifyCol(4, "50 Integer")
         LV_ModifyCol(5, "50 Integer")
+    }
+
+    ResetInventory()
+    {
+        this.FirstReadValues := ""
+        this.ReadInventory(1)
     }
     
     ; Reads the game memory for all chests in the inventory and their counts and shows it in the inventory view.

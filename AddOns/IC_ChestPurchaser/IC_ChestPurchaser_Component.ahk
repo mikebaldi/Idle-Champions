@@ -1,6 +1,5 @@
 GUIFunctions.AddTab("Chests")
 
-global g_InventoryView := new IC_InventoryView_Component()
 Gui, ICScriptHub:Tab, Chests
 Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to read chests into lists."
 Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only buy or open chests while game is closed. (Yes, this is a hassle.)"
