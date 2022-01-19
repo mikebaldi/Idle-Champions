@@ -36,10 +36,6 @@ Some examples include:
 
 IC_UserDetails_Class allows for simpler use of some commonly used data that is retrieved from a getuserdetails call. 
 
-> IC_VirtualKeyInputs_Class.ahk  
-
-IC_VirtualKeyInputs_Class offers an more robust option than DirectedInput for automatically adjusting keyboard timings when key input failure rates are high.
-
 > json.ahk  
 
 json is a library that allows for common json functionality such as loading and saving json to files. It has been expanded from the original to include json formatting functions.
