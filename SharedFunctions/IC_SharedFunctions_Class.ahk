@@ -167,7 +167,7 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         counter := 0
         sleepTime := 100
-        while(this.Memory.ReadCurrentZone() == -1)
+        while(this.Memory.ReadCurrentZone() == -1 AND ElapsedTime < maxLoopTime)
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime))
@@ -500,7 +500,11 @@ class IC_SharedFunctions_Class
         }
         if (dtCurrentZoneTime > 45 AND fallBackTries < 3 AND dtCurrentZoneTime - lastCheck > 15) ; second check - Fall back to previous zone and try to continue
         {
-            this.OpenIC() ; reset memory values in case they missed an update.
+            ; reset memory values in case they missed an update.
+            this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )
+            this.Memory.OpenProcessReader()
+            this.ResetServerCall()
+            ; try a fall back
             this.FallBackFromZone()
             this.DirectedInput(,, "{q}" ) ; safety for correct party
             this.ToggleAutoProgress(1, true)
@@ -579,6 +583,12 @@ class IC_SharedFunctions_Class
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
         }
+        ; check to swap briv from favorite 2 to favorite 1 (W to Q)
+        else if (!brivBenched AND this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)))
+        {
+            this.DirectedInput(,,["{q}"]*)
+            g_SharedData.SwapsMadeThisRun++
+        }
     }
 
     BenchBrivConditions(settings)
@@ -652,8 +662,7 @@ class IC_SharedFunctions_Class
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
-            Process, Exist, IdleDragons.exe ; allows generalized OpenIC to be used as a safetycheck.
-            this.PID := ErrorLevel
+            this.PID := 0
             while (!this.PID)
             {
                 StartTime := A_TickCount

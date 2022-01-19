@@ -74,6 +74,11 @@ if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver w400
 else
     Gui, ICScriptHub:Font, cDefault w400
+; Gui, ICScriptHub:Font, w700
+; Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+7 vButtonResetStats, Reset
+; buttonFunc := ObjBindMethod(IC_BrivGemFarm_Stats_Component, "ResetStats")
+; GuiControl,ICScriptHub: +g, ButtonResetStats, % buttonFunc
+; Gui, ICScriptHub:Font, w400
 GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
 

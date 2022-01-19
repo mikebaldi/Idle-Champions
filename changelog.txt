@@ -1,3 +1,10 @@
+Jan 18, 2022
+    Fix to help recover from W formation.
+    Fix to reset the adventure if modron reset times out since modron timeout > stuck timeout.
+    Added reset button to Inventory to reset run stats.
+    Fix for issue where game gets stuck never opening IC game.
+    AddOn: Dash Check removed. Was only meant to be a temporary test/proof of concept.
+
 Jan 17, 2022
     Potential Fix for accurate Briv QT detection.
     Fix for too much Q spam while leveling champions.
