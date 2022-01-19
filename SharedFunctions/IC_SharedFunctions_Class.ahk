@@ -216,31 +216,6 @@ class IC_SharedFunctions_Class
         return fellBack
     }
 
-    /*  FinishZone - Completes the quests in the current zone
-
-        Parameters:
-        maxLoopTime ;Maximum time, in milliseconds, the loop will continue.
-
-        Returns: nothing
-
-        Does not include WaitForTransition for situations when autoprogress is off and you may want to spam ults or something before triggering a transition.
-        ; TODO: test if champ leveling / ult spamming is needed
-    */
-    FinishZone(maxLoopTime := 60000 )
-    {
-        StartTime := A_TickCount
-        ElapsedTime := 0
-        QuestRemaining := this.Memory.ReadQuestRemaining()
-        g_SharedData.LoopString := "Finishing Zone: " . QuestRemaining . " / 25"
-        while ( QuestRemaining AND ElapsedTime < maxLoopTime )
-        {
-            QuestRemaining := this.Memory.ReadQuestRemaining()
-            g_SharedData.LoopString := "Finishing Zone: " . QuestRemaining . " / 25"
-            ElapsedTime := A_TickCount - StartTime
-        }
-        return
-    }
-
     ; IsToggled be 0 for off or 1 for on. ForceToggle always hits G. ForceState will press G until AutoProgress is read as on (<5s).
     ToggleAutoProgress( isToggled := 1, forceToggle := false, forceState := false )
     {
