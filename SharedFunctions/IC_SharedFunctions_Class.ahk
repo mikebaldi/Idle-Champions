@@ -167,7 +167,7 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         counter := 0
         sleepTime := 100
-        while(this.Memory.ReadCurrentZone() == -1)
+        while(this.Memory.ReadCurrentZone() == -1 AND ElapsedTime < maxLoopTime)
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime))
