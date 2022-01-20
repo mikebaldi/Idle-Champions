@@ -324,6 +324,7 @@ class IC_BrivGemFarm_Class
         static LastTriggerStart := false
         static ActiveGameInstance := 1
         static FailRunTime := 0
+        static TotalRunCountRetry := 0
 
         Critical, On
         if !isStarted
@@ -349,8 +350,10 @@ class IC_BrivGemFarm_Class
                 Critical, On
             }
             ; CoreXP starting on FRESH run.
-            if(!TotalRunCount OR (TotalRunCount AND (!CoreXPStart OR !GemStart)))
+            if(!TotalRunCount OR (TotalRunCount AND TotalRunCountRetry < 2 AND (!CoreXPStart OR !GemStart)))
             {
+                if(TotalRunCount)
+                    TotalRunCountRetry++
                 ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
                 CoreXPStart := g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance)
                 GemStart := g_SF.Memory.ReadGems()
