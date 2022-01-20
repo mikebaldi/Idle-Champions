@@ -4,6 +4,7 @@
 #include %A_LineFile%\..\IC_GameSettings_Class.ahk
 #include %A_LineFile%\..\IC_EngineSettings_Class.ahk
 #include %A_LineFile%\..\IC_CrusadersGameDataSet_Class.ahk
+#include %A_LineFile%\..\IC_DialogManager_Class.ahk
 
 ;Check if you have installed the class correctly.
 if (_ClassMemory.__Class != "_ClassMemory")
@@ -28,6 +29,7 @@ class IC_MemoryFunctions_Class
         this.GameSettings := new IC_GameSettings_Class
         this.EngineSettings := new IC_EngineSettings_Class
         this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
+        this.DialogManager := new IC_DialogManager_Class
     }
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
@@ -49,6 +51,7 @@ class IC_MemoryFunctions_Class
             this.GameSettings := new IC_GameSettingsEGS_Class
             this.EngineSettings := new IC_EngineSettingsEGS_Class
             this.CrusadersGameDataSet := new IC_CrusadersGameDataSetEGS_Class
+            this.DialogManager := new IC_DialogManagerEGS_Class
             this.Is64Bit := true
         }
         else if (this.Is64Bit and !this.GameManager.is64Bit())
@@ -57,6 +60,7 @@ class IC_MemoryFunctions_Class
             this.GameSettings := new IC_GameSettings_Class
             this.EngineSettings := new IC_EngineSettings_Class
             this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
+            this.DialogManager := new IC_DialogManager_Class
             this.Is64Bit := false
         }
         else
@@ -64,6 +68,7 @@ class IC_MemoryFunctions_Class
             this.GameSettings.Refresh()
             this.EngineSettings.Refresh()
             this.CrusadersGameDataSet.Refresh()
+            this.DialogManager.Refresh()
         }
     }
 
@@ -82,6 +87,7 @@ class IC_MemoryFunctions_Class
         }
         else
         {
+            ; test := ArrFnc.GetHexFormattedArrayString(GameObject.GetOffsets()) ; Useful to test what the hex value offsets are to compare to CE
             var := this.GameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
         return var
@@ -764,6 +770,16 @@ class IC_MemoryFunctions_Class
                 return this.GenericGetValue(this.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.NamePlural.GetGameObjectFromListValues(A_Index - 1))
         }
         return "" 
+    }
+
+    GetConversionCurrencyBySlot(slot := 3)
+    {
+        return this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.CurrentCurrency.ID.GetGameObjectFromListValues(slot))
+    }
+
+    GetDialogNameBySlot(slot := 3)
+    {
+        return this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.ObjectName.GetGameObjectFromListValues(slot))
     }
 
     ;==============
