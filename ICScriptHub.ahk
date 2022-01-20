@@ -126,17 +126,8 @@ OnMessage(0x200, "CheckControlForTooltip")
 ; Creates tooltips for various controls in Script Hub.
 BuildToolTips()
 {
-    WinGet ICScriptHub_ID, ID, A
-    AddToolTip(ICScriptHub_ID, "LaunchClickButton", "Launch Idle Champions")
-    AddToolTip(ICScriptHub_ID, "ReloadClickButton", "Reload Script Hub")
-}
-
-; Add a tooltip message to a control in a specific window.
-AddToolTip(windowID, controlVariableName, tipMessage)
-{
-    GuiControl ICScriptHub:Focus, %controlVariableName%
-    ControlGetFocus toolTipTarget, ahk_id %windowID%
-    g_MouseToolTips[toolTipTarget] := tipMessage
+    GUIFunctions.AddToolTip("LaunchClickButton", "Launch Idle Champions")
+    GUIFunctions.AddToolTip("ReloadClickButton", "Reload Script Hub")
 }
 
 ; Shows a tooltip if the control with mouseover has a tooltip associated with it.
@@ -160,3 +151,5 @@ CheckControlForTooltip()
 ;^LButton::WindowMouseDragMove()
 
 BuildToolTips()
+if(IsObject(AddonManagement))
+    AddonManagement.BuildToolTips()

@@ -47,8 +47,7 @@ Class AddonManagement
     ; ------------------------------------------------------------
     BuildToolTips()
     {
-        WinGet ICScriptHub_ID, ID, A
-        AddToolTip(ICScriptHub_ID, "AddonOpenGUIClickedButton", "AddOns")
+        GUIFunctions.AddToolTip("AddonOpenGUIClickedButton", "AddOns")
     }
     ; ------------------------------------------------------------
     ;

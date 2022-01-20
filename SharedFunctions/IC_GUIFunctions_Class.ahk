@@ -12,6 +12,7 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
+    ; Add a Button across the top of the GUI.
     AddButton(Picture,FunctionToCall,VariableName){
         global
         Gui, ICScriptHub:Tab
@@ -19,7 +20,15 @@ class GUIFunctions
         g_MenuBarXPos+=30
     }
     
-
+    ; Add a tooltip message to a control in a specific window.
+    AddToolTip(controlVariableName, tipMessage)
+    {
+        global
+        WinGet ICScriptHub_ID, ID, A
+        GuiControl ICScriptHub:Focus, %controlVariableName%
+        ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
+        g_MouseToolTips[toolTipTarget] := tipMessage
+    }
     ;------------------------------
     ;
     ; Function: LVM_CalculateSize

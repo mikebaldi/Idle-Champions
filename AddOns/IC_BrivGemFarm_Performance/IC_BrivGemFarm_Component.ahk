@@ -100,11 +100,10 @@ class IC_BrivGemFarm_Component
 
     BuildTooltips()
     {
-        WinGet ICScriptHub_ID, ID, A
-        AddToolTip(ICScriptHub_ID, "BrivGemFarmPlayButton", "Start Gem Farm")
-        AddToolTip(ICScriptHub_ID, "BrivGemFarmStopButton", "Stop Gem Farm")
-        AddToolTip(ICScriptHub_ID, "BrivGemFarmConnectButton", "Reconnect to Gem Farm Script. [If the stats have stopped updating, click this to start updating them again]")
-        AddToolTip(ICScriptHub_ID, "BrivGemFarmSaveButton", "Save Gem Farm Settings")
+        GUIFunctions.AddToolTip("BrivGemFarmPlayButton", "Start Gem Farm")
+        GUIFunctions.AddToolTip("BrivGemFarmStopButton", "Stop Gem Farm")
+        GUIFunctions.AddToolTip("BrivGemFarmConnectButton", "Reconnect to Gem Farm Script. [If the stats have stopped updating, click this to start updating them again]")
+        GUIFunctions.AddToolTip("BrivGemFarmSaveButton", "Save Gem Farm Settings")
     }
 
     UpdateGUICheckBoxes()

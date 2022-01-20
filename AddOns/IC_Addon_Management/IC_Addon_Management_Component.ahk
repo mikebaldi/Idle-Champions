@@ -17,7 +17,6 @@ AddonManagement.FirstRunCheck()
 
 AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
 GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUIClickedButton")
-AddonManagement.BuildToolTips()
 
 AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()

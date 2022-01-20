@@ -93,7 +93,6 @@ class IC_BrivGemFarm_Stats_Component
 
     BuildToolTips()
     {
-        WinGet ICScriptHub_ID, ID, A
         StackFailToolTip := "
         (
             StackFail Types:
@@ -105,7 +104,7 @@ class IC_BrivGemFarm_Stats_Component
             5.  Failed stack conversion, all stacks lost.
             6.  Modron not resetting, forced reset
         )"
-        AddToolTip(ICScriptHub_ID, "FailedStackingID", StackFailToolTip)
+        GUIFunctions.AddToolTip("FailedStackingID", StackFailToolTip)
     }
 
     AddStatsTabMod(FunctionName, Object := "")
