@@ -67,8 +67,8 @@ Class AddonManagement
                                 Else
                                 {
                                     this.DisableAddon(v.Name,v.Version)
+                                    return 0
                                 }
-                                this.WriteAddonManagementSettings()
                             }
                             else{
                                 break
@@ -84,7 +84,6 @@ Class AddonManagement
                     else{
                         MsgBox, 48, Warning, % "Can't find the addon " . j.Name . " required by " . v.Name . "`n" . v.Name . " will be disabled"
                         this.DisableAddon(v.Name,v.Version)
-                        this.WriteAddonManagementSettings()
                         return 0
                     }
                 }
@@ -127,6 +126,9 @@ Class AddonManagement
                     ;We have a addon who depends on the name, now check it it's enabled
                     if(this.Addons[k]["Enabled"]){
                         return k
+                    }
+                    else{
+                        break
                     }
                 }
             }
@@ -205,10 +207,21 @@ Class AddonManagement
     ; ------------------------------------------------------------
     DisableAddon(Name, Version){
         if(Name!="Addon Management"){
-            if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
-                MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
+            while(DependendAddon := this.CheckIsDependedOn(Name,Version)){
+                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`ndo you want to disable this addon?`nYes: disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . "enabled."
+                IfMsgBox Yes 
+                {
+                    this.DisableAddon(this.Addons[DependendAddon]["Name"],this.Addons[DependendAddon]["Version"])
+                }
+                Else
+                {
+                    return 
+                }               
             }
-            else{
+            ;if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
+            ;    MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
+            ;}
+            ;else{
                     for k, v in this.Addons {
                     if (v.Name=Name AND v.Version=Version){
                         this.NeedSave:=1
@@ -216,7 +229,7 @@ Class AddonManagement
                         break
                     }
                 }
-            }
+            ;}
 
         }
         else{
