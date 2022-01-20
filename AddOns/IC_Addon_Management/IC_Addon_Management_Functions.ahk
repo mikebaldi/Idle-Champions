@@ -319,8 +319,6 @@ Class AddonManagement
             }
         }
 
-        this.GenerateIncludeFile()
-
         if(IsObject(this.AddonOrder)){
             for k, v in this.AddonOrder {
                 ; Search for the correct Addon
@@ -334,7 +332,10 @@ Class AddonManagement
                 }
             }
         }
-        
+        if(!FileExist(this.GeneratedAddonIncludeFile))
+        {
+            this.GenerateIncludeFile() 
+        }       
     }
     ; ------------------------------------------------------------
     ;
