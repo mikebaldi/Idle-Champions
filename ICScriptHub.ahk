@@ -89,10 +89,6 @@ if(g_isDarkMode)
 ; Needed to add tabs
 Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, %g_TabList%
 ; Set specific tab ordering for prioritized scripts.
-if(IsObject(IC_BrivGemFarm_Class))
-    GUIFunctions.AddTab("Briv Gem Farm")
-if (IsObject(IC_BrivGemFarm_Stats_Component))
-    GUIFunctions.AddTab("Stats")
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)

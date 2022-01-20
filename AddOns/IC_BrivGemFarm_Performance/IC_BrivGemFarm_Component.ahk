@@ -2,6 +2,7 @@
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 
+GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
@@ -53,22 +54,6 @@ xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
 
-if(IsObject(IC_BrivGemFarm_Stats_Component))
-{
-    Gui, ICScriptHub:Tab, Stats
-    Gui, ICScriptHub:Font, w700
-    Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
-    Gui, ICScriptHub:Font, w400
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
-    Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
-    Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
-    Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
-    GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
-    g_DownAlign := g_DownAlign + posH -5
-}
-
 IC_BrivGemFarm_Component.UpdateGUICheckBoxes()
 IC_BrivGemFarm_Component.BuildToolTips()
 Briv_Run_Clicked() {
@@ -84,10 +69,35 @@ Briv_Save_Clicked() {
     IC_BrivGemFarm_Component.Briv_Save_Clicked()
 }
 
+
+If(IsObject(IC_BrivGemFarm_Stats_Component))
+{
+    IC_BrivGemFarm_Stats_Component.AddStatsTabMod("AddStatsTabInfo", "IC_BrivGemFarm_Component")
+    if(IC_BrivGemFarm_Stats_Component.isLoaded)
+        IC_BrivGemFarm_Stats_Component.UpdateStatsTabWithMods()
+}
+
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
 
 class IC_BrivGemFarm_Component
 {
+    AddStatsTabInfo()
+    {
+        global
+        Gui, ICScriptHub:Tab, Stats
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
+        Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
+        Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
+        Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
+        GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
+        g_DownAlign := g_DownAlign + posH -5
+    }
+
     BuildTooltips()
     {
         WinGet ICScriptHub_ID, ID, A
@@ -178,7 +188,5 @@ class IC_BrivGemFarm_Component
         return
     }
 }
-
-
 
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
