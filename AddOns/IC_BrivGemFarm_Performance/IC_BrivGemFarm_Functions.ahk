@@ -349,7 +349,7 @@ class IC_BrivGemFarm_Class
                 Critical, On
             }
             ; CoreXP starting on FRESH run.
-            if(!TotalRunCount)
+            if(!TotalRunCount OR (TotalRunCount AND (!CoreXPStart OR !GemStart)))
             {
                 ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
                 CoreXPStart := g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance)
