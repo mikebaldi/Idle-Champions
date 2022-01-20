@@ -7,6 +7,7 @@ Jan 19, 2022
     Added protection from saving haste stacks when they fail to read.
     Added ToolTips.
     Fix for infinite stuck while reading offline progress.
+    Fix for falling back after stack restarts when it's not necessary.
 
 Jan 18, 2022
     Fix to help recover from W formation.
