@@ -215,6 +215,8 @@ class IC_BrivGemFarm_Class
         }
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
+        fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
+        this.TimerFunctions[fncToCallOnTimer] := 200
     }
 
     ; Starts functions that need to be run in a separate thread such as GUI Updates.

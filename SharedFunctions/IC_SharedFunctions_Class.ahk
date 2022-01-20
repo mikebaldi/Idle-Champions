@@ -742,6 +742,25 @@ class IC_SharedFunctions_Class
         return true
     }
 
+    ; Reloads memory reads after game has closed. For updating GUI.
+    MonitorIsGameClosed()
+    {
+        static gameLoaded := false
+        if(this.Memory.ReadCurrentZone() == "")
+        {
+            if (Not WinExist( "ahk_exe IdleDragons.exe" ))
+            {
+                gameLoaded := false
+            }
+            else if (!gameLoaded)
+            {
+                this.Memory.OpenProcessReader()
+                gameLoaded := true
+            }
+        }
+        return gameLoaded
+    }
+
     /* Function that does follow-up tasks when IC is opened.
     This function should be overridden by AddOns using it to match their objective
 
