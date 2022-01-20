@@ -812,14 +812,13 @@ class IC_SharedFunctions_Class
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
             g_SharedData.LoopString := "Under attack. Retreating to change formations..."
-        while((this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND ElapsedTime < 2 * timeout)
+        while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND ElapsedTime < 2 * timeout)
         {
             ElapsedTime := A_TickCount - StartTime
-            numMonstReached := this.Memory.ReadNumAttackingMonstersReached()
-            numRangedAttack := this.Memory.ReadNumRangedAttackingMonsters()
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
+            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         }
         this.ToggleAutoProgress(1)
     }
