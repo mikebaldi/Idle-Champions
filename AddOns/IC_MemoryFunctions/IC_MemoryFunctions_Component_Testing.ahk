@@ -39,19 +39,21 @@ Gui, ICScriptHub:Add, Text, vKeyErrorStringID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, TimeScales: 
 Gui, ICScriptHub:Add, Text, vMultipliersStringID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, FormationCurrent: 
-Gui, ICScriptHub:Add, Text, vFormationCurrentID x+2 w400,
-Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite1: 
-Gui, ICScriptHub:Add, Text, vFormationFavorite1ID x+2 w400,
-Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite2: 
-Gui, ICScriptHub:Add, Text, vFormationFavorite2ID x+2 w400,
-Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite3: 
-Gui, ICScriptHub:Add, Text, vFormationFavorite3ID x+2 w400,
+; Gui, ICScriptHub:Add, Text, vFormationCurrentID x+2 w400,
+; Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite1: 
+; Gui, ICScriptHub:Add, Text, vFormationFavorite1ID x+2 w400,
+; Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite2: 
+; Gui, ICScriptHub:Add, Text, vFormationFavorite2ID x+2 w400,
+; Gui, ICScriptHub:Add, Text, x15 y+5, FormationFavorite3: 
+; Gui, ICScriptHub:Add, Text, vFormationFavorite3ID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionOverrideSize: 
 Gui, ICScriptHub:Add, Text, vReadTransitionOverrideSizeID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitionDirection: 
 Gui, ICScriptHub:Add, Text, vReadTransitionDirectionID x+2 w400,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadFormationTransitionDir: 
 Gui, ICScriptHub:Add, Text, vReadFormationTransitionDirID x+2 w400,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadFavorID: 
+Gui, ICScriptHub:Add, Text, vReadFavorIDID x+2 w400,
 
 class ReadMemoryFunctionsExtended
 {
@@ -70,16 +72,17 @@ class ReadMemoryFunctionsExtended
       
         GuiControl, ICScriptHub:, KeyErrorStringID, % "KeyDown: " . g_SF.ErrorKeyDown . " - KeyUp: " . g_SF.ErrorKeyUp
         GuiControl, ICScriptHub:, MultipliersStringID, % this.GetMultipliersString()
-        GuiControl, ICScriptHub:, FormationCurrentID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetCurrentFormation())
-        GuiControl, ICScriptHub:, FormationFavorite1ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 1))
-        GuiControl, ICScriptHub:, FormationFavorite2ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 2))
-        GuiControl, ICScriptHub:, FormationFavorite3ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 3))
+        ; GuiControl, ICScriptHub:, FormationCurrentID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetCurrentFormation())
+        ; GuiControl, ICScriptHub:, FormationFavorite1ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 1))
+        ; GuiControl, ICScriptHub:, FormationFavorite2ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 2))
+        ; GuiControl, ICScriptHub:, FormationFavorite3ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 3))
         GuiControl, ICScriptHub:, NumAttackingMonstersReachedLblID, % g_SF.Memory.ReadNumAttackingMonstersReached()
         GuiControl, ICScriptHub:, NumRangedAttackingMonsterLblID, % g_SF.Memory.ReadNumRangedAttackingMonsters()
         ;GuiControl, ICScriptHub:, g_InputsSentID, % g_InputsSent
         GuiControl, ICScriptHub:, ReadTransitionOverrideSizeID, % g_SF.Memory.ReadTransitionOverrideSize() ; g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game)
         GuiControl, ICScriptHub:, ReadTransitionDirectionID, % g_SF.Memory.ReadTransitionDirection()      
-        GuiControl, ICScriptHub:, ReadFormationTransitionDirID, % g_SF.Memory.ReadFormationTransitionDir()      
+        GuiControl, ICScriptHub:, ReadFormationTransitionDirID, % g_SF.Memory.ReadFormationTransitionDir()   
+        GuiControl, ICScriptHub:, ReadFavorIDID, % g_SF.Memory.GetDialogNameBySlot(0) ;g_SF.Memory.GetConversionCurrencyBySlot()
     }
 
     ReadSwapTimings()
