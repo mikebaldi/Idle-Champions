@@ -47,6 +47,7 @@ global g_ConnectButton := A_LineFile . "\..\Images\connect-100x100.png"
 global g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-25x25.png"
 global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
+global g_MouseTooltips := {}
 if (g_isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
@@ -124,6 +125,31 @@ ICScriptHubGuiClose()
     return True
 }
 
+; ToolTip Test
+OnMessage(0x200, "CheckControlForTooltip")
+; Creates tooltips for various controls in Script Hub.
+BuildToolTips()
+{
+    WinGet ICScriptHub_ID, ID, A
+    AddToolTip(ICScriptHub_ID, "LaunchClickButton", "Launch Idle Champions")
+    AddToolTip(ICScriptHub_ID, "ReloadClickButton", "Reload Script Hub")
+}
+
+; Add a tooltip message to a control in a specific window.
+AddToolTip(windowID, controlVariableName, tipMessage)
+{
+    GuiControl ICScriptHub:Focus, %controlVariableName%
+    ControlGetFocus toolTipTarget, ahk_id %windowID%
+    g_MouseToolTips[toolTipTarget] := tipMessage
+}
+
+; Shows a tooltip if the control with mouseover has a tooltip associated with it.
+CheckControlForTooltip()
+{
+    MouseGetPos,,,, VarControl
+    Message := g_MouseToolTips[VarControl]
+    ToolTip % Message
+}
 
 #include *i %A_ScriptDir%\AddOns\AddOnsIncluded.ahk
 ;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
@@ -136,3 +162,5 @@ ICScriptHubGuiClose()
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()
 ;^LButton::WindowMouseDragMove()
+
+BuildToolTips()

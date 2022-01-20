@@ -1,9 +1,21 @@
+Jan 19, 2022
+    Added StackFailStates class.
+    Updated how various types of run failures are shown and tracked.
+    Removed a number of unused functions, classes, and files.
+    Updated dev documentation to reflect changes.
+    Fixed timer functions so they can be stopped.
+    Added protection from saving haste stacks when they fail to read.
+    Added ToolTips.
+    Fix for infinite stuck while reading offline progress.
+    Fix for falling back after stack restarts when it's not necessary.
+
 Jan 18, 2022
     Fix to help recover from W formation.
     Fix to reset the adventure if modron reset times out since modron timeout > stuck timeout.
     Added reset button to Inventory to reset run stats.
     Fix for issue where game gets stuck never opening IC game.
     AddOn: Dash Check removed. Was only meant to be a temporary test/proof of concept.
+    Primary documentation updated.
 
 Jan 17, 2022
     Potential Fix for accurate Briv QT detection.

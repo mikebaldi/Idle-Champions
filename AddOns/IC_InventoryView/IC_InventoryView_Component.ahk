@@ -43,7 +43,7 @@ class IC_InventoryView_Component
     ; ReadInventory reads the inventory from in game and displays it in a list. Remembers first run values to compare for changes and per run calculations.
     ReadInventory(runCount := 1)
     {
-        restore_gui_on_return := LV_Scope("ICScriptHub", "InventoryViewID")
+        restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "InventoryViewID")
         doAddToFirstRead := false
         GuiControl, ICScriptHub:, InventoryViewTimeStampID, % "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
         if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
@@ -92,7 +92,7 @@ class IC_InventoryView_Component
     ; Reads the game memory for all chests in the inventory and their counts and shows it in the inventory view.
     ReadChests()
     {
-        restore_gui_on_return := LV_Scope("ICScriptHub", "InventoryViewID")
+        restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "InventoryViewID")
         GuiControl, ICScriptHub:, InventoryViewTimeStampID, % "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
         if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()

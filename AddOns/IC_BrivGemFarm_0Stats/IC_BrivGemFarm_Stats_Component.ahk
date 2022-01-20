@@ -45,10 +45,12 @@ Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
 Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
-Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
-Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking:
-Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w50,
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time Total (min):
+Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w50,
+; Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
+; Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
+Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
+Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
 Gui, ICScriptHub:Add, Text, vSilversPurchasedID x+2 w200, 0
@@ -85,4 +87,23 @@ g_DownAlign := g_DownAlign + posH -5
 class IC_BrivGemFarm_Stats_Component
 {
     doesExist := true
+    BuildToolTips()
+    {
+        WinGet ICScriptHub_ID, ID, A
+        StackFailToolTip := "
+        (
+            StackFail Types:
+            1.  Ran out of stacks when ( > min stack zone AND < target stack zone). only reported when fail recovery is on
+                Will stack farm - only a warning. Configuration likely incorrect
+            2.  Failed stack conversion (Haste <= 50, SB > target stacks). Forced Reset
+            3.  Game was stuck (checkifstuck), forced reset
+            4.  Ran out of haste and steelbones > target, forced reset
+            5.  Failed stack conversion, all stacks lost.
+            6.  Modron not resetting, forced reset
+        )"
+        AddToolTip(ICScriptHub_ID, "FailedStackingID", StackFailToolTip)
+    }
 }
+
+IC_BrivGemFarm_Stats_Component.BuildToolTips()
+
