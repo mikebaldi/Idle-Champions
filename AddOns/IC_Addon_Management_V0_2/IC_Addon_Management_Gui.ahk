@@ -26,6 +26,14 @@ AddonManagementGuiClose(){
 		MsgBox, 36, Save, Looks like you didn't save your changes, would you like to do this now?
         IfMsgBox, Yes
             AddonManagementSaveClicked()
+		IfMsgBox,No
+		{
+			AddonManagement.Addons:=[]
+			AddonManagement.GetAvailableAddons()
+			AddonManagement.GetAddonManagementSettings()
+			AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
+		}
+
 	}
 }
 
