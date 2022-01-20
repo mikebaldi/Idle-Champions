@@ -1,6 +1,6 @@
 {
 	"NameLess":"Addon Management",
-	"Version": "v0.1.",
+	"Version": "v1.0.",
     "Includes" : "IC_Addon_Management_Includes.ahk",
     "Author" : "nyze",
     "Url" : "Idle champions discord server #scripting",
