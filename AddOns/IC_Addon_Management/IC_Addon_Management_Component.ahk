@@ -10,12 +10,14 @@ AddonManagement.GetAvailableAddons()
 AddonManagement.GetAddonManagementSettings()
 AddonManagement.FirstRunCheck()
 
+
 ; ############################################################
 ;                    Add Button to the GUI
 ; ############################################################
 
 AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
-GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked")
+GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUIClickedButton")
+AddonManagement.BuildToolTips()
 
 AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()

@@ -12,9 +12,10 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
-    AddButton(Picture,FunctionToCall){
+    AddButton(Picture,FunctionToCall,VariableName){
+        global
         Gui, ICScriptHub:Tab
-        Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall%, %Picture%
+        Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall% v%VariableName% +0x4000000, %Picture%
         g_MenuBarXPos+=30
     }
     

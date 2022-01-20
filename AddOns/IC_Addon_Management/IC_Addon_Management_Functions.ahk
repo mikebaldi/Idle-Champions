@@ -36,6 +36,20 @@ Class AddonManagement
         Addon := new Addon(AddonSettings)
         this.Addons.Push(Addon)
     }
+
+    ; ------------------------------------------------------------
+    ;   
+    ;   Function: BuildToolTips()
+    ;               Adds tooltips to objects in the addon.
+    ; Parameters: None
+    ;     Return: None
+    ;
+    ; ------------------------------------------------------------
+    BuildToolTips()
+    {
+        WinGet ICScriptHub_ID, ID, A
+        AddToolTip(ICScriptHub_ID, "AddonOpenGUIClickedButton", "AddOns")
+    }
     ; ------------------------------------------------------------
     ;
     ;   Function: CheckDependenciesEnabled(Name, Version)
