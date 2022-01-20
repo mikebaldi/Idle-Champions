@@ -93,6 +93,8 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.ExpTotal := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x2C])  
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.CoreID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x24]) 
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.InstanceID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x28])
+        this.Game.GameInstance.Controller.UserData.ResetCurrencyHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x3C])
+        this.Game.GameInstance.Controller.UserData.ResetCurrencyHandler.IsForceConverting := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ResetCurrencyHandler,, [0x14])
         ;=========================================
         ;until I find a better spot here these are
         ;=========================================

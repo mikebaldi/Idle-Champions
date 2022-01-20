@@ -92,7 +92,6 @@ class IC_ServerCalls_Class
 
     CallLoadAdventure( adventureToLoad ) 
     {
-        ; TODO: set active instance by userDetails.activeInstanceID?
         advParams := this.dummyData . "&patron_tier=0&user_id=" . this.userID . "&hash=" . this.userHash . "&instance_id=" . this.instanceID 
             . "&game_instance_id=" . this.activeModronID . "&adventure_id=" . adventureToLoad . "&patron_id=" . this.activePatronID
         return this.ServerCall( "setcurrentobjective", advParams )
@@ -103,6 +102,15 @@ class IC_ServerCalls_Class
     {
         advParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID "&game_instance_id=" this.activeModronID
         return this.ServerCall( "softreset", advParams )
+    }
+
+    ;sample: call=convertresetcurrency&language_id=1&user_id=___&hash=___&converted_currency_id=17&target_currency_id=1&timestamp=0&request_id=0&network_id=0&mobile_client_version=999&localization_aware=true&instance_id=___& 
+    ;calling this loses everything earned during the adventure, should only be used when stuck.
+    CallConverCurrency(toCurrency := 1, fromCurrency := 24) 
+    {
+        advParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID
+        extraParams = "&converted_currency_id=" . fromCurrency . "&target_currency_id=" toCurrency
+        return this.ServerCall( "convertresetcurrency", (advParams . extraParams))
     }
 
     CallBuyChests( chestID, chests )
