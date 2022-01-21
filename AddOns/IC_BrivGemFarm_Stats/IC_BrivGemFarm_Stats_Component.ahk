@@ -1,6 +1,7 @@
 global g_LeftAlign
 global g_DownAlign
-;GUIFunctions.AddTab("Stats")
+
+GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, GroupBox, x+0 y+15 w450 h130 vCurrentRunGroupID, Current `Run:
@@ -83,13 +84,15 @@ else
 ; Gui, ICScriptHub:Font, w400
 GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
-
+IC_BrivGemFarm_Stats_Component.isLoaded := true
 class IC_BrivGemFarm_Stats_Component
 {
     doesExist := true
+    StatsTabFunctions := {}
+    isLoaded := false
+
     BuildToolTips()
     {
-        WinGet ICScriptHub_ID, ID, A
         StackFailToolTip := "
         (
             StackFail Types:
@@ -101,9 +104,33 @@ class IC_BrivGemFarm_Stats_Component
             5.  Failed stack conversion, all stacks lost.
             6.  Modron not resetting, forced reset
         )"
-        AddToolTip(ICScriptHub_ID, "FailedStackingID", StackFailToolTip)
+        GUIFunctions.AddToolTip("FailedStackingID", StackFailToolTip)
+    }
+
+    AddStatsTabMod(FunctionName, Object := "")
+    {
+        if(Object != "")
+        {
+            functionToPush := ObjBindMethod(%Object%, FunctionName)
+        }
+        else
+        {
+            functionToPush := Func(FunctionName)
+        }
+        if(this.StatsTabFunctions == "")
+            this.StatsTabFunctions := {}
+        this.StatsTabFunctions.Push(functionToPush)
+    }
+
+    UpdateStatsTabWithMods()
+    {
+        for k,v in this.StatsTabFunctions
+        {
+            v.Call()
+        }
+        this.StatsTabFunctions := {}
     }
 }
-
+IC_BrivGemFarm_Stats_Component.UpdateStatsTabWithMods()
 IC_BrivGemFarm_Stats_Component.BuildToolTips()
 

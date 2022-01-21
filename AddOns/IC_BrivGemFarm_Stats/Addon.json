@@ -5,5 +5,5 @@
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_BrivGemFarm_Stats",
     "Info" : "This Addon adds a stats tab to view live gem farm information.",
-    "Dependencies" : {}
+    "Dependencies" : []
 }

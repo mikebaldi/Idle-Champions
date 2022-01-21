@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetModronGUIVersion()
 {
-    return "v3.21, 01/14/2022"
+    return "v3.3, 01/20/2022"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -78,17 +78,17 @@ if(g_UserSettings[ "WriteSettings" ] := true)
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
 Gui, ICScriptHub:+Resize -MaximizeBox
-Gui, ICScriptHub:Add, Picture, x4 y5 h25 w25 gLaunch_Clicked vLaunchClickButton +0x4000000, %g_GameButton%
-Gui, ICScriptHub:Add, Picture, x+5 h25 w25 gReload_Clicked vReloadClickButton +0x4000000 , %g_ReloadButton%
+;Gui, ICScriptHub:Add, Button, x4 y5 w50 gReload_Clicked, `Reload
+;Gui, ICScriptHub:Add, Button, x+20 gLaunch_Clicked, Launch IC
+global g_MenuBarXPos:=4
+GUIFunctions.AddButton(g_GameButton,"Launch_Clicked","LaunchClickButton")
+GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton")
+
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver ;
 ; Needed to add tabs
 Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, %g_TabList%
 ; Set specific tab ordering for prioritized scripts.
-if(IsObject(IC_BrivGemFarm_Class))
-    GUIFunctions.AddTab("Briv Gem Farm")
-if (IsObject(IC_BrivGemFarm_Stats_Component))
-    GUIFunctions.AddTab("Stats")
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
@@ -123,24 +123,15 @@ ICScriptHubGuiClose()
 
 ; ToolTip Test
 OnMessage(0x200, "CheckControlForTooltip")
-; Creates tooltips for various controls in Script Hub. 
+; Creates tooltips for various controls in Script Hub.
 BuildToolTips()
 {
-    WinGet ICScriptHub_ID, ID, A
-    AddToolTip(ICScriptHub_ID, "LaunchClickButton", "Launch Idle Champions")
-    AddToolTip(ICScriptHub_ID, "ReloadClickButton", "Reload Script Hub")
-}
-
-; Add a tooltip message to a control in a specific window.
-AddToolTip(windowID, controlVariableName, tipMessage)
-{
-    GuiControl ICScriptHub:Focus, %controlVariableName%
-    ControlGetFocus toolTipTarget, ahk_id %windowID%
-    g_MouseToolTips[toolTipTarget] := tipMessage
+    GUIFunctions.AddToolTip("LaunchClickButton", "Launch Idle Champions")
+    GUIFunctions.AddToolTip("ReloadClickButton", "Reload Script Hub")
 }
 
 ; Shows a tooltip if the control with mouseover has a tooltip associated with it.
-CheckControlForTooltip() 
+CheckControlForTooltip()
 {
     MouseGetPos,,,, VarControl
     Message := g_MouseToolTips[VarControl]
@@ -160,3 +151,5 @@ CheckControlForTooltip()
 ;^LButton::WindowMouseDragMove()
 
 BuildToolTips()
+if(IsObject(AddonManagement))
+    AddonManagement.BuildToolTips()

@@ -1,3 +1,11 @@
+Jan 20, 2022
+    NEW! Addon Manager Update from nyze. (Now located by clicking the puzzle piece icon at the top of the window)
+    Added a retry for GPH/BPH initial reads if they failed the first time.
+    Added some troubleshooting tot he FAQ.md for BrivGemFarm
+    Fixed Tab Ordering so it can be reordered in any way using the Addon Manager.
+    Updated GUIFunctions.
+    Various bug fixes.
+
 Jan 19, 2022
     Added StackFailStates class.
     Updated how various types of run failures are shown and tracked.
