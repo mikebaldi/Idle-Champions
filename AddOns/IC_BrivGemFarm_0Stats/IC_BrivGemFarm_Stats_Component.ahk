@@ -117,6 +117,8 @@ class IC_BrivGemFarm_Stats_Component
         {
             functionToPush := Func(FunctionName)
         }
+        if(this.StatsTabFunctions == "")
+            this.StatsTabFunctions := {}
         this.StatsTabFunctions.Push(functionToPush)
     }
 
