@@ -1,5 +1,7 @@
 class GUIFunctions
 {
+    TooltipsToGenerate := {}
+
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
@@ -13,11 +15,14 @@ class GUIFunctions
     }
 
     ; Add a Button across the top of the GUI.
-    AddButton(Picture,FunctionToCall,VariableName){
+    AddButton(Picture,FunctionToCall,VariableName, TipMessage:=""){
         global
         Gui, ICScriptHub:Tab
         Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall% v%VariableName% +0x4000000, %Picture%
         g_MenuBarXPos+=30
+        if(TipMessage){
+            this.TooltipsToGenerate[VariableName] := TipMessage
+        }     
     }
     
     ; Add a tooltip message to a control in a specific window.
@@ -28,6 +33,14 @@ class GUIFunctions
         GuiControl ICScriptHub:Focus, %controlVariableName%
         ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
         g_MouseToolTips[toolTipTarget] := tipMessage
+    }
+
+    ;Generate the tooltips for all wanted objects
+    GenerateToolTips()
+    {
+        for k,v in this.TooltipsToGenerate {
+            this.AddToolTip(k, v)
+        }
     }
     ;------------------------------
     ;

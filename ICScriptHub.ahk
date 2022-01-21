@@ -78,11 +78,10 @@ if(g_UserSettings[ "WriteSettings" ] := true)
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
 Gui, ICScriptHub:+Resize -MaximizeBox
-;Gui, ICScriptHub:Add, Button, x4 y5 w50 gReload_Clicked, `Reload
-;Gui, ICScriptHub:Add, Button, x+20 gLaunch_Clicked, Launch IC
+
 global g_MenuBarXPos:=4
-GUIFunctions.AddButton(g_GameButton,"Launch_Clicked","LaunchClickButton")
-GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton")
+GUIFunctions.AddButton(g_GameButton,"Launch_Clicked","LaunchClickButton","Launch Idle Champions")
+GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton","Reload Script Hub")
 
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver ;
@@ -123,12 +122,6 @@ ICScriptHubGuiClose()
 
 ; ToolTip Test
 OnMessage(0x200, "CheckControlForTooltip")
-; Creates tooltips for various controls in Script Hub.
-BuildToolTips()
-{
-    GUIFunctions.AddToolTip("LaunchClickButton", "Launch Idle Champions")
-    GUIFunctions.AddToolTip("ReloadClickButton", "Reload Script Hub")
-}
 
 ; Shows a tooltip if the control with mouseover has a tooltip associated with it.
 CheckControlForTooltip()
@@ -150,6 +143,6 @@ CheckControlForTooltip()
 ;!LButton::WindowMouseDragMove()
 ;^LButton::WindowMouseDragMove()
 
-BuildToolTips()
-if(IsObject(AddonManagement))
-    AddonManagement.BuildToolTips()
+;BuildToolTips
+GUIFunctions.GenerateToolTips()
+
