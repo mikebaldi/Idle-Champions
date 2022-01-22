@@ -13,6 +13,12 @@ CLR contains various functions that allow for use with managed libraries (writte
 
 Contains functions for copying arrays and for viewing decimal and hex number arrays as strings. If this file is included, a script may access these functions through **ArrFnc.[FunctionName]\(\)**
 
+> IC_GUIFunctions_Class.ahk
+
+Contains expanded functions for handling or updating GUI elements. If this file is included, a script may access these functions through **GUIFunctions.[FunctionName]\(\)**
+
+`LV_Scope` is used whenever a listview is updated in order to ensure the correct listview gets updated. 
+
 > IC_KeyHelper_Class.ahk  
 
 IC_KeyHelper_Class helps convert keystrokes to a virtual key code which is used in SendMessage and PostMessage commands. It allows for expanded  compatability for international keyboards and more control than standard Send and SendInput ahk commands.
@@ -32,14 +38,6 @@ Some examples include:
 `CloseIC` - Closes the game. Forces it closed after 10 seconds.  
 `SetUserCredentials` - Stores UserID, Hash, InstanceID and some commonly used user data for use in server calls.
 
-> IC_UserDetails_Class.ahk  
-
-IC_UserDetails_Class allows for simpler use of some commonly used data that is retrieved from a getuserdetails call. 
-
-> IC_VirtualKeyInputs_Class.ahk  
-
-IC_VirtualKeyInputs_Class offers an more robust option than DirectedInput for automatically adjusting keyboard timings when key input failure rates are high.
-
 > json.ahk  
 
 json is a library that allows for common json functionality such as loading and saving json to files. It has been expanded from the original to include json formatting functions.
@@ -49,7 +47,6 @@ json is a library that allows for common json functionality such as loading and 
 ObjRegisterActive contains various functions written primarily by ahk's lexikos that expand functionality of AHK.
 
 `ObjRegisterActive` creates a comobject that can be used to interact directly with the script from another script.  
-`LV_Scope` is used whenever a listview is updated in order to ensure the correct listview gets updated.  
 
 > MemoryRead\classMemory.ahk
 

@@ -33,7 +33,7 @@ class IC_MemoryFunctionsFullRead_Component
 
     ReadAllFunctions()
     {
-        restore_gui_on_return := LV_Scope("ICScriptHub", "MemoryFunctionsViewID")
+        restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "MemoryFunctionsViewID")
         valueToPass := 1
         g_SF.Memory.OpenProcessReader()
         LV_Delete()

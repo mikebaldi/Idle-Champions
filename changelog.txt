@@ -1,9 +1,29 @@
+Jan 20, 2022
+    NEW! Addon Manager Update from nyze. (Now located by clicking the puzzle piece icon at the top of the window)
+    Added a retry for GPH/BPH initial reads if they failed the first time.
+    Added some troubleshooting tot he FAQ.md for BrivGemFarm
+    Fixed Tab Ordering so it can be reordered in any way using the Addon Manager.
+    Updated GUIFunctions.
+    Various bug fixes.
+
+Jan 19, 2022
+    Added StackFailStates class.
+    Updated how various types of run failures are shown and tracked.
+    Removed a number of unused functions, classes, and files.
+    Updated dev documentation to reflect changes.
+    Fixed timer functions so they can be stopped.
+    Added protection from saving haste stacks when they fail to read.
+    Added ToolTips.
+    Fix for infinite stuck while reading offline progress.
+    Fix for falling back after stack restarts when it's not necessary.
+
 Jan 18, 2022
     Fix to help recover from W formation.
     Fix to reset the adventure if modron reset times out since modron timeout > stuck timeout.
     Added reset button to Inventory to reset run stats.
     Fix for issue where game gets stuck never opening IC game.
     AddOn: Dash Check removed. Was only meant to be a temporary test/proof of concept.
+    Primary documentation updated.
 
 Jan 17, 2022
     Potential Fix for accurate Briv QT detection.

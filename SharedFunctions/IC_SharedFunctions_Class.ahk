@@ -12,13 +12,14 @@ global g_SharedData := new IC_SharedData_Class
 
 #include %A_LineFile%\..\IC_KeyHelper_Class.ahk
 #include %A_LineFile%\..\IC_ArrayFunctions_Class.ahk
-#include %A_LineFile%\..\IC_UserDetails_Class.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 ;Shandie's Dash handler
 #include %A_LineFile%\..\MemoryRead\EffectKeyHandlers\TimeScaleWhenNotAttackedHandler.ahk
 
 class IC_SharedData_Class
 {
+    ; Note stats vs States. Confusing, but intended.
+    StackFailStats := new StackFailStates
     LoopString := ""
     TotalBossesHit := 0
     BossesHitThisRun := 0
@@ -48,6 +49,25 @@ class IC_SharedData_Class
     }
 }
 
+class StackFailStates
+{
+    ; StackFail Types: 
+    ; 1.  Ran out of stacks when ( > min stack zone AND < target stack zone). only reported when fail recovery is on
+    ;       Will stack farm - only a warning. Configuration likely incorrect            
+    ; 2.  Failed stack conversion (Haste <= 50, SB > target stacks). Forced Reset
+    ; 3.  Game was stuck (checkifstuck), forced reset
+    ; 4.  Ran out of haste and steelbones > target, forced reset
+    ; 5.  Failed stack conversion, all stacks lost.
+    ; 6.  Modron not resetting, forced reset
+    static FAILED_TO_REACH_STACK_ZONE := 1
+    static FAILED_TO_CONVERT_STACKS := 2
+    static FAILED_TO_PROGRESS := 3
+    static FAILED_TO_REACH_STACK_ZONE_HARD:= 4
+    static FAILED_TO_KEEP_STACKS := 5
+    static FAILED_TO_RESET_MODRON := 6
+    TALLY := [0,0,0,0,0,0]
+}
+
 class IC_SharedFunctions_Class
 {
     Memory := ""
@@ -74,7 +94,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.4.1, 2022-01-17"
+        return "v2.5.0, 2022-01-18"
     }
 
     ;Gets data from JSON file
@@ -195,31 +215,6 @@ class IC_SharedFunctions_Class
         return fellBack
     }
 
-    /*  FinishZone - Completes the quests in the current zone
-
-        Parameters:
-        maxLoopTime ;Maximum time, in milliseconds, the loop will continue.
-
-        Returns: nothing
-
-        Does not include WaitForTransition for situations when autoprogress is off and you may want to spam ults or something before triggering a transition.
-        ; TODO: test if champ leveling / ult spamming is needed
-    */
-    FinishZone(maxLoopTime := 60000 )
-    {
-        StartTime := A_TickCount
-        ElapsedTime := 0
-        QuestRemaining := this.Memory.ReadQuestRemaining()
-        g_SharedData.LoopString := "Finishing Zone: " . QuestRemaining . " / 25"
-        while ( QuestRemaining AND ElapsedTime < maxLoopTime )
-        {
-            QuestRemaining := this.Memory.ReadQuestRemaining()
-            g_SharedData.LoopString := "Finishing Zone: " . QuestRemaining . " / 25"
-            ElapsedTime := A_TickCount - StartTime
-        }
-        return
-    }
-
     ; IsToggled be 0 for off or 1 for on. ForceToggle always hits G. ForceState will press G until AutoProgress is read as on (<5s).
     ToggleAutoProgress( isToggled := 1, forceToggle := false, forceState := false )
     {
@@ -320,11 +315,11 @@ class IC_SharedFunctions_Class
     DirectedInput(hold := 1, release := 1, s* )
     {
         Critical, On
-        TestVar := {}
-        for k,v in g_KeyPresses
-        {
-            TestVar[k] := v
-        }
+        ; TestVar := {}
+        ; for k,v in g_KeyPresses
+        ; {
+        ;     TestVar[k] := v
+        ; }
         timeout := 33
         directedInputStart := A_TickCount
         ;hwnd := "ahk_exe IdleDragons.exe"
@@ -341,9 +336,9 @@ class IC_SharedFunctions_Class
                 for k, v in values
                 {
                     g_InputsSent++
-                    if TestVar[v] == ""
-                        TestVar[v] := 0
-                    TestVar[v] += 1
+                    ; if TestVar[v] == ""
+                    ;     TestVar[v] := 0
+                    ; TestVar[v] += 1
                     key := g_KeyMap[v]
                     SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
                     if ErrorLevel
@@ -369,9 +364,9 @@ class IC_SharedFunctions_Class
             if(hold)
             {
                 g_InputsSent++
-                if TestVar[v] == ""
-                    TestVar[v] := 0
-                TestVar[v] += 1
+                ; if TestVar[v] == ""
+                ;     TestVar[v] := 0
+                ; TestVar[v] += 1
                 SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
                 if ErrorLevel
                     this.ErrorKeyDown++
@@ -383,16 +378,7 @@ class IC_SharedFunctions_Class
             ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
         }
         Critical, Off
-        g_KeyPresses := TestVar
-    }
-
-    ;Test to see if swapping is unneccessary. (Useful for skipping swaps on Tall Tales adventure)
-    ShouldSkipSwap()
-    {
-        ; 0 = right, 1 = left, 2 = static (instant)
-        if(this.Memory.ReadTransitionDirection() == 2)
-            return true
-        return false
+        ; g_KeyPresses := TestVar
     }
 
     ;================================
@@ -559,13 +545,6 @@ class IC_SharedFunctions_Class
         return true
     }
 
-    ; Forces an adventure restart through closing IC and using server calls
-    WorldMapRestart()
-    {
-        g_SharedData.LoopString := "Zone is -1. At world map?"
-        this.RestartAdventure( "Zone is -1. At world map? Forcing Restart." )
-    }
-
     ; a method to swap formations and cancel briv's jump animation.
     SetFormation(settings := "")
     {
@@ -591,6 +570,7 @@ class IC_SharedFunctions_Class
         }
     }
 
+    ; True/False on whether Briv should be benched based on game conditions.
     BenchBrivConditions(settings)
     {
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
@@ -610,6 +590,7 @@ class IC_SharedFunctions_Class
         return false
     }
 
+    ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
@@ -655,6 +636,7 @@ class IC_SharedFunctions_Class
         return
     }
 
+    ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
         loadingDone := false
@@ -760,6 +742,7 @@ class IC_SharedFunctions_Class
         return true
     }
 
+    ; Reloads memory reads after game has closed. For updating GUI.
     MonitorIsGameClosed()
     {
         static gameLoaded := false
@@ -779,7 +762,7 @@ class IC_SharedFunctions_Class
     }
 
     /* Function that does follow-up tasks when IC is opened.
-    This function should be overridden by AddOns using ot to match their objective
+    This function should be overridden by AddOns using it to match their objective
 
     The default functionality is to switch to Q formation (briv progression), or
     fall back and switch to Q if being attacked
@@ -829,11 +812,13 @@ class IC_SharedFunctions_Class
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
             g_SharedData.LoopString := "Under attack. Retreating to change formations..."
-        while(this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() AND ElapsedTime < 2 * timeout)
+        while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < 2 * timeout))
         {
+            ElapsedTime := A_TickCount - StartTime
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
+            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         }
         this.ToggleAutoProgress(1)
     }
@@ -866,6 +851,13 @@ class IC_SharedFunctions_Class
         this.TotalGems := this.Memory.ReadGems()
         this.TotalSilverChests := this.Memory.GetChestCountByID(1)
         this.TotalGoldChests := this.Memory.GetChestCountByID(2)
+    }
+
+    ; Forces an adventure restart through closing IC and using server calls
+    WorldMapRestart()
+    {
+        g_SharedData.LoopString := "Zone is -1. At world map?"
+        this.RestartAdventure( "Zone is -1. At world map? Forcing Restart." )
     }
 
     ;=================================
@@ -908,9 +900,9 @@ class IC_SharedFunctions_Class
         return
     }
 
-    ;=====================================================
-    ;Functions for finding and loading formation save data
-    ;=====================================================
+    ;=========================================================
+    ;Functions for testing if Automated script is ready to run
+    ;=========================================================
     /* A function to search a saved formation for a particular champ.
 
         Parameters:
@@ -985,6 +977,28 @@ class IC_SharedFunctions_Class
         }
         return formation
     }
+    
+    ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
+    ; Returns -1 if failed to load adventure id. Returns current adventure's ID if successful in finding adventure.
+    VerifyAdventureLoaded()
+    {
+        CurrentObjID := this.Memory.ReadCurrentObjID()
+        while ( CurrentObjID == "" OR CurrentObjID <= 0 )
+        {
+            MsgBox, 5,, % "Please load into a valid adventure or confirm the correct memory file is being used. `nCurrent version: " . this.Memory.GameManager.GetVersion() . "`nDebug Value: " CurrentObjID
+            IfMsgBox, Retry
+            {
+                this.Memory.OpenProcessReader()
+                CurrentObjID := this.Memory.ReadCurrentObjID()
+            }
+            IfMsgBox, Cancel
+            {
+                MsgBox, Stopping run.
+                return -1
+            }
+        }
+        return CurrentObjID
+    }
 
     ;======================
     ; Server Calls
@@ -1010,28 +1024,6 @@ class IC_SharedFunctions_Class
     ; New Helper Functions
     ;======================
 
-    ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
-    ; Returns -1 if failed to load adventure id. Returns current adventure's ID if successful in finding adventure.
-    VerifyAdventureLoaded()
-    {
-        CurrentObjID := this.Memory.ReadCurrentObjID()
-        while ( CurrentObjID == "" OR CurrentObjID <= 0 )
-        {
-            MsgBox, 5,, % "Please load into a valid adventure or confirm the correct memory file is being used. `nCurrent version: " . this.Memory.GameManager.GetVersion() . "`nDebug Value: " CurrentObjID
-            IfMsgBox, Retry
-            {
-                this.Memory.OpenProcessReader()
-                CurrentObjID := this.Memory.ReadCurrentObjID()
-            }
-            IfMsgBox, Cancel
-            {
-                MsgBox, Stopping run.
-                return -1
-            }
-        }
-        return CurrentObjID
-    }
-
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 
     Parameters:
@@ -1054,7 +1046,7 @@ class IC_SharedFunctions_Class
         return Fkeys
     }
 
-    /*  areChampionsUpgraded - Tests to see if all seats in formation are upgraded to max.
+    /*  AreChampionsUpgraded - Tests to see if all seats in formation are upgraded to max.
 
     Parameters:
     formation - A list of champion ID values from the formation currently on the field.
@@ -1063,7 +1055,7 @@ class IC_SharedFunctions_Class
     True if all seats are fully upgraded. False otherwise.
     */
     ; Takes an array of champion IDs and determines if the slots they are in (NOT the champions themselves) are fully upgraded.
-    areChampionsUpgraded(formation)
+    AreChampionsUpgraded(formation)
     {
         for k, v in formation
         {

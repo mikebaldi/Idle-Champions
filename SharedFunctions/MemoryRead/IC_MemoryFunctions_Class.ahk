@@ -169,6 +169,7 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer.T)
     }
 
+    ; 0 = right, 1 = left, 2 = static (instant)
     ReadTransitionDirection()
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection)

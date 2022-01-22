@@ -12,6 +12,23 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
+    ; Add a Button across the top of the GUI.
+    AddButton(Picture,FunctionToCall,VariableName){
+        global
+        Gui, ICScriptHub:Tab
+        Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall% v%VariableName% +0x4000000, %Picture%
+        g_MenuBarXPos+=30
+    }
+    
+    ; Add a tooltip message to a control in a specific window.
+    AddToolTip(controlVariableName, tipMessage)
+    {
+        global
+        WinGet ICScriptHub_ID, ID, A
+        GuiControl ICScriptHub:Focus, %controlVariableName%
+        ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
+        g_MouseToolTips[toolTipTarget] := tipMessage
+    }
     ;------------------------------
     ;
     ; Function: LVM_CalculateSize
@@ -92,5 +109,47 @@ class GUIFunctions
         r_Width :=(ErrorLevel&0xFFFF)+4 ;-- LOWORD
         r_Height:=(ErrorLevel>>16)+4    ;-- HIWORD
         Return r_Height<<16|r_Width
+    }
+    
+    ;=========================================
+    ; from https://www.autohotkey.com/boards/viewtopic.php?f=6&t=4732
+    ; CreateGUID()
+    ; {
+    ;     VarSetCapacity(pguid, 16, 0)
+    ;     if !(DllCall("ole32.dll\CoCreateGuid", "ptr", &pguid)) {
+    ;         size := VarSetCapacity(sguid, (38 << !!A_IsUnicode) + 1, 0)
+    ;         if (DllCall("ole32.dll\StringFromGUID2", "ptr", &pguid, "ptr", &sguid, "int", size))
+    ;             return StrGet(&sguid)
+    ;     }
+    ;     return ""
+    ; }
+
+    ; lexikos's fix for list views populating the wrong views.
+    ; https://www.autohotkey.com/boards/viewtopic.php?t=20740
+    LV_Scope(gui, lv) {
+        return new ListviewScope(gui, lv)
+    }
+}
+
+    
+class ListviewScope {
+    __New(gui, lv) {
+        ; Save previous default GUI
+        this.oldgui := A_DefaultGui
+        ; Set new default GUI
+        Gui % gui ":Default"
+        this.gui := gui
+        ; Save previous default LV of new default GUI
+        this.lv := A_DefaultListView
+        ; Set new default LV
+        Gui ListView, % lv
+    }
+    __Delete() {
+        ; Restore settings of our GUI
+        Gui % this.gui ":Default"
+        if this.lv
+            Gui ListView, % this.lv
+        ; Restore previous default GUI
+        Gui % this.oldgui ":Default"
     }
 }

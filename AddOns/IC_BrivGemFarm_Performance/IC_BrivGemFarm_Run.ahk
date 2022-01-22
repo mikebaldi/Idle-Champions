@@ -72,7 +72,6 @@ ReloadBrivGemFarmSettingsDisplay()
     LV_Add(, "Min Stack Zone w/ can't reach Stack Zone: ", g_BrivUserSettings[ "MinStackZone" ])
     LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
     LV_Add(, "Stacking Restart wait time: ", g_BrivUserSettings[ "RestartStackTime" ])
-    LV_Add(, "Briv Swap Sleep time: ", g_BrivUserSettings[ "SwapSleep" ])
     LV_Add(, "Buy and open Chests? ", g_BrivUserSettings[ "DoChests" ] ? "Yes" : "No")
     if(g_BrivUserSettings[ "DoChests" ])
     {

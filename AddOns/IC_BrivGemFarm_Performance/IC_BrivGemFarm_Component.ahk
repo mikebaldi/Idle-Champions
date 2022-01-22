@@ -2,6 +2,7 @@
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 
+GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
@@ -32,9 +33,9 @@ if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver
 
 Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked, %g_StopButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked, %g_ConnectButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked, %g_SaveButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
 
 ; Gui, ICScriptHub:Add, Button, x15 y+15 gBriv_Save_Clicked, Save Settings
 ; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Run_Clicked, `Run
@@ -53,102 +54,138 @@ xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
 
-if(IsObject(IC_BrivGemFarm_Stats_Component))
-{
-    Gui, ICScriptHub:Tab, Stats
-    Gui, ICScriptHub:Font, w700
-    Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
-    Gui, ICScriptHub:Font, w400
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
-    Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
-    Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
-    Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
-    Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
-    GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
-    g_DownAlign := g_DownAlign + posH -5
+IC_BrivGemFarm_Component.UpdateGUICheckBoxes()
+IC_BrivGemFarm_Component.BuildToolTips()
+Briv_Run_Clicked() {
+    IC_BrivGemFarm_Component.Briv_Run_Clicked()
+}
+Briv_Run_Stop_Clicked() {
+    IC_BrivGemFarm_Component.Briv_Run_Stop_Clicked()
+}
+Briv_Connect_Clicked() {
+    IC_BrivGemFarm_Component.Briv_Connect_Clicked()
+}
+Briv_Save_Clicked() {
+    IC_BrivGemFarm_Component.Briv_Save_Clicked()
 }
 
-UpdateGUICheckBoxes()
+
+If(IsObject(IC_BrivGemFarm_Stats_Component))
+{
+    IC_BrivGemFarm_Stats_Component.AddStatsTabMod("AddStatsTabInfo", "IC_BrivGemFarm_Component")
+    if(IC_BrivGemFarm_Stats_Component.isLoaded)
+        IC_BrivGemFarm_Stats_Component.UpdateStatsTabWithMods()
+}
+
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
 
-UpdateGUICheckBoxes()
+class IC_BrivGemFarm_Component
 {
-    GuiControl,ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
-    GuiControl,ICScriptHub:, AvoidBossesCheck, % g_BrivUserSettings[ "AvoidBosses" ]
-    GuiControl,ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
-    GuiControl,ICScriptHub:, DoChestsCheck, % g_BrivUserSettings[ "DoChests" ]
-    GuiControl,ICScriptHub:, BuySilversCheck, % g_BrivUserSettings[ "BuySilvers" ]
-    GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
-    GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
-    GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
-    GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ] 
-}
-
-Briv_Run_Clicked()
-{
-    try
+    AddStatsTabInfo()
     {
-        SharedData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-        SharedData.ShowGui()
-        Briv_Connect_Clicked()
+        global
+        Gui, ICScriptHub:Tab, Stats
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
+        Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
+        Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
+        Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
+        GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
+        g_DownAlign := g_DownAlign + posH -5
     }
-    catch
+
+    BuildTooltips()
     {
-        ;g_BrivGemFarm.GemFarm()
+        GUIFunctions.AddToolTip("BrivGemFarmPlayButton", "Start Gem Farm")
+        GUIFunctions.AddToolTip("BrivGemFarmStopButton", "Stop Gem Farm")
+        GUIFunctions.AddToolTip("BrivGemFarmConnectButton", "Reconnect to Gem Farm Script. [If the stats have stopped updating, click this to start updating them again]")
+        GUIFunctions.AddToolTip("BrivGemFarmSaveButton", "Save Gem Farm Settings")
+    }
+
+    UpdateGUICheckBoxes()
+    {
+        GuiControl,ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
+        GuiControl,ICScriptHub:, AvoidBossesCheck, % g_BrivUserSettings[ "AvoidBosses" ]
+        GuiControl,ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
+        GuiControl,ICScriptHub:, DoChestsCheck, % g_BrivUserSettings[ "DoChests" ]
+        GuiControl,ICScriptHub:, BuySilversCheck, % g_BrivUserSettings[ "BuySilvers" ]
+        GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
+        GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
+        GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
+        GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ] 
+    }
+    
+    Briv_Run_Clicked()
+    {
+        try
+        {
+            SharedData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            SharedData.ShowGui()
+            Briv_Connect_Clicked()
+        }
+        catch
+        {
+            ;g_BrivGemFarm.GemFarm()
+            g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+            g_SF.Memory.OpenProcessReader()
+            scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
+            GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
+            g_BrivFarm.CreateTimedFunctions()
+            g_BrivFarm.StartTimedFunctions()
+            Run, %A_AhkPath% "%scriptLocation%"
+        }
+    }
+
+    Briv_Run_Stop_Clicked()
+    {
+        g_BrivFarm.StopTimedFunctions()
+        try
+        {
+            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            SharedRunData.Close()
+        }
+    }
+
+    Briv_Connect_Clicked()
+    {    
         g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
         g_SF.Memory.OpenProcessReader()
-        scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
-        GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
+        g_BrivFarm.CreateTimedFunctions()
         g_BrivFarm.StartTimedFunctions()
-        Run, %A_AhkPath% "%scriptLocation%"
+        GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
     }
-}
 
-Briv_Run_Stop_Clicked()
-{
-    g_BrivFarm.StopTimedFunctions()
-    try
+    ;Saves Settings associated with BrivGemFarm
+    Briv_Save_Clicked()
     {
-        SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-        SharedRunData.Close()
+        global
+        Gui, ICScriptHub:Submit, NoHide
+        g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
+        g_BrivUserSettings[ "AvoidBosses" ] := AvoidBossesCheck
+        g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
+        g_BrivUserSettings[ "StackZone" ] := NewStackZone
+        g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
+        g_BrivUserSettings[ "TargetStacks" ] := NewTargetStacks
+        g_BrivUserSettings[ "RestartStackTime" ] := NewRestartStackTime
+        g_BrivUserSettings[ "DisableDashWait" ] := DisableDashWaitCheck
+        g_BrivUserSettings[ "DoChests" ] := DoChestsCheck
+        g_BrivUserSettings[ "BuySilvers" ] := BuySilversCheck
+        g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
+        g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
+        g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
+        g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
+        g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
+        try ; avoid thrown errors when comobject is not available.
+        {
+            local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            SharedRunData.ReloadSettings("ReloadBrivGemFarmSettingsDisplay")
+        }
+        return
     }
-}
-
-Briv_Connect_Clicked()
-{    
-    g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
-    g_SF.Memory.OpenProcessReader()
-    g_BrivFarm.StartTimedFunctions()
-    GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
-}
-
-;Saves Settings associated with BrivGemFarm
-Briv_Save_Clicked()
-{
-    global
-    Gui, ICScriptHub:Submit, NoHide
-    g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
-    g_BrivUserSettings[ "AvoidBosses" ] := AvoidBossesCheck
-    g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
-    g_BrivUserSettings[ "StackZone" ] := NewStackZone
-    g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
-    g_BrivUserSettings[ "TargetStacks" ] := NewTargetStacks
-    g_BrivUserSettings[ "RestartStackTime" ] := NewRestartStackTime
-    g_BrivUserSettings[ "DisableDashWait" ] := DisableDashWaitCheck
-    g_BrivUserSettings[ "DoChests" ] := DoChestsCheck
-    g_BrivUserSettings[ "BuySilvers" ] := BuySilversCheck
-    g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
-    g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
-    g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
-    g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
-    g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
-    try ; avoid thrown errors when comobject is not available.
-    {
-        local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-        SharedRunData.ReloadSettings("ReloadBrivGemFarmSettingsDisplay")
-    }
-    return
 }
 
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
