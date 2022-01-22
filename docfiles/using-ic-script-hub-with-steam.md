@@ -39,16 +39,28 @@ It should reload your Script Hub for you but should you ever want to do a manual
 
 1. Open the `Steam client`
 2. Go to your `Library`
-3. Right click the `Idle Champions` game entry in your `Library` and pick `Manage` then `Add desktop shortcut`
-4. Right click on the shortcut on your Desktop and pick `Properties`
-5. Copy the contents of the Url box that appears
+3. Right click the `Idle Champions` game entry in your `Library` and pick `Properties`
+
+![Properties in Steam](../docimages/steam-properties.png)
+
+4. Click `Local Files` in the left and then `Browse...`
+
+![Open in Explorer](../docimages/steam-local-files.png)
+
+5. Click in the whitespace in the Windows Explorer path
+
+![Explorer window](../docimages/steam-explorer.png)
+
+6. Copy the file location that appears
+
+![Explorer window](../docimages/steam-local-url.png)
 
 ### Step 2: Populate the location in `IC Script Hub`
 
 1. Return to your `IC Script Hub` window
 2. Click the `Briv Gem Farm` tab
 3. Click the `Change Game Location` button at the bottom of the `Briv Gem Farm` window
-4. Paste the link copied from the `Idle Champions` shortcut into both boxes
+4. Paste the link copied the steps above into the `Install Path` box adding a slash to the end of it if missing, and leave the `Install Exe` box as `IdleDragons.exe`
 5. Click `Save and Close`
 
 ## Now that's done, what can I do with this thing?
