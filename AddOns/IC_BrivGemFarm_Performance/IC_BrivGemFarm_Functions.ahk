@@ -391,10 +391,17 @@ class IC_BrivGemFarm_Class
             PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 60000, 2 )
             GuiControl, ICScriptHub:, PrevRunTimeID, % PreviousRunTime
 
-            if ( SlowRunTime < PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
-            if ( FastRunTime > PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
+            if ( (TotalRunCount > 1) AND (Stackfail In [0, 6]) )
+            {
+                if ( SlowRunTime < PreviousRunTime)
+                {
+                    GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
+                }
+                if ( FastRunTime > PreviousRunTime)
+                {
+                    GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
+                }
+            }
             if ( StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
             {
                 GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
