@@ -1,3 +1,6 @@
+Jan 23, 2022
+    Addon Jimothy: Revamped v0.2. Expanded functionality to assist in non-jimothy push or variant runs. See Read Me.
+
 Jan 20, 2022
     NEW! Addon Manager Update from nyze. (Now located by clicking the puzzle piece icon at the top of the window)
     Added a retry for GPH/BPH initial reads if they failed the first time.
