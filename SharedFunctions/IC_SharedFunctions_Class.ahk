@@ -684,6 +684,10 @@ class IC_SharedFunctions_Class
         {
             ElapsedTime := A_TickCount - timeoutTimerStart
         }
+        if (!this.Memory.ReadGameStarted())
+        {
+            return false
+        }
         ; check if game has offline progress to calculate
         offlineTime := this.Memory.ReadOfflineTime()
         If(offlineTime <= 0 AND offlineTime != "")
