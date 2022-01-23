@@ -11,6 +11,10 @@ class IC_BrivPotatoSharedFunctions_Class extends IC_BrivSharedFunctions_Class
         {
             ElapsedTime := A_TickCount - timeoutTimerStart
         }
+        if (!this.Memory.ReadGameStarted())
+        {
+            return false
+        }
         ; check if game has offline progress to calculate
         offlineTime := this.Memory.ReadOfflineTime()
         If(offlineTime <= 0 AND offlineTime != "")
