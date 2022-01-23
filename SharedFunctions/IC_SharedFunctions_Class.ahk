@@ -666,6 +666,10 @@ class IC_SharedFunctions_Class
             this.Memory.OpenProcessReader()
             loadingZone := this.WaitForGameReady()
             this.ResetServerCall()
+            if (!loadingZone)
+            {
+                return -1
+            }
         }
         if(ElapsedTime >= 30000)
             return -1 ; took too long to open
