@@ -1,3 +1,6 @@
+Jan 24, 2022
+    Addon EffectKey Handler Full Read: A new add on to test effectkey handlers are functioniong properly.
+
 Jan 23, 2022
     Addon Jimothy: Revamped v0.2. Expanded functionality to assist in non-jimothy push or variant runs. See Read Me.
     Fix for pathing issue with Addons Manager that could cause addons to not load.
