@@ -28,7 +28,7 @@ Log in using the credentials you created in the previous step once you have inst
 
 ## Creating a local clone of the IC Script Hub repository
 
-[Navigate to the code repository for `IC Script Hub` in a browser](https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public) and then click the green Code button. Pick `Open with GitHub Desktop`.
+[Navigate to the code repository for `IC Script Hub` in a browser](https://github.com/mikebaldi/Idle-Champions/tree/main) and then click the green Code button. Pick `Open with GitHub Desktop`.
 
 ![Cloning the repository into GitHub Desktop](../docimages/code-and-open-in-github-desktop.png)
 
@@ -38,17 +38,11 @@ A dialog box will pop up. Click the `Choose...` button to pick the folder where 
 
 Click `Clone` and wait for the cloning process to complete.
 
-You'll see this:
+You'll see this (except it will be pointing at `main` rather than `master`):
 
 ![GitHub Desktop window showing the master branch](../docimages/github-desktop-window.png)
 
-We're almost done but not quite as GitHub Desktop has defaulted to the default branch, in this case the Master branch. We need to swap over to `IC Script Hub`.
-
-Click the button for the current branch, and then pick the IC Script Hub branch.
-
-![Swapping branches in GitHub Desktop](../docimages/swapping-branches.png)
-
-A box inviting you to create a Pull request will appear. Ignore this.
+A box may appear inviting you to create a Pull request. Ignore this if it shows up.
 
 Click the `Fetch Origin` button that is to the right of Current branch.
 
