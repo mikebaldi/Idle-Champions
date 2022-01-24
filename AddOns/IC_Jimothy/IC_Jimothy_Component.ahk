@@ -1,6 +1,7 @@
 g_TabControlHeight := g_TabControlHeight >= 700 ? g_TabControlHeight : 700
 GUIFunctions.AddTab("Jimothy")
 
+g_SF := new IC_JimothySharedFunctions_Class
 global g_JimothySettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\JimothySettings.json" )
 
 ;check if first run
@@ -34,6 +35,7 @@ if ( g_JimothySettings.MaxZone == "" )
     g_JimothySettings.MaxZone := 2000
 Gui, ICScriptHub:Add, Text, x15 y+10, Max Zone:
 Gui, ICScriptHub:Add, Edit, vJimothyMaxZone x+5 w50, % g_JimothySettings.MaxZone
+b == "Down" ? 0x100 : 0x101
 Gui, ICScriptHub:Add, Text, x+5 vJimothyMaxZoneSaved, % "Saved value: " . g_JimothySettings.MaxZone
 
 if ( g_JimothySettings.MaxMonsters == "" )
@@ -47,21 +49,40 @@ if ( g_JimothySettings.UseFkeys == "" )
 Gui, ICScriptHub:Add, Text, x15 y+15, Use Fkeys to level 'Q' formation:
 chk := g_JimothySettings.UseFkeys
 Gui, ICScriptHub:Add, Checkbox, vCbUseFkeys Checked%chk% x+5, True
-Gui, ICScriptHub:Add, Text, x+5 vJimothyUseFkeysSaved, % "Saved value: " . g_JimothySettings.UseFkeys
+Gui, ICScriptHub:Add, Text, x+5 vJimothyUseFkeysSaved w200, % g_JimothySettings.UseFkeys == 1 ? "Saved value: True":"Saved value: False"
 
 if ( g_JimothySettings.UseClick == "" )
     g_JimothySettings.UseClick := 1
 Gui, ICScriptHub:Add, Text, x15 y+15, Level click damage:
 chk := g_JimothySettings.UseClick
 Gui, ICScriptHub:Add, Checkbox, vCbUseClick Checked%chk% x+5, True
-Gui, ICScriptHub:Add, Text, x+5 vJimothyUseClickSaved, % "Saved value: " . g_JimothySettings.UseClick
+Gui, ICScriptHub:Add, Text, x+5 vJimothyUseClickSaved w200, % g_JimothySettings.UseClick == 1 ? "Saved value: True":"Saved value: False"
 
-if ( g_JimothySettings.UseBriv == "" )
-    g_JimothySettings.UseBriv := 1
-Gui, ICScriptHub:Add, Text, x15 y+15, Use Briv On the following Zones:
-chk := g_JimothySettings.UseBriv
-Gui, ICScriptHub:Add, Checkbox, vCbUseBriv Checked%chk% x+5, True
-Gui, ICScriptHub:Add, Text, x+5 vJimothyUseBrivSaved, % "Saved value: " . g_JimothySettings.UseBriv
+if ( g_JimothySettings.UseHew == "" )
+    g_JimothySettings.UseHew := 1
+Gui, ICScriptHub:Add, Text, x15 y+15, Check if Hew is alive:
+chk := g_JimothySettings.UseHew
+Gui, ICScriptHub:Add, Checkbox, vCbUseHew Checked%chk% x+5, True
+Gui, ICScriptHub:Add, Text, x+5 vJimothyUseHewSaved w200, % g_JimothySettings.UseHew  == 1 ? "Saved value: True":"Saved value: False"
+
+if ( g_JimothySettings.FormationRadio == "" )
+    g_JimothySettings.FormationRadio := 0
+Gui, ICScriptHub:Add, Text, x15 y+15, Select the formation to use on the checked zones below:
+if (g_JimothySettings.FormationRadio == 0)
+{
+    chkQ := 1
+    chkE := 0
+    saved := "Q"
+}
+else
+{
+    chkQ := 0
+    chkE := 1
+    saved := "E"
+}
+Gui, ICScriptHub:Add, Radio, vFormationRadioGroup x+5 vFormationRadioQ Checked%chkQ%, 'Q'
+Gui, ICScriptHub:Add, Radio, vFormationRadioGroup x+5 vFormationRadioE Checked%chkE%, 'E'
+Gui, ICScriptHub:Add, Text, x+5 vJimothyFormationRadioSaved, % "Saved value: " . saved
 
 if ( g_JimothySettings.Mod5CB == "" )
 {
@@ -145,13 +166,27 @@ Jimothy_Save_Clicked()
     GuiControl, ICScriptHub:, JimothyMaxMonstersSaved, % "Saved value: " . g_JimothySettings.MaxMonsters
 
     g_JimothySettings.UseFkeys := CbUseFkeys
-    GuiControl, ICScriptHub:, JimothyUseFkeysSaved, % "Saved value: " . g_JimothySettings.UseFkeys
+    GuiControl, ICScriptHub:, JimothyUseFkeysSaved, % g_JimothySettings.UseFkeys == 1 ? "Saved value: True":"Saved value: False"
 
     g_JimothySettings.UseClick := CbUseClick
-    GuiControl, ICScriptHub:, JimothyUseClickSaved, % "Saved value: " . g_JimothySettings.UseClick
+    GuiControl, ICScriptHub:, JimothyUseClickSaved, % g_JimothySettings.UseClick  == 1 ? "Saved value: True":"Saved value: False"
 
-    g_JimothySettings.UseBriv := CbUseBriv
-    GuiControl, ICScriptHub:, JimothyUseBrivSaved, % "Saved value: " . g_JimothySettings.UseBriv
+    g_JimothySettings.UseHew := CbUseHew
+    GuiControl, ICScriptHub:, JimothyUseHewSaved, % g_JimothySettings.UseHew == 1 ? "Saved value: True":"Saved value: False"
+
+    if (FormationRadioQ == 1)
+    {
+        g_JimothySettings.FormationRadio := 0
+        ;chkQ := 1
+        saved := "Q"
+    }
+    else if (FormationRadioE == 1)
+    {
+        g_JimothySettings.FormationRadio := 1
+        ;chkE := 0
+        saved := "E"
+    }
+    GuiControl, ICScriptHub:, JimothyFormationRadioSaved, % "Saved value: " . saved
 
     loop, 5
     {
@@ -366,6 +401,7 @@ class Jimothy_GuiUpdater
         if (!IsObject(obj))
             return
         
+        static IsHewAlive
         if (IsHewAlive != obj.IsHewAlive)
         {
             IsHewAlive := obj.IsHewAlive
