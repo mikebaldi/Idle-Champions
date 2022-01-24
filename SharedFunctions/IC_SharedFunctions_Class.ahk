@@ -406,8 +406,8 @@ class IC_SharedFunctions_Class
         ; Loop escape conditions:
         ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
-        ;   dash is active, dash.GetScaleActiveValue() toggles to true when dash is active and returns "" if fails to read.
-        while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActiveValue()) )
+        ;   dash is active, dash.GetScaleActive() toggles to true when dash is active and returns "" if fails to read.
+        while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !(dash.GetScaleActive()) )
         {
             this.ToggleAutoProgress(0)
             if !(this.SafetyCheck()) OR !(dash.IsBaseAddressCorrect())

@@ -18,111 +18,45 @@ class BrivUnnaturalHasteHandler extends EffectKeyHandler
     RequiredLevel := 80
     EffectKeyID := 3452
 
-    ;this is a pointer
-    sprintStacksOffset[]
+    GetStackCount()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x30
-            Else
-                return 0x18
-        }
+        return this.sprintStacks.stackCount.GetValue()
     }
 
-    stackCountOffset[]
+    GetAreasSkipped()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x98
-            Else
-                return 0x58
-        }
+        return this.areasSkipped.GetValue()
     }
 
-    GetStackCountValue()
+    GetAreaSkipChance()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.sprintStacksOffset, "double", BrivUnnaturalHasteHandler.stackCountOffset)
+        return this.areaSkipChance.GetValue()
     }
 
-    areasSkippedOffset[]
+    GetAreaSkipAmount()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x58
-            Else
-                return 0x2C
-        }
+        return this.areaSkipAmount.GetValue()
     }
 
-    GetAreasSkippedValue()
+    GetAlwaysSkipOneLess()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areasSkippedOffset, "int")
+        return this.alwaysSkipOneLess.GetValue()
     }
 
-    areaSkipChanceOffset[]
+    GetStacksToConsume()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x60
-            Else
-                return 0x34
-        }
+        return this.stacksToConsume.GetValue()
     }
 
-    GetAreaSkipChanceValue()
+    BuildMemoryObjects()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipChanceOffset, "float")
-    }
-
-    areaSkipAmountOffset[]
-    {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x64
-            Else
-                return 0x38
-        }
-    }
-
-    GetAreaSkipAmountValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.areaSkipAmountOffset, "int")
-    }
-
-    alwaysSkipOneLessOffset[]
-    {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x68
-            Else
-                return 0x3C
-        }
-    }
-
-    GetAlwaysSkipOneLessValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.alwaysSkipOneLessOffset, "char")
-    }
-
-    stacksToConsumeOffset[]
-    {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x6C
-            Else
-                return 0x40
-        }
-    }
-
-    GetStacksToConsumeValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + BrivUnnaturalHasteHandler.stacksToConsumeOffset, "int")
+        this.BuildEffectKey()
+        this.sprintStacks := new MemoryObject(0x18, 0x30, "Ptr", "", this.BaseAddress)
+        this.sprintStacks.stackCount := new MemoryObject(0x58, 0x98, "Double", this.sprintStacks, this.BaseAddress)
+        this.areasSkipped := new MemoryObject(0x2C, 0x58, "Int", "", this.BaseAddress)
+        this.areaSkipChance := new MemoryObject(0x34, 0x60, "Float", "", this.BaseAddress)
+        this.areaSkipAmount := new MemoryObject(0x38, 0x64, "Int", "", this.BaseAddress)
+        this.alwaysSkipOneLess := new MemoryObject(0x3C, 0x68, "Char", "", this.BaseAddress)
+        this.stacksToConsume := new MemoryObject(0x40, 0x6C, "Int", "", this.BaseAddress)
     }
 }

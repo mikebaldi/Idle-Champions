@@ -303,7 +303,7 @@ class IC_JimothySharedFunctions_Class extends IC_SharedFunctions_Class
             msgbox, % "Havilar's Imp Handler failed to load.`nBase Address: " . impHandler.BaseAddress
             return
         }
-        if (impHandler.CurrentOtherImpIndex != 1 OR impHandler.ActiveImpsSize != 2)
+        if (impHandler.GetCurrentOtherImpIndex() != 1 OR impHandler.GetActiveImpsSize() != 2)
         {
             ultKey := this.GetUltimateButtonByChampID(56)
             this.DirectedInput(,, ultKey)

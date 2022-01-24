@@ -19,114 +19,36 @@ class HavilarImpHandler extends EffectKeyHandler
     RequiredLevel := 15
     EffectKeyID := 3431
 
-    ;pointer
-    activeImpsOffset[]
+    GetActiveImpsSize()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x68
-            Else
-                return 0x34
-        }
+        return this.activeImps._size.GetValue()
     }
 
-    activeImpsSizeOffset[]
+    GetCurrentOtherImpIndex()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x18
-            Else
-                return 0xC
-        }
+        return this.currentOtherImpIndex.GetValue()
     }
 
-    ActiveImpsSize[]
+    GetSummonImpCoolDownTimer()
     {
-        get
-        {
-            return g_SF.Memory.GameManager.Main.read(this.baseAddress + HavilarImpHandler.activeImpsOffset, "int", HavilarImpHandler.activeImpsSizeOffset)
-        }
+        return this.summonImpUltimate.CoolDownTimer.GetValue()
     }
 
-    currentOtherImpIndexOffset[]
+    GetSacrificeImpCoolDownTimer()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x1A8
-            Else
-                return 0x120
-        }
+        return this.sacrificeImpUltimate.CoolDownTimer.GetValue()
     }
 
-    CurrentOtherImpIndex[]
+    BuildMemoryObjects()
     {
-        get
-        {
-            return g_SF.Memory.GameManager.Main.read(this.baseAddress + HavilarImpHandler.currentOtherImpIndexOffset, "int")
-        }
-    }
-
-    summonImpUltimateOffset[]
-    {
-        get
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xB0
-            Else
-                return 0x58
-        }
-    }
-
-    summonImpCooldownTimerOffset[]
-    {
-        get
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xAC
-            Else
-                return 0x74
-        }
-    }
-
-    SummonImpCooldownTimer[]
-    {
-        get
-        {
-            return g_SF.Memory.GameManager.Main.read(this.baseAddress + HavilarImpHandler.summonImpUltimateOffset, "float", HavilarImpHandler.summonImpCooldownTimerOffset)
-        }
-    }
-
-    sacrificeImpUltimateOffset[]
-    {
-        get
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xB8
-            Else
-                return 0x5C
-        }
-    }
-
-
-    sacrificeImpCooldownTimerOffset[]
-    {
-        get
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0xAC
-            Else
-                return 0x74
-        }
-    }
-
-    SacrificeImpCooldownTimer[]
-    {
-        get
-        {
-            return g_SF.Memory.GameManager.Main.read(this.baseAddress + HavilarImpHandler.sacrificeImpUltimateOffset, "float", HavilarImpHandler.sacrificeImpCooldownTimerOffset)
-        }
+        this.BuildEffectKey()
+        
+        this.activeImps := new MemoryObject(0x34, 0x68, "Ptr", "", this.BaseAddress)
+        this.activeImps._size := new MemoryObject(0xC, 0x18, "Int", this.activeImps, this.BaseAddress)
+        this.currentOtherImpIndex := new MemoryObject(0x120, 0x1A8, "Int", "", this.BaseAddress)
+        this.summonImpUltimate := new MemoryObject(0x58, 0xB0, "Ptr", "", this.BaseAddress)
+        this.summonImpUltimate.CoolDownTimer := new MemoryObject(0x74, 0xAC, "Float", this.summonImpUltimate, this.BaseAddress)
+        this.sacrificeImpUltimate := new MemoryObject(0x5C, 0xB8, "Ptr", "", this.BaseAddress)
+        this.sacrificeImpUltimate.CoolDownTimer := new MemoryObject(0x74, 0xAC, "Float", this.sacrificeImpUltimate, this.BaseAddress)
     }
 }
