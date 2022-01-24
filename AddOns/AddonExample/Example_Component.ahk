@@ -1,1 +1,0 @@
-global ExampleVariable := new Example

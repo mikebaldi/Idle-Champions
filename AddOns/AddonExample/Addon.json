@@ -1,9 +1,0 @@
-{
-	"Name":"Addon Example",
-	"Version": "v0.1.",
-    "Includes" : "Example_Includes.ahk",
-    "Author" : "<your name here>",
-    "Url" : "<Your url here>",
-    "Info" : "<more info about the addon>",
-    "Dependencies" : []
-}
