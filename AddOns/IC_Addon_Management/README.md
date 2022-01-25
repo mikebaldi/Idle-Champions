@@ -5,7 +5,7 @@ It will read all addons in the addon folder and will list them, you'll have the 
 
 ## How to use:
 When this addon is enabled you will find a puzzle button on top of the IC Scripthub.
-On opening you'll get a list with all the the available addons. Below that list you'll find 6 buttons
+On opening you'll get a list with all the available addons. Below that list you'll find 6 buttons
 - Enable
 - Disable
 - Move up

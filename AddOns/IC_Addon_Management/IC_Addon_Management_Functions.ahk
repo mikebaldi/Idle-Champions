@@ -72,7 +72,7 @@ Class AddonManagement
                             ; Check if the dependencie is enabled
                             DependancieFound:=1
                             if (!z.Enabled){
-                                MsgBox, 52, Warning, % "Addon " . j.Name . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . j.Name . "`nNo: disable " . v.Name
+                                MsgBox, 52, Warning, % "Addon " . j.Name . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . j.Name . "`nNo: Disable " . v.Name
                                 IfMsgBox Yes 
                                 {
                                     this.EnableAddon(j.Name,j.Version)
@@ -95,7 +95,7 @@ Class AddonManagement
                         }
                     }
                     else{
-                        MsgBox, 48, Warning, % "Can't find the addon " . j.Name . " required by " . v.Name . "`n" . v.Name . " will be disabled"
+                        MsgBox, 48, Warning, % "Can't find the addon " . j.Name . " required by " . v.Name . "`n" . v.Name . " will be disabled."
                         this.DisableAddon(v.Name,v.Version)
                         return 0
                     }
@@ -221,7 +221,7 @@ Class AddonManagement
     DisableAddon(Name, Version){
         if(Name!="Addon Management"){
             while(DependendAddon := this.CheckIsDependedOn(Name,Version)){
-                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`ndo you want to disable this addon?`nYes: disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . "enabled."
+                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`nDo you want to disable this addon?`nYes: disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . "enabled."
                 IfMsgBox Yes 
                 {
                     this.DisableAddon(this.Addons[DependendAddon]["Name"],this.Addons[DependendAddon]["Version"])
@@ -232,7 +232,7 @@ Class AddonManagement
                 }               
             }
             ;if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
-            ;    MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable"
+            ;    MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable."
             ;}
             ;else{
                     for k, v in this.Addons {
@@ -246,7 +246,7 @@ Class AddonManagement
 
         }
         else{
-            MsgBox, 48, Warning, Can't disable the Addon Manager
+            MsgBox, 48, Warning, Can't disable the Addon Manager.
         }
     }
     ; ------------------------------------------------------------
@@ -262,7 +262,7 @@ Class AddonManagement
         ; Check if another version is allready enabled
         for k,v in this.Addons {
             if(v.Name = Name AND v.Version != Version AND v.Enabled){
-                MsgBox, 48, Warning, % "Another version of " . v.Name . " is allready enabled, please disable that addon first!"
+                MsgBox, 48, Warning, % "Another version of " . v.Name . " is already enabled, please disable that addon first!"
                 return
             }
         }
@@ -479,7 +479,7 @@ Class AddonManagement
         ThingsToWrite["Addon Order"]:=Order
         g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, ThingsToWrite)
         this.GenerateIncludeFile()
-        MsgBox, 36, Restart, To make change to addon loading\deloading active you do need to restart the script.`nDo you want to do this now?
+        MsgBox, 36, Restart, To activate changes to enabled/disabled addons you need to restart the script.`nDo you want to do this now?
         IfMsgBox, Yes
             Reload
     }
