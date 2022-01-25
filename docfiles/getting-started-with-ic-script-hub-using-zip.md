@@ -9,7 +9,7 @@
 
 ## Downloading the Zip file
 
-[Navigate to the code repository for `IC Script Hub` in a browser](https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public) and then click the green Code button. Pick `Download ZIP`.
+[Navigate to the code repository for `IC Script Hub` in a browser](https://github.com/mikebaldi/Idle-Champions/tree/main) and then click the green Code button. Pick `Download ZIP`.
 
 ![Download the zip file](../docimages/grabbing-the-zip.png)
 

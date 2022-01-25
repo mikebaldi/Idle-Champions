@@ -1,7 +1,6 @@
 /*  A handler for Shandie's Dash ability
 
     Properties:
-        active ; The handler, not Dash.
         scaleActive ; True or false for Dash ability is active.
         effectTimeValue ; Starts at 0 and counts up. At 60 Dash scaleActive should be truen and Dash on.
 */
@@ -15,51 +14,20 @@ class TimeScaleWhenNotAttackedHandler extends EffectKeyHandler
     RequiredLevel := 120
     EffectKeyID := 2774
 
-    activeOffset[]
+    GetScaleActive()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x20
-            Else
-                return 0x10
-        }
+        return this.scaleActive.GetValue()
     }
 
-    GetActiveValue()
+    GetEffectTime()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + TimeScaleWhenNotAttackedHandler.activeOffset, "int")
+        return this.effectTimeValue.GetValue()
     }
 
-    scaleActiveOffset[]
+    BuildMemoryObjects()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x108
-            Else
-                return 0xD0
-        }
-    }
-
-    GetScaleActiveValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + TimeScaleWhenNotAttackedHandler.scaleActiveOffset, "int")
-    }
-
-    effectTimeOffset[]
-    {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x110
-            Else
-                return 0xD8
-        }
-    }
-
-    GetEffectTimeValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + TimeScaleWhenNotAttackedHandler.effectTimeOffset, "double")
-    }    
+        this.BuildEffectKey()
+        this.scaleActive := new MemoryObject(0xD0, 0x108, "Int", "", this.BaseAddress)
+        this.effectTimeValue := new MemoryObject(0xD8, 0x110, "Double", "", this.BaseAddress)
+    } 
 }

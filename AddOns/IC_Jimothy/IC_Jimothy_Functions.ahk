@@ -25,6 +25,7 @@ class Jimothy
         this.UpdateSettings(settings)
         this.UseMsgBox := useMsgBox
         this.External := external
+        ;this.Test := "Test field"
         return this
     }
     
@@ -34,9 +35,10 @@ class Jimothy
         settings ;object containint the following key pairs:
             settings.MaxZone ;When current zone memory reads grater than this value, the script ends. type: integer
             settings.MaxMonsters ;When monsters spawned memory reads greater than this value, the script resets the zone. type: integer
-            settings.UseBriv ;Determines which formation to use for the following arrays of zones. 1 for 'q' formation, 0 for 'e' formation
+            settings.UseHew ;1 to use Hew, 0 to not.
+            settings.FormationRadio ;Determines which formation to use for the following arrays of zones. 0 for 'q' formation, 1 for 'e' formation
             settings.Mod5 ;An array of up to 5 unique values between 1 and 5. When mod(mod(current zone, 50), 5) == a value from the
-                array, the script will set the formation as determined by settings.UseBriv.
+                array, the script will set the formation as determined by settings.FormationRadio.
             settings.Mod10 ;Save as above, but up to 10 unique values between 1 and 10 and for mod(mod(current zone, 50), 10). For better
                 performance, parse this array, i.e. mod5 := [1] and mod10 := false is superior to mod5 := false and mod10 := [1,6]
             settings.Mod50 ;same as above, but up to 50 unique values between 1 and 50 for mod(current zone, 50). Parsing is recommended.
@@ -45,8 +47,9 @@ class Jimothy
     {
         this.MaxZone := settings.MaxZone
         this.MaxMonsters := settings.MaxMonsters
-        this.UseBriv := settings.UseBriv
-        if (this.UseBriv == 1)
+        this.UseHew := settings.UseHew
+        this.FormationRadio := settings.FormationRadio
+        if (this.FormationRadio == 0)
         {
             this.ModFormation := "q"
             this.NotModFormation := "e"
@@ -79,14 +82,12 @@ class Jimothy
         {
             if (this.CheckToEndRun())
                 break
-            this.SetFormation()
+            g_SF.SetFormation(this)
             this.CheckToResetZone()
             this.External.Update(this)
             g_SF.ToggleAutoProgress(1)
             if(this.UseFkeys)
                 g_SF.DirectedInput(,,this.KeySpam*)
-            ;if (this.UseFkeys AND g_SF.areChampionsUpgraded(this.formationQ))
-            ;    this.UseFkeys := false
             if (this.UseClick)
                 g_SF.DirectedInput(,,"{ClickDmg}")
             Sleep, 10 ;an attempt to help with gui freezing
@@ -102,13 +103,13 @@ class Jimothy
     {
         g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
         g_SF.Memory.OpenProcessReader()
-        this.CheckSetup()
+        ;this.CheckSetup()
         this.formationQ := g_SF.Memory.GetFormationByFavorite(1)
-        g_SF.LevelChampByID( 75, 10, 7000, "{q}") ; level hew once
-        this.HewSlot := this.GetHewSlot()
-        this.EndRunTxt := "Could not find Hew's slot."
-        if (this.UseMsgBox AND this.HewSlot == -1)
-            MsgBox, %  this.EndRunTxt
+        if (this.UseHew)
+        {
+            g_SF.LevelChampByID( 75, 10, 7000, "{q}") ; level hew once
+            this.HewSlot := this.GetHewSlot()
+        }
         if (this.UseFkeys)
         {
             this.KeySpam := g_SF.GetFormationFKeys(this.formationQ)
@@ -120,104 +121,59 @@ class Jimothy
     DoPartySetup()
     {
         isShandieInFormation := g_SF.IsChampInFormation( 47, this.formationQ )
-        if(isShandieInFormation)
+        if (isShandieInFormation)
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
-        g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
+        isBrivInFormation := g_SF.IsChampInFormation( 58, this.formationQ )
+        if (isBrivInFormation)
+            g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
         isHavilarInFormation := g_SF.IsChampInFormation( 56, this.formationQ )
-        if(isHavilarInFormation)
+        if (isHavilarInFormation)
         {
             g_SF.ToggleAutoProgress(0)
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
-            ultButton := g_SF.GetUltimateButtonByChampID(56)
-            if (ultButton != -1)
-                g_SF.DirectedInput(,, ultButton)
+            g_SF.WaitForTransition()
+            g_SF.SummonDembo()
+            ;ultButton := g_SF.GetUltimateButtonByChampID(56)
+            ;if (ultButton != -1)
+            ;    g_SF.DirectedInput(,, ultButton)
             g_SF.ToggleAutoProgress(1)
         }
     }
 
-    SetFormation()
+    IsModFormationMatch(formation)
     {
-        if ( !g_SF.Memory.ReadQuestRemaining() AND g_SF.Memory.ReadTransitioning() )  ; swap out briv for faster transition
-        {
-            g_SF.DirectedInput(,,"e")
-            this.Formation := "Formation 'e', canceling jump animation."
-            Return
-        }
-
         currentZone := g_SF.Memory.ReadCurrentZone()
         mod50 := mod(CurrentZone, 50)
         mod5 := mod(mod50, 5)
         mod10 := mod(mod50, 10)
 
+        ;msgbox, % "mod 5: " . this.Mod5 . "`nmod10: " . this.Mod10 . "`nmod50: " . this.Mod50
+
         if (this.Mod5 != false)
         {
             for k, v in this.Mod5
             {
-                if (v == mod5)
-                {
-                    this.Formation := this.ModFormation
-                    g_SF.DirectedInput(,,this.Formation)
-                    return
-                }
+                if (v == mod5 AND formation == this.ModFormation)
+                    return true
             }
         }
-        else if (this.Mod10 != false)
+        if (this.Mod10 != false)
         {
             for k, v in this.Mod10
             {
-                if (v == mod10)
-                {
-                    this.Formation := this.ModFormation
-                    g_SF.DirectedInput(,,this.Formation)
-                    return
-                }
+                if (v == mod10 AND formation == this.ModFormation)
+                    return true
             }
         }
-        else if (this.Mod50 != false)
+        if (this.Mod50 != false)
         {
             for k, v in this.Mod50
             {
-                if (v == mod50)
-                {
-                    this.Formation := this.ModFormation
-                    g_SF.DirectedInput(,,this.Formation)
-                    return
-                }
+                if (v == mod50 AND formation == this.ModFormation)
+                    return true
             }
         }
-
-        this.Formation := this.NotModFormation
-        g_SF.DirectedInput(,,this.Formation)
-        Return
-    }
-
-    CheckSetup()
-    {
-        this.EndRunTxt := ""
-        if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 75) == "") ;hew
-        {
-            this.EndRunTxt .= "Could not find Hew in favorite formation 1. "
-            ;return 0
-        }
-        if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 48) == "") ;jim
-        {
-            this.EndRunTxt .= "Could not find Jim in favorite formation 1. "
-            ;return 0
-        }
-        if (g_SF.FindChampIDinSavedFormation(1, "Jimothy", 1, 58) == "") ;briv
-        {
-            this.EndRunTxt .= "Could not find Briv in favorite formation 1. "
-            ;return 0
-        }
-        if (g_SF.FindChampIDinSavedFormation(3, "Jimothy No Briv", 0, 58) == "") ;no briv
-        {
-            this.EndRunTxt .= "Found Briv in favorite formation 3. "
-            ;return 0
-        }
-        if (this.EndRunTxt == "")
-            return 1
-        else
-            return 0
+        Return false
     }
 
     GetHewSlot()
@@ -251,9 +207,9 @@ class Jimothy
 
     CheckToResetZone()
     {
-        if !(this.CheckHewIsAlive())
+        if (this.UseHew AND !(this.CheckHewIsAlive()))
             this.ResetZone()
-        if !(this.CheckMaxMonsters())
+        if (this.MaxMonsters AND !(this.CheckMaxMonsters()))
             this.ResetZone()
     }
 
@@ -288,5 +244,69 @@ class Jimothy
             this.Monsters := "Too many monsers spawned, resetting zone."
             return false
         }
+    }
+}
+
+class IC_JimothySharedFunctions_Class extends IC_SharedFunctions_Class
+{
+    ; a method to swap formations and cancel briv's jump animation.
+    SetFormation(settings := "")
+    {
+        ;only send input messages if necessary
+        brivBenched := this.Memory.ReadChampBenchedByID(58)
+        ;check to bench briv
+        if (!brivBenched AND this.BenchBrivConditions(settings))
+        {
+            this.DirectedInput(,,["{e}"]*)
+        }
+        ;check to unbench briv
+        else if (brivBenched AND this.UnBenchBrivConditions(settings))
+        {
+            this.DirectedInput(,,["{q}"]*)
+        }
+    }
+
+    BenchBrivConditions(settings)
+    {
+        ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
+            return true
+        ;bench briv if mod formation is set to "e" and match method returns true
+        if (settings.ModFormation == "e" AND settings.IsModFormationMatch("e"))
+            return true
+        ;bench briv if mod formation is not set to "e" and match method returns false
+        if (settings.NotModFormation == "e" AND !(settings.IsModFormationMatch("q")))
+            return true
+        return false
+    }
+
+    UnBenchBrivConditions(settings)
+    {
+        ;no attempt to cancel landing animation and risk having wrong formation in.
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
+            return false
+        ;bench briv if mod formation is set to "q" and match method returns true
+        if (settings.ModFormation == "q" AND settings.IsModFormationMatch("q"))
+            return true
+        ;bench briv if mod formation is not set to "q" and match method returns false
+        if (settings.NotModFormation == "q" AND !(settings.IsModFormationMatch("e")))
+            return true
+        return false
+    }
+
+    SummonDembo(force := false)
+    {
+        impHandler := new HavilarImpHandler
+        impHandler.Initialize()
+        if !(impHandler.IsBaseAddressCorrect())
+        {
+            msgbox, % "Havilar's Imp Handler failed to load.`nBase Address: " . impHandler.BaseAddress
+            return
+        }
+        if (impHandler.GetCurrentOtherImpIndex() != 1 OR impHandler.GetActiveImpsSize() != 2)
+        {
+            ultKey := this.GetUltimateButtonByChampID(56)
+            this.DirectedInput(,, ultKey)
+        }  
     }
 }

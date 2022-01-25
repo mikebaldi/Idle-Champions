@@ -30,6 +30,7 @@ class EffectKeyHandler
             return -2
         }
         this.BaseAddress := this.GetBaseAddress()
+        this.BuildMemoryObjects()
         return 0
     }
 
@@ -57,12 +58,16 @@ class EffectKeyHandler
 
     GetBaseAddress()
     {
-        return g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers.GetGameObjectFromDictValues( [ this.ChampID - 1, [ "value", this.DictIndex ] ]* ) )
+        address := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers.GetGameObjectFromDictValues( [ this.ChampID - 1, [ "value", this.DictIndex ] ]* ) )
+        if (g_SF.Memory.GameManager.Is64Bit())
+            return address + 0x20
+        else
+            return address + 0x10
     }
 
     IsBaseAddressCorrect()
     {
-        readEffectKeyID := g_SF.Memory.GameManager.Main.read(this.baseAddress + EffectKeyHandler.effectKeyOffset, "int", EffectKeyHandler.effectKeyIDoffset*)
+        readEffectKeyID := this.effectKey.parentEffectKeyHandler.parent.source.ID.GetValue()
         if (readEffectKeyID != this.EffectKeyID)
         {
             this.Initialized := false
@@ -71,25 +76,61 @@ class EffectKeyHandler
         return true
     }
 
-    effectKeyOffset[]
+    BuildEffectKey()
+    {
+        this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
+    }
+
+    BuildMemoryObjects()
+    {
+        this.BuildEffectKey()
+    }
+}
+
+class MemoryObject
+{
+    __new(32BitOffset, 64BitOffset, valueType, parentObj, baseAddress)
+    {
+        this.ValueType := valueType
+        this.Offset32 := 32BitOffset
+        this.Offset64 := 64BitOffset
+        this.ParentObj := parentObj
+        this.Is64Bit := g_SF.Memory.GameManager.Is64Bit()
+        this.BaseAddress := baseAddress
+    }
+
+    FullOffsets[]
     {
         get 
         {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x28
-            Else
-                return 0x14
+            offsets := {}
+            If IsObject(this.ParentObj)
+                offsets := this.ParentObj.FullOffsets
+            offsets.Push(this.Offset)
+            return offsets
         }
     }
 
-    effectKeyIDoffset[]
+    Offset[]
     {
         get 
         {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return [0x10, 0x10, 0x18, 0x10]
+            if (this.Is64Bit)
+                return this.Offset64
             Else
-                return [0x8, 0x8, 0xC, 0x8]
+                return this.Offset32
         }
+    }
+
+    GetValue()
+    {
+        if (this.ValueType == "Ptr")
+            return g_SF.Memory.GameManager.Main.getAddressFromOffsets(this.BaseAddress, this.FullOffsets*)
+        else
+            return g_SF.Memory.GameManager.Main.read(this.BaseAddress, this.ValueType, this.FullOffsets*)
     }
 }
