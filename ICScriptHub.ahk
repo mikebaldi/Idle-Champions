@@ -69,6 +69,8 @@ if ( g_UserSettings[ "WindowYPositon" ] == "" )
     g_UserSettings[ "WindowYPositon" ] := 0
 if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
     g_UserSettings[ "NoCtrlKeypress" ] := 0
+if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
+    g_UserSettings[ "WaitForProcessTime" ] := 0
 if(g_UserSettings[ "WriteSettings" ] := true)
 {
     g_UserSettings.Delete("WriteSettings")
