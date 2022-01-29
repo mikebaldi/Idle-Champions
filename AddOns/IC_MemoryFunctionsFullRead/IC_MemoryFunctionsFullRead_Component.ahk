@@ -1,3 +1,5 @@
+g_TabControlHeight := Max(g_TabControlHeight, (650+100))
+g_TabControlWidth := Max(g_TabControlHeight, (525+10))
 GUIFunctions.AddTab("FullMemoryFunctions")
 
 Gui, ICScriptHub:Tab, FullMemoryFunctions
@@ -8,7 +10,7 @@ Gui, ICScriptHub:Font, w400
 
 if(g_isDarkMode)
     Gui, Font, g_CustomColor
-Gui, ICScriptHub:Add, ListView, x15 y+8 w450 h450 vMemoryFunctionsViewID, Function|x|Value
+Gui, ICScriptHub:Add, ListView, x15 y+8 w525 h650 vMemoryFunctionsViewID, Function|x|Value
 if(g_isDarkMode)
 {
     GuiControl,ICScriptHub: +Background888888, MemoryFunctionsViewID
