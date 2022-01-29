@@ -48,7 +48,7 @@ class IC_MemoryFunctionsFullRead_Component
                 value := v.Maxparams >= 2 ? fncToCall.Call(valueToPass) : fncToCall.Call()
                 value := IsObject(value) ? ArrFnc.GetDecFormattedArrayString(value) : value
                 value := value == "" ? "-- ERROR --" : value
-                valuePassedString := (v.Maxparams >= 2 ? "(1)" : "")
+                valuePassedString := (v.Maxparams >= 2 ? "(" . valueToPass . ")" : "")
                 LV_Add(, parameterString, valuePassedString, value)
             }
         }
