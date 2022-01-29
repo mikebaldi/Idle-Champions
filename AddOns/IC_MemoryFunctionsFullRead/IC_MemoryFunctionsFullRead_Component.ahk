@@ -33,6 +33,10 @@ class IC_MemoryFunctionsFullRead_Component
         return false
     }
 
+    ; Current valid ERRORs to reads using value 1:
+    ;   ReadTimeScaleMultipliersKeyByIndex - May be modron core speed which won't read effect data
+    ;   ReadChampIDBySlot - make sure a champion is in slot 1 on the game field or this will have an error. (game field slots start at 0 at the far right and count: right to left, top to bottom)
+    ;   ReadUltimateButtonChampIDByItem - Must have at least 2 ultimate abilities unlocked or this will error.
     ReadAllFunctions()
     {
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "MemoryFunctionsViewID")
