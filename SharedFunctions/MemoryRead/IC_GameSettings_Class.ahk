@@ -11,7 +11,7 @@ class IC_GameSettings_Class
  
     GetVersion()
     {
-        return "v1.0, 11/30/21, IC v0.414+, Steam"  
+        return "v1.01, 2022-01-29, IC v0.418.1+, Steam"  
     }
 
     Refresh()
@@ -27,9 +27,9 @@ class IC_GameSettings_Class
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x20])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x28, 0xC])
-        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x30])
-        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x38]) ; Push MobileClientVersion
-        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x3C, 0xC])
+        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x3C])
+        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x44]) ; Push MobileClientVersion
+        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x48, 0xC])
         this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
         this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x10])
     }
