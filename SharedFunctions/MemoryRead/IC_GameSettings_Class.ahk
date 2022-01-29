@@ -39,7 +39,7 @@ class IC_GameSettings_Class
 class IC_GameSettingsEGS_Class
 {
     
-    StaticOffset := 0xE00
+    StaticOffset := 0xA80
     __new()
     {
         this.Refresh()
@@ -47,7 +47,7 @@ class IC_GameSettingsEGS_Class
 
     GetVersion()
     {
-        return "v1.0, 11/30/21, IC v0.414+, EGS"  
+        return "v1.01, 2022-01-29, IC v0.418.1+, EGS"  
     }
 
     Refresh()
@@ -58,14 +58,14 @@ class IC_GameSettingsEGS_Class
         ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
         ;hProcessCopy is an optional variable in which the opened handled is stored.
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
-        this.GameSettings := new GameObjectStructure([0xE0])
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493e40
+        this.GameSettings := new GameObjectStructure([0x820])
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x40])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x48, 0x14])
-        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x58])
-        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x68]) ; Push MobileClientVersion
-        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x70, 0x14])
+        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x70])
+        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x80]) ; Push MobileClientVersion
+        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x88, 0x14])
         this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
         this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x18])
     }
