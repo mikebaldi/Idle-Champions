@@ -250,9 +250,13 @@ class IC_BrivGemFarm_Class
         static LastTriggerStart := false
 
         if (IsObject(SharedRunData))
+        {
             TriggerStart := SharedRunData.TriggerStart
+        }
         else
+        {
             TriggerStart := LastTriggerStart
+        }
 
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
@@ -261,14 +265,20 @@ class IC_BrivGemFarm_Class
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
         }
-        if ( currentZone > lastZone AND currentZone >= 2) ; zone reset
+
+        if !g_SF.Memory.ReadUserIsInited()
+        {
+            ; do not update lastZone if game is loading
+        }
+        else if ( (currentZone > lastZone) AND (currentZone >= 2)) ; zone reset
         {
             lastZone := currentZone
             previousZoneStartTime := A_TickCount
         }
-        else if (g_SF.Memory.ReadHighestZone() < 3 AND lastZone >= 3 ) ; After reset. +1 buffer for time to read value
+        else if ((g_SF.Memory.ReadHighestZone() < 3) AND (lastZone >= 3) AND (currentZone > 0) ) ; After reset. +1 buffer for time to read value
         {
             lastZone := currentZone
+            previousLoopStartTime := A_TickCount
         }
 
         sbStacks := g_SF.Memory.ReadSBStacks()
