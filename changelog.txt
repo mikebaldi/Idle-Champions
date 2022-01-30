@@ -2,7 +2,7 @@ Jan 29, 2022
     Increased FullMemoryView tab's lista area size.
     Updated offsets for Steam/EGS v418.1.
     Updated how loop time resets. (Emmes)
-    Updated logic for stacking to accomodate early stackers better. (Emmes)
+    * REVERTED: Updated logic for stacking to accomodate early stackers better. (Emmes) 
     Updated Dashwait to occur after stacking to accomodate early stackers better. Use the DashWaitBuffer advanced setting to prevent dashwait after stacking.
 
 Jan 24, 2022
