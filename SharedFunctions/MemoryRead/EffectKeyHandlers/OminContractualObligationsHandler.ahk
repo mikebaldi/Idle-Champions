@@ -14,46 +14,23 @@ class OminContractualObligationsHandler extends EffectKeyHandler
     RequiredLevel := 210
     EffectKeyID := 4110
 
-    numContractsFufilledOffset[]
+    GetNumContractsFufilled()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x70
-            Else
-                return 0x38
-        }
+        return this.numContractsFufilled.GetValue()
     }
 
-    GetNumContractsFufilledValue()
+    GetSecondsOnGoldFind()
     {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.numContractsFufilledOffset, "int")
+        return this.secondsOnGoldFind.GetValue()
     }
 
-    secondsOnGoldFindOffset[]
+    BuildMemoryObjects()
     {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x94
-            Else
-                return 0x5C
-        }
+        this.BuildEffectKey()
+        ;effectKey has a different offset than standard.
+        this.effectKey.Offset32 := 0x18
+        this.effectKey.Offset64 := 0x30
+        this.numContractsFufilled := new MemoryObject(0x38, 0x70, "Int", "", this.BaseAddress)
+        this.secondsOnGoldFind := new MemoryObject(0x5C, 0x94, "Float", "", this.BaseAddress)
     }
-
-    GetSecondsOnGoldFindValue()
-    {
-        return g_SF.Memory.GameManager.Main.read(this.baseAddress + OminContractualObligationsHandler.secondsOnGoldFindOffset, "float")
-    }
-
-    effectKeyOffset[]
-    {
-        get 
-        {
-            if (g_SF.Memory.GameManager.Is64Bit())
-                return 0x30
-            Else
-                return 0x18
-        }
-    } 
 }

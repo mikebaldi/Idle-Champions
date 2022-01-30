@@ -250,9 +250,13 @@ class IC_BrivGemFarm_Class
         static LastTriggerStart := false
 
         if (IsObject(SharedRunData))
+        {
             TriggerStart := SharedRunData.TriggerStart
+        }
         else
+        {
             TriggerStart := LastTriggerStart
+        }
 
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
@@ -261,14 +265,20 @@ class IC_BrivGemFarm_Class
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
         }
-        if ( currentZone > lastZone AND currentZone >= 2) ; zone reset
+
+        if !g_SF.Memory.ReadUserIsInited()
+        {
+            ; do not update lastZone if game is loading
+        }
+        else if ( (currentZone > lastZone) AND (currentZone >= 2)) ; zone reset
         {
             lastZone := currentZone
             previousZoneStartTime := A_TickCount
         }
-        else if (g_SF.Memory.ReadHighestZone() < 3 AND lastZone >= 3 ) ; After reset. +1 buffer for time to read value
+        else if ((g_SF.Memory.ReadHighestZone() < 3) AND (lastZone >= 3) AND (currentZone > 0) ) ; After reset. +1 buffer for time to read value
         {
             lastZone := currentZone
+            previousLoopStartTime := A_TickCount
         }
 
         sbStacks := g_SF.Memory.ReadSBStacks()
@@ -487,19 +497,21 @@ class IC_BrivGemFarm_Class
     ;Gets total of SteelBonesStacks + Haste Stacks
     GetNumStacksFarmed()
     {
-        if ( g_BrivUserSettings[ "RestartStackTime" ] )
+        ; to accomodate early stacking:
+        ; Ignore haste stacks if we are past stack zone, like online stacking
+        ; There is a point during modron reset where we have reset current zone, but not converted stacks, so after modron reset level we count both stacks.
+        currentZone := g_SF.Memory.ReadCurrentZone()
+        sbStacks := g_SF.Memory.ReadSBStacks()
+        if ( g_BrivUserSettings[ "RestartStackTime" ] AND ((currentZone < g_BrivUserSettings[ "StackZone" ]) OR (currentZone >= g_SF.ModronResetZone)))
         {
-            return g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
+            return sbStacks + g_SF.Memory.ReadHasteStacks()
         }
         else
         {
-            ; If restart stacking is disabled, we'll stack to basically the exact
-            ; threshold.  That means that doing a single jump would cause you to
-            ; lose stacks to fall below the threshold, which would mean StackNormal
-            ; would happen after every jump.
-            ; Thus, we use a static 47 instead of using the actual haste stacks
+            ; Stack to basically the exact threshold, ignoring current haste stacks.
+            ; We use a static 47 instead of using the actual haste stacks
             ; with the assumption that we'll be at minimum stacks after a reset.
-            return g_SF.Memory.ReadSBStacks() + 47
+            return sbStacks + 47
         }
     }
 

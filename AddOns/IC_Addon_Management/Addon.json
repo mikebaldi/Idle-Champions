@@ -1,9 +1,9 @@
 {
-	"NameLess":"Addon Management",
-	"Version": "v1.0.",
+    "NameLess":"Addon Management",
+    "Version": "v1.0.",
     "Includes" : "IC_Addon_Management_Includes.ahk",
     "Author" : "nyze",
-    "Url" : "Idle champions discord server #scripting",
-    "Info" : "This is an addon that provides management for addons",
+    "Url" : "https://github.com/nyze/Addon-Management",
+    "Info" : "This is an addon that provides addon management for addons in IC Scripthub",
     "Dependencies" : {}
 }

@@ -68,7 +68,7 @@ AddonManagementMoveUpClicked(){
 				LV_Modify(WantedRow, "Select")
 			}
 			else{
-				msgbox Can't move above a dependancy
+				msgbox Can't move above a dependancy.
 			}			
 		}
 	}
@@ -85,7 +85,7 @@ AddonManagementMoveDownClicked(){
 				LV_Modify(WantedRow, "Select")
 			}
 			else{
-				msgbox Can't move below a addon who depends on this addon
+				msgbox Can't move below an addon who depends on this addon.
 			}	
 		}
 	}

@@ -33,7 +33,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.91, 01/12/2022, IC v0.415.1+"
+        return "v1.92, 2022-01-29, IC v0.415.1+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -134,9 +134,9 @@ class IC_MemoryFunctions_Class
     ;this read will only return a valid key if it is reading from TimeScaleWhenNotAttackedHandler object
     ReadTimeScaleMultipliersKeyByIndex(index := 0)
     {
-        ;if (this.Is64Bit)
-        ;    timeScaleObject := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries, "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
-        ;else
+        if (this.Is64Bit)
+           key := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries,, [0x20 + 0x8 + (index * 0x18), 0x28, 0x10, 0x10, 0x18, 0x10]) ; 20 start -> handler, effectKey, parentEffectKeyHandler, parent, source, ID
+        else
             key := New GameObjectStructure(this.GameManager.Game.GameInstance.TimeScales.Multipliers.Entries,, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
         return this.GenericGetValue(key)
     }
