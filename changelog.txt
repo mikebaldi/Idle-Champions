@@ -1,3 +1,9 @@
+Jan 29, 2022
+    Increased FullMemoryView tab's lista area size.
+    Updated offsets for Steam/EGS v418.1.
+    Updated how loop time resets. (Emmes)
+    Updated logic for stacking to accomodate early stackers better. (Emmes)
+
 Jan 24, 2022
     Addon EffectKey Handler Full Read: A new add on to test effectkey handlers are functioniong properly.
 
