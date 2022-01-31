@@ -177,6 +177,14 @@ class IC_BrivGemFarm_Class
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
                     keyspam := ["{ClickDmg}"]
+                    formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
+                    isHewInFormation := g_SF.IsChampInFormation( 75, formationFavorite1 )
+                    if(isHewInFormation)
+                    {
+                        ultButton := g_SF.GetUltimateButtonByChampID(75)
+                        if (ultButton != -1)
+                            keyspam.Push(ultButton)
+                    }
                     doKeySpam := false
                 }
                 g_SF.InitZone( keyspam )
