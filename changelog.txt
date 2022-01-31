@@ -1,3 +1,8 @@
+Jan 31, 2022
+    Updated Slow/Fast runs to update when using manual reset from ResetZoneBuffer. (Emmes)
+    Added WaitForProcess user setting to assist Kartridge users when PID changes. (sycdan)
+    Removed timescale modification to the timeout on dashwait since certain problems can cause it to time out early.
+
 Jan 29, 2022
     Increased FullMemoryView tab's lista area size.
     Updated offsets for Steam/EGS v418.1.
