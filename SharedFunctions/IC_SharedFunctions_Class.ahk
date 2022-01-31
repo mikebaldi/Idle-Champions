@@ -401,7 +401,7 @@ class IC_SharedFunctions_Class
         dash.Initialize()
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
-        timeout := 80000 / timeScale ; 80 seconds / timescale (8s at 10x)
+        timeout := 60000 ; 60s seconds ( previously / timescale (6s at 10x) )
         estimate := (60000 / timeScale) ; no buffer: 60s / timescale to show in LoopString
         ; Loop escape conditions:
         ;   does full timeout duration
