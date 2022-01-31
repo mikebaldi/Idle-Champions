@@ -391,7 +391,7 @@ class IC_BrivGemFarm_Class
             PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 60000, 2 )
             GuiControl, ICScriptHub:, PrevRunTimeID, % PreviousRunTime
 
-            if ( (TotalRunCount > 1) AND (Stackfail In [0, 6]) )
+            if ( TotalRunCount AND (Stackfail In [0, 6]) )
             {
                 if ( SlowRunTime < PreviousRunTime)
                 {
