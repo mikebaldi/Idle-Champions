@@ -51,9 +51,9 @@ class IC_SharedData_Class
 
 class StackFailStates
 {
-    ; StackFail Types: 
+    ; StackFail Types:
     ; 1.  Ran out of stacks when ( > min stack zone AND < target stack zone). only reported when fail recovery is on
-    ;       Will stack farm - only a warning. Configuration likely incorrect            
+    ;       Will stack farm - only a warning. Configuration likely incorrect
     ; 2.  Failed stack conversion (Haste <= 50, SB > target stacks). Forced Reset
     ; 3.  Game was stuck (checkifstuck), forced reset
     ; 4.  Ran out of haste and steelbones > target, forced reset
@@ -598,7 +598,7 @@ class IC_SharedFunctions_Class
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
-        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0) 
+        if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         else if !(settings[ "BrivJumpBuffer" ])
@@ -642,6 +642,7 @@ class IC_SharedFunctions_Class
     {
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
+        waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
@@ -653,6 +654,7 @@ class IC_SharedFunctions_Class
                 g_SharedData.LoopString := "Opening IC.."
                 programLoc := g_UserSettings[ "InstallPath" ] . g_UserSettings ["ExeName" ]
                 Run, %programLoc%
+                Sleep, %waitForProcessTime%
                 while(ElapsedTime < 10000 AND !this.PID )
                 {
                     ElapsedTime := A_TickCount - StartTime
@@ -978,7 +980,7 @@ class IC_SharedFunctions_Class
         }
         return formation
     }
-    
+
     ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
     ; Returns -1 if failed to load adventure id. Returns current adventure's ID if successful in finding adventure.
     VerifyAdventureLoaded()
