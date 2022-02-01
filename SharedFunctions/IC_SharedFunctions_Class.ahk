@@ -94,7 +94,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.5.2, 2022-01-31"
+        return "v2.5.3, 2022-02-01"
     }
 
     ;Gets data from JSON file
@@ -750,6 +750,15 @@ class IC_SharedFunctions_Class
                 this.WorldMapRestart()
             this.RecoverFromGameClose(this.GameStartFormation)
             return false
+        }
+         ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
+        else if ( CurrentZone == "" )
+        {
+            this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )
+            Process, Exist, IdleDragons.exe
+            this.PID := ErrorLevel
+            this.Memory.OpenProcessReader()
+            this.ResetServerCall()
         }
         return true
     }
