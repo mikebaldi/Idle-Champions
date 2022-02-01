@@ -105,7 +105,7 @@ class IC_ServerCalls_Class
     }
 
     ;sample: call=convertresetcurrency&language_id=1&user_id=___&hash=___&converted_currency_id=17&target_currency_id=1&timestamp=0&request_id=0&network_id=0&mobile_client_version=999&localization_aware=true&instance_id=___& 
-    ;calling this loses everything earned during the adventure, should only be used when stuck.
+    ; Valid Target Currencies: 1 (Torm), 3 (Kalemvor), 15 (Helm), 22 (Tiamat), 23 (Auril), 25 (Corellon)
     CallConverCurrency(toCurrency := 1, fromCurrency := 24) 
     {
         advParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID

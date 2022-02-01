@@ -772,15 +772,49 @@ class IC_MemoryFunctions_Class
         return "" 
     }
 
-    GetConversionCurrencyBySlot(slot := 3)
+    ;===================
+    ;Currency Conversion
+    ;===================
+
+    ReadConversionCurrencyBySlot(slot := 0)
     {
         return this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.CurrentCurrency.ID.GetGameObjectFromListValues(slot))
     }
 
-    GetDialogNameBySlot(slot := 3)
+    ReadDialogNameBySlot(slot := 0)
     {
         return this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.ObjectName.GetGameObjectFromListValues(slot))
     }
+
+    ReadForceConvertFavorBySlot(slot := 0)
+    {
+        return this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.ForceConvertFavor.GetGameObjectFromListValues(slot))
+    }
+
+    GetBlessingsDialogSlot()
+    {
+        size := this.GenericGetValue(this.DialogManager.DialogManager.DialogsListSize)
+        loop, %size%
+        {
+            name := this.GenericGetValue(this.DialogManager.DialogManager.DialogsList.ObjectName.GetGameObjectFromListValues(A_Index - 1))
+            if (name == "BlessingsStoreDialog")
+                return (A_Index - 1)
+        }
+        return ""
+    }
+
+    GetBlessingsCurrency()
+    {
+        return this.ReadConversionCurrencyBySlot(this.GetBlessingsDialogSlot())
+    }
+
+    GetForceConvertFavor()
+    {
+        ; slot := this.GetBlessingsDialogSlot()
+        ; value := this.ReadForceConvertFavorBySlot(slot)
+        return this.ReadForceConvertFavorBySlot(this.GetBlessingsDialogSlot())
+    }
+
 
     ;==============
     ;Helper Methods
