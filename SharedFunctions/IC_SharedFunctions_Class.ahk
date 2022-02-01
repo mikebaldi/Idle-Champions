@@ -752,7 +752,7 @@ class IC_SharedFunctions_Class
             return false
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
-        else if ( CurrentZone == "" )
+        else if ( this.Memory.ReadCurrentZone() == "" )
         {
             this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )
             Process, Exist, IdleDragons.exe
