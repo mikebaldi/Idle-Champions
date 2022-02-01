@@ -643,7 +643,8 @@ class IC_SharedFunctions_Class
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
         waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
-        WinGetActiveTitle, saveActive
+        WinGetActiveTitle, savedActive
+        this.SavedActiveWindow := savedActive
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
@@ -666,8 +667,7 @@ class IC_SharedFunctions_Class
             ; Process exists, wait for the window:
             while(!(this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )) AND ElapsedTime < 32000)
                 ElapsedTime := A_TickCount - StartTime
-            WinActivate, Idle Champions
-            WinActivate, %saveActive%
+            this.ActivateLastWindow()
             Process, Priority, % this.PID, High
             this.Memory.OpenProcessReader()
             loadingZone := this.WaitForGameReady()
@@ -677,6 +677,9 @@ class IC_SharedFunctions_Class
             return -1 ; took too long to open
         else
             return 0
+    }
+
+    ActivateLastWindow() { ; Just for prototyping purposes
     }
 
     ; Waits for the game to be in a ready state
