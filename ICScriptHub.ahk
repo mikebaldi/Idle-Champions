@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetModronGUIVersion()
 {
-    return "v3.3.1, 2022-01-30"
+    return "v3.3.2, 2022-02-01"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -48,6 +48,7 @@ global g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-25x25.png"
 global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MouseTooltips := {}
+global g_Miniscripts := {}
 if (g_isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 

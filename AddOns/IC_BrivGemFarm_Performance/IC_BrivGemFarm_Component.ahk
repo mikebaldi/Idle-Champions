@@ -121,6 +121,13 @@ class IC_BrivGemFarm_Component
     
     Briv_Run_Clicked()
     {
+        for k,v in g_Miniscripts
+        {
+            try
+            {
+                Run, %A_AhkPath% "%v%"
+            }
+        }
         try
         {
             SharedData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
@@ -143,6 +150,14 @@ class IC_BrivGemFarm_Component
     Briv_Run_Stop_Clicked()
     {
         g_BrivFarm.StopTimedFunctions()
+        for k,v in g_Miniscripts
+        {
+            try
+            {
+                SharedRunData := ComObjActive(k)
+                SharedRunData.Close()
+            }
+        }
         try
         {
             SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")

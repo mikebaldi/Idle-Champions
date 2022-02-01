@@ -933,7 +933,7 @@ class IC_SharedFunctions_Class
         formationSaveSlot := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
         ; Test Favorite Exists
         txtCheck := "1. Check the correct memory file is being used. Current version: " . memoryVersion
-        txtcheck .= "`n`n2. If IC is running with admin privelages, then the script will also require admin privlages."
+        txtcheck .= "`n`n2. If IC is running with admin privileges, then the script will also require admin privileges."
         if (this.Memory.GameManager.is64bit())
             txtcheck .= "`n`n3. Check AHK is 64bit."
         while ( formationSaveSlot == -1 )
