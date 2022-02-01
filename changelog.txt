@@ -1,3 +1,16 @@
+Jan 31, 2022
+    Updated Slow/Fast runs to update when using manual reset from ResetZoneBuffer. (Emmes)
+    Added WaitForProcess user setting to assist Kartridge users when PID changes. (sycdan)
+    Removed timescale modification to the timeout on dashwait since certain problems can cause it to time out early.
+    Added potential fix for steam not recognizing it is stuck quickly enough when the platform (e.g. steam) can't connect.
+
+Jan 29, 2022
+    Increased FullMemoryView tab's lista area size.
+    Updated offsets for Steam/EGS v418.1.
+    Updated how loop time resets. (Emmes)
+    * REVERTED: Updated logic for stacking to accomodate early stackers better. (Emmes) 
+    Updated Dashwait to occur after stacking to accomodate early stackers better. Use the DashWaitBuffer advanced setting to prevent dashwait after stacking.
+
 Jan 24, 2022
     Addon EffectKey Handler Full Read: A new add on to test effectkey handlers are functioniong properly.
 

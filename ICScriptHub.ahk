@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetModronGUIVersion()
 {
-    return "v3.3, 01/20/2022"
+    return "v3.3.1, 2022-01-30"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -69,6 +69,8 @@ if ( g_UserSettings[ "WindowYPositon" ] == "" )
     g_UserSettings[ "WindowYPositon" ] := 0
 if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
     g_UserSettings[ "NoCtrlKeypress" ] := 0
+if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
+    g_UserSettings[ "WaitForProcessTime" ] := 0
 if(g_UserSettings[ "WriteSettings" ] := true)
 {
     g_UserSettings.Delete("WriteSettings")

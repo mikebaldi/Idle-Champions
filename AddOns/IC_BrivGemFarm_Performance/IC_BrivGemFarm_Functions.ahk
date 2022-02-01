@@ -250,9 +250,13 @@ class IC_BrivGemFarm_Class
         static LastTriggerStart := false
 
         if (IsObject(SharedRunData))
+        {
             TriggerStart := SharedRunData.TriggerStart
+        }
         else
+        {
             TriggerStart := LastTriggerStart
+        }
 
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
@@ -261,14 +265,20 @@ class IC_BrivGemFarm_Class
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
         }
-        if ( currentZone > lastZone AND currentZone >= 2) ; zone reset
+
+        if !g_SF.Memory.ReadUserIsInited()
+        {
+            ; do not update lastZone if game is loading
+        }
+        else if ( (currentZone > lastZone) AND (currentZone >= 2)) ; zone reset
         {
             lastZone := currentZone
             previousZoneStartTime := A_TickCount
         }
-        else if (g_SF.Memory.ReadHighestZone() < 3 AND lastZone >= 3 ) ; After reset. +1 buffer for time to read value
+        else if ((g_SF.Memory.ReadHighestZone() < 3) AND (lastZone >= 3) AND (currentZone > 0) ) ; After reset. +1 buffer for time to read value
         {
             lastZone := currentZone
+            previousLoopStartTime := A_TickCount
         }
 
         sbStacks := g_SF.Memory.ReadSBStacks()
@@ -381,10 +391,13 @@ class IC_BrivGemFarm_Class
             PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 60000, 2 )
             GuiControl, ICScriptHub:, PrevRunTimeID, % PreviousRunTime
 
-            if ( SlowRunTime < PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
-            if ( FastRunTime > PreviousRunTime AND !StackFail AND TotalRunCount )
-                GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
+            if (TotalRunCount AND (!StackFail OR StackFail == 6))
+            {
+                if (SlowRunTime < PreviousRunTime)
+                    GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
+                if (FastRunTime > PreviousRunTime)
+                    GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
+            }
             if ( StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
             {
                 GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
@@ -542,6 +555,10 @@ class IC_BrivGemFarm_Class
             this.StackRestart()
         else if (stacks < g_BrivUserSettings[ "TargetStacks" ])
             this.StackNormal()
+        formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
+        isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
+        if ( !g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
+            g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
     }
 
     /*  StackRestart - Stack Briv's SteelBones by switching to his formation and restarting the game.
