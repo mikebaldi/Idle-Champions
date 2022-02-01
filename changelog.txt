@@ -1,3 +1,7 @@
+Feb 1, 2022
+    Updated how refocus after game load works.
+    Added patron compatability for manual resets.
+
 Jan 31, 2022
     Updated Slow/Fast runs to update when using manual reset from ResetZoneBuffer. (Emmes)
     Added WaitForProcess user setting to assist Kartridge users when PID changes. (sycdan)

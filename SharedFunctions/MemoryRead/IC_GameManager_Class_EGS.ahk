@@ -9,7 +9,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.95, 2022-01-29, IC v0.418.1+, EGS"
+        return "v1.9.6, 2022-02-01, IC v0.418.1+, EGS"
     }
 
     is64Bit()
@@ -97,6 +97,10 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect,, [0x38])
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer.T := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer, "Double", [0x48])
         this.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x3C]) ; 0 = right, 1 = left, 2 = static (instant)
+        this.Game.GameInstance.PatronHandler := New GameObjectStructure(this.Game.GameInstance,, [0x50])
+        this.Game.GameInstance.PatronHandler.ActivePatron := New GameObjectStructure(this.Game.GameInstance.PatronHandler,, [0x20]) ; Push - <ActivePatron>k_BackingField
+        this.Game.GameInstance.PatronHandler.ActivePatron.ID := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0x10]) 
+        this.Game.GameInstance.PatronHandler.ActivePatron.Tier := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0xC0]) 
         ;=================
         ;Screen Resolution
         ;=================

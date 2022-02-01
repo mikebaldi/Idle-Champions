@@ -92,7 +92,8 @@ class IC_ServerCalls_Class
 
     CallLoadAdventure( adventureToLoad ) 
     {
-        advParams := this.dummyData . "&patron_tier=0&user_id=" . this.userID . "&hash=" . this.userHash . "&instance_id=" . this.instanceID 
+        patronTier := this.activePatronID ? 1 : 0
+        advParams := this.dummyData . "&patron_tier=" . patronTier . "&user_id=" . this.userID . "&hash=" . this.userHash . "&instance_id=" . this.instanceID 
             . "&game_instance_id=" . this.activeModronID . "&adventure_id=" . adventureToLoad . "&patron_id=" . this.activePatronID
         return this.ServerCall( "setcurrentobjective", advParams )
     }

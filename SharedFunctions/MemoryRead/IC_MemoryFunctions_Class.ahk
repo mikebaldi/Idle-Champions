@@ -35,7 +35,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.92, 2022-01-29, IC v0.415.1+"
+        return "v1.9.3, 2022-02-01, IC v0.415.1+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -815,6 +815,12 @@ class IC_MemoryFunctions_Class
         return this.ReadForceConvertFavorBySlot(this.GetBlessingsDialogSlot())
     }
 
+    ReadPatronID()
+    {
+        if (this.GenericGetValue(this.GameManager.Game.GameInstance.PatronHandler.ActivePatron))
+            return  this.GenericGetValue(this.GameManager.Game.GameInstance.PatronHandler.ActivePatron.ID)
+        return 0
+    }
 
     ;==============
     ;Helper Methods

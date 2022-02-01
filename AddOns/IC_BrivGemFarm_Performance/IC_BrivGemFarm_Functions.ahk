@@ -38,7 +38,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_ServerCall.webroot := this.Memory.ReadWebRoot() ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
-        g_ServerCall.activePatronID := 0 ; 0 = no patron
+        g_ServerCall.activePatronID := this.Memory.ReadPatronID() ; 0 = no patron
         g_ServerCall.UpdateDummyData()
     }
 
@@ -80,7 +80,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         Sleep, 100 ; extra wait for window to load
         hwnd := this.Hwnd
         WinActivate, ahk_id %hwnd% ; Idle Champions likes to be activated before it can be deactivated            
-        savedActive := this.SavedActive
+        savedActive := this.SavedActiveWindow
         WinActivate, %savedActive%
     }
 }
