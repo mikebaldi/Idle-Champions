@@ -1,6 +1,8 @@
 Feb 1, 2022
     Updated how refocus after game load works.
     Added patron compatability for manual resets.
+    Added system/compatability for "Miniscripts" via BrivGemFarm. 
+    Small bugfixes, typo corrections, and version updates.
 
 Jan 31, 2022
     Updated Slow/Fast runs to update when using manual reset from ResetZoneBuffer. (Emmes)
