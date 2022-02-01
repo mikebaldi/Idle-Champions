@@ -94,7 +94,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.5.0, 2022-01-18"
+        return "v2.5.1, 2022-01-31"
     }
 
     ;Gets data from JSON file
