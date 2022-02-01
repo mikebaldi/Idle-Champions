@@ -110,7 +110,7 @@ class IC_ServerCalls_Class
     CallConverCurrency(toCurrency := 1, fromCurrency := 24) 
     {
         advParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID
-        extraParams = "&converted_currency_id=" . fromCurrency . "&target_currency_id=" toCurrency
+        extraParams := "&converted_currency_id=" . fromCurrency . "&target_currency_id=" . toCurrency
         return this.ServerCall( "convertresetcurrency", (advParams . extraParams))
     }
 
