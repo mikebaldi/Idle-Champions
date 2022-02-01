@@ -36,7 +36,7 @@ class IC_EngineSettingsEGS_Class
  
     GetVersion()
     {
-        return "v1.0, 12/03/21, IC v0.414+, EGS"  
+        return "v1.0, 2022-01-31, IC v0.414+, EGS"  
     }
 
     Refresh()
@@ -44,6 +44,7 @@ class IC_EngineSettingsEGS_Class
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
         this.EngineSettings := new GameObjectStructure([0x30])
+        this.EngineSettings.Is64Bit := true
         this.EngineSettings.BaseAddress := this.BaseAddress
         this.EngineSettings.WebRoot := new GameObjectStructure(this.EngineSettings,"UTF-16",[this.StaticOffset + 0x10, 0x14])
     }

@@ -53,6 +53,7 @@ class GameObjectStructure
         var.BaseAddress := this.BaseAddress
         var.ListIndexes := this.ListIndexes.Clone()
         var.ValueType := this.ValueType
+        var.Is64Bit := this.Is64Bit
         return var
     }
 
