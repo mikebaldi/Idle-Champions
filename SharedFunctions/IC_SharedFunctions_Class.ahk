@@ -643,6 +643,7 @@ class IC_SharedFunctions_Class
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
         waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
+        WinGetActiveTitle, saveActive
         while ( !loadingZone AND ElapsedTime < 32000 )
         {
             this.Hwnd := 0
@@ -665,6 +666,8 @@ class IC_SharedFunctions_Class
             ; Process exists, wait for the window:
             while(!(this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )) AND ElapsedTime < 32000)
                 ElapsedTime := A_TickCount - StartTime
+            WinActivate, Idle Champions
+            WinActivate, %saveActive%
             Process, Priority, % this.PID, High
             this.Memory.OpenProcessReader()
             loadingZone := this.WaitForGameReady()
