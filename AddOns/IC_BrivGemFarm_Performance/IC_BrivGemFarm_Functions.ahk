@@ -566,8 +566,8 @@ class IC_BrivGemFarm_Class
             this.StackRestart()
         else if (stacks < g_BrivUserSettings[ "TargetStacks" ])
             this.StackNormal()
-        formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
-        isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
+        currentFormation := g_SF.Memory.GetCurrentFormation()
+        isShandieInFormation := g_SF.IsChampInFormation( 47, currentFormation )
         if ( !g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
     }
