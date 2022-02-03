@@ -13,23 +13,26 @@ class IC_BrivPotatoSharedFunctions_Class extends IC_BrivSharedFunctions_Class
         }
         ; check if game has offline progress to calculate
         offlineTime := this.Memory.ReadOfflineTime()
-        If(offlineTime <= 0 AND offlineTime != "")
-            return true ; No offline progress to caclculate, game started
-        else
+        if(this.Memory.ReadGameStarted())
         {
-            ; wait for offline progress to finish
-            g_SharedData.LoopString := "Waiting for offline progress.."
-            while( ElapsedTime < timeout AND !this.Memory.ReadOfflineDone())
+            if(offlineTime <= 0 AND offlineTime != "")
+                return true ; No offline progress to caclculate, game started
+            else
             {
-                Sleep, 250
-                ElapsedTime := A_TickCount - timeoutTimerStart
-            }
-            ; finished before timeout
-            if(this.Memory.ReadOfflineDone())
-            {
-                this.WaitForFinalStatUpdates()
-                g_PreviousZoneStartTime := A_TickCount
-                return true
+                ; wait for offline progress to finish
+                g_SharedData.LoopString := "Waiting for offline progress.."
+                while( ElapsedTime < timeout AND !this.Memory.ReadOfflineDone())
+                {
+                    Sleep, 250
+                    ElapsedTime := A_TickCount - timeoutTimerStart
+                }
+                ; finished before timeout
+                if(this.Memory.ReadOfflineDone())
+                {
+                    this.WaitForFinalStatUpdates()
+                    g_PreviousZoneStartTime := A_TickCount
+                    return true
+                }
             }
         }
         ; timed out
