@@ -196,7 +196,7 @@ class IC_BrivGemFarm_Class
             if(g_SF.CheckifStuck())
             {
                 g_SharedData.TriggerStart := true
-                g_SharedData.StackFail := StackFailStates.FAILED_TO_PROGRESS
+                g_SharedData.StackFail := StackFailStates.FAILED_TO_PROGRESS ; 3
                 g_SharedData.StackFailStats.TALLY[g_SharedData.StackFail] += 1
             }
             Sleep, 20 ; here to keep the script responsive.
@@ -479,30 +479,42 @@ class IC_BrivGemFarm_Class
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         stacks := this.GetNumStacksFarmed()
         stackfail := 0
+        forcedReset := false
+        forcedResetReason := ""
         ; passed stack zone, start stack farm. Normal operation.
         if ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
             this.StackFarm()
-        ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
-        else if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
+        else
         {
-            stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE
-            g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            this.StackFarm()
-        }
-        ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure
-        else if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > g_BrivUserSettings[ "TargetStacks" ] AND g_SF.Memory.ReadHighestZone() > 10)
-        {
-            stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD
-            g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            g_SF.RestartAdventure( "Briv ran out of jumps but has enough stacks for a new adventure" )
-        }
-        ; stacks are more than the target stacks and party is more than 25 levels past stack zone, restart adventure
-        ; (for restarting after stacking without going to modron reset level)
-        if ( stacks > g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
-        {
-            stackFail := StackFailStates.FAILED_TO_RESET_MODRON
-            g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            g_SF.RestartAdventure(" Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone")
+            ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
+            if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
+            {
+                stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
+                g_SharedData.StackFailStats.TALLY[stackfail] += 1
+                this.StackFarm()
+            }
+            else
+            { 
+                ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure
+                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > g_BrivUserSettings[ "TargetStacks" ] AND g_SF.Memory.ReadHighestZone() > 10)
+                {
+                    stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
+                    g_SharedData.StackFailStats.TALLY[stackfail] += 1
+                    forcedReset := true
+                    forcedResetReason := "Briv ran out of jumps but has enough stacks for a new adventure"
+                }
+                ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
+                ; (for restarting after stacking without going to modron reset level)
+                if ( stacks > g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+                {
+                    stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
+                    g_SharedData.StackFailStats.TALLY[stackfail] += 1
+                    forcedReset := true
+                    forcedResetReason := " Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone"
+                }
+                if(forcedReset)
+                    g_SF.RestartAdventure(forcedResetReason)
+            }
         }
         return stackfail
     }
@@ -668,12 +680,12 @@ class IC_BrivGemFarm_Class
                 g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
                 g_SF.RestartAdventure( "Failed Conversion" )
                 g_SF.SafetyCheck()
-                return StackFailStates.FAILED_TO_CONVERT_STACKS
+                return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
             }
             If (g_SF.Memory.ReadHasteStacks() < g_BrivUserSettings[ "TargetStacks" ] AND stacks <= 50)
             {
                 g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
-                return StackFailStates.FAILED_TO_KEEP_STACKS
+                return StackFailStates.FAILED_TO_KEEP_STACKS ; 5
             }
         }
         return 0
