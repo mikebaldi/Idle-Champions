@@ -110,6 +110,24 @@ class IC_BrivServerCall_Class extends IC_ServerCalls_Class
 class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
+
+    
+
+    SharedRunData[]
+    {
+        get 
+        {
+            try
+            {
+                return ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            }
+            catch, Err
+            {
+                return new IC_SharedData_Class
+            }
+        }
+    }
+
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
     ;=====================================================
@@ -260,15 +278,7 @@ class IC_BrivGemFarm_Class
         static hasteStackMessage := ""
         static LastTriggerStart := false
 
-        if (IsObject(SharedRunData))
-        {
-            TriggerStart := SharedRunData.TriggerStart
-        }
-        else
-        {
-            TriggerStart := LastTriggerStart
-        }
-
+        TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : LastTriggerStart
         Critical, On
         currentZone := g_SF.Memory.ReadCurrentZone()
         if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadAreaActive() AND lastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart)) ; Modron or Manual reset happend
@@ -353,18 +363,13 @@ class IC_BrivGemFarm_Class
             LastResetCount := g_SF.Memory.ReadResetsCount()
             isStarted := true
         }
-        SharedRunData := ""
-        try
-        {
-            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-        }
 
         ;testReadAreaActive := g_SF.Memory.ReadAreaActive()
-        StackFail := IsObject(SharedRunData) ? Max(StackFail, SharedRunData.StackFail) : StackFail
-        TriggerStart := IsObject(SharedRunData) ? SharedRunData.TriggerStart : LastTriggerStart
+        StackFail := Max(StackFail, this.SharedRunData.StackFail)
+        TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : LastTriggerStart
         if ( g_SF.Memory.ReadResetsCount() > LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND LastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart) )
         {
-            while(!g_SF.Memory.ReadOfflineDone() AND IsObject(SharedRunData) AND SharedRunData.TriggerStart)
+            while(!g_SF.Memory.ReadOfflineDone() AND IsObject(this.SharedRunData) AND this.SharedRunData.TriggerStart)
             {
                 Critical, Off
                 Sleep, 50
@@ -384,10 +389,10 @@ class IC_BrivGemFarm_Class
                 GoldChestCountStart := g_SF.Memory.GetChestCountByID(2)
                 
                 ; start count after first run since total chest count is counted after first run
-                if(IsObject(SharedRunData)) 
+                if(IsObject(this.SharedRunData)) 
                 {
-                    SharedRunData.PurchasedGoldChests := 0
-                    SharedRunData.PurchasedSilverChests := 0    
+                    this.SharedRunData.PurchasedGoldChests := 0
+                    this.SharedRunData.PurchasedSilverChests := 0    
                 }
                 
                 FastRunTime := 1000
@@ -414,7 +419,7 @@ class IC_BrivGemFarm_Class
                 GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
                 FailRunTime += PreviousRunTime
                 GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( FailRunTime, 2 )
-                GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(SharedRunData.StackFailStats.TALLY)
+                GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
             }
 
             GuiControl, ICScriptHub:, TotalRunCountID, % TotalRunCount
@@ -430,20 +435,22 @@ class IC_BrivGemFarm_Class
             GuiControl, ICScriptHub:, GemsTotalID, % GemsTotal
             GuiControl, ICScriptHub:, GemsPhrID, % Round( GemsTotal / dtTotalTime, 2 )
 
-            if (IsObject(SharedRunData))
+            if (IsObject(this.SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + (IsObject(SharedRunData) ? SharedRunData.PurchasedSilverChests : SilversPurchasedID)
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + (IsObject(SharedRunData) ? SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
-                GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(SharedRunData) ? SharedRunData.OpenedSilverChests : SilversOpenedID)
-                GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(SharedRunData) ? SharedRunData.OpenedGoldChests : GoldsOpenedID)
-                GuiControl, ICScriptHub:, ShiniesID, % (IsObject(SharedRunData) ? SharedRunData.ShinyCount : ShiniesID)
+                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : SilversPurchasedID)
+                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
+                GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : SilversOpenedID)
+                GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : GoldsOpenedID)
+                GuiControl, ICScriptHub:, ShiniesID, % (IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : ShiniesID)
             }
             ++TotalRunCount
             StackFail := 0
+            this.SharedRunData.StackFail := false
+            this.SharedRunData.TriggerStart := false
             RunStartTime := A_TickCount
         }
-        if (IsObject(SharedRunData))
-            LastTriggerStart := SharedRunData.TriggerStart
+        if (IsObject(this.SharedRunData))
+            LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
     }
 
