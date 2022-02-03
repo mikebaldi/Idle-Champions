@@ -11,6 +11,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
             response := g_ServerCall.CallEndAdventure()
             response := g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
+            g_SharedData.TriggerStart := true
     }
 
     SetUserCredentials()
@@ -160,10 +161,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.LoopString := "Main Loop"
             CurrentZone := g_SF.Memory.ReadCurrentZone()
             if(CurrentZone == "" AND !g_SF.SafetyCheck()) ; Check for game closed
-            {
                 g_SF.ToggleAutoProgress( 1, false, true ) ; Turn on autoprogress after a restart
-                g_SharedData.TriggerStart := true
-            }
             g_SF.SetFormation(g_BrivUserSettings)
             if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
