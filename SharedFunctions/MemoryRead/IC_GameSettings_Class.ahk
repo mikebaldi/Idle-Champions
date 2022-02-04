@@ -4,7 +4,7 @@ class IC_GameSettings_Class
 {
     
     ;StaticOffset := 0xD20
-    StaticOffset := 0x1A0
+    StaticOffset := 0xE00
     __new()
     {
         this.Refresh()
@@ -23,10 +23,10 @@ class IC_GameSettings_Class
         ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
         ;hProcessCopy is an optional variable in which the opened handled is stored.
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00344F94
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00344F94
         ;this.GameSettings := new GameObjectStructure([0xA8])
-        this.GameSettings := new GameObjectStructure([0x128])
+        this.GameSettings := new GameObjectStructure([0xE0])
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x20])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x28, 0xC])
