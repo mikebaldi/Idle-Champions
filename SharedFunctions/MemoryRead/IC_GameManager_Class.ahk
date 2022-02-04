@@ -26,7 +26,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.9.6, 2022-02-01, IC v0.418.1+, Steam"
+        return "v1.10.0, 2022-02-04, IC v0.418.2+, Steam"
     }
 
     is64Bit()
@@ -128,6 +128,7 @@ class IC_GameManager_Class
         ;herohandler - champion related information accessed by ID
         ;=========================================================
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler,"List", [0xC, 0x8]) ;Push heroes._items
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList_size := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler,, [0xC, 0xC]) ;Push heroes._size
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0xC])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def.Name := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def, "UTF-16", [0x18, 0xC]) ;Push Name, Value
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x40])
@@ -137,9 +138,18 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName,, [0x8, 0x10]) ;Push _items, item[0] - this is a list that should generally be one long, but there may be abilities with more items in which case we will need to revisit this and make a list.
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey,, [0x8])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler,, [0x94, 0x8]) ;Push activeEffectHandlers, _items. Eliminated item[0] so this acts as a pointer - OLD note no longer applies: this is a list that should generally be one long, but there may be abilities with more items in which case we will need to revisit this and make a list.
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x10C, 0xC, 0x1C]) ;Push allUpgradesOrdered, entries, value[0] -note this is a dict, but CE will build it as a list where value[0] is actually represented as item[3]
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered, "List", [0x8]) ;push _items
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered._size := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered,, [0xC])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.ID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x8])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.SpecializationName := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List, "UTF-16", [0x20, 0xC]) ;Push SpecializationName, Value
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.RequiredLevel := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x4C])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.RequiredUpgradeID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x54])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.SpecializationGraphic := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x58])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x110, 0x18]) ; Push purchasedUpgradeIDs._count
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x1E0]) ; Alias 
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Slot := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x184]) ; Push slotId
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Owned := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x180]) 
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Benched := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x190]) 
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Level := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x1AC]) ;Push _level
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x0C, 0xD0]) ; Push def.SeatID
@@ -215,20 +225,20 @@ class IC_GameManager_Class
         ;Screen and UI
         ;=================
         this.Game.GameInstance.Screen := New GameObjectStructure(this.Game.GameInstance,, [0x8])
-        this.Game.GameInstance.Screen.uiController := New GameObjectStructure(this.Game.GameInstance.Screen,, [0x230])
+        this.Game.GameInstance.Screen.uiController := New GameObjectStructure(this.Game.GameInstance.Screen,, [0x238])
         this.Game.GameInstance.Screen.uiController.topBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0xC])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x1FC])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox,, [0x218])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar, "Char", [0x200, 0x23A]) ; Push autoProgressButton.toggled
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x204])
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox,, [0x220])
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar, "Char", [0x208, 0x242]) ; Push autoProgressButton.toggled
         this.Game.GameInstance.Screen.uiController.bottomBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x10])
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar,, [0x20C])
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x22C, 0x8]) ; Push activeBoxes._items
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x24C]) 
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar,, [0x214])
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x234, 0x8]) ; Push activeBoxes._items
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x254]) 
         this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0x70]) 
         this.Game.GameInstance.Screen.uiController.ultimatesBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x14])
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x220, 0x8]) ; Push ultimatesItems._items
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x220, 0xC]) ; Push ultimatesItems._size
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x218])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x228, 0x8]) ; Push ultimatesItems._items
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x228, 0xC]) ; Push ultimatesItems._size
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x220])
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero,, [0xC])
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x8])
         ;=========================================
