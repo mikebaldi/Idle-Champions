@@ -1,3 +1,8 @@
+Feb 4, 2022
+    Dashwait after stacking checks current formation instead of favorite 1.
+    Updates to slightly change how stack fails are recorded and prioritized.
+    Potential fix for error spam during attempts to update GUI when Gem Farm script abruptly stops.
+
 Feb 1, 2022
     Updated how refocus after game load works.
     Added patron compatability for manual resets.
