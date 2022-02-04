@@ -2,9 +2,9 @@
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
 class IC_GameSettings_Class
 {
-    
-    ;StaticOffset := 0xD20
-    StaticOffset := 0xE00
+    ;StaticOffset := 0xE00
+    StaticOffset := 0x130
+    ;back ups: 0x190 and 0x1C0
     __new()
     {
         this.Refresh()
@@ -12,7 +12,7 @@ class IC_GameSettings_Class
  
     GetVersion()
     {
-        return "v1.0.2, 2022-02-04, IC v0.418.2+, Steam"  
+        return "v1.0.4, 2022-02-04, IC v0.418.2+, Steam"  
     }
 
     Refresh()
@@ -23,10 +23,13 @@ class IC_GameSettings_Class
         ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
         ;hProcessCopy is an optional variable in which the opened handled is stored.
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00344F94
-        ;this.GameSettings := new GameObjectStructure([0xA8])
-        this.GameSettings := new GameObjectStructure([0xE0])
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A4F74
+        ;this.GameSettings := new GameObjectStructure([0xE0])
+        this.GameSettings := new GameObjectStructure([0x8, 0xC, 0x60])
+        ;back ups
+        ;[0x8, 0xC, 0x300]
+        ;[0x8, 0xC, 0xE44]
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x20])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x28, 0xC])
