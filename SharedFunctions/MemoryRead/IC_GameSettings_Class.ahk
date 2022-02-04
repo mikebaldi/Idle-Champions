@@ -3,7 +3,8 @@
 class IC_GameSettings_Class
 {
     
-    StaticOffset := 0xD20
+    ;StaticOffset := 0xD20
+    StaticOffset := 0x1A0
     __new()
     {
         this.Refresh()
@@ -11,7 +12,7 @@ class IC_GameSettings_Class
  
     GetVersion()
     {
-        return "v1.01, 2022-01-29, IC v0.418.1+, Steam"  
+        return "v1.0.2, 2022-02-04, IC v0.418.2+, Steam"  
     }
 
     Refresh()
@@ -22,14 +23,16 @@ class IC_GameSettings_Class
         ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
         ;hProcessCopy is an optional variable in which the opened handled is stored.
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        this.GameSettings := new GameObjectStructure([0xA8])
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00344F94
+        ;this.GameSettings := new GameObjectStructure([0xA8])
+        this.GameSettings := new GameObjectStructure([0x128])
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x20])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x28, 0xC])
-        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x3C])
-        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x44]) ; Push MobileClientVersion
-        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x48, 0xC])
+        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x44])
+        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x4c]) ; Push MobileClientVersion
+        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x50, 0xC])
         this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
         this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x10])
     }

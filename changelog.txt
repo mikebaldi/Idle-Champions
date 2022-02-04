@@ -2,6 +2,8 @@ Feb 4, 2022
     Dashwait after stacking checks current formation instead of favorite 1.
     Updates to slightly change how stack fails are recorded and prioritized.
     Potential fix for error spam during attempts to update GUI when Gem Farm script abruptly stops.
+    Updated GameManager Pointers for v418.2 on steam.
+    Updated pointers and offsets for GameSettings on steam to re-enable chest opening in v418.2.
 
 Feb 1, 2022
     Updated how refocus after game load works.
