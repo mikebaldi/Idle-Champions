@@ -310,3 +310,5 @@ class IC_JimothySharedFunctions_Class extends IC_SharedFunctions_Class
         }  
     }
 }
+
+#include %A_LineFile%\..\..\..\SharedFunctions\MemoryRead\EffectKeyHandlers\HavilarImpHandler.ahk

@@ -32,3 +32,8 @@ Known Issues:
 5. Check if Hew is alive - The script will check if Hew is alive. When Hew is not alive, the script will reset the current zone by falling back and then autoprogressing forward.
 6. Select the formation to be used on the checked zones below - Choose either the 'Q' or 'E' formation to be used on the checked zones below. On the zones not checked, the unselected formation will be used.
 7. Mod 5, Mod 10, and Mod 50 check boxes - See setting 6 above.
+
+#
+## Change Log:
+v1.0.1, February 5, 2022
+    Fixed a case that would result in Havilar attempting to summon Dembo would throw an error.
