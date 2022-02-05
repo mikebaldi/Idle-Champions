@@ -1,6 +1,6 @@
 {
 	"Name":"Jimothy",
-	"Version": "v0.2.",
+	"Version": "v1.0.1",
     "Includes" : "IC_Jimothy_Component.ahk",
     "Author" : "mikebaldi1980",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_Jimothy",
