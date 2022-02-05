@@ -15,8 +15,6 @@ if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver
 }
 
-
-
 class IC_TestEffectKeys_Component
 {
     static exclusionList := [ "__Init", "__new", "__Class", "Initialize", "CheckChampLevel", "GetDictIndex", "GetBaseAddress", "IsBaseAddressCorrect", "BuildEffectKey", "BuildMemoryObjects" ]
@@ -70,7 +68,7 @@ class IC_TestEffectKeys_Component
             }
             for k,v in %handlerName%
             {
-                if( isFunc(v) AND !IC_MemoryFunctionsFullRead_Component.InExclusionsList(k) )
+                if( isFunc(v) AND !IC_TestEffectKeys_Component.InExclusionsList(k) )
                 {
                     fncToCall := ObjBindMethod(handlerInstance, k)
                     entry := k . ": " . fncToCall.Call()
@@ -103,7 +101,6 @@ class IC_TestEffectKeys_Component
         }
     }
 }
-#include %A_LineFile%\..\..\..\SharedFunctions\ObjRegisterActive.ahk
 
 #include %A_LineFile%\..\..\..\SharedFunctions\MemoryRead\EffectKeyHandlers\BrivUnnaturalHasteHandler.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\MemoryRead\EffectKeyHandlers\HavilarImpHandler.ahk
