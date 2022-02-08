@@ -92,6 +92,9 @@ class Jimothy
                 g_SF.DirectedInput(,,"{ClickDmg}")
             Sleep, 10 ;an attempt to help with gui freezing
         }
+        g_SF.ToggleAutoProgress(0)
+        g_SF.WaitForTransition()
+        g_SF.FallBackFromZone()
         while !(g_SF.Memory.ReadCurrentZone() < g_SF.Memory.ReadHighestZone())
         {
             g_SF.ToggleAutoProgress(0)
