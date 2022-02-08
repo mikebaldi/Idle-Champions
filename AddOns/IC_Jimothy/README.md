@@ -35,5 +35,7 @@ Known Issues:
 
 #
 ## Change Log:
+v1.0.2, February 8, 2022
+    Added additional code to better ensure the party falls back a full zone and disables autoprogress when ending a run.
 v1.0.1, February 5, 2022
     Fixed a case that would result in Havilar attempting to summon Dembo would throw an error.
