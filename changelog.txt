@@ -1,5 +1,6 @@
 Feb 9, 2022
     Updated URLs in addons to point to main instead of IC-ScriptHub-Public on github.
+    Added a basic Advanced BrivGemFarm Settings tab Addon.
 
 Feb 4, 2022
     Dashwait after stacking checks current formation instead of favorite 1.
