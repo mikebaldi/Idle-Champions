@@ -3,7 +3,7 @@
 	"Version": "v1.0.",
     "Includes" : "IC_BrivGemFarm_Component.ahk",
     "Author" : "Antilectual & mikebaldi1980",
-    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_BrivGemFarm_Performance",
+    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_BrivGemFarm_Performance",
     "Info" : "This Addon automates and optimizes gem farming by utilizing Briv swapping during transitions, offline steelbones stacking, waiting for Shandie's dash, leveling with Fkeys, opening chests while the game is closed, and numerous other speed farming features. This is the current rewrite/replacement for ModronGUI.",
     "Dependencies" : {
     }

@@ -3,7 +3,7 @@
 	"Version": "v1.0.2",
     "Includes" : "IC_Jimothy_Component.ahk",
     "Author" : "mikebaldi1980",
-    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/IC-Script-Hub-Public/AddOns/IC_Jimothy",
+    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_Jimothy",
     "Info" : "This Addon automates Jimothy push runs.",
     "Dependencies" : {}
 }
