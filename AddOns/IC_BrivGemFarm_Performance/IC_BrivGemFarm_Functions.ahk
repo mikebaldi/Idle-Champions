@@ -396,7 +396,7 @@ class IC_BrivGemFarm_Class
                 FastRunTime := 1000
                 ScriptStartTime := A_TickCount
             }
-            if(IsObject(IC_InventoryView_Component)) ; If InventoryView AddOn is available
+            if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
             {
                 InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadInventory")
                 InventoryViewRead.Call(TotalRunCount)
