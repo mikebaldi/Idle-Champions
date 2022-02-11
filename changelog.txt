@@ -1,3 +1,7 @@
+Feb 11, 2022
+    Fix for an error involving Inventory Reads.
+    Updated pointers for chest defines to fix the Chests tab.
+
 Feb 10, 2022
     Updated OfflineProgressHandler offsets for v419.
 
