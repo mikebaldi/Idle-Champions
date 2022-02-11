@@ -26,7 +26,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.10.0, 2022-02-04, IC v0.418.2+, Steam"
+        return "v1.10.2, 2022-02-10, IC v0.419+, Steam"
     }
 
     is64Bit()
@@ -215,12 +215,12 @@ class IC_GameManager_Class
         ;offlineprogress and modronsave
         ;==============================        
         this.Game.GameInstance.OfflineProgressHandler := New GameObjectStructure(this.Game.GameInstance,, [0x40])
-        this.Game.GameInstance.OfflineProgressHandler.InGameNumSecondsToProcess := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0xAC])
-        this.Game.GameInstance.OfflineProgressHandler.MonstersSpawnedThisArea := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0x98])
+        this.Game.GameInstance.OfflineProgressHandler.InGameNumSecondsToProcess := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0xB0])
+        this.Game.GameInstance.OfflineProgressHandler.MonstersSpawnedThisArea := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0xA0])
         this.Game.GameInstance.OfflineProgressHandler.ModronSave := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0x20])
         this.Game.GameInstance.OfflineProgressHandler.ModronSave.ExpTotal := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler.ModronSave,, [0x2C])
         this.Game.GameInstance.OfflineProgressHandler.ModronSave.TargetArea := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler.ModronSave,, [0x30])
-        this.Game.GameInstance.OfflineProgressHandler.FinishedOfflineProgress := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler, "Char", [0xFC]) ; Push finishedOfflineProgressType
+        this.Game.GameInstance.OfflineProgressHandler.FinishedOfflineProgress := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler, "Char", [0x10C]) ; Push finishedOfflineProgressType
         ;=================
         ;Screen and UI
         ;=================

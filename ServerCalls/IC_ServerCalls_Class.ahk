@@ -75,10 +75,7 @@ class IC_ServerCalls_Class
                     return this.ServerCall( callName, parameters ) 
                 }
             }
-            Catch
-            {
-                return "Failed to fetch valid JSON response from server."
-            }
+            ;catch "Failed to fetch valid JSON response from server."
         }
         return response
     }
@@ -222,10 +219,7 @@ class IC_ServerCalls_Class
                     return this.ServerCallSave( saveBody ) 
                 }
             }
-            Catch
-            {
-                throw "Failed to fetch valid JSON response from server."
-            }
+            ;catch "Failed to fetch valid JSON response from server."
         }
         return response
     }
