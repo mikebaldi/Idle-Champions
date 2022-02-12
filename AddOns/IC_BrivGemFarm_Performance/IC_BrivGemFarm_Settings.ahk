@@ -48,6 +48,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "BrivJumpBuffer" ] := 0
     if ( g_BrivUserSettings[ "DisableDashWait" ] == "" )
         g_BrivUserSettings[ "DisableDashWait" ] := false
+    if ( g_BrivUserSettings[ "PostStackDashWaitOnly"] == "")
+        g_BrivUserSettings[ "PostStackDashWaitOnly"] := false
     if ( g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] == "" )
         g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := false
     if(g_BrivUserSettings["WriteSettings"] := true)

@@ -15,6 +15,7 @@ Gui, ICScriptHub:Font, w400
 
 ;g_BrivUserSettings[ "BrivJumpBuffer" ]
 ;g_BrivUserSettings[ "DashWaitBuffer" ]
+;g_BrivUserSettings[ "PostStackDashWaitOnly" ]
 ;g_BrivUserSettings[ "DoChestsContinuous" ]
 ;g_BrivUserSettings[ "HiddenFarmWindow" ]
 ;g_BrivUserSettings[ "ResetZoneBuffer" ]
@@ -25,6 +26,7 @@ Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, DoChestsContinuous
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RestoreLastWindowOnGameOpen x15 y+5, RestoreLastWindowOnGameOpen
+Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_PostStackDashWaitOnly x15 y+5, PostStackDashWaitOnly
 
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, g_CustomColor
