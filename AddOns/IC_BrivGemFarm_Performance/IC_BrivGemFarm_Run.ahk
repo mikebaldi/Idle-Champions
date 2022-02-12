@@ -107,6 +107,14 @@ ReloadSettingsView_Click()
     isAdvancedBrivSettings := !isAdvancedBrivSettings
 }
 
+RefreshSettingsView()
+{
+    if(!isAdvancedBrivSettings)
+        ReloadBrivGemFarmSettingsDisplay()
+    else
+        ReloadAdvancedBrivGemFarmSettingsDisplay()
+}
+
 ObjRegisterActive(g_SharedData, "{416ABC15-9EFC-400C-8123-D7D8778A2103}")
 ; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
 
