@@ -37,6 +37,7 @@ class IC_BrivGemFarm_AdvancedSettings_Component
     Refresh() {
         GuiControl,ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
+        GuiControl,ICScriptHub:, OptionSettingCheck_PostStackDashWaitOnly, % g_BrivUserSettings[ "PostStackDashWaitOnly" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
     }
 }
