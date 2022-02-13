@@ -419,6 +419,11 @@ class IC_SharedFunctions_Class
         return
     }
 
+    ShouldDashWait()
+    {
+        return this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )
+    }
+
     ; Returns count for how many TimeScale values equal the value passed to the function
     CountTimeScaleMultipliersOfValue(value := 1.5)
     {
