@@ -26,6 +26,7 @@ global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
 global g_ServerCall
 global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
+global g_BrivUserSettingsFromAddons
 
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
