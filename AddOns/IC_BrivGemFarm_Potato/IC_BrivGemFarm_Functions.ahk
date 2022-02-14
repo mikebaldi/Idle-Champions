@@ -1,4 +1,4 @@
-class IC_BrivPotatoSharedFunctions_Class extends IC_BrivSharedFunctions_Class
+class IC_BrivPotatoSharedFunctions_Class
 {
     ; Waits for the game to be in a ready state
     WaitForGameReady( timeout := 90000)
@@ -62,6 +62,6 @@ class IC_BrivPotatoSharedFunctions_Class extends IC_BrivSharedFunctions_Class
     }
 }
 
-class IC_BrivPotatoGemFarm_Class extends IC_BrivGemFarm_Class
+class IC_BrivPotatoGemFarm_Class
 {
 }
