@@ -5,5 +5,10 @@
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_BrivGemFarm_Potato",
     "Info" : "This Addon adds sleeps to busy waits in BrivGemFarm_Performance to reduce CPU load. Requires BrivGemFarm_Performance. Cannot be enabled from the Addon interface.",
-    "Dependencies" : {}
+    "Dependencies" : [
+        {
+            "Name":"Briv Gem Farm",
+            "Version":"v1.0."
+        }
+    ]
 }

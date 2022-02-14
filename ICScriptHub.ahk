@@ -148,6 +148,7 @@ CheckControlForTooltip()
 #include %A_ScriptDir%\SharedFunctions\IC_ArrayFunctions_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_KeyHelper_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_GUIFunctions_Class.ahk
+#include %A_ScriptDir%\SharedFunctions\IC_UpdateClass_Class.ahk
 
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()

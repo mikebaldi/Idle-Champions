@@ -95,6 +95,11 @@ ReloadAdvancedBrivGemFarmSettingsDisplay()
         LV_Add(, k, v)
         columns += 1
     }
+    for k,v in g_BrivUserSettingsFromAddons
+    {
+        LV_Add(, k, v)
+        columns += 1
+    }
     LV_ModifyCol()
 }
 
