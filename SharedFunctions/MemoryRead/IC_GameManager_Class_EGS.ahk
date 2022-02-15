@@ -9,7 +9,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.9.8, 2022-02-10, IC v0.419+, EGS"
+        return "v1.9.9, 2022-02-12, IC v0.419+, EGS"
     }
 
     is64Bit()
@@ -105,10 +105,9 @@ class IC_GameManagerEGS_Class
         ;Screen Resolution
         ;=================
         this.Game.ActiveScreen := New GameObjectStructure(this.Game,, [0x10, 0x18]) ; Push screenController.activeScreen
-        this.Game.ActiveScreen.Width := New GameObjectStructure(this.Game.ActiveScreen,, [0x2F4]) ; v414-416
-        ;this.Game.ActiveScreen.Width := New GameObjectStructure(this.Game.ActiveScreen,, [0x314]) ; v417
-        this.Game.ActiveScreen.Height := New GameObjectStructure(this.Game.ActiveScreen,, [0x2F8]) ; v414-416
-        ;this.Game.ActiveScreen.Height := New GameObjectStructure(this.Game.ActiveScreen,, [0x318]) ; v417
+        this.Game.ActiveScreen.Width := New GameObjectStructure(this.Game.ActiveScreen,, [0x304])
+        this.Game.ActiveScreen.Height := New GameObjectStructure(this.Game.ActiveScreen,, [0x308])
+
         ;=========================================================
         ;herohandler - champion related information accessed by ID
         ;=========================================================

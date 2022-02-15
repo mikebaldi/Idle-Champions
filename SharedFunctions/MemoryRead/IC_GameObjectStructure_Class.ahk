@@ -1,29 +1,25 @@
 #include %A_LineFile%\..\..\IC_ArrayFunctions_Class.ahk
 ; GameManager class contains the in game data structure layout
-; LastUpdated := "11/24/21"
+; LastUpdated := "2022-02-01"
 
 
 ; Class used to describe a memory location. 
 ; ListIndexes is an array that contains the locations of where to insert offsets when accessing specific items in lists.
 ; ValueType describes what kind of data is at the location in memory. 
 ;       Note: "List" is not a memory data type but is being used to identify when a ListIndex must be added.
-; Name is not yet used.
 ; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
-; ParentStructure contains the stucture that this originated and expanded from. This allows for reverse traversal of mem locations if needed. (Currently unused)
 ; Is64Bit identifies if the object is using 32-bit (e.g. Steam) or 64-bit addresses (e.g. EGS)
 class GameObjectStructure
 {
     ListIndexes := Array()
     FullOffsets := Array()
+    FullOffsetsHexString := ""
     ValueType := "Int"
-    Name := ""
     BaseAddress := 0x0
-    ParentStructure := {}
     Is64Bit := 0
  
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
-        
         this.ValueType := ValueType
         if(!appendedOffsets[1]) ; When using an array, create a base structure
         {
@@ -32,11 +28,11 @@ class GameObjectStructure
         else
         {
             this.FullOffsets.Push(ArrFnc.Concat(baseStructureOrFullOffsets.GetOffsets(), appendedOffsets[1])*)
-            this.ParentStructure := baseStructureOrFullOffsets.Clone()
             this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
             this.ListIndexes := baseStructureOrFullOffsets.ListIndexes.Clone()
             this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
         }
+        this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         if(ValueType == "List")
         {
             this.ListIndexes.Push(this.FullOffsets.Count() + 1)
@@ -48,12 +44,11 @@ class GameObjectStructure
     {
         var := new GameObjectStructure
         var.FullOffsets := this.FullOffsets.Clone()
-        var.ParentStructure := this.ParentStructure.Clone()
-        var.Name := this.Name
         var.BaseAddress := this.BaseAddress
         var.ListIndexes := this.ListIndexes.Clone()
         var.ValueType := this.ValueType
         var.Is64Bit := this.Is64Bit
+        var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         return var
     }
 
@@ -87,7 +82,6 @@ class GameObjectStructure
     {
         newObject := this.Clone()
         newObject.FullOffsets := this.GetOffsetsWithListValues(values*)
-        ;var := ArrFnc.GetHexFormattedArrayString(newObject.FullOffsets)
         return newObject
     }
 
@@ -108,7 +102,6 @@ class GameObjectStructure
     {
         newObject := this.Clone()
         newObject.FullOffsets := this.GetOffsetsWithDictValues(values*)
-        ;var := ArrFnc.GetHexFormattedArrayString(newObject.FullOffsets)
         return newObject
     }
     ; probably doesn't work with EGS/64bit
