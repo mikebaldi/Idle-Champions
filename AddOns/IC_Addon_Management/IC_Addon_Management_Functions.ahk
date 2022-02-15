@@ -68,7 +68,7 @@ Class AddonManagement
                     ;First check if the dependencies DepExists
                     DependancieFound:=0
                     for y,z in this.Addons {
-                        if(z.Name = j.Name AND z.Version = j.Version){
+                        if(z.Name = j.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(j.Version, z.Version)){
                             ; Check if the dependencie is enabled
                             DependancieFound:=1
                             if (!z.Enabled){
@@ -165,7 +165,7 @@ Class AddonManagement
             LoopCounter:=PositionWanted
             for k, v in this.Addons[AddonNumber]["Dependencies"]{
                 while(LoopCounter<AddonNumber){
-                    if(v.Name=this.Addons[Loopcounter]["Name"] AND v.Version=this.Addons[Loopcounter]["Version"]){
+                    if(v.Name=this.Addons[Loopcounter]["Name"] AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
                         Return Loopcounter
                     }
                     ++LoopCounter
@@ -178,7 +178,7 @@ Class AddonManagement
             LoopCounter:=AddonNumber+1
             While(LoopCounter<=PositionWanted){
                 for k, v in this.Addons[LoopCounter]["Dependencies"]{
-                    if(this.Addons[AddonNumber]["Name"]=v.Name AND this.Addons[AddonNumber]["Version"]=v.Version){
+                    if(this.Addons[AddonNumber]["Name"]=v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
                         return k
                     }
                 }
