@@ -574,7 +574,7 @@ class IC_SharedFunctions_Class
     ; True/False on whether Briv should be benched based on game conditions.
     BenchBrivConditions(settings)
     {
-		if (this.Memory.ReadCurrentZone() == 915)
+		if (this.Memory.ReadCurrentZone() == 945)
             return true
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
         if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
@@ -596,7 +596,7 @@ class IC_SharedFunctions_Class
     ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
-		if (this.Memory.ReadCurrentZone() == 915)
+		if (this.Memory.ReadCurrentZone() == 945)
             return false
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
