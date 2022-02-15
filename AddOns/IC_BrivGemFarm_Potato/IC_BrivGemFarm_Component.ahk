@@ -3,7 +3,11 @@ class IC_BrivGemFarm_Potato_Component
 {
     InjectAddon()
     {
-        addonLoc := "#include *i %A_LineFile%\..\..\IC_BrivGemFarm_Potato\IC_BrivGemFarm_Addon.ahk`n"
+        SplitPath, A_LineFile ,, addonDirFullLoc
+        splitStr := StrSplit(addonDirFullLoc, "\")
+        size := splitStr.Count()
+        addonDirLoc := splitStr[size]
+        addonLoc := "#include *i %A_LineFile%\..\..\" . addonDirLoc . "\IC_BrivGemFarm_Addon.ahk`n"
         FileAppend, %addonLoc%, %g_BrivFarmModLoc%
     }
 }
