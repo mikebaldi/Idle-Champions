@@ -1059,7 +1059,7 @@ class IC_SharedFunctions_Class
         Fkeys := {}
         for k, v in formation
         {
-            if ( v != -1 )
+            if ( v != -1 AND this.Memory.ReadChampSeatByID(v) != "")
             {
                 Fkeys.Push("{F" . this.Memory.ReadChampSeatByID(v) . "}")
             }
