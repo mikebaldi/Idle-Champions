@@ -5,15 +5,19 @@ class IC_VersionHelper_Class
     {
         versionTesting := StrSplit(versionTesting, ".", "v")
         versionComparing := StrSplit(versionComparing, ".", "v")
-        ; compare each of the 3 version values
+        ; compare each of the 3 version values starting from left
         loop, 3
         {
-            version1 := versionTesting[A_Index]
-            version2 := versionComparing[A_Index]
+            ; is index value greater? version is newer
             if(versionTesting[A_Index] > versionComparing[A_Index])
                 return true
+            ; is index value not set but comparing version test is set? version is newer
+            else if (versionTesting[A_Index] == "" AND versionComparing[A_Index] != "")
+                return true
+            ; is index value lower? version is newer
             else if (versionTesting[A_Index] < versionComparing[A_Index])
                 return false
+
         }
         ; 3 tested values are equal
         return true
