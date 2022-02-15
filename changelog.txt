@@ -1,3 +1,11 @@
+Feb 15, 2022
+    Added function to check conditonals for if Dash should wait.
+    Potato converted to a proper addon.
+    Added g_BrivUserSettingsFromAddons for adding settings to the GemFarm script's advanced settings display window.
+    Code tidying including removing unused includes.
+    Added version test function to help test if addons are up to date.
+    Addon Manager now tests for minimum version instead of exact version.
+
 Feb 11, 2022
     Fix for an error involving Inventory Reads.
     Updated pointers for chest defines to fix the Chests tab.
