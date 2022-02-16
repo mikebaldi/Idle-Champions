@@ -1,5 +1,6 @@
 Feb 16, 2022
     Check Addons.md for some links to 3rd party addons.
+    Created a NerdsWagonHandler and modified the base EffectKeyHandler class.
 
 Feb 15, 2022
     Added function to check conditonals for if Dash should wait.
