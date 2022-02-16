@@ -1064,7 +1064,8 @@ class IC_SharedFunctions_Class
         Fkeys := {}
         for k, v in formation
         {
-            if ( v != -1 )
+            ;added a check that v is not 0 or "" for bad reads or NPC in saved formation some how, they show up as 0 supposedly.
+            if ( v != -1 AND v )
             {
                 Fkeys.Push("{F" . this.Memory.ReadChampSeatByID(v) . "}")
             }

@@ -1,6 +1,7 @@
 Feb 16, 2022
     Check Addons.md for some links to 3rd party addons.
     Created a NerdsWagonHandler and modified the base EffectKeyHandler class.
+    Modified GetFormationFKeys function to better handle scenarios where an NPC is saved in the formation.
 
 Feb 15, 2022
     Added function to check conditonals for if Dash should wait.
