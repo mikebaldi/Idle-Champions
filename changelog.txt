@@ -1,3 +1,6 @@
+Feb 16, 2022
+    Check Addons.md for some links to 3rd party addons.
+
 Feb 15, 2022
     Added function to check conditonals for if Dash should wait.
     Potato converted to a proper addon.
