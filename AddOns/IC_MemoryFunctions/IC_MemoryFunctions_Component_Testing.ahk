@@ -82,7 +82,7 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, ReadTransitionOverrideSizeID, % g_SF.Memory.ReadTransitionOverrideSize() ; g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game)
         GuiControl, ICScriptHub:, ReadTransitionDirectionID, % g_SF.Memory.ReadTransitionDirection()      
         GuiControl, ICScriptHub:, ReadFormationTransitionDirID, % g_SF.Memory.ReadFormationTransitionDir()   
-        GuiControl, ICScriptHub:, ReadFavorIDID, % g_SF.Memory.GetDialogNameBySlot(0) ;g_SF.Memory.GetConversionCurrencyBySlot()
+        ;GuiControl, ICScriptHub:, ReadFavorIDID, % g_SF.Memory.GetDialogNameBySlot(0) ;g_SF.Memory.GetConversionCurrencyBySlot()
     }
 
     ReadSwapTimings()
