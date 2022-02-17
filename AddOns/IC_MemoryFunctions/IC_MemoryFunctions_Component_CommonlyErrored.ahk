@@ -2,7 +2,7 @@
     Memory Reads Testing
 */
 
-g_TabControlHeight += Min(g_TabControlHeight - Max(g_TabControlHeight, 600) + 120, 0)
+g_TabControlHeight += Max(g_TabControlHeight - Max(g_TabControlHeight, 600) + 420, 0)
 
 Gui, ICScriptHub:Tab, Memory View
 Gui, ICScriptHub:Font, w700
@@ -21,14 +21,14 @@ Gui, ICScriptHub:Add, Text, x15 y+5, GetForceConvertFavor:
 Gui, ICScriptHub:Add, Text, vGetForceConvertFavorLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadConversionCurrencyBySlot: 
 Gui, ICScriptHub:Add, Text, vReadConversionCurrencyBySlotLblID x+2 w170,
-Gui, ICScriptHub:Add, Text, x15 y+5, ReadDialogNameBySlot: 
-Gui, ICScriptHub:Add, Text, vReadDialogNameBySlotLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadForceConvertFavorBySlot: 
 Gui, ICScriptHub:Add, Text, vReadForceConvertFavorBySlotLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTimeScaleMultipliersKeyByIndex: 
 Gui, ICScriptHub:Add, Text, vReadTimeScaleMultipliersKeyByIndexLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTimeScaleMultipliersByIndex: 
 Gui, ICScriptHub:Add, Text, vReadTimeScaleMultipliersByIndexLblID x+2 w170,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadDialogNameBySlot: 
+Gui, ICScriptHub:Add, Text, x20 y+5 vReadDialogNameBySlotLblID w200 h165,
 
 
 class ReadMemoryFunctionsExtended
@@ -43,13 +43,14 @@ class ReadMemoryFunctionsExtended
 
     ReadContinuous()
     {
+        GuiControl, ICScriptHub:, GetBlessingsCurrencyLblID, % g_SF.Memory.GetBlessingsCurrency()
+        GuiControl, ICScriptHub:, GetBlessingsDialogSlotLblID, % g_SF.Memory.GetBlessingsDialogSlot()
+        GuiControl, ICScriptHub:, GetForceConvertFavorLblID, % g_SF.Memory.GetForceConvertFavor()
+        GuiControl, ICScriptHub:, ReadConversionCurrencyBySlotLblID, % this.GetConversionCurrencyStrings()
+        GuiControl, ICScriptHub:, ReadForceConvertFavorBySlotLblID, % this.GetForceConvertFavorTagInAllSlots()
+        GuiControl, ICScriptHub:, ReadTimeScaleMultipliersKeyByIndexLblID, % this.GetMultipliersKeyString()
         GuiControl, ICScriptHub:, ReadTimeScaleMultipliersByIndexLblID, % this.GetMultipliersString()
-        ; GuiControl, ICScriptHub:, ReadTimeScaleMultipliersKeyByIndexLblID, % this.GetMultipliersKeyString()
-        ; GuiControl, ICScriptHub:, GetBlessingsDialogSlotLblID, % g_SF.Memory.GetBlessingsDialogSlot()
-        ; GuiControl, ICScriptHub:, GetForceConvertFavorLblID, % g_SF.Memory.GetForceConvertFavor()
-        ; GuiControl, ICScriptHub:, ReadConversionCurrencyBySlotLblID, % this.GetConversionCurrencyStrings()
-        ; GuiControl, ICScriptHub:, ReadDialogNameBySlotLblID, % this.GetDialogNameStrings()
-        ; GuiControl, ICScriptHub:, ReadForceConvertFavorBySlotLblID, % this.GetForceConvertFavorTagInAllSlots()
+        GuiControl, ICScriptHub:, ReadDialogNameBySlotLblID, % this.GetDialogNameStrings()
     }
 
     GetMultipliersString()
@@ -97,7 +98,7 @@ class ReadMemoryFunctionsExtended
         size := g_SF.Memory.GenericGetValue(g_SF.Memory.DialogManager.DialogManager.DialogsListSize)
         i := 0
         if size is integer
-            currencyString := size . "["
+            currencyString := "["
         loop, %size%
         {
             value := g_SF.Memory.ReadConversionCurrencyBySlot(i)
@@ -112,17 +113,17 @@ class ReadMemoryFunctionsExtended
 
     GetDialogNameStrings()
     {
-        size := g_SF.Memory.GenericGetValue(DialogManager.DialogManager.DialogsListSize)
+        size := g_SF.Memory.GenericGetValue(g_SF.Memory.DialogManager.DialogManager.DialogsListSize)
         i := 0
         if size is integer
-            dialogString := size . "["
+            dialogString := "["
         loop, %size%
         {
             value := g_SF.Memory.ReadDialogNameBySlot(i)
             if(i == size - 1)
                 dialogString .= value . "]"
             else
-                dialogString .= value . ", "
+                dialogString .= value . "`n"
             i++
         }
         return dialogString
@@ -130,15 +131,15 @@ class ReadMemoryFunctionsExtended
 
     GetForceConvertFavorTagInAllSlots()
     {
-        size := g_SF.Memory.GenericGetValue(DialogManager.DialogManager.DialogsListSize)
+        size := g_SF.Memory.GenericGetValue(g_SF.Memory.DialogManager.DialogManager.DialogsListSize)
         i := 0
-        if size is integer
-            forceConvertString := size . "["
+        if size is not integer
+            return
         loop, %size%
         {
             value := g_SF.Memory.ReadForceConvertFavorBySlot(i)
             if(i == size - 1)
-                forceConvertString .= value . "]"
+                forceConvertString .= value
             else
                 forceConvertString .= value . ", "
             i++
