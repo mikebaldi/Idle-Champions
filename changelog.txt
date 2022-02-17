@@ -3,6 +3,7 @@ Feb 17, 2022
     Disabled read for GetDialogNameBySlot as the pointers often break and could cause memory read problems.
     Changed MemoryFunction's default secondary to extended instead of Testing since functions in testing might crash script hub.
     Added new memory functions secondary script for testing blessing(favor) dialog since it can come up as an error even if it is not.
+    Updated DialogManager pointers/offsets for steam/egs.
 
 Feb 16, 2022
     Check Addons.md for some links to 3rd party addons.
