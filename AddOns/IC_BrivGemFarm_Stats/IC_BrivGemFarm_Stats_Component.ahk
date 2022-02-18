@@ -1,3 +1,6 @@
+#include %A_LineFile%\..\IC_BrivGemFarm_Stats_Functions.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\IC_UpdateClass_Class.ahk
+
 global g_LeftAlign
 global g_DownAlign
 
@@ -83,54 +86,26 @@ else
 ; GuiControl,ICScriptHub: +g, ButtonResetStats, % buttonFunc
 ; Gui, ICScriptHub:Font, w400
 GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
+posX += 170
+posY += -4
+Gui, ICSCriptHub:Add, Button, x%posX% y%posY% gReset_Briv_Farm_Stats, Reset
+GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
-IC_BrivGemFarm_Stats_Component.isLoaded := true
-class IC_BrivGemFarm_Stats_Component
+
+g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
+g_BrivGemFarmStats.isLoaded := true
+
+if(IsObject(IC_BrivGemFarm_Component))
 {
-    doesExist := true
-    StatsTabFunctions := {}
-    isLoaded := false
-
-    BuildToolTips()
-    {
-        StackFailToolTip := "
-        (
-            StackFail Types:
-            1.  Ran out of stacks when ( > min stack zone AND < target stack zone). only reported when fail recovery is on
-                Will stack farm - only a warning. Configuration likely incorrect
-            2.  Failed stack conversion (Haste <= 50, SB > target stacks). Forced Reset
-            3.  Game was stuck (checkifstuck), forced reset
-            4.  Ran out of haste and steelbones > target, forced reset
-            5.  Failed stack conversion, all stacks lost.
-            6.  Modron not resetting, forced reset
-        )"
-        GUIFunctions.AddToolTip("FailedStackingID", StackFailToolTip)
-    }
-
-    AddStatsTabMod(FunctionName, Object := "")
-    {
-        if(Object != "")
-        {
-            functionToPush := ObjBindMethod(%Object%, FunctionName)
-        }
-        else
-        {
-            functionToPush := Func(FunctionName)
-        }
-        if(this.StatsTabFunctions == "")
-            this.StatsTabFunctions := {}
-        this.StatsTabFunctions.Push(functionToPush)
-    }
-
-    UpdateStatsTabWithMods()
-    {
-        for k,v in this.StatsTabFunctions
-        {
-            v.Call()
-        }
-        this.StatsTabFunctions := {}
-    }
+    g_BrivGemFarmStats.AddStatsTabMod("AddStatsTabInfo", "IC_BrivGemFarm_Component")
+    g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "CreateTimedFunctions"))
+    g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "StartTimedFunctions"))
+    g_BrivFarmAddonStopFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "StopTimedFunctions"))
 }
-IC_BrivGemFarm_Stats_Component.UpdateStatsTabWithMods()
-IC_BrivGemFarm_Stats_Component.BuildToolTips()
+g_BrivGemFarmStats.UpdateStatsTabWithMods()
+g_BrivGemFarmStats.BuildToolTips()
 
+Reset_Briv_Farm_Stats()
+{
+    g_BrivGemFarmStats.ResetBrivFarmStats()
+}
