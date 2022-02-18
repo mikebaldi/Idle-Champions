@@ -339,13 +339,12 @@ class IC_BrivGemFarm_Class
         {
             ++i
             this.StackFarmSetup()
-            formationArray := g_SF.Memory.GetCurrentFormation()
             g_SF.CloseIC( "StackRestart" )
             StartTime := A_TickCount
             ElapsedTime := 0
             g_SharedData.LoopString := "Stack Sleep"
             var := ""
-            if ( g_BrivUserSettings[ "DoChests" ] AND formationArray != "" )
+            if ( g_BrivUserSettings[ "DoChests" ] )
             {
                 startTime := A_TickCount
                 if(g_BrivUserSettings[ "DoChestsContinuous" ])
