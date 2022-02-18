@@ -25,6 +25,8 @@ class IC_BrivGemFarm_Stats_Component
     ActiveGameInstance := 1
     FailRunTime := 0
     TotalRunCountRetry := 0
+    PreviousRunTime := 0
+    GemsTotal := 0
 
     
     SharedRunData[]
@@ -278,6 +280,7 @@ class IC_BrivGemFarm_Stats_Component
     {
         this.ResetUpdateStats()
         this.ResetComObjectStats()
+        this.ResetStatsGUI()
     }
 
     ResetComObjectStats()
@@ -297,6 +300,27 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.PurchasedSilverChests := 0
             SharedRunData.ShinyCount := 0
         }
+    }
+
+    ResetStatsGUI()
+    {
+        GuiControl, ICScriptHub:, PrevRunTimeID, % this.PreviousRunTime
+        GuiControl, ICScriptHub:, SlowRunTimeID, % this.SlowRunTime
+        GuiControl, ICScriptHub:, FastRunTimeID, % this.FastRunTime
+        GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
+        GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
+        GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
+        GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
+        GuiControl, ICScriptHub:, dtTotalTimeID, % 0
+        GuiControl, ICScriptHub:, AvgRunTimeID, % 0
+        GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
+        GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
+        GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+        GuiControl, ICScriptHub:, SilversPurchasedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : 0
+        GuiControl, ICScriptHub:, GoldsPurchasedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : 0
+        GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : 0
+        GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : 0
+        GuiControl, ICScriptHub:, ShiniesID, % IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : 0
     }
 
     ResetUpdateStats()
@@ -321,6 +345,8 @@ class IC_BrivGemFarm_Stats_Component
         this.ActiveGameInstance := 1
         this.FailRunTime := 0
         this.TotalRunCountRetry := 0
+        this.PreviousRunTime := 0
+        this.GemsTotal := 0
     }
 
     ;===========================================
