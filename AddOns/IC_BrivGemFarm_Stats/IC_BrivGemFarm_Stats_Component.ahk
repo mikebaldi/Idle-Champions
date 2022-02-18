@@ -3,6 +3,7 @@
 
 global g_LeftAlign
 global g_DownAlign
+global g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
 
 GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats
@@ -92,7 +93,6 @@ Gui, ICSCriptHub:Add, Button, x%posX% y%posY% gReset_Briv_Farm_Stats, Reset
 GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
 
-g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
 g_BrivGemFarmStats.isLoaded := true
 
 if(IsObject(IC_BrivGemFarm_Component))
