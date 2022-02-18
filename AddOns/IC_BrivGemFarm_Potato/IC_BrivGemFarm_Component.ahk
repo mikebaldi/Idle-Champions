@@ -1,9 +1,12 @@
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
-;Load user settings
-UpdateBrivGemFarmType()
+class IC_BrivGemFarm_Potato_Component
 {
-    g_SF := new IC_BrivPotatoSharedFunctions_Class
-    g_BrivGemFarm := new IC_BrivPotatoGemFarm_Class
+    InjectAddon()
+    {
+        splitStr := StrSplit(A_LineFile, "\")
+        addonDirLoc := splitStr[(splitStr.Count()-1)]
+        addonLoc := "#include *i %A_LineFile%\..\..\" . addonDirLoc . "\IC_BrivGemFarm_Addon.ahk`n"
+        FileAppend, %addonLoc%, %g_BrivFarmModLoc%
+    }
 }
-
-UpdateBrivGemFarmType()
+IC_BrivGemFarm_Potato_Component.InjectAddon()

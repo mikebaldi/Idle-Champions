@@ -94,7 +94,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.5.3, 2022-02-01"
+        return "v2.5.4, 2022-02-15"
     }
 
     ;Gets data from JSON file
@@ -417,6 +417,11 @@ class IC_SharedFunctions_Class
         }
         g_PreviousZoneStartTime := A_TickCount
         return
+    }
+
+    ShouldDashWait()
+    {
+        return this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )
     }
 
     ; Returns count for how many TimeScale values equal the value passed to the function
@@ -1063,7 +1068,8 @@ class IC_SharedFunctions_Class
         Fkeys := {}
         for k, v in formation
         {
-            if ( v != -1 )
+            ;added a check that v is not 0 or "" for bad reads or NPC in saved formation some how, they show up as 0 supposedly.
+            if ( v != -1 AND v )
             {
                 Fkeys.Push("{F" . this.Memory.ReadChampSeatByID(v) . "}")
             }

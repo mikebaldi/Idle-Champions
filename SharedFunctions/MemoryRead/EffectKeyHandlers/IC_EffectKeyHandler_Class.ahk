@@ -81,6 +81,8 @@ class EffectKeyHandler
         this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
         this.effectKey.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey, this.BaseAddress)
         this.effectKey.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.def := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.def.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.def, this.BaseAddress)
         this.effectKey.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
         this.effectKey.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
     }

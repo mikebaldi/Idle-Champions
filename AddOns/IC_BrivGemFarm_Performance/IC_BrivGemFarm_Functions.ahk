@@ -74,6 +74,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         return true
     }
 
+    ; Refocuses the window that was recorded as being active before the game window opened.
     ActivateLastWindow()
     {
         if(!g_BrivUserSettings["RestoreLastWindowOnGameOpen"])
@@ -83,6 +84,14 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         WinActivate, ahk_id %hwnd% ; Idle Champions likes to be activated before it can be deactivated            
         savedActive := this.SavedActiveWindow
         WinActivate, %savedActive%
+    }
+
+    ; Returns true when conditions have been met for starting a wait for dash.
+    ShouldDashWait()
+    {
+        currentFormation := this.Memory.GetCurrentFormation()
+        isShandieInFormation := this.IsChampInFormation( 47, currentFormation )
+        return (!g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation)
     }
 }
 
@@ -583,9 +592,7 @@ class IC_BrivGemFarm_Class
             this.StackRestart()
         else if (stacks < g_BrivUserSettings[ "TargetStacks" ])
             this.StackNormal()
-        currentFormation := g_SF.Memory.GetCurrentFormation()
-        isShandieInFormation := g_SF.IsChampInFormation( 47, currentFormation )
-        if ( !g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
+        if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
     }
 
@@ -605,13 +612,12 @@ class IC_BrivGemFarm_Class
         {
             ++i
             this.StackFarmSetup()
-            formationArray := g_SF.Memory.GetCurrentFormation()
             g_SF.CloseIC( "StackRestart" )
             StartTime := A_TickCount
             ElapsedTime := 0
             g_SharedData.LoopString := "Stack Sleep"
             var := ""
-            if ( g_BrivUserSettings[ "DoChests" ] AND formationArray != "" )
+            if ( g_BrivUserSettings[ "DoChests" ] )
             {
                 startTime := A_TickCount
                 if(g_BrivUserSettings[ "DoChestsContinuous" ])
@@ -728,7 +734,7 @@ class IC_BrivGemFarm_Class
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
         g_SF.ModronResetZone := g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
-        if ( !g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation ) ;AND g_SF.Memory.ReadHighestZone() + 50 < g_BrivUserSettings[ "StackZone"] )
+        if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1, false, true )
     }

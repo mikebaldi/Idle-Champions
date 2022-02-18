@@ -2,7 +2,7 @@
     Extended memory reads
 */
 
-g_TabControlHeight += 290
+g_TabControlHeight += 305
 GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 ;Gui, show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight+40
 
@@ -29,6 +29,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, ReadGameStarted:
 Gui, ICScriptHub:Add, Text, vReadGameStartedID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadFinishedOfflineProgressWindow: 
 Gui, ICScriptHub:Add, Text, vReadFinishedOfflineProgressWindowID x+2 w300,
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadInGameNumSecondsToProcess: 
+Gui, ICScriptHub:Add, Text, vReadInGameNumSecondsToProcess2ID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, Steam: 
 Gui, ICScriptHub:Add, Text, vIsSteam x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadAutoProgressToggled: 
@@ -69,5 +71,6 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, ReadGoldString2ID, % g_SF.Memory.ReadGoldString2()
         GuiControl, ICScriptHub:, ReadGoldString3ID, % g_SF.Memory.ReadGoldString3()
         GuiControl, ICScriptHub:, FormationInFavoriteOne, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( 1 ))
+        GuiControl, ICScriptHub:, ReadInGameNumSecondsToProcess2ID, % g_SF.Memory.ReadOfflineTime()
     }
 }

@@ -26,6 +26,7 @@ global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
 global g_ServerCall
 global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
+global g_BrivUserSettingsFromAddons := {}
 
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
@@ -91,6 +92,11 @@ ReloadAdvancedBrivGemFarmSettingsDisplay()
     Gui, BrivPerformanceGemFarm:ListView, BrivFarmSettingsID
     LV_Delete()
     for k,v in g_BrivUserSettings
+    {
+        LV_Add(, k, v)
+        columns += 1
+    }
+    for k,v in g_BrivUserSettingsFromAddons
     {
         LV_Add(, k, v)
         columns += 1

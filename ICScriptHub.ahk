@@ -118,10 +118,11 @@ ICScriptHubGuiClose()
     MsgBox 4,, Are you sure you want to `exit?
     IfMsgBox Yes
     {
+        MiniScriptWarning()
         ExitApp
     }
     IfMsgBox No
-    return True
+        return True
 }
 
 ; ToolTip Test
@@ -148,6 +149,7 @@ CheckControlForTooltip()
 #include %A_ScriptDir%\SharedFunctions\IC_ArrayFunctions_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_KeyHelper_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_GUIFunctions_Class.ahk
+#include %A_ScriptDir%\SharedFunctions\IC_UpdateClass_Class.ahk
 
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()
@@ -156,3 +158,45 @@ CheckControlForTooltip()
 BuildToolTips()
 if(IsObject(AddonManagement))
     AddonManagement.BuildToolTips()
+
+
+StopMiniscripts()
+{
+    for k,v in g_Miniscripts
+    {
+        try
+        {
+            SharedRunData := ComObjActive(k)
+            SharedRunData.Close()
+        }
+    }
+}
+
+CountRunningMiniscripts()
+{
+    objectCount := 0
+    for k,v in g_Miniscripts
+    {
+        try
+        {
+            SharedRunData := ComObjActive(k)
+            objectCount += 1
+        }
+    }
+    return objectCount
+}
+
+MiniScriptWarning()
+{
+    if(CountRunningMiniscripts())
+    {
+        MsgBox 4,, There are still Miniscripts running in the baackground. Do you wish to close them?
+        IfMsgBox Yes
+        {
+            StopMiniscripts()
+            ExitApp
+        }
+        IfMsgBox No
+            return True
+    }
+}

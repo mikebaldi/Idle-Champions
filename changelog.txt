@@ -1,3 +1,23 @@
+Feb 17, 2022
+    Added running miniscript warning when closing script hub.
+    Disabled read for GetDialogNameBySlot as the pointers often break and could cause memory read problems.
+    Changed MemoryFunction's default secondary to extended instead of Testing since functions in testing might crash script hub.
+    Added new memory functions secondary script for testing blessing(favor) dialog since it can come up as an error even if it is not.
+    Updated DialogManager pointers/offsets for steam/egs.
+
+Feb 16, 2022
+    Check Addons.md for some links to 3rd party addons.
+    Created a NerdsWagonHandler and modified the base EffectKeyHandler class.
+    Modified GetFormationFKeys function to better handle scenarios where an NPC is saved in the formation.
+
+Feb 15, 2022
+    Added function to check conditonals for if Dash should wait.
+    Potato converted to a proper addon.
+    Added g_BrivUserSettingsFromAddons for adding settings to the GemFarm script's advanced settings display window.
+    Code tidying including removing unused includes.
+    Added version test function to help test if addons are up to date.
+    Addon Manager now tests for minimum version instead of exact version.
+
 Feb 11, 2022
     Fix for an error involving Inventory Reads.
     Updated pointers for chest defines to fix the Chests tab.

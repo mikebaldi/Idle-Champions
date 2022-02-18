@@ -68,7 +68,7 @@ Class AddonManagement
                     ;First check if the dependencies DepExists
                     DependancieFound:=0
                     for y,z in this.Addons {
-                        if(z.Name = j.Name AND z.Version = j.Version){
+                        if(z.Name = j.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(j.Version, z.Version)){
                             ; Check if the dependencie is enabled
                             DependancieFound:=1
                             if (!z.Enabled){
@@ -133,15 +133,27 @@ Class AddonManagement
     ;
     ; ------------------------------------------------------------
     CheckIsDependedOn(Name,Version){
-        for k,v in this.Addons{
-            for i,j in v.Dependencies{
-                if (j.Name = Name AND j.Version = Version) {
+        ; Test for exact match
+        for addonIndex,addonObject in this.Addons{
+            for dependencyIndex,dependencyObject in addonObject.Dependencies{
+                if (dependencyObject.Name == Name AND dependencyObject.Version = Version) {
                     ;We have a addon who depends on the name, now check it it's enabled
-                    if(this.Addons[k]["Enabled"]){
-                        return k
+                    if(this.Addons[addonIndex]["Enabled"]){
+                        return addonIndex
                     }
                     else{
                         break
+                    }
+                }
+            }
+        }
+        ; test for higher version 
+        for addonIndex,addonObject in this.Addons{
+            for dependencyIndex,dependencyObject in addonObject.Dependencies{
+                if (dependencyObject.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(dependencyObject.Version, Version)) {
+                    ;We have a addon who depends on the name, now check it it's enabled
+                    if(this.Addons[addonIndex]["Enabled"]){
+                        return addonIndex
                     }
                 }
             }
@@ -165,7 +177,7 @@ Class AddonManagement
             LoopCounter:=PositionWanted
             for k, v in this.Addons[AddonNumber]["Dependencies"]{
                 while(LoopCounter<AddonNumber){
-                    if(v.Name=this.Addons[Loopcounter]["Name"] AND v.Version=this.Addons[Loopcounter]["Version"]){
+                    if(v.Name=this.Addons[Loopcounter]["Name"] AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
                         Return Loopcounter
                     }
                     ++LoopCounter
@@ -178,7 +190,7 @@ Class AddonManagement
             LoopCounter:=AddonNumber+1
             While(LoopCounter<=PositionWanted){
                 for k, v in this.Addons[LoopCounter]["Dependencies"]{
-                    if(this.Addons[AddonNumber]["Name"]=v.Name AND this.Addons[AddonNumber]["Version"]=v.Version){
+                    if(this.Addons[AddonNumber]["Name"]=v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
                         return k
                     }
                 }
@@ -221,7 +233,7 @@ Class AddonManagement
     DisableAddon(Name, Version){
         if(Name!="Addon Management"){
             while(DependendAddon := this.CheckIsDependedOn(Name,Version)){
-                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`nDo you want to disable this addon?`nYes: disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . "enabled."
+                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`nDo you want to disable this addon?`nYes: Disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . " enabled."
                 IfMsgBox Yes 
                 {
                     this.DisableAddon(this.Addons[DependendAddon]["Name"],this.Addons[DependendAddon]["Version"])
@@ -266,12 +278,27 @@ Class AddonManagement
                 return
             }
         }
+        versionFound := false
         if(this.CheckDependenciesEnabled(Name,Version)){
             for k, v in this.Addons {
                 if (v.Name=Name AND v.Version=Version){
+                    versionFound := true
                     this.NeedSave:=1
                     v.enable()
                     break
+                }
+            }
+            ; if didn't find exact match, find first fit
+            if(!versionFound)
+            {
+                for k, v in this.Addons {
+                    ; Enable if version > version being checked.
+                    if (v.Name=Name AND IC_VersionHelper_class.IsVersionSameOrNewer(v.Version, Version)){
+                        versionFound := true
+                        this.NeedSave:=1
+                        v.enable()
+                        break
+                    }
                 }
             }
         }
