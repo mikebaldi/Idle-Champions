@@ -236,8 +236,8 @@ class IC_BrivGemFarm_Stats_Component
 
             if (IsObject(this.SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : SilversPurchasedID)
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
+                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - this.SilverChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : SilversPurchasedID)
+                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - this.GoldChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
                 GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : SilversOpenedID)
                 GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : GoldsOpenedID)
                 GuiControl, ICScriptHub:, ShiniesID, % (IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : ShiniesID)
@@ -265,6 +265,7 @@ class IC_BrivGemFarm_Stats_Component
             else
                 GuiControl, ICScriptHub: +cSilver, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
+            ; Todo: Move functionality from Briv Gem Farm Stats to Briv Gem farm and update stats from Gem Farm.
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % SharedRunData.SwapsMadeThisRun
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
@@ -281,6 +282,7 @@ class IC_BrivGemFarm_Stats_Component
         this.ResetUpdateStats()
         this.ResetComObjectStats()
         this.ResetStatsGUI()
+        this.UpdateGUIFromCom()
     }
 
     ResetComObjectStats()
@@ -299,6 +301,10 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.PurchasedGoldChests := 0
             SharedRunData.PurchasedSilverChests := 0
             SharedRunData.ShinyCount := 0
+            ; Todo: Move functionality from Briv Gem Farm Stats to Briv Gem farm and update stats from Gem Farm.
+            SharedRunData.TotalBossesHit := 0
+            SharedRunData.BossesHitThisRun := 0
+            SharedRunData.TotalBossesHit := 0
         }
     }
 
