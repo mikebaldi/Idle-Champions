@@ -168,11 +168,9 @@ class IC_BrivGemFarm_Class
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
                 StartTime := g_PreviousZoneStartTime := A_TickCount
-                g_SharedData.StackFail := 0
-                if(!g_SharedData.StackFail)
-                    g_SharedData.StackFail := this.CheckForFailedConv()
-                g_SharedData.SwapsMadeThisRun := 0
                 PreviousZone := 1
+                g_SharedData.StackFail := this.CheckForFailedConv()
+                g_SharedData.SwapsMadeThisRun := 0
                 g_SharedData.TriggerStart := false
                 g_SharedData.LoopString := "Main Loop"
             }
@@ -334,43 +332,27 @@ class IC_BrivGemFarm_Class
     StackRestart()
     {
         stacks := this.GetNumStacksFarmed()
-        i := 0
-        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND i < 10 )
+        retryAttempt := 0
+        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND retryAttempt < 10 )
         {
-            ++i
+            retryAttempt++
             this.StackFarmSetup()
             g_SF.CloseIC( "StackRestart" )
-            StartTime := A_TickCount
-            ElapsedTime := 0
             g_SharedData.LoopString := "Stack Sleep"
-            var := ""
-            if ( g_BrivUserSettings[ "DoChests" ] )
-            {
-                startTime := A_TickCount
-                if(g_BrivUserSettings[ "DoChestsContinuous" ])
-                {
-                    while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime ))
-                    {
-                        var .= this.BuyOrOpenChests(startTime) . "`n"
-                    }
-                }
-                else
-                {
-                    var := this.BuyOrOpenChests() . " "
-                }
-                ElapsedTime := A_TickCount - StartTime
-                g_SharedData.LoopString := "Sleep: " . var
-            }
+            var := this.DoChests()
+            ElapsedTime := 0
+            StartTime := A_TickCount
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
                 g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
             }
             g_SF.SafetyCheck()
-            stacks := this.GetNumStacksFarmed() ; Update GUI and Globals
+            stacks := this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
             if ( g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ] )
             {
+                g_SharedData.LoopString := "Stack Sleep: Failed (zone < min)"
                 Break  ; "Bad Save? Loaded below stack zone, see value."
             }
         }
@@ -400,6 +382,28 @@ class IC_BrivGemFarm_Class
         g_SF.FallBackFromZone()
         g_SF.ToggleAutoProgress( 1 )
         return
+    }
+
+    DoChests()
+    {
+        StartTime := A_TickCount
+        var := ""
+        if ( g_BrivUserSettings[ "DoChests" ] )
+        {
+            if(g_BrivUserSettings[ "DoChestsContinuous" ])
+            {
+                while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
+                {
+                    var .= this.BuyOrOpenChests(StartTime) . "`n"
+                }
+            }
+            else
+            {
+                var := this.BuyOrOpenChests() . " "
+            }
+            g_SharedData.LoopString := "Sleep: " . var
+        }
+        return var
     }
 
     /* ;A function that checks if farmed SB stacks from previous run failed to convert to haste.
