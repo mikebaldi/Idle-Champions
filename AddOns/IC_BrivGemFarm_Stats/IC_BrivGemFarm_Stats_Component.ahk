@@ -7,8 +7,11 @@ global g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
 
 GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats
+Gui, ICSCriptHub:Add, Button, x+5 gReset_Briv_Farm_Stats vReset_Briv_Farm_Stats_Button, Reset Stats
+GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
+posY := posY + 25
 Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, GroupBox, x+0 y+15 w450 h130 vCurrentRunGroupID, Current `Run:
+Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h130 vCurrentRunGroupID, Current `Run:
 Gui, ICScriptHub:Font, w400
 
 Gui, ICScriptHub:Font, w700
@@ -27,12 +30,10 @@ Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
 Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
 
-; Gui, ICScriptHub:Add, Text, x15 y+10, Inputs Sent:
-; Gui, ICScriptHub:Add, Text, vg_InputsSentID x+2 w50, % g_InputsSent
 GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
 g_DownAlign := posY + posH -5
 Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
+Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Previous Run Time (min):
 Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
@@ -52,8 +53,6 @@ Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
 Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time Total (min):
 Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w50,
-; Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stack Conversion:
-; Gui, ICScriptHub:Add, Text, vFailedStackConvID x+2 w50,
 Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
 Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
@@ -81,15 +80,7 @@ if(g_isDarkMode)
     Gui, ICScriptHub:Font, cSilver w400
 else
     Gui, ICScriptHub:Font, cDefault w400
-; Gui, ICScriptHub:Font, w700
-; Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+7 vButtonResetStats, Reset
-; buttonFunc := ObjBindMethod(IC_BrivGemFarm_Stats_Component, "ResetStats")
-; GuiControl,ICScriptHub: +g, ButtonResetStats, % buttonFunc
-; Gui, ICScriptHub:Font, w400
-GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
-posX += 170
-posY += -4
-Gui, ICSCriptHub:Add, Button, x%posX% y%posY% gReset_Briv_Farm_Stats, Reset
+
 GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
 g_DownAlign := g_DownAlign + posH -5
 

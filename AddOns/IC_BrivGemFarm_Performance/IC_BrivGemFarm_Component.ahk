@@ -81,8 +81,9 @@ class IC_BrivGemFarm_Component
     {
         global
         Gui, ICScriptHub:Tab, Stats
+        GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x6 y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
         Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
