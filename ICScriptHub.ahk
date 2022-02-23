@@ -13,7 +13,7 @@ SetControlDelay, 0 ; Sets the delay that will occur after each control-modifying
 SetBatchLines, -1 ; How fast a script will run (affects CPU utilization).(Default setting is 10ms - prevent the script from using any more than 50% of an idle CPU's time.
                   ; This allows scripts to run quickly while still maintaining a high level of cooperation with CPU sensitive tasks such as games and video capture/playback.
 ListLines Off
-Process, Priority,, High
+Process, Priority,, Normal
 
 CoordMode, Mouse, Client
 
