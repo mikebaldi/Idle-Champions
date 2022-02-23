@@ -10,9 +10,9 @@ GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats
 Gui, ICSCriptHub:Add, Button, x+5 gReset_Briv_Farm_Stats vReset_Briv_Farm_Stats_Button, Reset Stats
 
-g_BrivGemFarmStats.StatsTabFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "AddCurrentRunGroup"))
-g_BrivGemFarmStats.StatsTabFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "AddOncePerRunGroup"))
-g_BrivGemFarmStats.StatsTabFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "AddBrivGemFarmStatsGroup"))
+g_BrivGemFarmStats.AddStatsTabMod("AddCurrentRunGroup", "g_BrivGemFarmStats")
+g_BrivGemFarmStats.AddStatsTabMod("AddOncePerRunGroup", "g_BrivGemFarmStats")
+g_BrivGemFarmStats.AddStatsTabMod("AddBrivGemFarmStatsGroup", "g_BrivGemFarmStats")
 
 if(IsObject(IC_BrivGemFarm_Component))
 {
