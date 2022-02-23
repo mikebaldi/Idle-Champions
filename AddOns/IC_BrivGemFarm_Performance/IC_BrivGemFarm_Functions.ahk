@@ -35,7 +35,6 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         version := this.Memory.ReadGameVersion()
         if(version != "")
             g_ServerCall.clientVersion := version
-        ; TODO: Update these values based on memory reads
         g_ServerCall.webroot := this.Memory.ReadWebRoot() ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
