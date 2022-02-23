@@ -44,6 +44,11 @@ class IC_BrivGemFarm_Stats_Component
     }
 
 
+    ;======================
+    ; GUI Building Functions
+    ;======================
+
+    ; Adds tooltip to StackFails
     BuildToolTips()
     {
         StackFailToolTip := "
@@ -60,6 +65,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.AddToolTip("FailedStackingID", StackFailToolTip)
     }
 
+    ; Used to add a function to be called when generating the stats tab
     AddStatsTabMod(FunctionName, Object := "")
     {
         if(Object != "")
@@ -75,6 +81,7 @@ class IC_BrivGemFarm_Stats_Component
         this.StatsTabFunctions.Push(functionToPush)
     }
 
+    ; Adds the current run group box to the stats tab under the reset button
     AddCurrentRunGroup()
     {
         global
@@ -102,6 +109,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.SetThemeTextColor()
     }
 
+    ; Adds the Once per run group box to the stats tab page under the current run group.
     AddOncePerRunGroup()
     {
         global        
@@ -157,6 +165,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.SetThemeTextColor()
     }
 
+    ; Adds the briv gem farm stats group to the stats page below the current run group 
     AddBrivGemFarmStatsGroup()
     {
         global
@@ -176,6 +185,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.SetThemeTextColor()
     }
 
+    ; Calls the functions that have been added to the stats tab via the AddStatsTabMod function
     UpdateStatsTabWithMods()
     {
         for k,v in this.StatsTabFunctions
@@ -185,6 +195,10 @@ class IC_BrivGemFarm_Stats_Component
         this.StatsTabFunctions := {}
     }
     
+    ;======================
+    ; GUI Update Functions
+    ;======================
+
     ;Updates GUI dtCurrentRunTimeID and dtCurrentLevelTimeID
     UpdateStatTimers()
     {
@@ -353,6 +367,7 @@ class IC_BrivGemFarm_Stats_Component
         Critical, Off
     }
 
+    ; Updates data on the stats tab page that is collected from the Briv Gem Farm script.
     UpdateGUIFromCom()
     {
         static SharedRunData
@@ -377,7 +392,11 @@ class IC_BrivGemFarm_Stats_Component
     }
 
     
+    ;==========================
+    ; Stats GUI Reset Functions
+    ;==========================
 
+    ; Resets stats shown on the stats tab
     ResetBrivFarmStats()
     {
         this.ResetUpdateStats()
@@ -386,6 +405,7 @@ class IC_BrivGemFarm_Stats_Component
         this.UpdateGUIFromCom()
     }
 
+    ; Connects to Briv Gem Farm script and resets its saved stats variables.
     ResetComObjectStats()
     {
         try ; avoid thrown errors when comobject is not available.
@@ -408,6 +428,7 @@ class IC_BrivGemFarm_Stats_Component
         }
     }
 
+    ; Resets the values shown on the stats tab immediately without waiting for updates to run.
     ResetStatsGUI()
     {
         GuiControl, ICScriptHub:, PrevRunTimeID, % this.PreviousRunTime
@@ -432,6 +453,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, TotalBossesHitID, % IsObject(this.SharedRunData) ? SharedRunData.TotalBossesHit : 0
     }
 
+    ; Resets stats stored on the stats tab.
     ResetUpdateStats()
     {
         this.TotalRunCount := 0
@@ -462,6 +484,7 @@ class IC_BrivGemFarm_Stats_Component
     ;Functions for updating GUI stats and timers
     ;===========================================
 
+    ; Adds timed functions (typically to be started when briv gem farm is started)
     CreateTimedFunctions()
     {
         this.TimedFunctions := {}
@@ -481,6 +504,7 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions[fncToCallOnTimer] := 200
     }
 
+    ; Starts the saved timed functions (typically to be started when briv gem farm is started)
     StartTimedFunctions()
     {
         for k,v in this.TimerFunctions
@@ -489,6 +513,7 @@ class IC_BrivGemFarm_Stats_Component
         }
     }
 
+    ; Stops the saved timed functions (typically to be stopped when briv gem farm is stopped)
     StopTimedFunctions()
     {
         for k,v in this.TimerFunctions
