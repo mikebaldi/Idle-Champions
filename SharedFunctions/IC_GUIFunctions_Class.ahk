@@ -1,5 +1,6 @@
 class GUIFunctions
 {
+    isDarkMode := false
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
@@ -28,6 +29,14 @@ class GUIFunctions
         GuiControl ICScriptHub:Focus, %controlVariableName%
         ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
         g_MouseToolTips[toolTipTarget] := tipMessage
+    }
+
+    SetThemeTextColor()
+    {  
+        if(this.isDarkMode)
+            Gui, ICScriptHub:Font, cSilver w400
+        else
+            Gui, ICScriptHub:Font, cDefault w400
     }
     ;------------------------------
     ;

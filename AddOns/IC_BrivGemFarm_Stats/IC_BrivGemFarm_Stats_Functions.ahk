@@ -2,7 +2,6 @@ class IC_BrivGemFarm_Stats_Component
 {
     doesExist := true
     StatsTabFunctions := {}
-    isLoaded := false
 
     ; Update Tab Stats Variables
     TotalRunCount := 0
@@ -74,6 +73,107 @@ class IC_BrivGemFarm_Stats_Component
         if(this.StatsTabFunctions == "")
             this.StatsTabFunctions := {}
         this.StatsTabFunctions.Push(functionToPush)
+    }
+
+    AddCurrentRunGroup()
+    {
+        global
+        GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
+        posY := posY + 25
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h130 vCurrentRunGroupID, Current `Run:
+        Gui, ICScriptHub:Font, w400
+
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, Text, vLoopAlignID xp+15 yp+25 , `Loop:
+        GuiControlGet, pos, ICScriptHub:Pos, LoopAlignID
+        g_LeftAlign := posX
+        Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current Area Time (s):
+        Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current `Run Time (min):
+        Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
+
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, SB Stack `Count:
+        Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
+        Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
+        GUIFunctions.SetThemeTextColor()
+    }
+
+    AddOncePerRunGroup()
+    {
+        global        
+        GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
+        g_DownAlign := posY + posH -5
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Previous Run Time (min):
+        Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fastest Run Time (min):
+        Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Slowest Run Time (min):
+        Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w50,
+
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Run `Count:
+        Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Total Run Time (hr):
+        Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Avg. Run Time (min):
+        Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
+
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
+        Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time Total (min):
+        Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w50,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
+        Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
+
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
+        Gui, ICScriptHub:Add, Text, vSilversPurchasedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silvers Opened:
+        Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Gained:
+        Gui, ICScriptHub:Add, Text, vGoldsPurchasedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Opened:
+        Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
+        Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
+
+        Gui, ICScriptHub:Font, cBlue w700
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
+        Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w50, % bossesPhr
+
+        Gui, ICScriptHub:Font, cGreen
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
+        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
+        Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
+        
+        GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
+        g_DownAlign := g_DownAlign + posH -5
+        GUIFunctions.SetThemeTextColor()
+    }
+
+    AddBrivGemFarmStatsGroup()
+    {
+        global
+        Gui, ICScriptHub:Tab, Stats
+        GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h80 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
+        Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
+        Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
+        Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200, 
+        GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
+        g_DownAlign := g_DownAlign + posH -5
+        GUIFunctions.SetThemeTextColor()
     }
 
     UpdateStatsTabWithMods()
@@ -265,7 +365,6 @@ class IC_BrivGemFarm_Stats_Component
             else
                 GuiControl, ICScriptHub: +cSilver, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
-            ; Todo: Move functionality from Briv Gem Farm Stats to Briv Gem farm and update stats from Gem Farm.
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % SharedRunData.SwapsMadeThisRun
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
@@ -276,6 +375,8 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script [Closed Script?]."
         }
     }
+
+    
 
     ResetBrivFarmStats()
     {
@@ -301,7 +402,6 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.PurchasedGoldChests := 0
             SharedRunData.PurchasedSilverChests := 0
             SharedRunData.ShinyCount := 0
-            ; Todo: Move functionality from Briv Gem Farm Stats to Briv Gem farm and update stats from Gem Farm.
             SharedRunData.TotalBossesHit := 0
             SharedRunData.BossesHitThisRun := 0
             SharedRunData.TotalBossesHit := 0
@@ -327,7 +427,6 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : 0
         GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : 0
         GuiControl, ICScriptHub:, ShiniesID, % IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : 0
-        ; Todo: Move functionality from Briv Gem Farm Stats to Briv Gem farm and update stats from Gem Farm.
         GuiControl, ICScriptHub:, SwapsMadeThisRunID, % IsObject(this.SharedRunData) ? SharedRunData.SwapsMadeThisRun : 0
         GuiControl, ICScriptHub:, BossesHitThisRunID, % IsObject(this.SharedRunData) ? SharedRunData.BossesHitThisRun : 0
         GuiControl, ICScriptHub:, TotalBossesHitID, % IsObject(this.SharedRunData) ? SharedRunData.TotalBossesHit : 0
@@ -382,7 +481,6 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions[fncToCallOnTimer] := 200
     }
 
-    ; Starts functions that need to be run in a separate thread such as GUI Updates.
     StartTimedFunctions()
     {
         for k,v in this.TimerFunctions

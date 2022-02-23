@@ -49,6 +49,9 @@ global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
+;TODO: convert g_isDarkMode to use gui functions
+if (g_isDarkMode)
+    GUIfunctions.isDarkMode := true
 if (g_isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
