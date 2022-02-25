@@ -706,7 +706,7 @@ class IC_MemoryFunctions_Class
         if(!size)
             return ""
         index := this.BinarySearchList(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID, 1, size, buffID)
-        if (index)
+        if (index >= 0)
             return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount.GetGameObjectFromListValues(index - 1))
         else
             return ""
@@ -718,7 +718,7 @@ class IC_MemoryFunctions_Class
         if(!size)
             return ""
         index := this.BinarySearchList(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID, 1, size, buffID)
-        if (index)
+        if (index >= 0)
             return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular.GetGameObjectFromListValues(index - 1))
         else
             return ""
@@ -755,7 +755,7 @@ class IC_MemoryFunctions_Class
         if(!size)
             return "" 
         index := this.BinarySearchList(this.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.ID, 1, size, chestID)
-        if (index)
+        if (index >= 0)
             return this.GenericGetValue(this.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.NamePlural.GetGameObjectFromListValues(index - 1))
         else
             return ""
