@@ -51,7 +51,7 @@ class IC_CrusadersGameDataSetEGS_Class
 
     GetVersion()
     {
-        return "v1.1.1, 2022-02-11, IC v0.419+, EGS"  
+        return "v1.1.2, 2022-02-25, IC v0.420+, EGS"  
     }
 
     Refresh()

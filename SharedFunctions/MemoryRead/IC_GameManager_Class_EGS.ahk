@@ -9,7 +9,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.9.9, 2022-02-12, IC v0.419+, EGS"
+        return "v1.9.10, 2022-02-25, IC v0.420+, EGS"
     }
 
     is64Bit()
