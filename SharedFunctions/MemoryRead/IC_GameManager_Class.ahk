@@ -185,7 +185,7 @@ class IC_GameManager_Class
         ;===================================
         this.Game.GameInstance.FormationSaveHandler:= New GameObjectStructure(this.Game.GameInstance,, [0x30])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesListSize := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,, [0x18, 0xC]) ; Push formationSavesV2._size
-        this.Game.GameInstance.FormationSaveHandler.FormationCampaignID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,, [0x3c])
+        this.Game.GameInstance.FormationSaveHandler.FormationCampaignID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,, [0x40])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,"List", [0x18, 0x8]) ; Push formationSavesV2._Items
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Favorite := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x24]) ; Push favorite from Item[x].Favorite
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.SaveID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x1C]) 
