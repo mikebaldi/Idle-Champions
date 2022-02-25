@@ -1,4 +1,5 @@
 Feb 25, 2022
+    Updated pointers and offsets for Steam and EGS v420.
     Updated Inventory tab to be significantly faster when loading.
 
 Feb 24, 2022
@@ -6,7 +7,7 @@ Feb 24, 2022
     Added Reset Button on the Stats tab.
     Fixed a bug for addons not respecting some dependency versions.
     Set Script Hub to Normal Priority. (Game and Briv Gem Farm still run at High priority)
-    Refactor: 
+    Refactor:
         Moved many stats tab functions from BrivGemFarm to BrivGemFarm_Stats.
         Moved GUI code into functions.
         Updated Addon Version numbers.
@@ -14,7 +15,7 @@ Feb 24, 2022
         Moved chest opening logic to its own function.
         Simplified some GemFarm() loop logic.
         Added g_BrivFarmAddonStartFunctions and g_BrivFarmAddonStopFunctions which will be called whenever brivemfarm is run/stopped respectively
-    Added SetThemTextColor function to GUIFunctions.     
+    Added SetThemTextColor function to GUIFunctions.
 
 Feb 17, 2022
     Added running miniscript warning when closing script hub.
@@ -58,7 +59,7 @@ Feb 4, 2022
 Feb 1, 2022
     Updated how refocus after game load works.
     Added patron compatability for manual resets.
-    Added system/compatability for "Miniscripts" via BrivGemFarm. 
+    Added system/compatability for "Miniscripts" via BrivGemFarm.
     Small bugfixes, typo corrections, and version updates.
 
 Jan 31, 2022
@@ -73,7 +74,7 @@ Jan 29, 2022
     Increased FullMemoryView tab's lista area size.
     Updated offsets for Steam/EGS v418.1.
     Updated how loop time resets. (Emmes)
-    * REVERTED: Updated logic for stacking to accomodate early stackers better. (Emmes) 
+    * REVERTED: Updated logic for stacking to accomodate early stackers better. (Emmes)
     Updated Dashwait to occur after stacking to accomodate early stackers better. Use the DashWaitBuffer advanced setting to prevent dashwait after stacking.
 
 Jan 24, 2022
@@ -120,7 +121,7 @@ Jan 16, 2022
     The aforementioned method has been relocated to the Shared Function class.
     EffectKeyHandler classes have been reorganized and relocated to the SharedFunctions/Memory folder.
     Removed ForceDashWait setting.
-    Replaced DashSleepTime setting with DisableDashWait setting.   
+    Replaced DashSleepTime setting with DisableDashWait setting.
 
 Jan 14, 2022
     Updated GUI instructions to ensure they are affecting the correct GUI.
@@ -136,7 +137,7 @@ Jan 13, 2022
     Fix for BrivGemFarm required MemoryFunctions addon.
     Added a first run check for Addon Manager.
     EffectKeyHandler classes may now be compatible with EGS.
-    Added warning when closing gem farm script. 
+    Added warning when closing gem farm script.
     Gem Farm script can now be minimized to the tray when clicking x (choose "no" on prompt).
     Gem Farm script GUI will be shown again when pressing the play button if it is already open.
 
@@ -167,7 +168,7 @@ Jan 10, 2022
     Fixed bug where first chests opened/bought during the first run were counted in stats when stats should not start until after the first run.
     Fixed two bugs causing shinies to not be counted correctly.
     Server calls should now correctly use the same server as the client.
-    Server calls should now correctly use the same platform/network_id as the client.    
+    Server calls should now correctly use the same platform/network_id as the client.
     Added bypass for game recovery when game loads on zone 1.
 
 Jan 9, 2022

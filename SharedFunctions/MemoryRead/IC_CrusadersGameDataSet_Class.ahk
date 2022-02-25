@@ -9,7 +9,7 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
  
     GetVersion()
     {
-        return "v1.1.1, 2022-02-11, IC v0.419+, Steam"  
+        return "v1.1.2, 2022-02-25, IC v0.420+, Steam"  
     }
 
     Refresh()
@@ -20,7 +20,7 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
         ;mono-2.0-bdwgc.dll+0x003A3188 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003A31B8 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003AAFFC [0x470, 0xE70]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF28] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF10] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.AreaDefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0xC, 0x8]) ; Push ChestTypeDefines._items
         this.CrusadersGameDataSet.AreaDefinesListSize := new GameObjectStructure(this.CrusadersGameDataSet,,[0xC, 0xC]) ; Push ChestTypeDefines._size
@@ -51,20 +51,20 @@ class IC_CrusadersGameDataSetEGS_Class
 
     GetVersion()
     {
-        return "v1.1.1, 2022-02-11, IC v0.419+, EGS"  
+        return "v1.1.2, 2022-02-25, IC v0.420+, EGS"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495CE0
         ; Possible other locations:
         ;mono-2.0-bdwgc.dll+0x00493DC8 [0x18, 0xD80]
         ;mono-2.0-bdwgc.dll+0x00495C70 [0x38, 0xE80]
         ;mono-2.0-bdwgc.dll+0x00495CE0 [0x38, 0xE80]
         ;mono-2.0-bdwgc.dll+0x004A33D8 [0x280, 0xD80]
         ;mono-2.0-bdwgc.dll+0x004A3658 [0x285, 0xD80]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x18, 0xDB0] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x38, 0xE80] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.Is64Bit := true
         this.CrusadersGameDataSet.BuffdefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0x20, 0x10]) ; Push BuffDefines._items
