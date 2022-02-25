@@ -7,6 +7,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
+            ; TODO: If the steelbone stacks are > 1900000 the script will forever fail to fix a failed restack. Evaluate options.
             if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
             response := g_ServerCall.CallEndAdventure()

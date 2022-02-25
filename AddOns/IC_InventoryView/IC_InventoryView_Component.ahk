@@ -38,7 +38,11 @@ class IC_InventoryView_Component
     ; ReadInventory reads the inventory from in game and displays it in a list. Remembers first run values to compare for changes and per run calculations.
     ReadInventory(runCount := 1, doAddToFirstRead := false)
     {  
-
+        if(!IsObject(this.FirstReadBuffValues))
+        {
+            this.FirstReadBuffValues := {}
+            doAddToFirstRead := true
+        }
         size := g_SF.Memory.ReadInventoryItemsCount()
         loop, %size%
         {
@@ -46,7 +50,9 @@ class IC_InventoryView_Component
             buffID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID.GetGameObjectFromListValues(A_index - 1))
             itemName := g_SF.Memory.GetInventoryBuffNameByID(buffID)
             itemAmount := g_SF.Memory.GetInventoryBuffAmountByID(buffID)
-            change := this.GetBuffChange(buffID, itemAmount)
+            if(doAddToFirstRead) ; only create first object if there is an inventory
+                this.FirstReadBuffValues.Push({"ID":buffID, "Name":itemName, "Amount":itemAmount})
+            change := this.GetChange(buffID, itemAmount, "Buff")
             perRunVal := Round(change / runCount, 2)
             if(!perRunVal)
                 perRunVal := ""
@@ -66,6 +72,11 @@ class IC_InventoryView_Component
     ; Reads the game memory for all chests in the inventory and their counts and shows it in the inventory view.
     ReadChests(runCount := 1, doAddToFirstRead := false)
     {
+        if(!IsObject(this.FirstReadChestValues) )
+        {
+            this.FirstReadChestValues := {}
+            doAddToFirstRead := true
+        }
         size := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionarySize)    
         if(!size)
             return "" 
@@ -76,13 +87,15 @@ class IC_InventoryView_Component
             chestID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(listIndex))
             itemName := g_SF.Memory.GetChestNameByID(chestID)
             itemAmount := g_SF.Memory.GetChestCountByID(chestID) ;g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(A_index - 1 + 3))
-            change := this.GetChestChange(chestID, itemAmount)
+            change := this.GetChange(chestID, itemAmount, "Chest")
             perRunVal := Round(change / runCount, 2)
+            if(doAddToFirstRead) ; only create first object if there is an inventory
+                this.FirstReadChestValues.Push({"ID":chestID, "Name":itemName, "Amount":itemAmount})
             if(!perRunVal)
                 perRunVal := ""
             if(!change)
                 change := ""
-            LV_Add(, chestID, itemName, itemAmount, "", "")
+            LV_Add(, chestID, itemName, itemAmount, change, perRunVal)
         }
     }
 
@@ -96,14 +109,6 @@ class IC_InventoryView_Component
         else
             return
         LV_Delete()
-        if(!IsObject(this.FirstReadChestValues) AND !IsObject(this.FirstReadBuffValues))
-        {
-            this.FirstReadChestValues := {}
-            this.FirstReadBuffValues := {}
-            doAddToFirstRead := true
-        }
-        if(doAddToFirstRead) ; only create first object if there is an inventory
-            this.FirstReadValues.Push({"ID":buffID, "Name":itemName, "Amount":itemAmount})
         this.ReadChests(runCount, doAddToFirstRead)
         this.ReadInventory(runCount, doAddToFirstRead)
         LV_ModifyCol()
@@ -123,7 +128,7 @@ class IC_InventoryView_Component
     ; GetChange compares the current inventory item's (buffID) value (itemAmount) with the start value and returns the difference.
     GetChange(itemID, itemAmount, itemType := "Buff")
     {
-        firstCount := this.GetFirstCountFromID(buffID, itemType)
+        firstCount := this.GetFirstCountFromID(itemID, itemType)
         diff := itemAmount - firstCount
         return diff
     }
