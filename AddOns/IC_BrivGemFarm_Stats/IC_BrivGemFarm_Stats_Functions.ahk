@@ -312,7 +312,7 @@ class IC_BrivGemFarm_Stats_Component
             }
             if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
             {
-                InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadInventory")
+                InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadCombinedInventory")
                 InventoryViewRead.Call(this.TotalRunCount)
             }
             this.LastResetCount := g_SF.Memory.ReadResetsCount()
