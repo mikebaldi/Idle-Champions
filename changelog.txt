@@ -1,3 +1,6 @@
+Feb 25, 2022
+    Updated Inventory tab to be significantly faster when loading.
+
 Feb 24, 2022
     Inventory view now combines chests and buffs (potions, contracts, etc.)
     Added Reset Button on the Stats tab.

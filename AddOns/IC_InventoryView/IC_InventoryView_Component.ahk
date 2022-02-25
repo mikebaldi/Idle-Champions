@@ -16,7 +16,7 @@ Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonResetInventory, Reset
 buttonFunc := ObjBindMethod(g_InventoryView, "ResetInventory")
 GuiControl,ICScriptHub: +g, ButtonResetInventory, % buttonFunc
 
-Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+5 w225, % "Last Updated: "
+Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+5 w455, % "Last Updated: "
 
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, g_CustomColor
@@ -48,8 +48,8 @@ class IC_InventoryView_Component
         {
             change := ""
             buffID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID.GetGameObjectFromListValues(A_index - 1))
-            itemName := g_SF.Memory.GetInventoryBuffNameByID(buffID)
-            itemAmount := g_SF.Memory.GetInventoryBuffAmountByID(buffID)
+            itemName := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular.GetGameObjectFromListValues(A_index - 1))
+            itemAmount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount.GetGameObjectFromListValues(A_index - 1))
             if(doAddToFirstRead) ; only create first object if there is an inventory
                 this.FirstReadBuffValues.Push({"ID":buffID, "Name":itemName, "Amount":itemAmount})
             change := this.GetChange(buffID, itemAmount, "Buff")
@@ -83,10 +83,14 @@ class IC_InventoryView_Component
         loop, %size%
         {
             ; See GetChestCountByID() memory function to see why these extra caluculations are made.
+            ; Get index for ID
             listIndex := g_SF.Memory.Is64Bit ? ((A_index - 1) * 4 + 4)  : (A_index - 1) * 4
             chestID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(listIndex))
+            ; Get index for amount
+            listIndex := g_SF.Memory.Is64Bit ? ((A_index - 1) * 4 + 7)  : (A_index - 1) * 4 + 3
+            itemAmount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(listIndex))
             itemName := g_SF.Memory.GetChestNameByID(chestID)
-            itemAmount := g_SF.Memory.GetChestCountByID(chestID) ;g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(A_index - 1 + 3))
+            ;itemAmount := g_SF.Memory.GetChestCountByID(chestID) 
             change := this.GetChange(chestID, itemAmount, "Chest")
             perRunVal := Round(change / runCount, 2)
             if(doAddToFirstRead) ; only create first object if there is an inventory
@@ -103,12 +107,13 @@ class IC_InventoryView_Component
     {
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "InventoryViewID")
         doAddToFirstRead := false
-        GuiControl, ICScriptHub:, InventoryViewTimeStampID, % "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
+        lastUpdateString := "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
         if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()
         else
             return
         LV_Delete()
+        startTime := A_TickCount
         this.ReadChests(runCount, doAddToFirstRead)
         this.ReadInventory(runCount, doAddToFirstRead)
         LV_ModifyCol()
@@ -116,6 +121,8 @@ class IC_InventoryView_Component
         LV_ModifyCol(3, "Integer")
         LV_ModifyCol(4, "50 Integer")
         LV_ModifyCol(5, "50 Integer")
+        timeToProcess := (A_TickCount - startTime) / 1000
+        GuiControl, ICScriptHub:, InventoryViewTimeStampID, % lastUpdateString . " in " . timeToProcess . "s"
     }
 
     ; ClearFirstRead clears the first run values to start new tracking.
