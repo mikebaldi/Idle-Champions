@@ -1,3 +1,18 @@
+Feb 24, 2022
+    Inventory view now combines chests and buffs (potions, contracts, etc.)
+    Added Reset Button on the Stats tab.
+    Fixed a bug for addons not respecting some dependency versions.
+    Set Script Hub to Normal Priority. (Game and Briv Gem Farm still run at High priority)
+    Refactor: 
+        Moved many stats tab functions from BrivGemFarm to BrivGemFarm_Stats.
+        Moved GUI code into functions.
+        Updated Addon Version numbers.
+        Simplified StackRestart()
+        Moved chest opening logic to its own function.
+        Simplified some GemFarm() loop logic.
+        Added g_BrivFarmAddonStartFunctions and g_BrivFarmAddonStopFunctions which will be called whenever brivemfarm is run/stopped respectively
+    Added SetThemTextColor function to GUIFunctions.     
+
 Feb 17, 2022
     Added running miniscript warning when closing script hub.
     Disabled read for GetDialogNameBySlot as the pointers often break and could cause memory read problems.
