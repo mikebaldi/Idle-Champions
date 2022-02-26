@@ -1,3 +1,6 @@
+Feb 25, 2022
+    Updated pointers and offsets for Steam and EGS v420
+
 Feb 17, 2022
     Added running miniscript warning when closing script hub.
     Disabled read for GetDialogNameBySlot as the pointers often break and could cause memory read problems.
