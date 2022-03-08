@@ -51,7 +51,7 @@ class IC_CrusadersGameDataSetEGS_Class
 
     GetVersion()
     {
-        return "v1.1.2, 2022-02-25, IC v0.420+, EGS"  
+        return "v1.1.3, 2022-03-08, IC v0.420.2+, EGS"  
     }
 
     Refresh()
@@ -64,7 +64,7 @@ class IC_CrusadersGameDataSetEGS_Class
         ;mono-2.0-bdwgc.dll+0x00495CE0 [0x38, 0xE80]
         ;mono-2.0-bdwgc.dll+0x004A33D8 [0x280, 0xD80]
         ;mono-2.0-bdwgc.dll+0x004A3658 [0x285, 0xD80]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x38, 0xE80] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x38, 0xEB0] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.Is64Bit := true
         this.CrusadersGameDataSet.BuffdefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0x20, 0x10]) ; Push BuffDefines._items
