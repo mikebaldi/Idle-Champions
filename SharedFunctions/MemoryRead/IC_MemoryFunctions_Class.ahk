@@ -868,7 +868,7 @@ class IC_MemoryFunctions_Class
 
     BinarySearchList(gameObject, leftIndex, rightIndex, searchValue)
     {
-        if(rightIndex >= 1)
+        if(rightIndex > leftIndex)
         {
             middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
             IDValue := this.GenericGetValue(gameObject.GetGameObjectFromListValues(middle - 1))
