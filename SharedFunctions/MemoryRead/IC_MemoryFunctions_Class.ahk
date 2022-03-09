@@ -872,8 +872,11 @@ class IC_MemoryFunctions_Class
         {
             middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
             IDValue := this.GenericGetValue(gameObject.GetGameObjectFromListValues(middle - 1))
+            ; failed memory read
+            if(IDValue == "")
+                return -1
             ; if value found, return index
-            if (IDValue == searchValue)
+            else if (IDValue == searchValue)
                 return middle
             ; else if value larger that middle value, check larger half
             else if (IDValue > searchValue)
