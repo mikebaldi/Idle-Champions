@@ -868,7 +868,12 @@ class IC_MemoryFunctions_Class
 
     BinarySearchList(gameObject, leftIndex, rightIndex, searchValue)
     {
-        if(rightIndex >= leftIndex)
+        
+        if(rightIndex < leftIndex)
+        {
+            return -1
+        }
+        else
         {
             middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
             IDValue := this.GenericGetValue(gameObject.GetGameObjectFromListValues(middle - 1))
@@ -883,11 +888,7 @@ class IC_MemoryFunctions_Class
                 return this.BinarySearchList(gameObject, leftIndex, middle-1, searchValue)
             ; else if value smaller than middle value, check smaller half
             else
-                return this.BinarySearchList(gameObject, middle, rightIndex, searchValue)
-        }
-        else
-        {
-            return -1
+                return this.BinarySearchList(gameObject, middle+1, rightIndex, searchValue)
         }
     }
 
