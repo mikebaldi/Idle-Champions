@@ -13,7 +13,7 @@ SetControlDelay, 0 ; Sets the delay that will occur after each control-modifying
 SetBatchLines, -1 ; How fast a script will run (affects CPU utilization).(Default setting is 10ms - prevent the script from using any more than 50% of an idle CPU's time.
                   ; This allows scripts to run quickly while still maintaining a high level of cooperation with CPU sensitive tasks such as games and video capture/playback.
 ListLines Off
-Process, Priority,, High
+Process, Priority,, Normal
 
 CoordMode, Mouse, Client
 
@@ -49,6 +49,9 @@ global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
+;TODO: convert g_isDarkMode to use gui functions
+if (g_isDarkMode)
+    GUIfunctions.isDarkMode := true
 if (g_isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 

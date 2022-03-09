@@ -68,7 +68,7 @@ Class AddonManagement
                     ;First check if the dependencies DepExists
                     DependancieFound:=0
                     for y,z in this.Addons {
-                        if(z.Name = j.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(j.Version, z.Version)){
+                        if(z.Name = j.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(z.Version, j.Version)){
                             ; Check if the dependencie is enabled
                             DependancieFound:=1
                             if (!z.Enabled){

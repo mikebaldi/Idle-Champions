@@ -89,4 +89,22 @@ class ArrFnc
         var .= " ]"
         return var
     }
+
+    BinarySearch(array, leftIndex, rightIndex, searchValue)
+    {
+        if(rightIndex >= 1)
+        {
+            middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
+            if (array[middle] == searchValue)
+                return middle
+            else if (array[middle] > searchValue)
+                return this.BinarySearch(array, leftIndex, middle-1, searchValue)
+            else
+                return this.BinarySearch(array, middle, rightIndex, searchValue)
+        }
+        else
+        {
+            return false
+        }
+    }
 }

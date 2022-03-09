@@ -7,6 +7,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
+            ; TODO: If the steelbone stacks are > 1900000 the script will forever fail to fix a failed restack. Evaluate options.
             if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
             response := g_ServerCall.CallEndAdventure()
@@ -35,7 +36,6 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         version := this.Memory.ReadGameVersion()
         if(version != "")
             g_ServerCall.clientVersion := version
-        ; TODO: Update these values based on memory reads
         g_ServerCall.webroot := this.Memory.ReadWebRoot() ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
@@ -121,23 +121,6 @@ class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
 
-    
-
-    SharedRunData[]
-    {
-        get 
-        {
-            try
-            {
-                return ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-            }
-            catch, Err
-            {
-                return new IC_SharedData_Class
-            }
-        }
-    }
-
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
     ;=====================================================
@@ -185,11 +168,9 @@ class IC_BrivGemFarm_Class
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
                 StartTime := g_PreviousZoneStartTime := A_TickCount
-                g_SharedData.StackFail := 0
-                if(!g_SharedData.StackFail)
-                    g_SharedData.StackFail := this.CheckForFailedConv()
-                g_SharedData.SwapsMadeThisRun := 0
                 PreviousZone := 1
+                g_SharedData.StackFail := this.CheckForFailedConv()
+                g_SharedData.SwapsMadeThisRun := 0
                 g_SharedData.TriggerStart := false
                 g_SharedData.LoopString := "Main Loop"
             }
@@ -225,262 +206,6 @@ class IC_BrivGemFarm_Class
                 g_SharedData.StackFailStats.TALLY[g_SharedData.StackFail] += 1
             }
             Sleep, 20 ; here to keep the script responsive.
-        }
-    }
-
-    ;===========================================
-    ;Functions for updating GUI stats and timers
-    ;===========================================
-
-    CreateTimedFunctions()
-    {
-        this.TimedFunctions := {}
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
-        this.TimerFunctions[fncToCallOnTimer] := 200
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
-        this.TimerFunctions[fncToCallOnTimer] := 3000
-        if(IsFunc(Func("IC_MemoryFunctions_ReadMemory")))
-        {
-            fncToCallOnTimer :=  Func("IC_MemoryFunctions_ReadMemory")
-            this.TimerFunctions[fncToCallOnTimer] := 250
-        }
-        if(IsFunc(Func("IC_BrivGemFarm_Class.UpdateBrivClassStats")))
-        {
-            fncToCallOnTimer := ObjBindMethod(IC_BrivGemFarm_Class, "UpdateBrivClassStats")
-            this.TimerFunctions[fncToCallOnTimer] := 250
-        }
-        fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
-        this.TimerFunctions[fncToCallOnTimer] := 100
-        fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
-        this.TimerFunctions[fncToCallOnTimer] := 200
-    }
-
-    ; Starts functions that need to be run in a separate thread such as GUI Updates.
-    StartTimedFunctions()
-    {
-        for k,v in this.TimerFunctions
-        {
-            SetTimer, %k%, %v%, 0
-        }
-    }
-
-    StopTimedFunctions()
-    {
-        for k,v in This.TimerFunctions
-        {
-            SetTimer, %k%, Off
-            SetTimer, %k%, Delete
-        }
-    }
-
-    ;Updates GUI dtCurrentRunTimeID and dtCurrentLevelTimeID
-    UpdateStatTimers()
-    {
-        static startTime := A_TickCount
-        static previousZoneStartTime := A_TickCount
-        static previousLoopStartTime := A_TickCount
-        static lastZone := -1
-        static lastResetCount := 0
-        static sbStackMessage := ""
-        static hasteStackMessage := ""
-        static LastTriggerStart := false
-
-        TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : LastTriggerStart
-        Critical, On
-        currentZone := g_SF.Memory.ReadCurrentZone()
-        if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadAreaActive() AND lastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart)) ; Modron or Manual reset happend
-        {
-            lastResetCount := g_SF.Memory.ReadResetsCount()
-            previousLoopStartTime := A_TickCount
-        }
-
-        if !g_SF.Memory.ReadUserIsInited()
-        {
-            ; do not update lastZone if game is loading
-        }
-        else if ( (currentZone > lastZone) AND (currentZone >= 2)) ; zone reset
-        {
-            lastZone := currentZone
-            previousZoneStartTime := A_TickCount
-        }
-        else if ((g_SF.Memory.ReadHighestZone() < 3) AND (lastZone >= 3) AND (currentZone > 0) ) ; After reset. +1 buffer for time to read value
-        {
-            lastZone := currentZone
-            previousLoopStartTime := A_TickCount
-        }
-
-        sbStacks := g_SF.Memory.ReadSBStacks()
-        if (sbStacks == "")
-        {
-            if (SubStr(sbStackMessage, 1, 1) != "[")
-            {
-                sbStackMessage := "[" . sbStackMessage . "] last seen"
-            }
-        } else {
-            sbStackMessage := sbStacks
-        }
-        hasteStacks := g_SF.Memory.ReadHasteStacks()
-        if (hasteStacks == "")
-        {
-            if (SubStr(hasteStackMessage, 1, 1) != "[")
-            {
-                hasteStackMessage := "[" . hasteStackMessage . "] last seen"
-            }
-        } else {
-            hasteStackMessage := hasteStacks
-        }
-        GuiControl, ICScriptHub:, g_StackCountSBID, % sbStackMessage
-        GuiControl, ICScriptHub:, g_StackCountHID, % hasteStackMessage
-
-        dtCurrentRunTime := Round( ( A_TickCount - previousLoopStartTime ) / 60000, 2 )
-        GuiControl, ICScriptHub:, dtCurrentRunTimeID, % dtCurrentRunTime
-
-        dtCurrentLevelTime := Round( ( A_TickCount - previousZoneStartTime ) / 1000, 2 )
-        GuiControl, ICScriptHub:, dtCurrentLevelTimeID, % dtCurrentLevelTime
-        Critical, Off
-    }
-
-    ;Updates the stats tab's once per run stats
-    UpdateStartLoopStats()
-    {
-        static TotalRunCount := 0
-        static FailedStacking := 0
-        static FailedStackConv := 0
-        static SlowRunTime := 0
-        static FastRunTime := 0
-        static ScriptStartTime := 0
-        static CoreXPStart := 0
-        static GemStart := 0
-        static GemSpentStart := 0
-        static BossesPerHour := 0
-        static LastResetCount := 0
-        static RunStartTime := A_TickCount
-        static IsStarted := false ; Skip recording of first run
-        static StackFail
-        static SilverChestCountStart := 0
-        static GoldChestCountStart := 0
-        static LastTriggerStart := false
-        static ActiveGameInstance := 1
-        static FailRunTime := 0
-        static TotalRunCountRetry := 0
-
-        Critical, On
-        if !isStarted
-        {
-            LastResetCount := g_SF.Memory.ReadResetsCount()
-            isStarted := true
-        }
-
-        ;testReadAreaActive := g_SF.Memory.ReadAreaActive()
-        StackFail := Max(StackFail, this.SharedRunData.StackFail)
-        TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : LastTriggerStart
-        if ( g_SF.Memory.ReadResetsCount() > LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND LastResetCount != 0 ) OR (TriggerStart AND LastTriggerStart != TriggerStart) )
-        {
-            while(!g_SF.Memory.ReadOfflineDone() AND IsObject(this.SharedRunData) AND this.SharedRunData.TriggerStart)
-            {
-                Critical, Off
-                Sleep, 50
-                Critical, On
-            }
-            ; CoreXP starting on FRESH run.
-            if(!TotalRunCount OR (TotalRunCount AND TotalRunCountRetry < 2 AND (!CoreXPStart OR !GemStart)))
-            {
-                if(TotalRunCount)
-                    TotalRunCountRetry++
-                ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
-                CoreXPStart := g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance)
-                GemStart := g_SF.Memory.ReadGems()
-                GemSpentStart := g_SF.Memory.ReadGemsSpent()
-                LastResetCount := g_SF.Memory.ReadResetsCount()
-                SilverChestCountStart := g_SF.Memory.GetChestCountByID(1)
-                GoldChestCountStart := g_SF.Memory.GetChestCountByID(2)
-                
-                ; start count after first run since total chest count is counted after first run
-                if(IsObject(this.SharedRunData)) 
-                {
-                    this.SharedRunData.PurchasedGoldChests := 0
-                    this.SharedRunData.PurchasedSilverChests := 0    
-                }
-                
-                FastRunTime := 1000
-                ScriptStartTime := A_TickCount
-            }
-            if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
-            {
-                InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadInventory")
-                InventoryViewRead.Call(TotalRunCount)
-            }
-            LastResetCount := g_SF.Memory.ReadResetsCount()
-            PreviousRunTime := round( ( A_TickCount - RunStartTime ) / 60000, 2 )
-            GuiControl, ICScriptHub:, PrevRunTimeID, % PreviousRunTime
-
-            if (TotalRunCount AND (!StackFail OR StackFail == 6))
-            {
-                if (SlowRunTime < PreviousRunTime)
-                    GuiControl, ICScriptHub:, SlowRunTimeID, % SlowRunTime := PreviousRunTime
-                if (FastRunTime > PreviousRunTime)
-                    GuiControl, ICScriptHub:, FastRunTimeID, % FastRunTime := PreviousRunTime
-            }
-            if ( StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
-            {
-                GuiControl, ICScriptHub:, FailRunTimeID, % PreviousRunTime
-                FailRunTime += PreviousRunTime
-                GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( FailRunTime, 2 )
-                GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
-            }
-
-            GuiControl, ICScriptHub:, TotalRunCountID, % TotalRunCount
-            dtTotalTime := (A_TickCount - ScriptStartTime) / 3600000
-            GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
-            GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / TotalRunCount ) * 60, 2 )
-
-            if(g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance))
-                BossesPerHour := Round( ( ( g_SF.Memory.GetCoreXPByInstance(ActiveGameInstance) - CoreXPStart ) / 5 ) / dtTotalTime, 2 )
-            GuiControl, ICScriptHub:, bossesPhrID, % BossesPerHour
-
-            GemsTotal := ( g_SF.Memory.ReadGems() - GemStart ) + ( g_SF.Memory.ReadGemsSpent() - GemSpentStart )
-            GuiControl, ICScriptHub:, GemsTotalID, % GemsTotal
-            GuiControl, ICScriptHub:, GemsPhrID, % Round( GemsTotal / dtTotalTime, 2 )
-
-            if (IsObject(this.SharedRunData))
-            {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - SilverChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : SilversPurchasedID)
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - GoldChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
-                GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : SilversOpenedID)
-                GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : GoldsOpenedID)
-                GuiControl, ICScriptHub:, ShiniesID, % (IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : ShiniesID)
-            }
-            ++TotalRunCount
-            StackFail := 0
-            this.SharedRunData.StackFail := false
-            this.SharedRunData.TriggerStart := false
-            RunStartTime := A_TickCount
-        }
-        if (IsObject(this.SharedRunData))
-            LastTriggerStart := this.SharedRunData.TriggerStart
-        Critical, Off
-    }
-
-    UpdateGUIFromCom()
-    {
-        static SharedRunData
-        ;activeObjects := GetActiveObjects()
-        try ; avoid thrown errors when comobject is not available.
-        {
-            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
-            if(!g_isDarkMode)
-                GuiControl, ICScriptHub: +cBlack, LoopID, 
-            else
-                GuiControl, ICScriptHub: +cSilver, LoopID, 
-            GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
-            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % SharedRunData.SwapsMadeThisRun
-            GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
-            GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
-        }
-        catch
-        {
-            GuiControl, ICScriptHub: +cRed, LoopID, 
-            GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script [Closed Script?]."
         }
     }
 
@@ -607,43 +332,27 @@ class IC_BrivGemFarm_Class
     StackRestart()
     {
         stacks := this.GetNumStacksFarmed()
-        i := 0
-        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND i < 10 )
+        retryAttempt := 0
+        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND retryAttempt < 10 )
         {
-            ++i
+            retryAttempt++
             this.StackFarmSetup()
             g_SF.CloseIC( "StackRestart" )
-            StartTime := A_TickCount
-            ElapsedTime := 0
             g_SharedData.LoopString := "Stack Sleep"
-            var := ""
-            if ( g_BrivUserSettings[ "DoChests" ] )
-            {
-                startTime := A_TickCount
-                if(g_BrivUserSettings[ "DoChestsContinuous" ])
-                {
-                    while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime ))
-                    {
-                        var .= this.BuyOrOpenChests(startTime) . "`n"
-                    }
-                }
-                else
-                {
-                    var := this.BuyOrOpenChests() . " "
-                }
-                ElapsedTime := A_TickCount - StartTime
-                g_SharedData.LoopString := "Sleep: " . var
-            }
+            var := this.DoChests()
+            ElapsedTime := 0
+            StartTime := A_TickCount
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
                 g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
             }
             g_SF.SafetyCheck()
-            stacks := this.GetNumStacksFarmed() ; Update GUI and Globals
+            stacks := this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
             if ( g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ] )
             {
+                g_SharedData.LoopString := "Stack Sleep: Failed (zone < min)"
                 Break  ; "Bad Save? Loaded below stack zone, see value."
             }
         }
@@ -673,6 +382,28 @@ class IC_BrivGemFarm_Class
         g_SF.FallBackFromZone()
         g_SF.ToggleAutoProgress( 1 )
         return
+    }
+
+    DoChests()
+    {
+        StartTime := A_TickCount
+        var := ""
+        if ( g_BrivUserSettings[ "DoChests" ] )
+        {
+            if(g_BrivUserSettings[ "DoChestsContinuous" ])
+            {
+                while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
+                {
+                    var .= this.BuyOrOpenChests(StartTime) . "`n"
+                }
+            }
+            else
+            {
+                var := this.BuyOrOpenChests() . " "
+            }
+            g_SharedData.LoopString := "Sleep: " . var
+        }
+        return var
     }
 
     /* ;A function that checks if farmed SB stacks from previous run failed to convert to haste.
