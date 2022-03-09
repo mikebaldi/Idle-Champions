@@ -1,3 +1,7 @@
+March 8, 2022
+    Updated pointers/offsets for v420.2.
+    Added checkbox toggles for chests/buffs in inventory tab.
+
 Feb 25, 2022
     Updated pointers and offsets for Steam and EGS v420.
     Updated Inventory tab to be significantly faster when loading.

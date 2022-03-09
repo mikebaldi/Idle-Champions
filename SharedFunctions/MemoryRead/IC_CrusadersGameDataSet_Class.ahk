@@ -9,7 +9,7 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
  
     GetVersion()
     {
-        return "v1.1.2, 2022-02-25, IC v0.420+, Steam"  
+        return "v1.1.3, 2022-03-08, IC v0.420.2+, Steam"  
     }
 
     Refresh()
@@ -20,7 +20,7 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
         ;mono-2.0-bdwgc.dll+0x003A3188 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003A31B8 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003AAFFC [0x470, 0xE70]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF10] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF28] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.AreaDefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0xC, 0x8]) ; Push ChestTypeDefines._items
         this.CrusadersGameDataSet.AreaDefinesListSize := new GameObjectStructure(this.CrusadersGameDataSet,,[0xC, 0xC]) ; Push ChestTypeDefines._size
