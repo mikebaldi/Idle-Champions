@@ -1,6 +1,8 @@
 GUIFunctions.AddTab("Inventory View")
 
 global g_InventoryView := new IC_InventoryView_Component
+global g_InventoryViewChestsCheckbox
+global g_InventoryViewBuffsCheckbox
 
 ; Add GUI fields to this addon's tab.
 Gui, ICScriptHub:Tab, Inventory View
@@ -16,7 +18,10 @@ Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonResetInventory, Reset
 buttonFunc := ObjBindMethod(g_InventoryView, "ResetInventory")
 GuiControl,ICScriptHub: +g, ButtonResetInventory, % buttonFunc
 
-Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+5 w455, % "Last Updated: "
+Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewChestsCheckbox x+15 yp+3 Checked, Chests
+Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewBuffsCheckbox x+15 Checked, Buffs
+
+Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+15 w455, % "Last Updated: "
 
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, g_CustomColor
@@ -114,8 +119,11 @@ class IC_InventoryView_Component
             return
         LV_Delete()
         startTime := A_TickCount
-        this.ReadChests(runCount, doAddToFirstRead)
-        this.ReadInventory(runCount, doAddToFirstRead)
+        Gui, Submit, NoHide
+        if(g_InventoryViewChestsCheckbox)
+            this.ReadChests(runCount, doAddToFirstRead)
+        if(g_InventoryViewBuffsCheckbox)
+            this.ReadInventory(runCount, doAddToFirstRead)
         LV_ModifyCol()
         LV_ModifyCol(1, "Integer")  
         LV_ModifyCol(3, "Integer")
