@@ -9,7 +9,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.9.12, 2022-03-08, IC v0.420.2+, EGS"
+        return "v1.9.13, 2022-03-15, IC v0.421+, EGS"
     }
 
     is64Bit()
@@ -88,6 +88,7 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.Area := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x18])
         this.Game.GameInstance.Controller.Area.Active := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Char", [0x1D0]) 
         this.Game.GameInstance.Controller.Area.BasicMonstersSpawned := New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x230]) ; Push basicMonstersSpawnedThisArea
+        this.Game.GameInstance.Controller.Area.activeMonstersListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x38, 0x18]) ; Push - activeMonsters, _size
         this.Game.GameInstance.Controller.Area.SecondsSinceStarted := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Float", [0x1F4]) 
         this.Game.GameInstance.ResetHandler.Resetting := New GameObjectStructure(this.Game.GameInstance.ResetHandler, "Char", [0x38])
         this.GameManager.TimeScale := New GameObjectStructure(This.GameManager, "Float", [0x80]) 
@@ -105,8 +106,8 @@ class IC_GameManagerEGS_Class
         ;Screen Resolution
         ;=================
         this.Game.ActiveScreen := New GameObjectStructure(this.Game,, [0x10, 0x18]) ; Push screenController.activeScreen
-        this.Game.ActiveScreen.Width := New GameObjectStructure(this.Game.ActiveScreen,, [0x304])
-        this.Game.ActiveScreen.Height := New GameObjectStructure(this.Game.ActiveScreen,, [0x308])
+        this.Game.ActiveScreen.Width := New GameObjectStructure(this.Game.ActiveScreen,, [0x32C])
+        this.Game.ActiveScreen.Height := New GameObjectStructure(this.Game.ActiveScreen,, [0x330])
 
         ;=========================================================
         ;herohandler - champion related information accessed by ID
@@ -201,20 +202,20 @@ class IC_GameManagerEGS_Class
         ;Screen and UI
         ;=================
         this.Game.GameInstance.Screen := New GameObjectStructure(this.Game.GameInstance,, [0x10])
-        this.Game.GameInstance.Screen.uiController := New GameObjectStructure(this.Game.GameInstance.Screen,, [0x370])
+        this.Game.GameInstance.Screen.uiController := New GameObjectStructure(this.Game.GameInstance.Screen,, [0x390])
         this.Game.GameInstance.Screen.uiController.topBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x18])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x310])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox,, [0x348])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar, "Char", [0x318, 0x36A]) ; Push autoProgressButton.toggled
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x330])
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox,, [0x368])
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar, "Char", [0x338, 0x38A]) ; Push autoProgressButton.toggled
         this.Game.GameInstance.Screen.uiController.bottomBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x20])
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar,, [0x330])
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x370, 0x10]) ; Push activeBoxes._items
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x3B8])
-        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0xA0])
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar,, [0x350])
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel, "List", [0x390, 0x10]) ; Push activeBoxes._items
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList,, [0x3D8])
+        this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade.IsPurchased := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.bottomBar.heroPanel.activeBoxesList.nextupgrade,"Char", [0xE0])
         this.Game.GameInstance.Screen.uiController.ultimatesBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x28])
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x358, 0x10]) ; Push ultimatesItems._items
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x358, 0x18]) ; Push ultimatesItems._size
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x348])
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar, "List", [0x378, 0x10]) ; Push ultimatesItems._items
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x378, 0x18]) ; Push ultimatesItems._size
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x368])
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero,, [0x18])
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x10])    
         ;=========================================

@@ -1,3 +1,7 @@
+March 15, 2022
+    Updated pointers/offsets for v421.
+    Added ReadActiveMonstersCount function (based on Thatman's suggestion)
+
 March 8, 2022
     Updated pointers/offsets for v420.2.
     Added checkbox toggles for chests/buffs in inventory tab.

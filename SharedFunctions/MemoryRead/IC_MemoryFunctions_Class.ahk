@@ -35,7 +35,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.0, 2022-02-25, IC v0.415.1+"
+        return "v1.10.1, 2022-03-15, IC v0.415.1+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -115,6 +115,11 @@ class IC_MemoryFunctions_Class
     ReadMonstersSpawned()
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.BasicMonstersSpawned)
+    }
+
+    ReadActiveMonstersCount()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.activeMonstersListSize)
     }
 
     ReadResetting()
