@@ -118,6 +118,7 @@ class IC_GameManager_Class
         this.Game.GameInstance.PatronHandler.ActivePatron := New GameObjectStructure(this.Game.GameInstance.PatronHandler,, [0x10]) ; Push - <ActivePatron>k_BackingField
         this.Game.GameInstance.PatronHandler.ActivePatron.ID := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0x8]) 
         this.Game.GameInstance.PatronHandler.ActivePatron.Tier := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0x70]) 
+        this.Game.GameInstance.Controller.Area.activeMonstersListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x1C, 0xC]) ; push - activeMonsters, _size
         ;=================
         ;Screen Resolution
         ;=================
