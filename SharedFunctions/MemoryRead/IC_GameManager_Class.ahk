@@ -26,7 +26,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.10.7, 2022-03-15, IC v0.421+, Steam"
+        return "v1.10.8, 2022-03-16, IC v0.421+, Steam"
     }
 
     is64Bit()
@@ -139,7 +139,7 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName,, [0x8, 0x10]) ;Push _items, item[0] - this is a list that should generally be one long, but there may be abilities with more items in which case we will need to revisit this and make a list.
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey,, [0x8])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler,, [0x94, 0x8]) ;Push activeEffectHandlers, _items. Eliminated item[0] so this acts as a pointer - OLD note no longer applies: this is a list that should generally be one long, but there may be abilities with more items in which case we will need to revisit this and make a list.
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x110, 0xC, 0x1C]) ;Push allUpgradesOrdered, entries, value[0] -note this is a dict, but CE will build it as a list where value[0] is actually represented as item[3]
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x10C, 0xC, 0x1C]) ;Push allUpgradesOrdered, entries, value[0] -note this is a dict, but CE will build it as a list where value[0] is actually represented as item[3]
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered, "List", [0x8]) ;push _items
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered._size := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered,, [0xC])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.ID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x8])
@@ -147,13 +147,13 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.RequiredLevel := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x4C])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.RequiredUpgradeID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x54])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List.SpecializationGraphic := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.allUpgradesOrdered.List,, [0x58])
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x114, 0x18]) ; Push purchasedUpgradeIDs._count
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x1E8]) ; Alias 
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Slot := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x188]) ; Push slotId
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Owned := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x184]) 
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Benched := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x194]) 
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Level := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x1B0])
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x0C, 0xD0]) ; Push def.SeatID
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x110, 0x18]) ; Push purchasedUpgradeIDs._count
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x1E0]) ; Alias 
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Slot := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x184]) ; Push slotId
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Owned := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x181]) 
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Benched := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x190]) 
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Level := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x1AC])
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0xC, 0xD0]) ; Push def.SeatID
         ;=============================
         ;GameUser - userid, hash, etc. (Depricated. Used GameSettings class to access these values)
         ;=============================
