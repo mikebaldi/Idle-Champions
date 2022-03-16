@@ -99,6 +99,11 @@ class IC_MemoryFunctions_Class
     ; The following Read___ functions are shorthand for GenericGetValue(GameObjectStructure). 
     ; They are not necessary but they do increase readability of code and increase ease of use.
 
+ReadActiveMonstersListSize()
+{
+  return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.activeMonstersListSize)
+}
+
     ReadGameVersion()
     {
         if(this.GenericGetValue(this.GameSettings.GameSettings.PostFix)  != "")
