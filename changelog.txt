@@ -1,3 +1,6 @@
+March 26, 2022
+    Updated pointers/offsets for v422.4.
+
 March 15, 2022
     Updated pointers/offsets for v421.
     Added ReadActiveMonstersCount function (based on Thatman's suggestion)
