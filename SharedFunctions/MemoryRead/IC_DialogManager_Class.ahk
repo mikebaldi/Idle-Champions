@@ -48,7 +48,7 @@ class IC_DialogManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.0.6, 2022-03-23, IC v0.422+, EGS"
+        return "v1.0.7, 2022-03-26, IC v0.422.4+, EGS"
     }
 
     Refresh()
