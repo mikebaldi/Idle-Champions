@@ -49,11 +49,11 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.UserData.BuffHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x28])
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,"List", [0x20, 0x10]) ; Push inventoryBuffs._Items
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsListSize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,, [0x20, 0x18]) ; Push inventoryBuffs._size
-        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0x10]) 
+        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0x10])
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0xB4+0x8]) ; The actual value is InventoryAmount + 8
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,"UTF-16", [0x20,0x14]) ; Push NamePlural.Value (Value not 0xC)
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NamePlural := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,"UTF-16", [0x28,0x14]) ; Push NamePlural.Value (Value not 0xC)
-        this.Game.GameInstance.Controller.UserData.LootHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x18]) 
+        this.Game.GameInstance.Controller.UserData.LootHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x18])
         this.Game.GameInstance.Controller.UserData.LootHandler.InventoryLootList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.LootHandler,"List", [0x30,0x10]) ; push inventoryLoot._Items
         this.Game.GameInstance.Controller.UserData.LootHandler.InventoryLootListSize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.LootHandler,, [0x30,0x18]) ; push inventoryLoot._size
         this.Game.GameInstance.Controller.UserData.LootHandler.InventoryLootList.NameValue := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.LootHandler.InventoryLootList,, [0x18,0x14]) ; push Name.Value
@@ -74,9 +74,9 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesListSize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler,, [0x20, 0x18]) ; Push modronSaves.size
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionary := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,"List", [0x18,0x18]) ; Push FormationSaves.entries
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.FormationSavesDictionarySize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x18,0x40]) ; Push FormationSaves.count
-        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.TargetArea := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x54]) 
-        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.ExpTotal := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x50])  
-        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.CoreID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x48]) 
+        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.TargetArea := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x54])
+        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.ExpTotal := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x50])
+        this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.CoreID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x48])
         this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList.InstanceID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.ModronHandler.ModronSavesList,, [0x4C])
         ;=========================================
         ;until I find a better spot here these are
@@ -86,22 +86,22 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.ResetsSinceLastManual := New GameObjectStructure(this.Game.GameInstance,, [0x104])
         this.Game.GameInstance.instanceLoadTimeSinceLastSave := New GameObjectStructure(this.Game.GameInstance,, [0x10C])
         this.Game.GameInstance.Controller.Area := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x18])
-        this.Game.GameInstance.Controller.Area.Active := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Char", [0x1E0]) 
+        this.Game.GameInstance.Controller.Area.Active := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Char", [0x1E0])
         this.Game.GameInstance.Controller.Area.BasicMonstersSpawned := New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x240]) ; Push basicMonstersSpawnedThisArea
         this.Game.GameInstance.Controller.Area.activeMonstersListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Area,, [0x48, 0x18]) ; Push - activeMonsters, _size
-        this.Game.GameInstance.Controller.Area.SecondsSinceStarted := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Float", [0x204]) 
+        this.Game.GameInstance.Controller.Area.SecondsSinceStarted := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Float", [0x204])
         this.Game.GameInstance.ResetHandler.Resetting := New GameObjectStructure(this.Game.GameInstance.ResetHandler, "Char", [0x38])
-        this.GameManager.TimeScale := New GameObjectStructure(This.GameManager, "Float", [0x80]) 
+        this.GameManager.TimeScale := New GameObjectStructure(This.GameManager, "Float", [0x80])
         this.Game.GameInstance.Controller.AreaTransitioner := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x40])
         this.Game.GameInstance.Controller.AreaTransitioner.IsTransitioning := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner, "Char", [0x38]) ; Push <IsTransitioning>k__BackingField
-        this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x28])        
+        this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x28])
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect,, [0x38])
         this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer.T := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner.ScreenWipeEffect.DelayTimer, "Double", [0x48])
         this.Game.GameInstance.Controller.AreaTransitioner.TransitionDirection := New GameObjectStructure(this.Game.GameInstance.Controller.AreaTransitioner,, [0x3C]) ; 0 = right, 1 = left, 2 = static (instant)
         this.Game.GameInstance.PatronHandler := New GameObjectStructure(this.Game.GameInstance,, [0x50])
         this.Game.GameInstance.PatronHandler.ActivePatron := New GameObjectStructure(this.Game.GameInstance.PatronHandler,, [0x20]) ; Push - <ActivePatron>k_BackingField
-        this.Game.GameInstance.PatronHandler.ActivePatron.ID := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0x10]) 
-        this.Game.GameInstance.PatronHandler.ActivePatron.Tier := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0xC0]) 
+        this.Game.GameInstance.PatronHandler.ActivePatron.ID := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0x10])
+        this.Game.GameInstance.PatronHandler.ActivePatron.Tier := New GameObjectStructure(this.Game.GameInstance.PatronHandler.ActivePatron,, [0xC0])
         ;=================
         ;Screen Resolution
         ;=================
@@ -124,9 +124,9 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey,, [0x10])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler, "Int64", [0x128, 0x10]) ;Push activeEffectHandlers, _items. Eliminated item[0] so this acts as a pointer - OLD note no longer applies: this is a list that should generally be one long, but there may be abilities with more items in which case we will need to revisit this and make a list.
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x220, 0x30]) ; Push purchasedUpgradeIDs._count
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x350]) ; Alias 
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Health := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList, "Double", [0x350]) ; Alias
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Slot := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x2F0]) ; Push slotId
-        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Benched := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x2FC]) 
+        this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Benched := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x2FC])
         this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Level := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList,, [0x318]) ;Push <Level>k__BackingField ; _level
         ;=============================
         ;GameUser - userid, hash, etc. (Depricated. Used GameSettings class to access these values)
@@ -163,8 +163,8 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.FormationSaveHandler.FormationCampaignID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,, [0x80])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler,"List", [0x30, 0x10]) ; Push formationSavesV2._Items
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Favorite := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x40]) ; Push favorite from Item[x].Favorite
-        this.Game.GameInstance.FormationSaveHandler.FormationSavesList.SaveID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x38]) 
-        this.Game.GameInstance.FormationSaveHandler.FormationSavesList.FormationName := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList, "UTF-16", [0x30, 0x14]) 
+        this.Game.GameInstance.FormationSaveHandler.FormationSavesList.SaveID := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x38])
+        this.Game.GameInstance.FormationSaveHandler.FormationSavesList.FormationName := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList, "UTF-16", [0x30, 0x14])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Formation := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList,, [0x18])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Formation.Size := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Formation,, [0x18])
         this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Formation.FormationList := New GameObjectStructure(this.Game.GameInstance.FormationSaveHandler.FormationSavesList.Formation,"List", [0x10]) ; Push _items ;
@@ -173,7 +173,7 @@ class IC_GameManagerEGS_Class
         ;=========================================================================
         this.Game.GameInstance.Controller.Formation := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x28])
         this.Game.GameInstance.Controller.Formation.FormationList := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,"List", [0x18, 0x10]) ; Push slots._Items (not confirmed, based on previous code)
-        this.Game.GameInstance.Controller.Formation.FormationListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0x18, 0x18]) ; Push slots._size 
+        this.Game.GameInstance.Controller.Formation.FormationListSize := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0x18, 0x18]) ; Push slots._size
         this.Game.GameInstance.Controller.Formation.FormationList.ChampID := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.FormationList,, [0x28, 0x18, 0x10]) ; Push hero.def.ID
         this.Game.GameInstance.Controller.Formation.FormationList.HeroAlive := New GameObjectStructure(this.Game.GameInstance.Controller.Formation.FormationList,, [0x251])
         this.Game.GameInstance.Controller.Formation.TransitionOverrides := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0xA8]) ;this is a dict
@@ -188,7 +188,7 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Controller.Formation.numRangedAttackingMonsters := New GameObjectStructure(this.Game.GameInstance.Controller.Formation,, [0x19C])
         ;==============================
         ;offlineprogress and modronsave
-        ;==============================        
+        ;==============================
         this.Game.GameInstance.OfflineProgressHandler := New GameObjectStructure(this.Game.GameInstance,, [0x80])
         this.Game.GameInstance.OfflineProgressHandler.InGameNumSecondsToProcess := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0xEC])
         this.Game.GameInstance.OfflineProgressHandler.MonstersSpawnedThisArea := New GameObjectStructure(this.Game.GameInstance.OfflineProgressHandler,, [0xD8])
@@ -215,7 +215,7 @@ class IC_GameManagerEGS_Class
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsListSize := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar,, [0x390, 0x18]) ; Push ultimatesItems._size
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList,, [0x380])
         this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero,, [0x18])
-        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x10])    
+        this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def.ID := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.ultimatesBar.ultimateItemsList.hero.def,, [0x10])
         ;=========================================
         ;Shandie's Dash
         ;=========================================
@@ -225,7 +225,6 @@ class IC_GameManagerEGS_Class
         ;=========================================
         ;Background - Can Skip?
         ;=========================================
-        
+
     }
 }
-
