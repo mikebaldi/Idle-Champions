@@ -62,10 +62,10 @@ class IC_GameManager_Class
         this.Game.GameInstance.Controller.UserData.ActiveUserGameInstance := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x164])
         this.Game.GameInstance.Controller.UserData.HeroHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x8])
         this.Game.GameInstance.Controller.UserData.BuffHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0x14])
-        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,"List", [0xC, 0x8]) ; Push inventoryBuffs._Items
-        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsListSize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,, [0xC, 0xC]) ; Push inventoryBuffs._size
+        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,"List", [0x10, 0x8]) ; Push inventoryBuffs._Items
+        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsListSize := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler,, [0x10, 0xC]) ; Push inventoryBuffs._size
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0x8]) 
-        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0x70+0x8]) ; The actual value is InventoryAmount + 8
+        this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,, [0x78+0x8]) ; The actual value is InventoryAmount + 8
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,"UTF-16", [0x10,0xC]) ; Push NamePlura.Value
         this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NamePlural := New GameObjectStructure(this.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList,"UTF-16", [0x14,0xC]) ; Push NamePlura.Value
         this.Game.GameInstance.Controller.UserData.LootHandler := New GameObjectStructure(this.Game.GameInstance.Controller.UserData,, [0xC]) 
