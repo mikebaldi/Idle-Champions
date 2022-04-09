@@ -51,20 +51,22 @@ class IC_CrusadersGameDataSetEGS_Class
 
     GetVersion()
     {
-        return "v1.1.5, 2022-03-26, IC v0.421+, EGS"  
+        return "v1.1.6, 2022-04-09, IC v0.425.1+, EGS"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495CE0
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495CE0
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
         ; Possible other locations:
         ;mono-2.0-bdwgc.dll+0x00493DC8 [0x18, 0xD80]
         ;mono-2.0-bdwgc.dll+0x00495C70 [0x38, 0xE80]
         ;mono-2.0-bdwgc.dll+0x00495CE0 [0x38, 0xE80]
         ;mono-2.0-bdwgc.dll+0x004A33D8 [0x280, 0xD80]
         ;mono-2.0-bdwgc.dll+0x004A3658 [0x285, 0xD80]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x38, 0xEB0] )
+        ;this.CrusadersGameDataSet := new GameObjectStructure( [0x38, 0xEB0] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.Is64Bit := true
         this.CrusadersGameDataSet.BuffdefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0x20, 0x10]) ; Push BuffDefines._items
