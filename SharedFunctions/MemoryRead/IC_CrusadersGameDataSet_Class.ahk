@@ -9,18 +9,20 @@ class IC_CrusadersGameDataSet_Class ; static loc is ==  its instance loc
  
     GetVersion()
     {
-        return "v1.1.5, 2022-03-26, IC v0.422.4+, Steam"  
+        return "v1.1.6, 2022-04-09, IC v0.425.1+, Steam"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A3188
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A3188
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
         ; Possible other locations:
         ;mono-2.0-bdwgc.dll+0x003A3188 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003A31B8 [0x20, 0xF10]
         ;mono-2.0-bdwgc.dll+0x003AAFFC [0x470, 0xE70]
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF28] )
+        ;this.CrusadersGameDataSet := new GameObjectStructure( [0x20, 0xF28] )
+        this.CrusadersGameDataSet := new GameObjectStructure( [0x648, 0x9C, 0x50, 0xE80] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.AreaDefinesList := new GameObjectStructure(this.CrusadersGameDataSet,"List",[0xC, 0x8]) ; Push ChestTypeDefines._items
         this.CrusadersGameDataSet.AreaDefinesListSize := new GameObjectStructure(this.CrusadersGameDataSet,,[0xC, 0xC]) ; Push ChestTypeDefines._size
