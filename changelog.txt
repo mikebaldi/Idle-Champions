@@ -1,3 +1,12 @@
+April 14, 2022
+    Updated outdated changelog.
+    Updated pointer offsets for EGS v428. (Thanks BCybercell)
+        (Pointer/Offsets used for automatic favor conversion addon have not been updated yet)
+
+April 9, 2022
+    Updated pointers/offsets for v425.1.
+
+
 March 26, 2022
     Updated pointers/offsets for v422.4.
 
