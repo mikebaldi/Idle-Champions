@@ -100,7 +100,7 @@ class IC_GameManager_Class
         ;=========================================
         this.Game.GameInstance.ClickLevel := New GameObjectStructure(this.Game.GameInstance,, [0x98])
         this.Game.GameStarted := New GameObjectStructure(this.Game, "Char", [0x7C])
-        this.Game.GameInstance.ResetsSinceLastManual := New GameObjectStructure(this.Game.GameInstance,, [0x84])
+        this.Game.GameInstance.ResetsSinceLastManual := New GameObjectStructure(this.Game.GameInstance,, [0x88])
         this.Game.GameInstance.instanceLoadTimeSinceLastSave := New GameObjectStructure(this.Game.GameInstance,, [0x8C])
         this.Game.GameInstance.Controller.Area := New GameObjectStructure(this.Game.GameInstance.Controller,, [0xC])
         this.Game.GameInstance.Controller.Area.Active := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Char", [0xF4]) 
