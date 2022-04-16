@@ -48,14 +48,14 @@ class IC_DialogManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.0.9, 2022-04-09, IC v0.425.1+, EGS"
+        return "v1.0.10, 2022-04-16, IC v0.430+, EGS"
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495C70
-        this.DialogManager := new GameObjectStructure([0xA10])
+        this.DialogManager := new GameObjectStructure([0xA20])
         this.DialogManager.Is64Bit := true
         this.DialogManager.BaseAddress := this.BaseAddress
         this.DialogManager.DialogsList := new GameObjectStructure(this.DialogManager,"List",[0x78, 0x10]) ; push dialogs._items

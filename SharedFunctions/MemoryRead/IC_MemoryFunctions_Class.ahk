@@ -35,7 +35,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.1, 2022-03-15, IC v0.415.1+"
+        return "v1.10.2, 2022-04-16, IC v0.415.1-v0.430+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -296,7 +296,7 @@ class IC_MemoryFunctions_Class
         return this.GameManager.Main.GetModuleFileNameEx()
     }
 
-    ReadWebRequestLogLocation()
+    GetWebRequestLogLocation()
     {
         gameLoc := this.ReadGameLocation()
         splitStringArray := StrSplit(gameLoc, "\")

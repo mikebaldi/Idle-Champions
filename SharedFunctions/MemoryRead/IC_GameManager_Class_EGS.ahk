@@ -40,7 +40,7 @@ class IC_GameManagerEGS_Class
         this.Game.BaseAddress := this.BaseAddress
         this.Game.GameUser := New GameObjectStructure(this.Game,, [0xA8])
         this.Game.GameInstance := New GameObjectStructure(this.Game,, [0xB0, 0x10, 0x20])         ; Push - GameInstances._items.Item[0]
-        this.Game.GameInstance.TimeScales := New GameObjectStructure(this.Game.GameInstance,, [0xF0])
+        this.Game.GameInstance.TimeScales := New GameObjectStructure(this.Game.GameInstance,, [0xF8])
         this.Game.GameInstance.Controller := New GameObjectStructure(this.Game.GameInstance,, [0x18])
         this.Game.GameInstance.ResetHandler := New GameObjectStructure(this.Game.GameInstance,, [0x38])
         this.Game.GameInstance.Controller.UserData := New GameObjectStructure(this.Game.GameInstance.Controller,, [0xA0])
@@ -83,7 +83,7 @@ class IC_GameManagerEGS_Class
         ;=========================================
         this.Game.GameInstance.ClickLevel := New GameObjectStructure(this.Game.GameInstance,, [0x118])
         this.Game.GameStarted := New GameObjectStructure(this.Game, "Char", [0xF8])
-        this.Game.GameInstance.ResetsSinceLastManual := New GameObjectStructure(this.Game.GameInstance,, [0x104])
+        this.Game.GameInstance.ResetsSinceLastManual := New GameObjectStructure(this.Game.GameInstance,, [0x10C])
         this.Game.GameInstance.instanceLoadTimeSinceLastSave := New GameObjectStructure(this.Game.GameInstance,, [0x10C])
         this.Game.GameInstance.Controller.Area := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x18])
         this.Game.GameInstance.Controller.Area.Active := New GameObjectStructure(this.Game.GameInstance.Controller.Area, "Char", [0x1E0])
