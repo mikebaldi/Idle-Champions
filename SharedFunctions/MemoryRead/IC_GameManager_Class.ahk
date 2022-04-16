@@ -26,7 +26,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.10.10, 2022-04-09, IC v0.425.1+, Steam"
+        return "v1.10.11, 2022-04-16, IC v0.430+, Steam"
     }
 
     is64Bit()
@@ -55,7 +55,7 @@ class IC_GameManager_Class
         this.Game.BaseAddress := this.BaseAddress
         this.Game.GameUser := New GameObjectStructure(this.Game,, [0x54])
         this.Game.GameInstance := New GameObjectStructure(this.Game,, [0x58, 0x8, 0x10])         ; Push - GameInstances._items.Item[0]
-        this.Game.GameInstance.TimeScales := New GameObjectStructure(this.Game.GameInstance,, [0x78])
+        this.Game.GameInstance.TimeScales := New GameObjectStructure(this.Game.GameInstance,, [0x7C])
         this.Game.GameInstance.Controller := New GameObjectStructure(this.Game.GameInstance,, [0xC])
         this.Game.GameInstance.ResetHandler := New GameObjectStructure(this.Game.GameInstance,, [0x1C])
         this.Game.GameInstance.Controller.UserData := New GameObjectStructure(this.Game.GameInstance.Controller,, [0x50])
@@ -228,7 +228,7 @@ class IC_GameManager_Class
         this.Game.GameInstance.Screen := New GameObjectStructure(this.Game.GameInstance,, [0x8])
         this.Game.GameInstance.Screen.uiController := New GameObjectStructure(this.Game.GameInstance.Screen,, [0x270])
         this.Game.GameInstance.Screen.uiController.topBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0xC])
-        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x24C])
+        this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar,, [0x23C])
         this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox,, [0x258])
         this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButtonToggled := New GameObjectStructure(this.Game.GameInstance.Screen.uiController.topBar.objectiveProgressBox.areaBar, "Char", [0x240, 0x27A]) ; Push autoProgressButton.toggled
         this.Game.GameInstance.Screen.uiController.bottomBar := New GameObjectStructure(this.Game.GameInstance.Screen.uiController,, [0x10])
