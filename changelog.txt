@@ -4,6 +4,8 @@ April 16, 2022
     Updated pointers/offsets for Steam v430.
     Bugfix - Added a check to verify webroot is a valid http string before  updating it. Should help prevent failed chest openings or failed resets on TR.
     
+    Fixed offset for ResetsSinceLastManual which was causing the script to fail to recognize it was on zone 1 instead of modron reset zone.
+
 April 14, 2022
     Updated outdated changelog.
     Updated pointer offsets for EGS v428. (Thanks BCybercell)
