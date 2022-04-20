@@ -16,7 +16,7 @@
 
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_GameManager_Class
+class IC_GameManager32_Class
 {
     __new()
     {
@@ -25,7 +25,7 @@ class IC_GameManager_Class
 
     GetVersion()
     {
-        return "v1.10.11, 2022-04-16, IC v0.430+, Steam"
+        return "v1.10.11, 2022-04-16, IC v0.430+, 32-bit"
     }
 
     is64Bit()
@@ -52,7 +52,7 @@ class IC_GameManager_Class
     }
 }
 
-class IC_GameManagerEGS_Class
+class IC_GameManager64_Class
 {
     __new()
     {
@@ -61,7 +61,7 @@ class IC_GameManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.9.16, 2022-04-09, IC v0.428+, EGS"
+        return "v1.9.16, 2022-04-09, IC v0.428+, 64-bit"
     }
 
     is64Bit()

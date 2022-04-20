@@ -2,7 +2,7 @@
 ; DialogManager class contains IC's DialogManager class structure. Useful for finding information in dialogues such as what Favor needs to be converted.
 ; DialogList needs to open a BlessingsStoreDialog object instead of a Dialog object.
 ; Searching for ptr depth of 1 has been fine.
-class IC_DialogManager_Class
+class IC_DialogManager32_Class
 {
     __new()
     {
@@ -11,7 +11,7 @@ class IC_DialogManager_Class
  
     GetVersion()
     {
-        return "v1.0.8, 2022-04-16, IC v0.431+, Steam"
+        return "v1.0.8, 2022-04-16, IC v0.431+, 32-bit"
     }
 
     Refresh()
@@ -25,7 +25,7 @@ class IC_DialogManager_Class
 }
 
 ; EGS variation of DialogManager
-class IC_DialogManagerEGS_Class
+class IC_DialogManager64_Class
 {
     __new()
     {
@@ -34,7 +34,7 @@ class IC_DialogManagerEGS_Class
 
     GetVersion()
     {
-        return "v1.0.10, 2022-04-16, IC v0.430+, EGS"
+        return "v1.0.10, 2022-04-16, IC v0.430+, 64-bit"
     }
 
     Refresh()

@@ -25,11 +25,11 @@ class IC_MemoryFunctions_Class
 
     __new()
     {
-        this.GameManager := new IC_GameManager_Class
-        this.GameSettings := new IC_GameSettings_Class
-        this.EngineSettings := new IC_EngineSettings_Class
-        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
-        this.DialogManager := new IC_DialogManager_Class
+        this.GameManager := new IC_GameManager32_Class
+        this.GameSettings := new IC_GameSettings32_Class
+        this.EngineSettings := new IC_EngineSettings32_Class
+        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
+        this.DialogManager := new IC_DialogManager32_Class
     }
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
@@ -47,20 +47,20 @@ class IC_MemoryFunctions_Class
         this.GameManager.Refresh()
         if(!this.Is64Bit and this.GameManager.is64Bit())
         {
-            this.GameManager := new IC_GameManagerEGS_Class
-            this.GameSettings := new IC_GameSettingsEGS_Class
-            this.EngineSettings := new IC_EngineSettingsEGS_Class
-            this.CrusadersGameDataSet := new IC_CrusadersGameDataSetEGS_Class
-            this.DialogManager := new IC_DialogManagerEGS_Class
+            this.GameManager := new IC_GameManager64_Class
+            this.GameSettings := new IC_GameSettings64_Class
+            this.EngineSettings := new IC_EngineSettings64_Class
+            this.CrusadersGameDataSet := new IC_CrusadersGameDataSet64_Class
+            this.DialogManager := new IC_DialogManager64_Class
             this.Is64Bit := true
         }
         else if (this.Is64Bit and !this.GameManager.is64Bit())
         {
-            this.GameManager := new IC_GameManager_Class
-            this.GameSettings := new IC_GameSettings_Class
-            this.EngineSettings := new IC_EngineSettings_Class
-            this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
-            this.DialogManager := new IC_DialogManager_Class
+            this.GameManager := new IC_GameManager32_Class
+            this.GameSettings := new IC_GameSettings32_Class
+            this.EngineSettings := new IC_EngineSettings32_Class
+            this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
+            this.DialogManager := new IC_DialogManager32_Class
             this.Is64Bit := false
         }
         else

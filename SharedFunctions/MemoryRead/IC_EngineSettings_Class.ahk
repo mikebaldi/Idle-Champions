@@ -1,7 +1,7 @@
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
 ; pointer scan for depth of 2 has been fine.
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
-class IC_EngineSettings_Class
+class IC_EngineSettings32_Class
 {
     
     StaticOffset := 0xF88
@@ -12,7 +12,7 @@ class IC_EngineSettings_Class
  
     GetVersion()
     {
-        return "v1.0, 12/03/21, IC v0.414+, Steam"  
+        return "v1.0, 12/03/21, IC v0.414+, 32-bit"  
     }
 
     Refresh()
@@ -25,7 +25,7 @@ class IC_EngineSettings_Class
     }
 }
 
-class IC_EngineSettingsEGS_Class
+class IC_EngineSettings64_Class
 {
     
     StaticOffset := 0xF60
@@ -36,7 +36,7 @@ class IC_EngineSettingsEGS_Class
  
     GetVersion()
     {
-        return "v1.0, 2022-01-31, IC v0.414+, EGS"  
+        return "v1.0, 2022-01-31, IC v0.414+, 64-bit"  
     }
 
     Refresh()

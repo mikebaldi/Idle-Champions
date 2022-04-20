@@ -1,6 +1,6 @@
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
-class IC_GameSettings_Class
+class IC_GameSettings32_Class
 {
     StaticOffset := 0xE00
     __new()
@@ -10,7 +10,7 @@ class IC_GameSettings_Class
  
     GetVersion()
     {
-        return "v1.0.5, 2022-04-16, IC v0.430+, Steam"  
+        return "v1.0.5, 2022-04-16, IC v0.430+, 32-bit"  
     }
 
     Refresh()
@@ -22,7 +22,7 @@ class IC_GameSettings_Class
     }
 }
 
-class IC_GameSettingsEGS_Class
+class IC_GameSettings64_Class
 {
     StaticOffset := 0xA80
     __new()
@@ -32,7 +32,7 @@ class IC_GameSettingsEGS_Class
 
     GetVersion()
     {
-        return "v1.0.4, 2022-04-14, IC v0.428+, EGS"  
+        return "v1.0.4, 2022-04-14, IC v0.428+, 64-bit"  
     }
 
     Refresh()
