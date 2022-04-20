@@ -1,5 +1,6 @@
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
+; pointer scan for depth of 2 has been fine.
+#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 class IC_EngineSettings_Class
 {
     
@@ -18,13 +19,12 @@ class IC_EngineSettings_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        this.EngineSettings := new GameObjectStructure([0x1C])
-        this.EngineSettings.BaseAddress := this.BaseAddress
-        this.EngineSettings.WebRoot := new GameObjectStructure(this.EngineSettings,"UTF-16",[this.StaticOffset + 0x8, 0xC])
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
+        this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
+        #include %A_LineFile%\..\IC_EngineSettings32_Export.ahk
     }
 }
 
-; EGS variation of GameSettings (Thanks to Fenume for updating offsets for 412)
 class IC_EngineSettingsEGS_Class
 {
     
@@ -43,9 +43,9 @@ class IC_EngineSettingsEGS_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
-        this.EngineSettings := new GameObjectStructure([0x30])
-        this.EngineSettings.Is64Bit := true
-        this.EngineSettings.BaseAddress := this.BaseAddress
-        this.EngineSettings.WebRoot := new GameObjectStructure(this.EngineSettings,"UTF-16",[this.StaticOffset + 0x10, 0x14])
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
+        this.UnityGameEngine.Core.EngineSettings.Is64Bit := true
+        this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
+        #include %A_LineFile%\..\IC_EngineSettings64_Export.ahk       
     }
 }

@@ -1,6 +1,6 @@
 ;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
 #include %A_LineFile%\..\classMemory.ahk
-#include %A_LineFile%\..\IC_GameManager_Class.ahk
+#include %A_LineFile%\..\IC_IdleGameManager_Class.ahk
 #include %A_LineFile%\..\IC_GameSettings_Class.ahk
 #include %A_LineFile%\..\IC_EngineSettings_Class.ahk
 #include %A_LineFile%\..\IC_CrusadersGameDataSet_Class.ahk
