@@ -792,6 +792,11 @@ class IC_MemoryFunctions_Class
     ;Currency Conversion
     ;===================
 
+    ReadDialogsListSize()
+    {
+        return this.GenericGetValue(this.DialogManager.dialogs.size)
+    }
+
     ReadConversionCurrencyBySlot(slot := 0)
     {
         return this.GenericGetValue(this.DialogManager.dialogs.currentCurrency.ID.GetGameObjectFromListValues(slot))
@@ -809,7 +814,7 @@ class IC_MemoryFunctions_Class
 
     GetBlessingsDialogSlot()
     {
-        size := this.GenericGetValue(this.DialogManager.dialogs.size)
+        size := this.ReadDialogsListSize()
         loop, %size%
         {
             name := this.GenericGetValue(this.DialogManager.dialogs.sprite.gameObjectName.GetGameObjectFromListValues(A_Index - 1))
