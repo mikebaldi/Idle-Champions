@@ -77,8 +77,6 @@ class IC_MemoryFunctions_Class
     ;=====================
     GenericGetValue(GameObject)
     {
-        ;testing
-        fullOffsetsString := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
             GameObject.FullOffsets.Push(this.Is64Bit ? 0x14 : 0xC)
@@ -99,7 +97,6 @@ class IC_MemoryFunctions_Class
         }
         else
         {
-            ; test := ArrFnc.GetHexFormattedArrayString(GameObject.GetOffsets()) ; Useful to test what the hex value offsets are to compare to CE
             var := this.GameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
         return var
@@ -155,7 +152,7 @@ class IC_MemoryFunctions_Class
     }
 
     ;this read will only return a valid key if it is reading from TimeScaleWhenNotAttackedHandler object
-    ;TODO: Verify this functions. Rewrite for new auto offsets system or this can break.
+    ;TODO: Rewrite for new auto offsets system or this can break.
     ReadTimeScaleMultipliersKeyByIndex(index := 0)
     {
         if (this.Is64Bit)
@@ -237,13 +234,6 @@ class IC_MemoryFunctions_Class
     ;=========================================================
     ;herohandler - champion related information accessed by ID
     ;=========================================================
-
-    ; -1 for 1->0 indexing conversion
-    ; TODO: Unused? Remove?
-    ReadChampUpgradeCountByID(ChampID:= 0)
-    {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.purchasedUpgradeIDs.size.GetGameObjectFromListValues(0, ChampID - 1))
-    }
 
     ReadChampHealthByID(ChampID := 0 )
     {
@@ -473,24 +463,6 @@ class IC_MemoryFunctions_Class
     ;offlineprogress and modronsave
     ;==============================
 
-    ; TODO: Unused? Remove?
-    ReadMonstersSpawnedThisAreaOL()
-    {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.offlineProgressHandler.monstersSpawnedThisArea.GetGameObjectFromListValues(0))
-    }
-
-    ; TODO: Unused? Remove?
-    ReadCoreXP()
-    {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.offlineProgressHandler.modronSave.ExpTotal.GetGameObjectFromListValues(0))
-    }
-
-    ; TODO: Unused? Remove?
-    ReadCoreTargetArea()
-    {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.offlineProgressHandler.modronSave.targetArea.GetGameObjectFromListValues(0))
-    }
-
     ReadActiveGameInstance()
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ActiveUserGameInstance.GetGameObjectFromListValues(0))
@@ -694,7 +666,6 @@ class IC_MemoryFunctions_Class
             ; 64 bit starts values at offset 0x20, 32 bit at 0x10
             testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
             testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.GetGameObjectFromListValues(0, modronSavesSlot),,[testIndex])
-            ;testValueObjectOffsets := ArrFnc.GetHexFormattedArrayString(testValueObject.GetOffsets())
             testValue := this.GenericGetValue(testValueObject)
             if (testValue == formationCampaignID)
             {
