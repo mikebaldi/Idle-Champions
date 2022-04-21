@@ -75,6 +75,8 @@ class IC_MemoryFunctions_Class
     ;=====================
     ;General Purpose Calls
     ;=====================
+
+    ; Not for general use.
     GenericGetValue(GameObject)
     {
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
@@ -759,7 +761,7 @@ class IC_MemoryFunctions_Class
 
     GetChestNameByID(chestID)
     {
-        size := this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.size)    
+        size := this.ReadChestDefinesSize()   
         if(!size)
             return "" 
         index := this.BinarySearchList(this.CrusadersGameDataSet.ChestTypeDefines.ID, 1, size, chestID)
@@ -768,6 +770,23 @@ class IC_MemoryFunctions_Class
         else
             return ""
     }
+
+    GetChestNameBySlot(index)
+    { 
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.Name.GetGameObjectFromListValues(index - 1))
+    }
+
+    GetChestIDBySlot(index)
+    {
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.ID.GetGameObjectFromListValues(index - 1))
+    }
+
+    ReadChestDefinesSize()
+    {
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.size) 
+    }
+
+
 
     ;===================
     ;Currency Conversion
