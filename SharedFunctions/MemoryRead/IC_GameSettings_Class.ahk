@@ -17,8 +17,10 @@ class IC_GameSettings32_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        this.GameSettings := new GameObjectStructure([0xE0])
-        #include %A_LineFile%\..\IC_GameSettings64_Export.ahk
+        this.CrusadersGame := {}
+        this.CrusadersGame.GameSettings := new GameObjectStructure([0xE0])
+        this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
+        #include %A_LineFile%\..\IC_GameSettings32_Export.ahk
     }
 }
 
@@ -39,9 +41,10 @@ class IC_GameSettings64_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493e40
-        this.GameSettings := new GameObjectStructure([0x820])
-        this.GameSettings.Is64Bit := true
-        this.GameSettings.BaseAddress := this.BaseAddress
+        this.CrusadersGame := {}
+        this.CrusadersGame.GameSettings := new GameObjectStructure([0x820])
+        this.CrusadersGame.GameSettings.Is64Bit := true
+        this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\IC_GameSettings64_Export.ahk
     }
 }

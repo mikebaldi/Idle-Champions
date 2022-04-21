@@ -12,11 +12,63 @@
 class GameObjectStructure
 {
     ListIndexes := Array()
+    DictIndexes := Array()
     FullOffsets := Array()
     FullOffsetsHexString := ""
     ValueType := "Int"
     BaseAddress := 0x0
     Is64Bit := 0
+    Offset := 0x0
+
+    __Get(index)
+    {
+        if index is integer
+        {
+            
+        }
+        else
+        {
+            OutputDebug, %index%
+            ; stdout := FileOpen("missingindexes.txt", "a")
+            ; stdout.WriteLine(index)
+        }
+    }
+
+    ; returns a a GameObjectStructure which can point to the size of a memory structure such as a dictionary or list
+    size[]
+    {
+        get
+        {
+            if(this.ValueType == "List")
+            {
+                sizeObject := this.Clone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Pop()
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
+                return sizeObject
+            }
+            else if(this.ValueType == "Dict")
+            {
+                sizeObject := this.Clone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Pop()
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x40 : 0x20)
+                return sizeObject
+            }
+            else if(this.ValueType == "HashSet")
+            {
+                sizeObject := this.Clone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Pop()
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
+                return sizeObject
+            }
+            else
+            {
+                return ""
+            }
+        }
+    }
  
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
@@ -31,11 +83,19 @@ class GameObjectStructure
             this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
             this.ListIndexes := baseStructureOrFullOffsets.ListIndexes.Clone()
             this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
+            this.Offset := appendedOffsets[1]
         }
         this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
-        if(ValueType == "List")
+        if(ValueType == "List" or ValueType == "HashSet")
         {
-            this.ListIndexes.Push(this.FullOffsets.Count() + 1)
+            ;items/_entries
+            this.FullOffsets.Push(this.Is64Bit ? 0x20 : 0x8)
+            this.ListIndexes.Push(this.FullOffsets.Count())
+        }
+        if(ValueType == "Dict")
+        {
+            this.FullOffsets.Push(this.Is64Bit ? 0x20 : 0xC)
+            this.DictIndexes.Push(this.FullOffsets.Count())
         }
     }
 
@@ -49,6 +109,7 @@ class GameObjectStructure
         var.ValueType := this.ValueType
         var.Is64Bit := this.Is64Bit
         var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        var.Offset := this.Offset
         return var
     }
 
@@ -71,7 +132,8 @@ class GameObjectStructure
         i := 0
         for k,v in values
         {
-            currentOffsets.InsertAt(this.ListIndexes[i+1] + i, this.CalculateOffset(v))
+            ; insert which item
+            currentOffsets.InsertAt(this.ListIndexes[i+1] + i+1, this.CalculateOffset(v))
             i++
         }
         return currentOffsets

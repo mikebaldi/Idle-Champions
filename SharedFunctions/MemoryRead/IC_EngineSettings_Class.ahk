@@ -19,6 +19,8 @@ class IC_EngineSettings32_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Core := {}
         this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
         this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\IC_EngineSettings32_Export.ahk
@@ -43,6 +45,8 @@ class IC_EngineSettings64_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Core := {}
         this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
         this.UnityGameEngine.Core.EngineSettings.Is64Bit := true
         this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress

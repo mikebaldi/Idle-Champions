@@ -18,6 +18,8 @@ class IC_DialogManager32_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A31B8
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Dialogs := {}
         this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xD38])
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\IC_DialogManager32_Export.ahk
@@ -41,6 +43,8 @@ class IC_DialogManager64_Class
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495C70
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Dialogs := {}
         this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA20])
         this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := true
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
