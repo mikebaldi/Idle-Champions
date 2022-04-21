@@ -701,7 +701,7 @@ class IC_MemoryFunctions_Class
     ;======================
     GetInventoryBuffAmountByID(buffID)
     {
-        size := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.size.GetGameObjectFromListValues(0))
+        size := this.ReadInventoryItemsCount()
         if(!size)
             return ""
         ; After adding gameInstances list value, remove gameInstances ListIndex and increment ListIndexes values following it
@@ -717,7 +717,7 @@ class IC_MemoryFunctions_Class
 
     GetInventoryBuffNameByID(buffID)
     {
-        size := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.size.GetGameObjectFromListValues(0))
+        size := this.ReadInventoryItemsCount()
         if(!size)
             return ""
         testObject := this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.ID.GetGameObjectFromListValues(0)
@@ -730,33 +730,74 @@ class IC_MemoryFunctions_Class
             return ""
     }
 
+    ReadInventoryBuffIDBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.ID.GetGameObjectFromListValues(0, index - 1))
+    }
+
+    ReadInventoryBuffNameBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.Name.GetGameObjectFromListValues(0, index - 1))
+    }
+
+    ReadInventoryBuffCountBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.InventoryAmount.GetGameObjectFromListValues(0, index - 1))
+    }
+
     ReadInventoryItemsCount()
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.size.GetGameObjectFromListValues(0))
     }
 
-    /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit  but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
+    /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
     */
-    ; TODO: Fix GetChestCount
+    ; TODO: Update GetChestCount with BinarySearch
     GetChestCountByID(chestID)
     {
-        size := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.size.GetGameObjectFromListValues(0))    
+        size := this.ReadInventoryChestListSize()
         if(!size)
             return "" 
         loop, %size%
         {
-            ; Not using 64 bit , but need +0x10 offset for where  starts
-            testIndex := this.Is64Bit ? (A_index - 1) * 4 + 4 : testIndex := (A_Index - 1) * 4
-            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
-            this.AdjustObjectListIndexes(testObject)
-            testObject.FullOffsets.Push(testIndex)
-            testValue := this.GenericGetValue(testObject)
-            ; Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
-            testIndex := this.Is64Bit ? (A_index - 1) * 4 + 7 : (A_index - 1) * 4 + 3
-            if(testValue == chestID)
-                return this.GenericGetValue(testObject)
+            currentChestID := this.GetInventoryChestIDBySlot(A_Index)
+            if(currentChestID == chestID)
+            {
+                return this.GetInventoryChestCountBySlot(A_Index)
+            }
         }
         return "" 
+    }
+
+    GetInventoryChestIDBySlot(slot)
+    {
+            ; Not using 64 bit , but need +0x10 offset for where  starts
+            testIndex := this.Is64Bit ? (slot - 1) * 4 + 4 : testIndex := (slot - 1) * 4
+            ; Add gameInstances[0] index to list
+            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
+            this.AdjustObjectListIndexes(testObject)
+            ; Calculate chestID index offset and add it to object's offsets
+            testObject.FullOffsets.Push(testObject.CalculateOffset(testIndex))
+            ; return Chest ID
+            return this.GenericGetValue(testObject)
+    }
+
+    GetInventoryChestCountBySlot(slot)
+    {
+            ; Calculate offset 
+            ; Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
+            ; Calculate count index offset and add it
+            testIndex := this.Is64Bit ? (slot - 1) * 4 + 7 : (slot - 1) * 4 + 3
+            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
+            this.AdjustObjectListIndexes(testObject) 
+            testObject.FullOffsets.Push(testObject.CalculateOffset(testIndex))
+            ; return Chest Count
+            return this.GenericGetValue(testObject)
+    }
+
+    ReadInventoryChestListSize()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.size.GetGameObjectFromListValues(0))
     }
 
     GetChestNameByID(chestID)
