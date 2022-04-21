@@ -89,8 +89,8 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadFormationSavesSizeID, % g_SF.Memory.ReadFormationSavesSize()
         GuiControl, ICScriptHub:, ReadFormationFavoriteIDBySlotID, % "ID: 1, Favorite: " . g_SF.Memory.ReadFormationFavoriteIDBySlot(1)
         GuiControl, ICScriptHub:, ReadNewAreaID, % g_SF.Memory.ReadTransitionDelay()
-        GuiControl, ICScriptHub:, ReadSecSinceStartID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.Area.SecondsSinceStarted) 
-        GuiControl, ICScriptHub:, ReadAreaActiveID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.Area.Active) 
+        GuiControl, ICScriptHub:, ReadSecSinceStartID, % g_SF.Memory.ReadSecondsSinceAreaStart()
+        GuiControl, ICScriptHub:, ReadAreaActiveID, % g_SF.Memory.ReadAreaActive()
     }
 }
 ;======================================================================================
