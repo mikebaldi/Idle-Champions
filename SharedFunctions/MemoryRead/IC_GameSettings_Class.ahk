@@ -12,7 +12,7 @@ class IC_GameSettings_Class
  
     GetVersion()
     {
-        return "v1.0.4, 2022-02-04, IC v0.418.2+, Steam"  
+        return "v1.0.5, 2022-04-16, IC v0.430+, Steam"  
     }
 
     Refresh()
@@ -33,9 +33,9 @@ class IC_GameSettings_Class
         this.GameSettings.BaseAddress := this.BaseAddress
         this.GameSettings.UserID := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x20])
         this.GameSettings.Hash := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x28, 0xC])
-        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x44])
-        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x4c]) ; Push MobileClientVersion
-        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x50, 0xC])
+        this.GameSettings.Platform := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x48])
+        this.GameSettings.Version := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x50]) ; Push MobileClientVersion
+        this.GameSettings.PostFix := new GameObjectStructure(this.GameSettings,"UTF-16",[this.StaticOffset + 0x54, 0xC])
         this.GameSettings._Instance := new GameObjectStructure(this.GameSettings,,[this.StaticOffset + 0x0])
         this.GameSettings._Instance.InstanceID := new GameObjectStructure(this.GameSettings._Instance,,[0x10])
     }
@@ -53,7 +53,7 @@ class IC_GameSettingsEGS_Class
 
     GetVersion()
     {
-        return "v1.0.2, 2022-02-04, IC v0.418.2+, EGS"  
+        return "v1.0.4, 2022-04-14, IC v0.428+, EGS"  
     }
 
     Refresh()

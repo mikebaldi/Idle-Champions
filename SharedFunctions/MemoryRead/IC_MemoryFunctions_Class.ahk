@@ -35,7 +35,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.0, 2022-02-25, IC v0.415.1+"
+        return "v1.10.2, 2022-04-16, IC v0.415.1-v0.430+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -115,6 +115,11 @@ class IC_MemoryFunctions_Class
     ReadMonstersSpawned()
     {
         return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.BasicMonstersSpawned)
+    }
+
+    ReadActiveMonstersCount()
+    {
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.Area.activeMonstersListSize)
     }
 
     ReadResetting()
@@ -249,7 +254,7 @@ class IC_MemoryFunctions_Class
 
     ReadChampSeatByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.Seat.GetGameObjectFromListValues(ChampID - 1))
+        return this.GenericGetValue(this.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.def.Seat.GetGameObjectFromListValues(ChampID - 1))
     }
 
     ReadChampNameByID(ChampID := 0)
@@ -284,6 +289,27 @@ class IC_MemoryFunctions_Class
     ReadPlatform()
     {
         return this.GenericGetValue(this.GameSettings.GameSettings.Platform) 
+    }
+
+    ReadGameLocation()
+    {
+        return this.GameManager.Main.GetModuleFileNameEx()
+    }
+
+    GetWebRequestLogLocation()
+    {
+        gameLoc := this.ReadGameLocation()
+        splitStringArray := StrSplit(gameLoc, "\")
+        newString := ""
+        i := 1
+        size := splitStringArray.Count() - 1
+        loop, %size%
+        {
+            newString := newString . splitStringArray[i] . "\"
+            i++
+        }
+        newString := newString . "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
+        return newString
     }
     
     

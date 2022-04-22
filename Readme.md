@@ -17,8 +17,10 @@ New year, new script. We hope you like it.
 This script is the successor to ModronGUI.
 
 **Warning**:
-This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.  
+This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
+**Warning2**:
+CNE will at times push out multiple patches during the week, changing classes and thus their structure in memory. This can change offsets which will break memory reading functions. It is advised you disable auto updates and keep a back up of a working Assembly-CSharp.dll from your install folder. Offsets will likely only be updated on weekends and not necessarily every weekend.
 
 ## Prerequisites
 
