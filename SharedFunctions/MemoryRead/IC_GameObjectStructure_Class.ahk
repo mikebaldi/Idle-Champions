@@ -29,8 +29,6 @@ class GameObjectStructure
         else
         {
             OutputDebug, %index%
-            ; stdout := FileOpen("missingindexes.txt", "a")
-            ; stdout.WriteLine(index)
         }
     }
 
