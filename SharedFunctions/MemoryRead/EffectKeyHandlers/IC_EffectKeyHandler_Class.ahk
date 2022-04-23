@@ -44,11 +44,17 @@ class EffectKeyHandler
     
     GetDictIndex()
     {
-        dictCount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyNameCount.GetGameObjectFromListValues(this.ChampID - 1))
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, this.ChampID - 1)
+        dictCount := g_SF.Memory.GenericGetValue(tempObject)
         i := 0
         loop, % dictCount
         {
-            keyName := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.Name.GetGameObjectFromDictValues( [ this.ChampID - 1, [ "key", i ] ]* ) )
+            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, this.ChampID - 1)
+            currOffset := tempObject.CalculateDictOffset(["key", i])
+            tempObject.FullOffsets.Push(currOffset)
+            tempObject.ValueType := "UTF-16"
+            testString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
+            keyName := g_SF.Memory.GenericGetValue(tempObject)
             if (keyName == this.EffectKeyString)
                 return i
             ++i
@@ -58,16 +64,48 @@ class EffectKeyHandler
 
     GetBaseAddress()
     {
-        address := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.effects.effectKeysByKeyName.effectKey.parentEffectKeyHandler.activeEffectHandlers.GetGameObjectFromDictValues( [ this.ChampID - 1, [ "value", this.DictIndex ] ]* ) )
-        if (g_SF.Memory.GameManager.Is64Bit())
-            return address + 0x20
-        else
-            return address + 0x10
+        ;tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.parentEffectKeyHandler.activeEffectHandlers.GetGameObjectFromListValues( 0, this.ChampID - 1)
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, this.ChampID - 1)
+        ; add dictionary value from effectkeysbyname
+        currOffset := tempobject.CalculateDictOffset(["value", this.DictIndex]) + 0 
+        tempObject.FullOffsets.InsertAt(15, currOffset)
+        ; insert list items offset
+        tempObject.FullOffsets.InsertAt(16, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x8)
+        ; insert first list item offset (Assuming only 1 item in list?)
+        tempObject.FullOffsets.InsertAt(17, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x10)
+        testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
+        OutputDebug, %testHexString%
+        _size := g_SF.Memory.GenericGetValue(tempObject)
+        ; Remove the "size" from the offsets list
+        tempObject.FullOffsets.Pop()
+        ; Update the last list index to include the 3 offsets added above
+        LastListIndex := tempObject.ListIndexes.Count()
+        tempObject.ListIndexes[lastListIndex] := tempObject.ListIndexes[lastListIndex] + 3
+        i := 0
+        loop, % _size
+        {
+            tempObject.FullOffsets[20] := tempObject.CalculateOffset(i)
+            testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
+            OutputDebug, %testHexString%
+            readEffectKeyID := this.parentEffectKeyHandler.parent.source.ID.GetValue()
+            if (readEffectKeyID != this.EffectKeyID)
+            {
+                this.Initialized := false
+                break
+            }
+            i++
+        }
+        address := g_SF.Memory.GenericGetValue(tempObject)
+        ; if (g_SF.Memory.GameManager.Is64Bit())
+        ;     return address + 0x20
+        ; else
+        ;     return address + 0x10
+        return address
     }
 
     IsBaseAddressCorrect()
     {
-        readEffectKeyID := this.effectKey.parentEffectKeyHandler.parent.source.ID.GetValue()
+        readEffectKeyID := this.parentEffectKeyHandler.parent.source.ID.GetValue()
         if (readEffectKeyID != this.EffectKeyID)
         {
             this.Initialized := false
@@ -78,13 +116,13 @@ class EffectKeyHandler
 
     BuildEffectKey()
     {
-        this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey, this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler.parent.def := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler.parent.def.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.def, this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
-        this.effectKey.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
+        ;this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
+        this.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", "" , this.BaseAddress)
+        this.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
+        this.parentEffectKeyHandler.parent.def := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.parentEffectKeyHandler.parent.def.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.def, this.BaseAddress)
+        this.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
     }
 
     BuildMemoryObjects()
