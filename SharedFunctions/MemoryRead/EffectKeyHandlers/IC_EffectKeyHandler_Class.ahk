@@ -71,41 +71,33 @@ class EffectKeyHandler
         tempObject.FullOffsets.InsertAt(15, currOffset)
         ; insert list items offset
         tempObject.FullOffsets.InsertAt(16, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x8)
-        ; insert first list item offset (Assuming only 1 item in list?)
+        ; insert first list item offset (Assuming only 1 item in effectkeyslist of effectkeysbyname (the dictionary value is a List<EffectKey>) list?)
         tempObject.FullOffsets.InsertAt(17, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x10)
         testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
         OutputDebug, %testHexString%
         _size := g_SF.Memory.GenericGetValue(tempObject)
         ; Remove the "size" from the offsets list
         tempObject.FullOffsets.Pop()
-        ; Update the last list index to include the 3 offsets added above
-        LastListIndex := tempObject.ListIndexes.Count()
-        tempObject.ListIndexes[lastListIndex] := tempObject.ListIndexes[lastListIndex] + 3
-        i := 0
-        loop, % _size
-        {
-            tempObject.FullOffsets[20] := tempObject.CalculateOffset(i)
-            testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
-            OutputDebug, %testHexString%
-            readEffectKeyID := this.parentEffectKeyHandler.parent.source.ID.GetValue()
-            if (readEffectKeyID != this.EffectKeyID)
-            {
-                this.Initialized := false
-                break
-            }
-            i++
-        }
-        address := g_SF.Memory.GenericGetValue(tempObject)
-        ; if (g_SF.Memory.GameManager.Is64Bit())
-        ;     return address + 0x20
-        ; else
-        ;     return address + 0x10
+        ; insert first list item offset (Assuming only 1 item in activeEffectKeys list)
+        tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x8)
+        testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
+        OutputDebug, %testHexString%
+        address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0)
         return address
     }
 
     IsBaseAddressCorrect()
     {
-        readEffectKeyID := this.parentEffectKeyHandler.parent.source.ID.GetValue()
+        readEffectKeyID := this.effectKey.parentEffectKeyHandler.parent.source.ID.GetValue()
+
+        valueActive := g_SF.Memory.GameManager.Main.read(0x3194A6C0, "Int", 0x14, 0x8, 0x8, 0xC, 0x8)        
+        valueActive := g_SF.Memory.GameManager.Main.read(0x3194A6C0, "Char", 0x10)        
+        areasSkipped := g_SF.Memory.GameManager.Main.read(0x3194A6C0, "Int", 0x34)     
+        resolutionSmall := g_SF.Memory.GameManager.Main.read(0x1165AF00, "Int", 0x44)     
+           
+        areasSkipped := this.areasSkipped.GetValue()
+        debugString := ArrFnc.GetHexFormattedArrayString(this.effectKey.parentEffectKeyHandler.parent.source.ID.FullOffsets)
+        OutputDebug, %debugString%
         if (readEffectKeyID != this.EffectKeyID)
         {
             this.Initialized := false
@@ -116,13 +108,13 @@ class EffectKeyHandler
 
     BuildEffectKey()
     {
-        ;this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
-        this.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", "" , this.BaseAddress)
-        this.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
-        this.parentEffectKeyHandler.parent.def := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
-        this.parentEffectKeyHandler.parent.def.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.def, this.BaseAddress)
-        this.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
-        this.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
+        this.effectKey := new MemoryObject(0x14, 0x28, "Ptr", "", this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.def := new MemoryObject(0x8, 0x10, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.def.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.def, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.source := new MemoryObject(0xC, 0x18, "Ptr", this.effectKey.parentEffectKeyHandler.parent, this.BaseAddress)
+        this.effectKey.parentEffectKeyHandler.parent.source.ID := new MemoryObject(0x8, 0x10, "Int", this.effectKey.parentEffectKeyHandler.parent.source, this.BaseAddress)
     }
 
     BuildMemoryObjects()
@@ -171,6 +163,11 @@ class MemoryObject
         if (this.ValueType == "Ptr")
             return g_SF.Memory.GameManager.Main.getAddressFromOffsets(this.BaseAddress, this.FullOffsets*)
         else
+        {
+            fullOffsets := this.FullOffsets
+            fullOffsets := ArrFnc.GetHexFormattedArrayString(fullOffsets)
+            value := g_SF.Memory.GameManager.Main.read(this.BaseAddress, this.ValueType, this.FullOffsets*)
             return g_SF.Memory.GameManager.Main.read(this.BaseAddress, this.ValueType, this.FullOffsets*)
+        }
     }
 }
