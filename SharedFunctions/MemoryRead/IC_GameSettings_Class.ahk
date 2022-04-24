@@ -20,7 +20,7 @@ class IC_GameSettings32_Class
         this.CrusadersGame := {}
         this.CrusadersGame.GameSettings := new GameObjectStructure([0xE0])
         this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\IC_GameSettings32_Import.ahk
+        #include %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
     }
 }
 
@@ -45,6 +45,6 @@ class IC_GameSettings64_Class
         this.CrusadersGame.GameSettings := new GameObjectStructure([0x820])
         this.CrusadersGame.GameSettings.Is64Bit := true
         this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\IC_GameSettings64_Import.ahk
+        #include %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
     }
 }

@@ -22,7 +22,7 @@ class IC_CrusadersGameDataSet32_Class ; static loc is ==  its instance loc
         this.CrusadersGame.Defs := {}
         this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x648, 0x9C, 0x50, 0xE80] )
         this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\IC_CrusadersGameDataSet32_Import.ahk
+        #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
     }
 }
 
@@ -47,6 +47,6 @@ class IC_CrusadersGameDataSet64_Class
         this.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
         this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGameDataSet.Is64Bit := true
-        #include %A_LineFile%\..\IC_CrusadersGameDataSet64_Import.ahk
+        #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
     }
 }
