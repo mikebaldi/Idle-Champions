@@ -47,7 +47,7 @@ class IC_GameManager32_Class
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
         this.IdleGameManager := New GameObjectStructure([0x658])
         this.IdleGameManager.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\IC_IdleGameManager32_Export.ahk
+        #include %A_LineFile%\..\IC_IdleGameManager32_Import.ahk
         ; special case for Dictionary<List<Action<action>>>
         ; Note, edit Export to use Dict instead of List
         this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
@@ -81,7 +81,7 @@ class IC_GameManager64_Class
         this.IdleGameManager := New GameObjectStructure([0xC88])
         this.IdleGameManager.Is64Bit := true
         this.IdleGameManager.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\IC_IdleGameManager64_Export.ahk
+        #include %A_LineFile%\..\IC_IdleGameManager64_Import.ahk
         ; special case for Dictionary<List<Action<action>>>
         ; Note, edit Export to use Dict instead of List
         this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
