@@ -81,8 +81,9 @@ class IC_MemoryFunctions_Class
     {
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
-            GameObject.FullOffsets.Push(this.Is64Bit ? 0x14 : 0xC)
-            var := this.GameManager.Main.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, (GameObject.GetOffsets())*)
+            offsets := GameObject.FullOffsets.Clone()
+            offsets.Push(this.Is64Bit ? 0x14 : 0xC)
+            var := this.GameManager.Main.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, offsets*)
         }
         else if (GameObject.ValueType == "List" or GameObject.ValueType == "Dict" or GameObject.ValueType == "HashSet") ; custome ValueTypes not in classMemory.ahk
         {
@@ -116,6 +117,11 @@ class IC_MemoryFunctions_Class
             return this.GenericGetValue(this.GameSettings.MobileClientVersion) . this.GenericGetValue(this.GameSettings.VersionPostFix) 
         else
             return this.GenericGetValue(this.GameSettings.MobileClientVersion)  
+    }
+
+    ReadBaseGameVersion()
+    {
+        return this.GenericGetValue(this.GameSettings.MobileClientVersion)  
     }
 
     ReadGameStarted()

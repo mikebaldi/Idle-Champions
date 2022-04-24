@@ -1035,7 +1035,7 @@ class IC_SharedFunctions_Class
     {
         this.SetUserCredentials()
         g_ServerCall := new IC_ServerCalls_Class( this.UserID, this.UserHash, this.InstanceID )
-        version := this.Memory.ReadGameVersion()
+        version := this.Memory.ReadBaseGameVersion()
         if(version != "")
             g_ServerCall.clientVersion := version
         tempWebRoot := this.Memory.ReadWebRoot()
