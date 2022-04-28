@@ -87,7 +87,7 @@ class GameObjectStructure
         if(ValueType == "List" or ValueType == "HashSet")
         {
             ;items/_entries
-            this.FullOffsets.Push(this.Is64Bit ? 0x20 : 0x8)
+            this.FullOffsets.Push(this.Is64Bit ? 0x10 : 0x8)
             this.ListIndexes.Push(this.FullOffsets.Count())
         }
         if(ValueType == "Dict")

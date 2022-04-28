@@ -85,11 +85,11 @@ class IC_MemoryFunctions_Class
             offsets.Push(this.Is64Bit ? 0x14 : 0xC)
             var := this.GameManager.Main.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, offsets*)
         }
-        else if (GameObject.ValueType == "List" or GameObject.ValueType == "Dict" or GameObject.ValueType == "HashSet") ; custome ValueTypes not in classMemory.ahk
+        else if (GameObject.ValueType == "List" or GameObject.ValueType == "Dict" or GameObject.ValueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
         {
             var := this.GameManager.Main.read(GameObject.baseAddress, "Int", (GameObject.GetOffsets())*)
         }
-        else if (GameObject.ValueType == "Quad") ; custome ValueTypes not in classMemory.ahk
+        else if (GameObject.ValueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
             offsets := GameObject.GetOffsets()
             first8 := this.GameManager.Main.read(GameObject.baseAddress, "Int64", (offsets)*)
