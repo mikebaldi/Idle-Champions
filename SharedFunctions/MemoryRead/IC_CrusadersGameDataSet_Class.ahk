@@ -44,9 +44,9 @@ class IC_CrusadersGameDataSet64_Class
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
         this.CrusadersGame := {}
         this.CrusadersGame.Defs := {}
-        this.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
-        this.CrusadersGameDataSet.BaseAddress := this.BaseAddress
-        this.CrusadersGameDataSet.Is64Bit := true
+        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
+        this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
+        this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := true
         #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
     }
 }
