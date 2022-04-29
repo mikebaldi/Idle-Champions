@@ -92,7 +92,7 @@ class GameObjectStructure
         }
         if(ValueType == "Dict")
         {
-            this.FullOffsets.Push(this.Is64Bit ? 0x20 : 0xC)
+            this.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
             this.DictIndexes.Push(this.FullOffsets.Count())
         }
     }
