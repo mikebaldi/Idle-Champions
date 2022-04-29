@@ -778,12 +778,12 @@ class IC_MemoryFunctions_Class
     GetInventoryChestIDBySlot(slot)
     {
             ; Not using 64 bit , but need +0x10 offset for where  starts
-            testIndex := this.Is64Bit ? (slot - 1) * 4 + 4 : testIndex := (slot - 1) * 4
+            testIndex := this.Is64Bit ? 0x20 + ((slot-1) * 0x10) : 0x10 + ((slot-1) * 0x10)
             ; Add gameInstances[0] index to list
             testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
             this.AdjustObjectListIndexes(testObject)
             ; Calculate chestID index offset and add it to object's offsets
-            testObject.FullOffsets.Push(testObject.CalculateOffset(testIndex))
+            testObject.FullOffsets.Push(testIndex)
             ; return Chest ID
             return this.GenericGetValue(testObject)
     }
@@ -793,10 +793,10 @@ class IC_MemoryFunctions_Class
             ; Calculate offset 
             ; Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
             ; Calculate count index offset and add it
-            testIndex := this.Is64Bit ? (slot - 1) * 4 + 7 : (slot - 1) * 4 + 3
+            testIndex := this.Is64Bit ? 0x2C + ((slot-1) * 0x10) : 0x1C + ((slot-1) * 0x10)
             testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
             this.AdjustObjectListIndexes(testObject) 
-            testObject.FullOffsets.Push(testObject.CalculateOffset(testIndex))
+            testObject.FullOffsets.Push(testIndex)
             ; return Chest Count
             return this.GenericGetValue(testObject)
     }
