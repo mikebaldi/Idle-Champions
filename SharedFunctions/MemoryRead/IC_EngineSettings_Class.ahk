@@ -1,9 +1,7 @@
-; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
-; pointer scan for depth of 2 has been fine.
+; EngineSettings class contains IC's EngineSettings class structure. Useful for finding webroot for doing server calls.
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 class IC_EngineSettings32_Class
 {
-    
     StaticOffset := 0xF88
     __new()
     {
@@ -29,7 +27,6 @@ class IC_EngineSettings32_Class
 
 class IC_EngineSettings64_Class
 {
-    
     StaticOffset := 0xF60
     __new()
     {
