@@ -393,6 +393,9 @@ class IC_SharedFunctions_Class
     {
         this.ToggleAutoProgress( 0, false, true )
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
+        ; Make sure the ability handler has the correct base address.
+        ; It can change on game restarts or modron resets.
+        this.Memory.ActiveEffectKeyHandler.Refresh()
         StartTime := A_TickCount
         ElapsedTime := 0
         timeScale := this.Memory.ReadTimeScaleMultiplier()
@@ -434,10 +437,10 @@ class IC_SharedFunctions_Class
     ; Searches TimeScale dictionary objects for TimeScaleWhenNotAttackedHandler (Shandie's Dash)
     IsDashActive()
     {
-        if(this.Memory.ReadDashActive())
+        if(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.ReadDashActive())
             return true
-        else if (!this.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.BaseAddress)
-            this.ActiveEffectKeyHandler.Refresh()
+        else if (!this.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.BaseAddress)
+            this.Memory.ActiveEffectKeyHandler.Refresh()
         return false
     }
 

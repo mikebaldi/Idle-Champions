@@ -173,16 +173,6 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(key)
     }
 
-    ReadDashActive()
-    {
-        return this.GenericGetValue(this.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive)
-    }
-
-    ReadBrivHasteSkipChance()
-    {
-        return this.GenericGetValue(this.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance)
-    }
-
     ReadTimeScaleMultipliersCount()
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances.TimeScales.Multipliers.size.GetGameObjectFromListValues(0,0))

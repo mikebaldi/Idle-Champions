@@ -95,6 +95,58 @@ class IC_ActiveEffectKeyHandler_Class
     }
 }
 
+
+class ActiveEffectKeySharedFunctions
+{
+    class Havilar
+    {
+        class ImpHandler
+        {
+            GetCurrentOtherImpIndex()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps)
+            }
+            
+            GetActiveImpsSize()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.currentOtherImpIndex)
+            }
+
+            GetSummonImpCoolDownTimer()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.summonImpUltimate.CoolDownTimer)
+            }
+
+            GetSacrificeImpCoolDownTimer()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.sacrificeImpUltimate.CoolDownTimer)
+            }
+        } 
+    }
+
+    class Briv
+    {
+        class BrivUnnaturalHasteHandler
+        {
+            ReadSkipChance()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance)
+            }
+        }
+    }
+
+    Class Shandie
+    {
+        class TimeScaleWhenNotAttackedHandler
+        {
+            ReadDashActive()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive)
+            }
+        }
+    }
+}
+
 ; Omin Contractual Obligations
     ; ChampID := 65
     ; EffectKeyString := "contractual_obligations"
