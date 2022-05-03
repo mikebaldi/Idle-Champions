@@ -5,6 +5,7 @@
 #include %A_LineFile%\..\IC_EngineSettings_Class.ahk
 #include %A_LineFile%\..\IC_CrusadersGameDataSet_Class.ahk
 #include %A_LineFile%\..\IC_DialogManager_Class.ahk
+#include %A_LineFile%\..\IC_ActiveEffectKeyHandler_Class.ahk
 
 ;Check if you have installed the class correctly.
 if (_ClassMemory.__Class != "_ClassMemory")
@@ -30,6 +31,7 @@ class IC_MemoryFunctions_Class
         this.EngineSettings := new IC_EngineSettings32_Class
         this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
         this.DialogManager := new IC_DialogManager32_Class
+        this.ActiveEffectKeyHandler := new IC_ActiveEffectKeyHandler_Class
     }
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
@@ -70,6 +72,7 @@ class IC_MemoryFunctions_Class
             this.CrusadersGameDataSet.Refresh()
             this.DialogManager.Refresh()
         }
+        this.ActiveEffectKeyHandler.Refresh()
     }
 
     ;=====================
@@ -168,6 +171,16 @@ class IC_MemoryFunctions_Class
         else
             key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(0,0),, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
         return this.GenericGetValue(key)
+    }
+
+    ReadDashActive()
+    {
+        return this.GenericGetValue(this.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive)
+    }
+
+    ReadBrivHasteSkipChance()
+    {
+        return this.GenericGetValue(this.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance)
     }
 
     ReadTimeScaleMultipliersCount()
