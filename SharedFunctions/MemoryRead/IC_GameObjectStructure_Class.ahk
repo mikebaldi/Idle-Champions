@@ -83,7 +83,6 @@ class GameObjectStructure
             this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
             this.Offset := appendedOffsets[1]
         }
-        this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         if(ValueType == "List" or ValueType == "HashSet")
         {
             ;items/_entries
@@ -95,6 +94,7 @@ class GameObjectStructure
             this.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
             this.DictIndexes.Push(this.FullOffsets.Count())
         }
+        this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
     }
 
     ; Function used to make a deep copy of the current object.
@@ -155,38 +155,6 @@ class GameObjectStructure
             return 0x20 + ( listItem * 0x8 )
         else
             return 0x10 + ( listItem * 0x4 )
-    }
-
-    ; Uses dict location values to create a new object that has the correst FullOffsets and ValueType of the item being looked up.
-    GetGameObjectFromDictValues(values*)
-    {
-        newObject := this.Clone()
-        newObject.FullOffsets := this.GetOffsetsWithDictValues(values*)
-        return newObject
-    }
-    ; probably doesn't work with EGS/64bit
-    ; Takes an array of values. Each value in the array is an offset to multiply the offsets by in a list or dict.
-    ; values for list should be integers, values for dict should be an array with first item either "key" or "value" as appropriate and second item corresponding to the dict index
-    ; For now, this method only works with dict with key entries are pointers
-    ; There can be multiple values as there can be multiple lists or dicts in a location.
-    GetOffsetsWithDictValues(values*)
-    {
-        if(values.Count() > this.ListIndexes.Count() )
-        {
-            stringVal := "More parameters were passed than there are list objects"
-            throw stringVal
-        }
-        currentOffsets := this.FullOffsets.Clone()
-        i := 0
-        for k,v in values
-        {
-            if (!IsObject(v))
-                currentOffsets.InsertAt(this.ListIndexes[i+1] + i, this.CalculateOffset(v))
-            else
-                currentOffsets.InsertAt(this.ListIndexes[i+1] + i, this.CalculateDictOffset(v))
-            i++
-        }
-        return currentOffsets
     }
 
     ; EGS (64bit) is a complete guess, probably doesn't work.
