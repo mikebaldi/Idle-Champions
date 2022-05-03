@@ -5,7 +5,7 @@ class IC_ActiveEffectKeyHandler_Class
 {
     ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
     HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContraactualObligationsHandler":65, "NerdWagonHandler":87}
-    HeroEffectNames := {"NerdWagonHandler":"nerd_wagon", "OminContraactualObligationsHandler": "contractual_obligations", "HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked"}
+    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContraactualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon" }
     __new()
     {
         this.Refresh()
@@ -63,24 +63,16 @@ class IC_ActiveEffectKeyHandler_Class
         ; add dictionary value from effectkeysbyname
         currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
         tempObject.FullOffsets.InsertAt(15, currOffset)
-        ; ; insert list items offset
-        ; tempObject.FullOffsets.InsertAt(16, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x8)
-        ; ; insert first list item offset (Assuming only 1 item in effectkeyslist of effectkeysbyname (the dictionary value is a List<EffectKey>) list?)
-        ; tempObject.FullOffsets.InsertAt(17, g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x10)
-        ; testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
-        ; OutputDebug, %testHexString%
         _size := g_SF.Memory.GenericGetValue(tempObject)
         ; Remove the "size" from the offsets list
         tempObject.FullOffsets.Pop()
-        ; insert first list item offset (Assuming only 1 item in activeEffectKeys list)
+        ; insert first list offset (Assuming only 1 item in activeEffectKeys list)
         tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x10 : 0x8) ; _items
-        ; tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x20 : 0x10) ; Item[0]
-        testHexString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
-        OutputDebug, %testHexString%
         address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0)
         return address
     }
 
+    ; Finds the index of the item in the dictionary by iterating the items looking for a key matching handlerName
     GetDictIndex(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]
@@ -94,7 +86,6 @@ class IC_ActiveEffectKeyHandler_Class
             currOffset := tempObject.CalculateDictOffset(["key", i])
             tempObject.FullOffsets.Push(currOffset)
             tempObject.ValueType := "UTF-16"
-            testString := ArrFnc.GetHexFormattedArrayString(tempObject.FullOffsets)
             keyName := g_SF.Memory.GenericGetValue(tempObject)
             if (keyName == effectName)
                 return i

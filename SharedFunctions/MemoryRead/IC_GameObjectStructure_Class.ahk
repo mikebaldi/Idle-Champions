@@ -6,7 +6,7 @@
 ; Class used to describe a memory location. 
 ; ListIndexes is an array that contains the locations of where to insert offsets when accessing specific items in lists.
 ; ValueType describes what kind of data is at the location in memory. 
-;       Note: "List" is not a memory data type but is being used to identify when a ListIndex must be added.
+;       Note: "List", "Dict", and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
 ; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
 ; Is64Bit identifies if the object is using 32-bit (e.g. Steam) or 64-bit addresses (e.g. EGS)
 class GameObjectStructure
@@ -20,19 +20,14 @@ class GameObjectStructure
     Is64Bit := 0
     Offset := 0x0
 
-    __Get(index)
-    {
-        if index is integer
-        {
-            
-        }
-        else
-        {
-            OutputDebug, %index%
-        }
-    }
+    ; DEBUG: Helps debug missing objects in dot chains of GameObjectStructures.
+    ; __Get(index)
+    ; {
+    ;     if index is not integer
+    ;         OutputDebug, %index%
+    ; }
 
-    ; returns a a GameObjectStructure which can point to the size of a memory structure such as a dictionary or list
+    ; returns a a GameObjectStructure which can point to the size of a memory structure such as a Dictionary, List, or HashSet
     size[]
     {
         get
@@ -68,6 +63,7 @@ class GameObjectStructure
         }
     }
  
+    ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
         this.ValueType := ValueType
@@ -85,12 +81,13 @@ class GameObjectStructure
         }
         if(ValueType == "List" or ValueType == "HashSet")
         {
-            ;items/_entries
+            ;add items
             this.FullOffsets.Push(this.Is64Bit ? 0x10 : 0x8)
             this.ListIndexes.Push(this.FullOffsets.Count())
         }
         if(ValueType == "Dict")
         {
+            ;add _entries
             this.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
             this.DictIndexes.Push(this.FullOffsets.Count())
         }
@@ -106,7 +103,8 @@ class GameObjectStructure
         var.ListIndexes := this.ListIndexes.Clone()
         var.ValueType := this.ValueType
         var.Is64Bit := this.Is64Bit
-        var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        ;var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         var.Offset := this.Offset
         return var
     }
@@ -157,7 +155,6 @@ class GameObjectStructure
             return 0x10 + ( listItem * 0x4 )
     }
 
-    ; EGS (64bit) is a complete guess, probably doesn't work.
     ; Used to calculate offsets of an item in a dict. requires an array with "key" or "value" as first entry and the dict index as second. indices start at 0.
     CalculateDictOffset(array)
     {
