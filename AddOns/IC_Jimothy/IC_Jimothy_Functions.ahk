@@ -303,19 +303,10 @@ class IC_JimothySharedFunctions_Class extends IC_SharedFunctions_Class
 
     SummonDembo(force := false)
     {
-        impHandler := new HavilarImpHandler
-        impHandler.Initialize()
-        if !(impHandler.IsBaseAddressCorrect())
-        {
-            msgbox, % "Havilar's Imp Handler failed to load.`nBase Address: " . impHandler.BaseAddress
-            return
-        }
-        if (impHandler.GetCurrentOtherImpIndex() != 1 OR impHandler.GetActiveImpsSize() != 2)
+        if (ActiveEffectKeySharedFunctions.Havilar.ImpHandler.GetCurrentOtherImpIndex()!= 1 OR ActiveEffectKeySharedFunctions.Havilar.ImpHandler.GetActiveImpsSize() != 2)
         {
             ultKey := this.GetUltimateButtonByChampID(56)
             this.DirectedInput(,, ultKey)
         }  
     }
 }
-
-#include %A_LineFile%\..\..\..\SharedFunctions\MemoryRead\EffectKeyHandlers\HavilarImpHandler.ahk
