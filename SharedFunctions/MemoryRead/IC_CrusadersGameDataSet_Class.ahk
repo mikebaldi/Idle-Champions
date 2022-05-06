@@ -38,7 +38,7 @@ class IC_CrusadersGameDataSet64_Class
 
     GetVersion()
     {
-        return "v1.1.6, 2022-04-09, IC v0.425.1+, 64-bit"  
+        return "v1.1.7, 2022-05-05, IC v0.435+, 64-bit"  
     }
 
     Refresh()
