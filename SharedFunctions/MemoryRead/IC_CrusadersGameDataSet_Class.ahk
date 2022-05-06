@@ -44,10 +44,12 @@ class IC_CrusadersGameDataSet64_Class
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8 ; v433
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00498C40 ; v435
         this.CrusadersGame := {}
         this.CrusadersGame.Defs := {}
-        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
+        ;this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x10, 0xBE0] )
+        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x0, 0xD0, 0x8, 0X1D0, 0x80] ) ; v435
         this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := true
         #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
