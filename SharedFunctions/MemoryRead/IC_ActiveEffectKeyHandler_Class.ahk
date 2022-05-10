@@ -66,6 +66,7 @@ class IC_ActiveEffectKeyHandler_Class
         _size := g_SF.Memory.GenericGetValue(tempObject)
         ; Remove the "size" from the offsets list
         tempObject.FullOffsets.Pop()
+        tempObject.ValueType := g_SF.Memory.GameManager.Is64Bit() ? "Int64" : "Int"
         ; insert first list offset (Assuming only 1 item in activeEffectKeys list)
         tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x10 : 0x8) ; _items
         address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0)
