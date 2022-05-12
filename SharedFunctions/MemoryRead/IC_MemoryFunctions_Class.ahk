@@ -263,9 +263,9 @@ class IC_MemoryFunctions_Class
 
     ReadChampLvlByID(ChampID:= 0)
     {
-        val = this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(0, ChampID - 1))
+        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(0, ChampID - 1))
         if !val
-            val = this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(0, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(0, ChampID - 1))
         return val
     }
 
