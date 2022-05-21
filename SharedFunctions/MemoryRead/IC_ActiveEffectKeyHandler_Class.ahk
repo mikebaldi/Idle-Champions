@@ -198,6 +198,7 @@ class ActiveEffectKeySharedFunctions
             ReadNerd2Type()
             {
                 return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd2()]
+            }
         }
     }
 }
