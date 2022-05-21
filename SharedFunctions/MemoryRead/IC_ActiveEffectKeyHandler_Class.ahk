@@ -167,36 +167,37 @@ class ActiveEffectKeySharedFunctions
     {
         class NerdWagonHandler
         {
+            static NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
+
             ReadNerd0()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0)
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0.type)
             }
 
             ReadNerd1()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1)
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1.type)
             }
 
 
             ReadNerd2()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2)
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2.type)
             }
 
             ReadNerd0Type()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0.type)
+                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd0()]
             }
 
             ReadNerd1Type()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1.type)
+                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd1()]
             }
 
             ReadNerd2Type()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2.type)
-            }
+                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd2()]
         }
     }
 }
