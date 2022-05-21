@@ -165,7 +165,7 @@ class ActiveEffectKeySharedFunctions
 
     class Nerds
     {
-        class OminContractualObligationsHandler
+        class NerdWagonHandler
         {
             ReadNerd0()
             {
