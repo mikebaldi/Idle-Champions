@@ -4,8 +4,8 @@
 class IC_ActiveEffectKeyHandler_Class
 {
     ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
-    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContraactualObligationsHandler":65, "NerdWagonHandler":87}
-    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContraactualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon" }
+    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87}
+    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon" }
     __new()
     {
         this.Refresh()
@@ -136,13 +136,66 @@ class ActiveEffectKeySharedFunctions
         }
     }
 
-    Class Shandie
+    class Shandie
     {
         class TimeScaleWhenNotAttackedHandler
         {
             ReadDashActive()
             {
                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive)
+            }
+        }
+    }
+
+    class Omin
+    {
+        class OminContractualObligationsHandler
+        {
+            ReadNumContractsFulfilled()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+            }
+
+            ReadSecondsOnGoldFind()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
+            }
+        }
+    }
+
+    class Nerds
+    {
+        class OminContractualObligationsHandler
+        {
+            ReadNerd0()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0)
+            }
+
+            ReadNerd1()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1)
+            }
+
+
+            ReadNerd2()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2)
+            }
+
+            ReadNerd0Type()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0.type)
+            }
+
+            ReadNerd1Type()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1.type)
+            }
+
+            ReadNerd2Type()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2.type)
             }
         }
     }
