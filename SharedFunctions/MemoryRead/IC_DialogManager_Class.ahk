@@ -45,9 +45,21 @@ class IC_DialogManager64_Class
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495C70
         this.UnityGameEngine := {}
         this.UnityGameEngine.Dialogs := {}
-        this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA20])
+        if(this.HasOverlay())
+            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA30])
+        else
+            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA20])
         this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := true
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
+    }
+
+    ; GfxPluginEOSLoader_x64 and EOSSDK-Win64-Shipping.dll are EGS specific DLLs for its overlay.
+    ; Since they are either removed by some people or a 64 bit version may not include them, the pointer could change depending on if they exist.
+    HasOverlay()
+    {
+        overlayDLL1 := this.Main.getModuleBaseAddress("GfxPluginEOSLoader_x64.dll")
+        overlayDLL2 := this.Main.getModuleBaseAddress("EOSSDK-Win64-Shipping.dll")
+        return (overlayDLL1 != -1 AND overlayDLL2 != -1)
     }
 }

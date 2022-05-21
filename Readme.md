@@ -1,6 +1,6 @@
 # IC Script Hub
-## Testing Branch
-This branch is for use with and for testing of antilectual's [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets).
+## ``New:``
+Script Hub has been updated for use with and with antilectual's [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets). See the the linked repo for instructions on how to use it to update Script Hub's offsets.
 
 ## Introduction
 
