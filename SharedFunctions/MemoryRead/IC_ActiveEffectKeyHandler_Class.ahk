@@ -73,7 +73,7 @@ class IC_ActiveEffectKeyHandler_Class
         return address
     }
 
-    ; Finds the index of the item in the dictionary by iterating the items looking for a key matching handlerName
+    ; Finds the index of the item in the effectKeysByKeyName dictionary by iterating the items looking for a key matching handlerName
     GetDictIndex(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]

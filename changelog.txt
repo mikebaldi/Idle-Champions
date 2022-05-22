@@ -1,3 +1,9 @@
+May 22, 2022
+    Updated GameObjectStructure for better handling of dictionaries.
+    Updated GameObjectStructure to have a function to fully clone another GameObjectStructure.
+    Updated GameObjectStructure to have a function that recursively updates all sub-GameObjectStructures list and dict indexes when the list's object has been found.
+    Added Memory function to get a GameObjectStructure for a specific champion's OrderedUpgrade list.
+
 May 21, 2022
     Auto-Updates change moved to main branch.
     Updated offsets for IC v439 for both 64 and 32 bit versions.

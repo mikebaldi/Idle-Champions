@@ -105,6 +105,7 @@ class IC_MemoryFunctions_Class
         {
             var := this.GameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
+        val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         return var
     }
 
@@ -390,7 +391,7 @@ class IC_MemoryFunctions_Class
     ;reads the first 8 bytes of the quad value of gold
     ReadGoldFirst8Bytes()
     {
-        newObject := this.GameManager.game.gameInstances.ActiveCampaignData.gold.Clone()
+        newObject := this.GameManager.game.gameInstances.ActiveCampaignData.gold.QuickClone()
         newObject.ValueType := "Int64"
         return this.GenericGetValue(newObject.GetGameObjectFromListValues(0))
     }
@@ -398,7 +399,7 @@ class IC_MemoryFunctions_Class
     ;reads the last 8 bytes of the quad value of gold
     ReadGoldSecond8Bytes()
     {
-        newObject := this.GameManager.game.gameInstances.ActiveCampaignData.gold.Clone()
+        newObject := this.GameManager.game.gameInstances.ActiveCampaignData.gold.QuickClone()
         newObject.ValueType := "Int64"
         goldOffsetIndex := newObject.FullOffsets.Count()
         newObject.FullOffsets[goldOffsetIndex] := newObject.FullOffsets[goldOffsetIndex] + 0x8
@@ -626,7 +627,7 @@ class IC_MemoryFunctions_Class
         return formation
     }
 
-    ReadBoughtLastUpgrade( seat = 1)
+    ReadBoughtLastUpgrade( seat := 1)
     {
         ; The nextUpgrade pointer could be null if no upgrades are found.
         if(this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.GetGameObjectFromListValues(0, seat - 1)))
@@ -638,6 +639,14 @@ class IC_MemoryFunctions_Class
         {
             return True
         }
+    }
+
+    GetHeroOrderedUpgrade(champID := 1, upgradeID := 0)
+    {
+        val1 := ArrFnc.GetHexFormattedArrayString(this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.FullOffsets)
+        orderedUpgrade := this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.GetFullGameObjectFromListOrDictValues("List", 0, champID)
+        orderedUpgrade := orderedUpgrade.GetFullGameObjectFromListOrDictValues("Dict", upgradeID)
+        return orderedUpgrade
     }
 
     ; Returns the formation array of the formation used in the currently active modron.
