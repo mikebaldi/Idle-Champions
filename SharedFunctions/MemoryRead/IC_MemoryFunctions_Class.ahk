@@ -645,7 +645,8 @@ class IC_MemoryFunctions_Class
     {
         val1 := ArrFnc.GetHexFormattedArrayString(this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.FullOffsets)
         orderedUpgrade := this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.GetFullGameObjectFromListOrDictValues("List", 0, champID)
-        orderedUpgrade := orderedUpgrade.GetFullGameObjectFromListOrDictValues("Dict", upgradeID)
+        orderedUpgrade := orderedUpgrade.GetFullGameObjectFromListOrDictValues("Dict", 0)
+        orderedUpgrade := orderedUpgrade.List.GetFullGameObjectFromListOrDictValues("List", upgradeID)
         return orderedUpgrade
     }
 
