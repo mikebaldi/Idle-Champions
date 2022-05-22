@@ -105,7 +105,7 @@ class IC_MemoryFunctions_Class
         {
             var := this.GameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
-        val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
+        ; val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         return var
     }
 
@@ -643,7 +643,6 @@ class IC_MemoryFunctions_Class
 
     GetHeroOrderedUpgrade(champID := 1, upgradeID := 0)
     {
-        val1 := ArrFnc.GetHexFormattedArrayString(this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.FullOffsets)
         orderedUpgrade := this.GameManager.Game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.GetFullGameObjectFromListOrDictValues("List", 0, champID)
         orderedUpgrade := orderedUpgrade.GetFullGameObjectFromListOrDictValues("Dict", 0)
         orderedUpgrade := orderedUpgrade.List.GetFullGameObjectFromListOrDictValues("List", upgradeID)
