@@ -397,7 +397,12 @@ class IC_BrivGemFarm_Class
             {
                 while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
                 {
-                    var .= this.BuyOrOpenChests(StartTime) . "`n"
+                    var2 := this.BuyOrOpenChests(StartTime)
+                    var .= var2 . "`n" 
+                    if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
+                        break
+                    else
+                         continue
                 }
             }
             else
