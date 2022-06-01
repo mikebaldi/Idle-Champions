@@ -60,10 +60,6 @@ IC_EngineSettings_Class reads data from the game's static EngineSettings object.
 
 IC_GameManager_Class is the **first** place to look to update offsets to data read from the game. It contains many offsets for things ranging from game speed to loot/chest/buffs to autoprogress to current area and just about anything in between. The offsets are based on the 32-bit (Steam) version of the game.
 
-> MemoryRead\IC_GameManager_Class_EGS.ahk
-
-IC_GameManager_Class_EGS is the 64-bit variation of the above. (Epic Game Store verison).
-
 > MemoryRead\IC_GameObjectStructure_Class.ahk
 
 IC_GameObjectStructure_Class is used by other memory scripts to control how offsets are created, interpreted and read. It should not need to modified, but is fundamental to how the game objects are structured.

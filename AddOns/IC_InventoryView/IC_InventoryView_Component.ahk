@@ -52,9 +52,9 @@ class IC_InventoryView_Component
         loop, %size%
         {
             change := ""
-            buffID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.ID.GetGameObjectFromListValues(A_index - 1))
-            itemName := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.NameSingular.GetGameObjectFromListValues(A_index - 1))
-            itemAmount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.BuffHandler.InventoryBuffsList.InventoryAmount.GetGameObjectFromListValues(A_index - 1))
+            buffID := g_SF.Memory.ReadInventoryBuffIDBySlot(A_Index)
+            itemName := g_SF.Memory.ReadInventoryBuffNameBySlot(A_Index)
+            itemAmount := g_SF.Memory.ReadInventoryBuffCountBySlot(A_Index)
             if(doAddToFirstRead) ; only create first object if there is an inventory
                 this.FirstReadBuffValues.Push({"ID":buffID, "Name":itemName, "Amount":itemAmount})
             change := this.GetChange(buffID, itemAmount, "Buff")
@@ -82,20 +82,14 @@ class IC_InventoryView_Component
             this.FirstReadChestValues := {}
             doAddToFirstRead := true
         }
-        size := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionarySize)    
+        size := g_SF.Memory.ReadInventoryChestListSize()
         if(!size)
             return "" 
         loop, %size%
         {
-            ; See GetChestCountByID() memory function to see why these extra caluculations are made.
-            ; Get index for ID
-            listIndex := g_SF.Memory.Is64Bit ? ((A_index - 1) * 4 + 4)  : (A_index - 1) * 4
-            chestID := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(listIndex))
-            ; Get index for amount
-            listIndex := g_SF.Memory.Is64Bit ? ((A_index - 1) * 4 + 7)  : (A_index - 1) * 4 + 3
-            itemAmount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.UserData.ChestHandler.ChestCountsDictionary.GetGameObjectFromListValues(listIndex))
+            chestID := g_SF.Memory.GetInventoryChestIDBySlot(A_Index)
+            itemAmount := g_SF.Memory.GetInventoryChestCountBySlot(A_Index)
             itemName := g_SF.Memory.GetChestNameByID(chestID)
-            ;itemAmount := g_SF.Memory.GetChestCountByID(chestID) 
             change := this.GetChange(chestID, itemAmount, "Chest")
             perRunVal := Round(change / runCount, 2)
             if(doAddToFirstRead) ; only create first object if there is an inventory
@@ -125,10 +119,10 @@ class IC_InventoryView_Component
         if(g_InventoryViewBuffsCheckbox)
             this.ReadInventory(runCount, doAddToFirstRead)
         LV_ModifyCol()
-        LV_ModifyCol(1, "Integer")  
-        LV_ModifyCol(3, "Integer")
-        LV_ModifyCol(4, "50 Integer")
-        LV_ModifyCol(5, "50 Integer")
+        LV_ModifyCol(1, Integer)  
+        LV_ModifyCol(3, Integer)
+        LV_ModifyCol(4, 50 Integer)
+        LV_ModifyCol(5, 50 Integer)
         timeToProcess := (A_TickCount - startTime) / 1000
         GuiControl, ICScriptHub:, InventoryViewTimeStampID, % lastUpdateString . " in " . timeToProcess . "s"
     }

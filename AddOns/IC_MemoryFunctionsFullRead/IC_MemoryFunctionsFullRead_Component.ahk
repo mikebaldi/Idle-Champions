@@ -19,7 +19,7 @@ if(g_isDarkMode)
 
 class IC_MemoryFunctionsFullRead_Component
 {
-    static exclusionList := [ "__Init", "__new",  "BinarySearchList", "ConvQuadToString", "ConvQuadToString2", "ConvQuadToString3", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "ReadUserHash", "ReadUserID", "ReadTimeScaleMultipliersKeyByIndex" ]
+    static exclusionList := [ "__Init", "__new",  "BinarySearchList", "ConvQuadToString", "ConvQuadToString2", "ConvQuadToString3", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "ReadUserHash", "ReadUserID", "ReadTimeScaleMultipliersKeyByIndex", "AdjustObjectListIndexes" ]
 
     InExclusionsList(value)
     {

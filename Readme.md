@@ -1,4 +1,7 @@
 # IC Script Hub
+## ``New:``
+Script Hub has been updated for use with and with antilectual's [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets). See the the linked repo for instructions on how to use it to update Script Hub's offsets.
+
 ## Introduction
 
 > "This is your last chance. After this, there is no turning back. You take the blue pill—the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill—you stay in Wonderland, and I show you how deep the rabbit hole goes. Remember: all I'm offering is the truth. Nothing more." 

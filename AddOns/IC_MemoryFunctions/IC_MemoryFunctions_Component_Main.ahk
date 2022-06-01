@@ -36,8 +36,6 @@ Gui, ICScriptHub:Add, Text, x15 y+5, ReadScreenWidth:
 Gui, ICScriptHub:Add, Text, vReadScreenWidthID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadScreenHeight:
 Gui, ICScriptHub:Add, Text, vReadScreenHeightID x+2 w200,
-Gui, ICScriptHub:Add, Text, x15 y+5, ReadCoreXP:
-Gui, ICScriptHub:Add, Text, vReadCoreXPID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadCoreTargetArea: 
 Gui, ICScriptHub:Add, Text, vReadCoreTargetAreaID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadGems:
@@ -81,8 +79,6 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadScreenWidthID, % g_SF.Memory.ReadScreenWidth()
         GuiControl, ICScriptHub:, ReadScreenHeightID, % g_SF.Memory.ReadScreenHeight()
         GuiControl, ICScriptHub:, ReadMonstersSpawnedID, % g_SF.Memory.ReadMonstersSpawned()
-        GuiControl, ICScriptHub:, ReadCoreXPID, % g_SF.Memory.GetCoreXPByInstance(g_SF.Memory.ReadActiveGameInstance())
-        ;GuiControl, ICScriptHub:, ReadCoreTargetAreaID, % g_SF.Memory.ReadCoreTargetArea()
         GuiControl, ICScriptHub:, ReadCoreTargetAreaID, % g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance())
         GuiControl, ICScriptHub:, ReadGemsID, % g_SF.Memory.ReadGems()
         GuiControl, ICScriptHub:, ReadGemsSpentID, % g_SF.Memory.ReadGemsSpent()
@@ -93,8 +89,8 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadFormationSavesSizeID, % g_SF.Memory.ReadFormationSavesSize()
         GuiControl, ICScriptHub:, ReadFormationFavoriteIDBySlotID, % "ID: 1, Favorite: " . g_SF.Memory.ReadFormationFavoriteIDBySlot(1)
         GuiControl, ICScriptHub:, ReadNewAreaID, % g_SF.Memory.ReadTransitionDelay()
-        GuiControl, ICScriptHub:, ReadSecSinceStartID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.Area.SecondsSinceStarted) 
-        GuiControl, ICScriptHub:, ReadAreaActiveID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.Controller.Area.Active) 
+        GuiControl, ICScriptHub:, ReadSecSinceStartID, % g_SF.Memory.ReadSecondsSinceAreaStart()
+        GuiControl, ICScriptHub:, ReadAreaActiveID, % g_SF.Memory.ReadAreaActive()
     }
 }
 ;======================================================================================

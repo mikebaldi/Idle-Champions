@@ -33,7 +33,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
         this.SetUserCredentials()
         g_ServerCall := new IC_BrivServerCall_Class( this.UserID, this.UserHash, this.InstanceID )
-        version := this.Memory.ReadGameVersion()
+        version := this.Memory.ReadBaseGameVersion()
         if(version != "")
             g_ServerCall.clientVersion := version
         tempWebRoot := this.Memory.ReadWebRoot()
@@ -397,7 +397,12 @@ class IC_BrivGemFarm_Class
             {
                 while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
                 {
-                    var .= this.BuyOrOpenChests(StartTime) . "`n"
+                    var2 := this.BuyOrOpenChests(StartTime)
+                    var .= var2 . "`n" 
+                    if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
+                        break
+                    else
+                         continue
                 }
             }
             else

@@ -1,9 +1,0 @@
-{
-	"Name":"Effect Key Handlers Full Read",
-	"Version": "v1.0.1",
-    "Includes" : "IC_EffectKeyHandlersFullRead_Component.ahk",
-    "Author" : "mikebaldi1980",
-    "Url" : "",
-    "Info" : "This AddOn will attempt to test ALL effect key handler properties",
-    "Dependencies" : {}
-}

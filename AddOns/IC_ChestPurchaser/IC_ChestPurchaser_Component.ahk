@@ -34,13 +34,13 @@ class IC_ChestPurchaser_Component
             g_SF.Memory.OpenProcessReader()
         else
             return
-        size := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesListSize)    
+        size := g_SF.Memory.ReadChestDefinesSize()
         if(!size)
             return
         loop, %size%
         {
-            chestID := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.ID.GetGameObjectFromListValues(A_Index - 1))
-            chestName := g_SF.Memory.GenericGetValue(g_SF.Memory.CrusadersGameDataSet.CrusadersGameDataSet.ChestDefinesList.NameSingular.GetGameObjectFromListValues(A_Index - 1))
+            chestID := g_SF.Memory.GetChestIDBySlot(A_Index)
+            chestName := g_SF.Memory.GetChestNameBySlot(A_Index)
             comboBoxOptions .= chestID . " " . chestName . "|"
         }
         g_SF.ResetServerCall()

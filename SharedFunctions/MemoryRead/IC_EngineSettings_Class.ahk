@@ -1,8 +1,7 @@
+; EngineSettings class contains IC's EngineSettings class structure. Useful for finding webroot for doing server calls.
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
-; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
-class IC_EngineSettings_Class
+class IC_EngineSettings32_Class
 {
-    
     StaticOffset := 0xF88
     __new()
     {
@@ -11,23 +10,23 @@ class IC_EngineSettings_Class
  
     GetVersion()
     {
-        return "v1.0, 12/03/21, IC v0.414+, Steam"  
+        return "v1.0, 12/03/21, IC v0.414+, 32-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
-        this.EngineSettings := new GameObjectStructure([0x1C])
-        this.EngineSettings.BaseAddress := this.BaseAddress
-        this.EngineSettings.WebRoot := new GameObjectStructure(this.EngineSettings,"UTF-16",[this.StaticOffset + 0x8, 0xC])
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Core := {}
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
+        this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
+        #include %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
     }
 }
 
-; EGS variation of GameSettings (Thanks to Fenume for updating offsets for 412)
-class IC_EngineSettingsEGS_Class
+class IC_EngineSettings64_Class
 {
-    
     StaticOffset := 0xF60
     __new()
     {
@@ -36,16 +35,23 @@ class IC_EngineSettingsEGS_Class
  
     GetVersion()
     {
-        return "v1.0, 2022-01-31, IC v0.414+, EGS"  
+        return "v1.0, 2022-01-31, IC v0.414+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8
-        this.EngineSettings := new GameObjectStructure([0x30])
-        this.EngineSettings.Is64Bit := true
-        this.EngineSettings.BaseAddress := this.BaseAddress
-        this.EngineSettings.WebRoot := new GameObjectStructure(this.EngineSettings,"UTF-16",[this.StaticOffset + 0x10, 0x14])
+        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8 ; v414-435
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A3658 ; v435
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Core := {}
+        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C]) ; v414-433
+        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30]) ; v435
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x2A0])
+        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30, 0x60, 0xC0, 0xC0]) ; v435 static - 0xEA0
+        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30, 0x60, 0x0]) ; v435
+        this.UnityGameEngine.Core.EngineSettings.Is64Bit := true
+        this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
+        #include %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk       
     }
 }

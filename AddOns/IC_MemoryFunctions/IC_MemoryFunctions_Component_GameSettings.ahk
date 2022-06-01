@@ -37,12 +37,11 @@ class ReadMemoryFunctionsExtended
 
     ReadContinuous()
     {
-        ;GuiControl, ICScriptHub:, Level2ID, % GenericGetValue(g_SF.Memory.GameManager.Game.GameInstance.ActiveCampaignData.CurrentArea.Level) 
-        GuiControl, ICScriptHub:, InstanceIDID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameSettings.GameSettings._Instance.InstanceID) 
-        GuiControl, ICScriptHub:, UserIDID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameSettings.GameSettings.UserID) 
-        GuiControl, ICScriptHub:, UserHashID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameSettings.GameSettings.Hash) 
-        GuiControl, ICScriptHub:, PlatformID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameSettings.GameSettings.Platform) 
+        GuiControl, ICScriptHub:, UserIDID, % g_SF.Memory.ReadUserID()
+        GuiControl, ICScriptHub:, UserHashID, % g_SF.Memory.ReadUserHash()
+        GuiControl, ICScriptHub:, InstanceIDID, % g_SF.Memory.ReadInstanceID()
+        GuiControl, ICScriptHub:, PlatformID, % g_SF.Memory.ReadPlatform()
         GuiControl, ICScriptHub:, GameVersionID, % g_SF.Memory.ReadGameVersion()
-        GuiControl, ICScriptHub:, WebRootID, % g_SF.Memory.GenericGetValue(g_SF.Memory.Enginesettings.EngineSettings.WebRoot) 
+        GuiControl, ICScriptHub:, WebRootID, % g_SF.Memory.ReadWebRoot()
     }
 }
