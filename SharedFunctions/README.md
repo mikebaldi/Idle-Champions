@@ -7,7 +7,7 @@ These functions are intended to be shared among many scripts. They are built wit
 
 > CLR.ahk  
 
-CLR contains various functions that allow for use with managed libraries (written C#/VB). Required for IC_SaveHelper_Class.ahk.
+CLR contains various functions that allow for use with managed libraries (written C#/VB). Required for IC_SaveHelper_Class.ahk. No longer in use.
 
 > IC_ArrayFunctions_Class.ahk
 
@@ -38,6 +38,14 @@ Some examples include:
 `CloseIC` - Closes the game. Forces it closed after 10 seconds.  
 `SetUserCredentials` - Stores UserID, Hash, InstanceID and some commonly used user data for use in server calls.
 
+> IC_UpdateClass_Class.ahk
+
+IC_UpdateClass_Class is used to overwrite AHK classes. Since AHK does not protect class fields and functions, this class can be used for simple updates to instances of the classes when they require modified functionality for addons.
+
+> IC_VersionHelper_Class.ahk
+
+IC_VersionHelper_Class contains a function which can be used to compare version numbers that are in a specific format. It is used for managing Addons properly.
+
 > json.ahk  
 
 json is a library that allows for common json functionality such as loading and saving json to files. It has been expanded from the original to include json formatting functions.
@@ -52,13 +60,13 @@ ObjRegisterActive contains various functions written primarily by ahk's lexikos 
 
 classMemory is a library required for any game memory interaction. All scripts rely heavily on this to read game states.
 
+> MemoryRead\IC_ActiveEffectKeyHandler_Class.ahk
+
+IC_ActiveEffectKeyHandler_Class is used for handling ``Champion Abilities``. **IMPORTANT:** This file also contains ``ActiveEffectKeySharedFunctions`` which is the ``interface`` for getting memory reads about Champion abilities.  The offsets used can be found/updated in the ``MemoryRead\Imports\ActiveEffectHandlers\`` folder.
+
 > MemoryRead\IC_EngineSettings_Class.ahk
 
 IC_EngineSettings_Class reads data from the game's static EngineSettings object. It is used to retrieve the current server the game is connecting to. 
-
-> MemoryRead\IC_GameManager_Class.ahk
-
-IC_GameManager_Class is the **first** place to look to update offsets to data read from the game. It contains many offsets for things ranging from game speed to loot/chest/buffs to autoprogress to current area and just about anything in between. The offsets are based on the 32-bit (Steam) version of the game.
 
 > MemoryRead\IC_GameObjectStructure_Class.ahk
 
@@ -68,9 +76,10 @@ IC_GameObjectStructure_Class is used by other memory scripts to control how offs
 
 IC_GameSettings_Class contains the offsets for the games static GameSettings object. It includes important information such as *UserID*, *User Hash*, *Version*, *Instance ID*. These memory reads are required reading data used in IC_ServerCalls_Class.ahk.
 
+> MemoryRead\IC_IdleGameManager_Class.ahk
+
+IC_IdleGameManager_Class is the **first** place to look to update offsets to data read from the game. It contains many offsets for things ranging from game speed to loot/chest/buffs to autoprogress to current area and just about anything in between. The offsets are based on the 32-bit (Steam) version of the game.
+
 > MemoryRead\IC_MemoryFunctions_Class.ahk
 
-**Important**: IC_MemoryFunctions_Class contains functions that simplify memory reading. Use this class's functions to read important information from the game. It utilizes the other classes in the diretory and simplifies their read calls. Although most things *can* be done without these functions, using them will greatly simplify code. 
-
-
-
+**Important**: IC_MemoryFunctions_Class is the interface that contains functions that simplify memory reading. Use this class's functions to read important information from the game. It utilizes the other classes in the diretory and simplifies their read calls. Using the functions in this file (except ``GenericGetValue``) is the best way to make sure addons remain compatable with Script Hub.  
