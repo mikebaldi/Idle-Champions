@@ -128,6 +128,11 @@ ICScriptHubGuiClose()
         return True
 }
 
+ICScriptHubGuiSize()
+{
+    GuiControl, Move, ModronTabControl, % "w" A_GuiWidth - 20 "h" A_GuiHeight - 40
+    GuiControl, Move, MemoryFunctionsViewID, % "w" A_GuiWidth - 40 "h" A_GuiHeight - 120
+}
 ; ToolTip Test
 OnMessage(0x200, "CheckControlForTooltip")
 ; Creates tooltips for various controls in Script Hub.
