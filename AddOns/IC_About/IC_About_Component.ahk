@@ -11,6 +11,7 @@ class IC_About_Component
 {
     GetVersionString()
     {
+        g_SF.Memory.OpenProcessReader()
         string := ""
         string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
         if(isFunc(g_SF.Memory.ReadGameVersion))
