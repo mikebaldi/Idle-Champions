@@ -132,6 +132,7 @@ ICScriptHubGuiSize(GuiHwnd, EventInfo, Width, Height)
 {
     GuiControl, Move, ModronTabControl, % "w" Width - 20 "h" Height - 40
     GuiControl, Move, MemoryFunctionsViewID, % "w" Width - 40 "h" Height - 120
+    GuiControl, Move, InventoryViewID, % "w" Width - 40 "h" Height - 170
 }
 ; ToolTip Test
 OnMessage(0x200, "CheckControlForTooltip")
