@@ -37,8 +37,7 @@ class IC_MemoryFunctionsFullRead_Component
     RefreshSize()
     {
         GuiControlGet, Size, ICScriptHub:Pos, ModronTabControl
-        Gui, ICScriptHub:Show, % " w" . SizeW + 1
-        Gui, ICScriptHub:Show, % " w" . SizeW - 1
+        ICScriptHubGuiSize(WinExist(),0,SizeW+20,SizeH+40)
     }
 
     ; Current valid ERRORs to reads using value 1:
