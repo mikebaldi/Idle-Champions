@@ -23,6 +23,10 @@ GuiControl, ICScriptHub: +g, ButtonChestPurchaserOpenChests, % openChestsFunc
 chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.ReadChests")
 GuiControl, ICScriptHub: +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
 
+GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpenID
+xyValY +=150
+Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount, % "---"
+
 IC_ChestPurchaser_Component.ReadChests()
 
 
@@ -59,10 +63,11 @@ class IC_ChestPurchaser_Component
         buyCount := ChestPurchaseCountID
         while(buyCount > 0)
         {
+            GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " buyCount " chests..."
             response := g_ServerCall.CallBuyChests( chestID, buyCount )
             if(!IsObject(response))
             {
-                MsgBox % "Failed with response: " . response
+                MsgBox % "Error purchasing chest or parsing response."
                 return
             }
             if (!response.okay)
@@ -75,6 +80,7 @@ class IC_ChestPurchaser_Component
             else
                 buyCount -= 1
         }
+        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " Max(buyCount,0) " chests..."
         MsgBox % "Done"
     }
 
@@ -87,12 +93,14 @@ class IC_ChestPurchaser_Component
         chestName := splitArray[2]
         MsgBox % "Opening " . ChestOpenCountID . " of " . chestName . " (ID: " . chestID . ") Make sure the game is closed before continuing."
         openCount := ChestOpenCountID
+        shinyMessage := ""
         while(openCount > 0)
         {
+            GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " openCount " chests..."
             response := g_ServerCall.CallOpenChests( chestID, openCount )
             if(!IsObject(response))
             {
-                MsgBox % "Failed with response: " . response
+                MsgBox % "Error opening chest(s) or parsing response."
                 return
             }
             if (!response.success)
@@ -100,8 +108,10 @@ class IC_ChestPurchaser_Component
                 MsgBox % "Failed because " . response.failure_reason . response.fail_message
                 return 
             }
+            shinyMessage .= g_ServerCall.ParseChestResults(response)
             openCount -= 99
         }
-        MsgBox % "Done"
+        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " Max(openCount,0) " chests..."
+        MsgBox % "Done`n" . (shinyMessage != "" ? shinyMessage : "No shiny gear found.")
     }
 }
