@@ -12,7 +12,7 @@ class IC_About_Component
     GetVersionString()
     {
         string := ""
-        string .= "Script Version: " . GetModronGUIVersion() . "`n`n"
+        string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
         if(isFunc(g_SF.Memory.ReadGameVersion))
             string .= "Idle Champions Game Version: " . g_SF.Memory.ReadGameVersion() . "`n`n"
         if(isFunc(IC_GameManager_Class.GetVersion))
