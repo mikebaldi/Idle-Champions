@@ -20,7 +20,7 @@ class IC_DialogManager32_Class
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A31B8
         this.UnityGameEngine := {}
         this.UnityGameEngine.Dialogs := {}
-        this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xD38])
+        this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xD10])
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
     }
@@ -46,9 +46,9 @@ class IC_DialogManager64_Class
         this.UnityGameEngine := {}
         this.UnityGameEngine.Dialogs := {}
         if(this.HasOverlay())
-            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA30])
+            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0x9E0])
         else
-            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xA20])
+            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0x9D0])
         this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := true
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
