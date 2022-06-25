@@ -10,7 +10,7 @@ class IC_EngineSettings32_Class
  
     GetVersion()
     {
-        return "v1.0, 12/03/21, IC v0.414+, 32-bit"  
+        return "v1.0.0, 12/03/21, IC v0.414+, 32-bit"  
     }
 
     Refresh()

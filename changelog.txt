@@ -1,6 +1,7 @@
 June 24, 2022
     Updated pointers for EGS (64-bit) v452
-
+    Updated pointers for Steam (32-bit) v452
+    
 June 2, 2022
     Updated Readme.md for SharedFunctions.
     Added HewMaan's ultimate ID and CoolDown time to ActiveEffectKeySharedFunctions.
