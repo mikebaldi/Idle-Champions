@@ -33,12 +33,20 @@ class IC_MemoryFunctionsFullRead_Component
         return false
     }
 
+    ; Resize window to trigger automatic resize code in ICScriptHubGuiSize()
+    RefreshSize()
+    {
+        GuiControlGet, Size, ICScriptHub:Pos, ModronTabControl
+        ICScriptHubGuiSize(WinExist(),0,SizeW+20,SizeH+40)
+    }
+
     ; Current valid ERRORs to reads using value 1:
     ;   ReadTimeScaleMultipliersKeyByIndex - May be modron core speed which won't read effect data
     ;   ReadChampIDBySlot - make sure a champion is in slot 1 on the game field or this will have an error. (game field slots start at 0 at the far right and count: right to left, top to bottom)
     ;   ReadUltimateButtonChampIDByItem - Must have at least 2 ultimate abilities unlocked or this will error.
     ReadAllFunctions()
     {
+        IC_MemoryFunctionsFullRead_Component.RefreshSize()
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "MemoryFunctionsViewID")
         valueToPass := 1
         g_SF.Memory.OpenProcessReader()
@@ -54,6 +62,27 @@ class IC_MemoryFunctionsFullRead_Component
                 value := value == "" ? "-- ERROR --" : value
                 valuePassedString := (v.Maxparams >= 2 ? "(" . valueToPass . ")" : "")
                 LV_Add(, parameterString, valuePassedString, value)
+            }
+        }
+
+        for k,v in ActiveEffectKeySharedFunctions ; Class
+        {
+            for k1, v1 in v ; Champions
+            {
+                for k2, v2 in v1 ; Handlers
+                {
+                    if( isFunc(v2) ) ; Handler Fields/Functions
+                    {
+                        parameterString := k1 . "..." . k2 . (v2.MaxParams > 4 ? "(...)" : (v2.MaxParams > 3 ? "(x,y,z)" : (v2.MaxParams > 2 ? "(x,y)" : (v2.MaxParams > 1 ? "(x)" : ""))))
+                        currentObject := ActiveEffectKeySharedFunctions[k][k1]
+                        fncToCall := ObjBindMethod(currentObject, k2)
+                        value := v2.Maxparams >= 2 ? fncToCall.Call(valueToPass) : fncToCall.Call()
+                        value := IsObject(value) ? ArrFnc.GetDecFormattedArrayString(value) : value
+                        value := value == "" ? "-- ERROR --" : value
+                        valuePassedString := (v2.Maxparams >= 2 ? "(" . valueToPass . ")" : "")
+                        LV_Add(, parameterString, valuePassedString, value)
+                    }
+                }
             }
         }
         LV_ModifyCol()

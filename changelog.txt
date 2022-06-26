@@ -1,3 +1,20 @@
+June 24, 2022
+    Updated pointers for EGS (64-bit) v452
+    Updated pointers for Steam (32-bit) v452
+    
+June 2, 2022
+    Updated Readme.md for SharedFunctions.
+    Added HewMaan's ultimate ID and CoolDown time to ActiveEffectKeySharedFunctions.
+    Updated offsets for v440.1.
+    Added ActiveEffectKeyHandlers to memory functions. Note: These will show as -- Error -- unless the associated champion ability is unlocked.
+    Added a tab control resize when resizing the GUI.
+    Added a List control resize in FullMemoryFunctions when resizing the GUI.
+    Added a List control resize in InventoryView when resizing the GUI.
+    Fixed game version not showing up in the About addon if the game is open when starting the script.
+    Updated Script Version.
+    Fixed version reads on About addon.
+    Updated Chest Purchaser Addon to give more feedback when purchasing.
+
 May 24, 2022
     Fix for out of memory error when doing continuous chests.
 

@@ -19,9 +19,9 @@ CoordMode, Mouse, Client
 
 
 ;Modron Automation Gem Farming Script
-GetModronGUIVersion()
+GetScriptHubVersion()
 {
-    return "v3.3.2, 2022-02-01"
+    return "v3.3.3, 2022-06-02"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -128,6 +128,12 @@ ICScriptHubGuiClose()
         return True
 }
 
+ICScriptHubGuiSize(GuiHwnd, EventInfo, Width, Height)
+{
+    GuiControl, Move, ModronTabControl, % "w" Width - 20 "h" Height - 40
+    GuiControl, Move, MemoryFunctionsViewID, % "w" Width - 40 "h" Height - 120
+    GuiControl, Move, InventoryViewID, % "w" Width - 40 "h" Height - 170
+}
 ; ToolTip Test
 OnMessage(0x200, "CheckControlForTooltip")
 ; Creates tooltips for various controls in Script Hub.

@@ -62,7 +62,7 @@ class IC_GameManager64_Class
 
     GetVersion()
     {
-        return "v1.9.16, 2022-04-09, IC v0.428+, 64-bit"
+        return "v1.9.17, 2022-06-24, IC v0.452+, 64-bit"
     }
 
     is64Bit()
@@ -77,7 +77,11 @@ class IC_GameManager64_Class
         ;==================
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495A90
+<<<<<<< HEAD
         this.IdleGameManager := New GameObjectStructure([0xCB0])
+=======
+        this.IdleGameManager := New GameObjectStructure([0xCB0]) ; Offsets 0xCB0,0, but 0 is a mod (+) and disappears.
+>>>>>>> e73f7aed8e4a7fd64700f3c2e4da62e740be186c
         this.IdleGameManager.Is64Bit := true
         this.IdleGameManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk

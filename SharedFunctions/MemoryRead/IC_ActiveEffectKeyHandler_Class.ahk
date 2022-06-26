@@ -4,8 +4,10 @@
 class IC_ActiveEffectKeyHandler_Class
 {
     ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
-    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87}
-    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon" }
+    ; chance_multiply_monster_quest_rewards (Hew Maan effect)
+    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87, "HewMaanTeamworkHandler":75}
+    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon", "HewMaanTeamworkHandler":"hewmaan_teamwork"}
+    
     __new()
     {
         this.Refresh()
@@ -13,7 +15,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.0, 2022-05-01, IC v0.430+"  
+        return "v2.1, 2022-06-02, IC v0.440+"  
     }
 
     Refresh()
@@ -24,6 +26,7 @@ class IC_ActiveEffectKeyHandler_Class
         this.NerdWagonHandler := this.GetEffectHandler("NerdWagonHandler")
         this.OminContractualObligationsHandler := this.GetEffectHandler("OminContractualObligationsHandler")
         this.TimeScaleWhenNotAttackedHandler := this.GetEffectHandler("TimeScaleWhenNotAttackedHandler")
+        this.HewMaanTeamworkHandler := this.GetEffectHandler("HewMaanTeamworkHandler")
         if g_SF.Memory.GameManager.Is64Bit()
             this.Refresh64()
         else
@@ -37,6 +40,7 @@ class IC_ActiveEffectKeyHandler_Class
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler32_Import.ahk
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler32_Import.ahk
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler32_Import.ahk
+        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler32_Import.ahk
     }
 
     Refresh64()
@@ -46,6 +50,7 @@ class IC_ActiveEffectKeyHandler_Class
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler64_Import.ahk
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler64_Import.ahk
         #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler64_Import.ahk
+        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler64_Import.ahk
     }
 
     GetEffectHandler(handlerName)
@@ -159,6 +164,22 @@ class ActiveEffectKeySharedFunctions
             ReadSecondsOnGoldFind()
             {
                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
+            }
+        }
+    }
+
+    class HewMaan
+    {
+        class HewMaanTeamworkHandler
+        {
+            ReadUltimateCooldownTimeLeft()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.CooldownTimer)
+            }
+
+            ReadUltimateID()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.ID)
             }
         }
     }

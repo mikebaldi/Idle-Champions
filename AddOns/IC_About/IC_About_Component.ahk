@@ -11,46 +11,36 @@ class IC_About_Component
 {
     GetVersionString()
     {
+        g_SF.Memory.OpenProcessReader()
         string := ""
-        string .= "Script Version: " . GetModronGUIVersion() . "`n`n"
+        string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
+        gameVersion := g_SF.Memory.ReadGameVersion()
+        if(gameVersion == "")
+            gameVersion := " -- Game not found on Script Hub load. --"
         if(isFunc(g_SF.Memory.ReadGameVersion))
-            string .= "Idle Champions Game Version: " . g_SF.Memory.ReadGameVersion() . "`n`n"
-        if(isFunc(IC_GameManager_Class.GetVersion))
-            string .= "GameManager Memory Functions (Steam) : " . IC_GameManager_Class.GetVersion() . "`n"
-        if(isFunc(IC_GameSettings_Class.GetVersion))
-            string .= "GameSettings Memory Functions (Steam) : " . IC_GameSettings_Class.GetVersion() . "`n"
-        if(isFunc(IC_EngineSettings_Class.GetVersion))
-            string .= "EngineSettings Memory Functions (Steam): " . IC_EngineSettings_Class.GetVersion() . "`n"
-        if(isFunc(IC_CrusadersGameDataSet_Class.GetVersion))
-            string .= "CGDataSet Memory Functions (Steam): " . IC_CrusadersGameDataSet_Class.GetVersion() . "`n`n"
-        if(isFunc(IC_GameManagerEGS_Class.GetVersion))
-            string .= "GameManager Memory Functions (EGS): " . IC_GameManagerEGS_Class.GetVersion() . "`n"
-        if(isFunc(IC_GameSettingsEGS_Class.GetVersion))
-            string .= "GameSettings Memory Functions (EGS): " . IC_GameSettingsEGS_Class.GetVersion() . "`n"
-        if(isFunc(IC_EngineSettingsEGS_Class.GetVersion))
-            string .= "EngineSettings Memory Functions (EGS): " . IC_EngineSettingsEGS_Class.GetVersion() . "`n"
-        if(isFunc(IC_CrusadersGameDataSetEGS_Class.GetVersion))
-            string .= "CGDataSet Memory Functions (EGS): " . IC_CrusadersGameDataSetEGS_Class.GetVersion() . "`n`n"
-        if(isFunc(IC_GameManager_Class32.GetVersion))
-            string .= "GameManager Memory Functions (32-bit) : " . IC_GameManager_Class32.GetVersion() . "`n"
-        if(isFunc(IC_GameSettings_Class32.GetVersion))
-            string .= "GameSettings Memory Functions (32-bit) : " . IC_GameSettings_Class32.GetVersion() . "`n"
-        if(isFunc(IC_EngineSettings_Class32.GetVersion))
-            string .= "EngineSettings Memory Functions (32-bit): " . IC_EngineSettings_Class32.GetVersion() . "`n"
-        if(isFunc(IC_CrusadersGameDataSet_Class32.GetVersion))
-            string .= "CGDataSet Memory Functions (32-bit): " . IC_CrusadersGameDataSet_Class32.GetVersion() . "`n`n"
-        if(isFunc(IC_DialogManager_Class.GetVersion))
-            string .= "CGDataSet Memory Functions (32-bit): " . IC_DialogManager_Class.GetVersion() . "`n`n"
-        if(isFunc(IC_GameManager64_Class.GetVersion))
-            string .= "GameManager Memory Functions (64-bit): " . IC_GameManager64_Class.GetVersion() . "`n"
+            string .= "Idle Champions Game Version: " . gameVersion . "`n`n"
+        if(isFunc(IC_IdleGameManager32_Class.GetVersion))
+            string .= "GameManager Memory Functions (32-bit) : " . IC_IdleGameManager32_Class.GetVersion() . "`n"
+        if(isFunc(IC_GameSettings32_Class.GetVersion))
+            string .= "GameSettings Memory Functions (32-bit) : " . IC_GameSettings32_Class.GetVersion() . "`n"
+        if(isFunc(IC_EngineSettings32_Class.GetVersion))
+            string .= "EngineSettings Memory Functions (32-bit): " . IC_EngineSettings32_Class.GetVersion() . "`n"
+        if(isFunc(IC_CrusadersGameDataSet32_Class.GetVersion))
+            string .= "CGDataSet Memory Functions (32-bit): " . IC_CrusadersGameDataSet32_Class.GetVersion() . "`n"
+        if(isFunc(IC_DialogManager32_Class.GetVersion))
+            string .= "DialogManager Memory Functions (32-bit): " . IC_DialogManager32_Class.GetVersion() . "`n`n"
+        if(isFunc(IC_IdleGameManager64_Class.GetVersion))
+            string .= "GameManager Memory Functions (64-bit): " . IC_IdleGameManager64_Class.GetVersion() . "`n"
         if(isFunc(IC_GameSettings64_Class.GetVersion))
             string .= "GameSettings Memory Functions (64-bit): " . IC_GameSettings64_Class.GetVersion() . "`n"
         if(isFunc(IC_EngineSettings64_Class.GetVersion))
             string .= "EngineSettings Memory Functions (64-bit): " . IC_EngineSettings64_Class.GetVersion() . "`n"
         if(isFunc(IC_CrusadersGameDataSet64_Class.GetVersion))
-            string .= "CGDataSet Memory Functions (64-bit): " . IC_CrusadersGameDataSet64_Class.GetVersion() . "`n`n"
+            string .= "CGDataSet Memory Functions (64-bit): " . IC_CrusadersGameDataSet64_Class.GetVersion() . "`n"
         if(isFunc(IC_DialogManager64_Class.GetVersion))
-            string .= "CGDataSet Memory Functions (64-bit): " . IC_DialogManager64_Class.GetVersion() . "`n`n"
+            string .= "DialogManager Memory Functions (64-bit): " . IC_DialogManager64_Class.GetVersion() . "`n`n"
+        if(isFunc(IC_ActiveEffectKeyHandler_Class.GetVersion))
+            string .= "EffectKeyHandler Memory Functions (64-bit): " . IC_DialogManager64_Class.GetVersion() . "`n`n"
         if(isFunc(IC_SharedFunctions_Class.GetVersion))
             string .= "Shared Functions Version: " . IC_SharedFunctions_Class.GetVersion() . "`n"
         if(isFunc(IC_ServerCalls_Class.GetVersion))

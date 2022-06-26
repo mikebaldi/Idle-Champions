@@ -10,7 +10,7 @@ class IC_EngineSettings32_Class
  
     GetVersion()
     {
-        return "v1.0, 12/03/21, IC v0.414+, 32-bit"  
+        return "v1.0.0, 12/03/21, IC v0.414+, 32-bit"  
     }
 
     Refresh()
@@ -35,21 +35,16 @@ class IC_EngineSettings64_Class
  
     GetVersion()
     {
-        return "v1.0, 2022-01-31, IC v0.414+, 64-bit"  
+        return "v1.0.1, 2022-06-24, IC v0.452+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        ;this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493DC8 ; v414-435
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A3658 ; v435
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A7678 ; v452
         this.UnityGameEngine := {}
         this.UnityGameEngine.Core := {}
-        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C]) ; v414-433
-        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30]) ; v435
-        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x2A0])
-        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30, 0x60, 0xC0, 0xC0]) ; v435 static - 0xEA0
-        ; this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x30, 0x60, 0x0]) ; v435
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x2A0]) ; v452
         this.UnityGameEngine.Core.EngineSettings.Is64Bit := true
         this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk       
