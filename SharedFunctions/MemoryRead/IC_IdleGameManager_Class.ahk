@@ -76,12 +76,8 @@ class IC_GameManager64_Class
         ;structure pointers
         ;==================
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495A90
-<<<<<<< HEAD
-        this.IdleGameManager := New GameObjectStructure([0xCB0])
-=======
-        this.IdleGameManager := New GameObjectStructure([0xCB0]) ; Offsets 0xCB0,0, but 0 is a mod (+) and disappears.
->>>>>>> e73f7aed8e4a7fd64700f3c2e4da62e740be186c
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
+        this.IdleGameManager := New GameObjectStructure([0xC88]) ; Offsets 0xC,0, but 0 is a mod (+) and disappears.
         this.IdleGameManager.Is64Bit := true
         this.IdleGameManager.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
