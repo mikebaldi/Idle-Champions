@@ -34,13 +34,13 @@ class IC_GameSettings64_Class
 
     GetVersion()
     {
-        return "v1.0.5, 2022-06-24, IC v0.452+, 64-bit"  
+        return "v1.0.6, 2022-07-01, IC v0.455+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00497E40 ; v452
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00493E40 ; v451, v453-v455
         this.CrusadersGame := {}
         this.CrusadersGame.GameSettings := new GameObjectStructure([0x820])
         this.CrusadersGame.GameSettings.Is64Bit := true
