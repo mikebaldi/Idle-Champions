@@ -23,6 +23,12 @@ class IC_MemoryFunctions_Class
     EngineSettings := ""
     CrusadersGameDataSet := ""
     Is64Bit := false
+    ; Active GameInstance is 0 in the DLL so this should not need to change
+    ;		public ChampionsGameInstance GetActiveChampionsInstance()
+    ;   	{
+    ;   		return this.gameInstances[0];
+    ;   	}
+    GameInstance := 0
 
     __new()
     {
@@ -82,6 +88,7 @@ class IC_MemoryFunctions_Class
     ; Not for general use.
     GenericGetValue(GameObject)
     {
+        ; val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
             offsets := GameObject.FullOffsets.Clone()
@@ -105,7 +112,6 @@ class IC_MemoryFunctions_Class
         {
             var := this.GameManager.Main.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
-        ; val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         return var
     }
 
@@ -135,17 +141,17 @@ class IC_MemoryFunctions_Class
 
     ReadMonstersSpawned()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.basicMonstersSpawnedThisArea.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.basicMonstersSpawnedThisArea.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadActiveMonstersCount()
     {
-         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.activeMonsters.size.GetGameObjectFromListValues(0))
+         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.activeMonsters.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadResetting()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ResetHandler.Resetting.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ResetHandler.Resetting.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadTimeScaleMultiplier()
@@ -157,9 +163,9 @@ class IC_MemoryFunctions_Class
     {
         offset := Mod(index,2) ? 10
         if (this.Is64Bit)
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(0,0), "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
+            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0), "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
         else
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances.TimeScales.Multipliers.GetGameObjectFromListValues(0,0), "Float", [0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
+            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances.TimeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0), "Float", [0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
         return Round(this.GenericGetValue(timeScaleObject), 2)
     }
 
@@ -168,15 +174,15 @@ class IC_MemoryFunctions_Class
     ReadTimeScaleMultipliersKeyByIndex(index := 0)
     {
         if (this.Is64Bit)
-           key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(0,0),, [0x20 + 0x8 + (index * 0x18), 0x28, 0x10, 0x10, 0x18, 0x10]) ; 20 start -> handler, effectKey, parentEffectKeyHandler, parent, source, ID
+           key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0),, [0x20 + 0x8 + (index * 0x18), 0x28, 0x10, 0x10, 0x18, 0x10]) ; 20 start -> handler, effectKey, parentEffectKeyHandler, parent, source, ID
         else
-            key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(0,0),, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
+            key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0),, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
         return this.GenericGetValue(key)
     }
 
     ReadTimeScaleMultipliersCount()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.TimeScales.Multipliers.size.GetGameObjectFromListValues(0,0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.TimeScales.Multipliers.size.GetGameObjectFromListValues(this.GameInstance,0))
     }
 
     ReadUncappedTimeScaleMultiplier()
@@ -194,39 +200,39 @@ class IC_MemoryFunctions_Class
 
     ReadTransitioning()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.IsTransitioning_k__BackingField.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.IsTransitioning_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadTransitionDelay()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.ScreenWipeEffect.DelayTimer.T.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.ScreenWipeEffect.DelayTimer.T.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ; 0 = right, 1 = left, 2 = static (instant)
     ReadTransitionDirection()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.transitionDirection.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.areaTransitioner.transitionDirection.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ; 0 = OnFromLeft, 1 = OnFromRight, 2 = OffToLeft, 3 = OffToRight
     ReadFormationTransitionDir()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.transitionDir.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.transitionDir.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadSecondsSinceAreaStart()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.SecondsSinceStarted.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.SecondsSinceStarted.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadAreaActive()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.Active.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.area.Active.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadUserIsInited()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.inited.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.inited.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;=================
@@ -249,38 +255,38 @@ class IC_MemoryFunctions_Class
 
     ReadChampHealthByID(ChampID := 0 )
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(0, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
     }
 
     ReadChampSlotByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(0, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
     }
 
     ReadChampBenchedByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(0, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
     }
 
     ; TODO: Depricate older unused versions
     ReadChampLvlByID(ChampID:= 0)
     {
-        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(0, ChampID - 1))
+        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(0, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(0, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
         return val
     }
 
     ReadChampSeatByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(0, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
     }
 
     ReadChampNameByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(0, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
     }
 
     ;=============================
@@ -340,27 +346,27 @@ class IC_MemoryFunctions_Class
 
     ReadGems()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.redRubies.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.redRubies.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadGemsSpent()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.redRubiesSpent.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.redRubiesSpent.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadRedGems() ; BlackViper Red Gems
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BlackViperTotalGems.GetGameObjectFromListValues(0)) 
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BlackViperTotalGems.GetGameObjectFromListValues(this.GameInstance)) 
     }
 
     ReadSBStacks()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BrivSteelbonesStacks.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BrivSteelbonesStacks.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadHasteStacks()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BrivSprintStacks.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.StatHandler.BrivSprintStacks.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;======================================================================================
@@ -369,22 +375,22 @@ class IC_MemoryFunctions_Class
 
     ReadCurrentObjID()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentObjective.ID.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentObjective.ID.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadQuestRemaining()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentArea.QuestRemaining.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentArea.QuestRemaining.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadCurrentZone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentAreaID.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.currentAreaID.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadHighestZone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.highestAvailableAreaID.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.highestAvailableAreaID.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;======================================================================================
@@ -396,7 +402,7 @@ class IC_MemoryFunctions_Class
     {
         newObject := this.GameManager.game.gameInstances.ActiveCampaignData.gold.QuickClone()
         newObject.ValueType := "Int64"
-        return this.GenericGetValue(newObject.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(newObject.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;reads the last 8 bytes of the quad value of gold
@@ -406,12 +412,12 @@ class IC_MemoryFunctions_Class
         newObject.ValueType := "Int64"
         goldOffsetIndex := newObject.FullOffsets.Count()
         newObject.FullOffsets[goldOffsetIndex] := newObject.FullOffsets[goldOffsetIndex] + 0x8
-        return this.GenericGetValue(newObject.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(newObject.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadGoldString()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.gold.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ActiveCampaignData.gold.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;===================================
@@ -420,31 +426,31 @@ class IC_MemoryFunctions_Class
     ;read the number of saved formations for the active campaign
     ReadFormationSavesSize()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.size.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;reads if a formation save is a favorite
     ;0 = not a favorite, 1 = favorite slot 1 (q), 2 = 2 (w), 3 = 3 (e)
     ReadFormationFavoriteIDBySlot(slot := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Favorite.GetGameObjectFromListValues(0, slot))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Favorite.GetGameObjectFromListValues(this.GameInstance, slot))
     }
 
     ReadFormationNameBySlot(slot := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Name.GetGameObjectFromListValues(0, slot)) 
+        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Name.GetGameObjectFromListValues(this.GameInstance, slot)) 
     }
 
     ; Reads the SaveID for the FormationSaves index passed in.
     ReadFormationSaveIDBySlot(slot := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.SaveID.GetGameObjectFromListValues(0, slot))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.SaveID.GetGameObjectFromListValues(this.GameInstance, slot))
     }
 
     ; Reads the FormationCampaignID for the FormationSaves index passed in.
     ReadFormationCampaignID()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.FormationCampaignID.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.FormationCampaignID.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;=========================================================================
@@ -453,28 +459,28 @@ class IC_MemoryFunctions_Class
     
     ReadNumAttackingMonstersReached()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.numAttackingMonstersReached.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.numAttackingMonstersReached.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadNumRangedAttackingMonsters()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.numRangedAttackingMonsters.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.numRangedAttackingMonsters.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadChampIDBySlot(slot := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.hero.def.ID.GetGameObjectFromListValues(0, slot))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.hero.def.ID.GetGameObjectFromListValues(this.GameInstance, slot))
     }
 
     ReadHeroAliveBySlot(slot := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.heroAlive.GetGameObjectFromListValues(0, slot))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.heroAlive.GetGameObjectFromListValues(this.GameInstance, slot))
     }
 
     ; should read 1 if briv jump animation override is loaded to , 0 otherwise
     ReadTransitionOverrideSize()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;==============================
@@ -483,20 +489,20 @@ class IC_MemoryFunctions_Class
 
     ReadActiveGameInstance()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ActiveUserGameInstance.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ActiveUserGameInstance.GetGameObjectFromListValues(this.GameInstance))
     }
 
     GetCoreTargetAreaByInstance(InstanceID := 1)
     {
         ;reads memory for the number of cores        
-        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(0))
+        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(this.GameInstance))
         ;cycle through saved formations to find save slot of Favorite
         i := 0
         loop, %saveSize%
         {
-            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(0, i)) == InstanceID)
+            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(this.GameInstance, i)) == InstanceID)
             {
-                return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.targetArea.GetGameObjectFromListValues(0, i))
+                return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.targetArea.GetGameObjectFromListValues(this.GameInstance, i))
             }
             ++i
         }
@@ -506,14 +512,14 @@ class IC_MemoryFunctions_Class
     GetCoreXPByInstance(InstanceID := 1)
     {
         ;reads memory for the number of cores        
-        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(0))
+        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(this.GameInstance))
         ;cycle through saved formations to find save slot of Favorite
         i := 0
         loop, %saveSize%
         {
-            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(0, i)) == InstanceID)
+            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(this.GameInstance, i)) == InstanceID)
             {
-                return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.ExpTotal.GetGameObjectFromListValues(0, i))
+                return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.ExpTotal.GetGameObjectFromListValues(this.GameInstance, i))
             }
             ++i
         }
@@ -525,17 +531,17 @@ class IC_MemoryFunctions_Class
     ;=================
     ReadOfflineTime()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.inGameNumSecondsToProcess.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.inGameNumSecondsToProcess.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadOfflineDone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.finishedOfflineProgressType.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.finishedOfflineProgressType.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadResetsCount()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.ResetsSinceLastManual.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.ResetsSinceLastManual.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;=================
@@ -544,18 +550,18 @@ class IC_MemoryFunctions_Class
 
     ReadAutoProgressToggled()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButton.toggled.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButton.toggled.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;reads the champ id associated with an ultimate button
     ReadUltimateButtonChampIDByItem(item := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.hero.def.ID.GetGameObjectFromListValues(0, item))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.hero.def.ID.GetGameObjectFromListValues(this.GameInstance, item))
     }
 
     ReadUltimateButtonListSize()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.size.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;======================
@@ -568,11 +574,11 @@ class IC_MemoryFunctions_Class
     GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0 )
     {
         Formation := Array()
-        _size := this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Formation.size.GetGameObjectFromListValues(0, slot))
+        _size := this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Formation.size.GetGameObjectFromListValues(this.GameInstance, slot))
         loop, %_size%
         {
             heroLoc := this.GameManager.Is64Bit() ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
-            champID := this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Formation.GetGameObjectFromListValues(0, slot, heroLoc))
+            champID := this.GenericGetValue(this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Formation.GetGameObjectFromListValues(this.GameInstance, slot, heroLoc))
             if (!ignoreEmptySlots or champID != -1)
             {
                 Formation.Push( champID )
@@ -618,12 +624,12 @@ class IC_MemoryFunctions_Class
     GetCurrentFormation()
     {
         formation := Array()
-        size := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.size.GetGameObjectFromListValues(0))
+        size := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.size.GetGameObjectFromListValues(this.GameInstance))
         if(!size)
             return ""
         loop, %size%
         {
-            heroID := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.hero.def.ID.GetGameObjectFromListValues(0, A_index - 1))
+            heroID := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.slots.hero.def.ID.GetGameObjectFromListValues(this.GameInstance, A_index - 1))
             heroID := heroID > 0 ? heroID : -1
             formation.Push(heroID)
         }
@@ -633,9 +639,9 @@ class IC_MemoryFunctions_Class
     ReadBoughtLastUpgrade( seat := 1)
     {
         ; The nextUpgrade pointer could be null if no upgrades are found.
-        if(this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.GetGameObjectFromListValues(0, seat - 1)))
+        if(this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.GetGameObjectFromListValues(this.GameInstance, seat - 1)))
         {
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.IsPurchased.GetGameObjectFromListValues(0, seat - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.IsPurchased.GetGameObjectFromListValues(this.GameInstance, seat - 1))
             return val
         }
         else
@@ -686,17 +692,17 @@ class IC_MemoryFunctions_Class
         ; Find which modron core is being used
         modronSavesSlot := this.GetCurrentModronSaveSlot()
         ; Find SaveID for given formationCampaignID
-        modronFormationsSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.size.GetGameObjectFromListValues(0, modronSavesSlot))
+        modronFormationsSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.size.GetGameObjectFromListValues(this.GameInstance, modronSavesSlot))
         loop, %modronFormationsSavesSize%
         {
             ; 64 bit starts values at offset 0x20, 32 bit at 0x10
             testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
-            testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.GetGameObjectFromListValues(0, modronSavesSlot),,[testIndex])
+            testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.GetGameObjectFromListValues(this.GameInstance, modronSavesSlot),,[testIndex])
             testValue := this.GenericGetValue(testValueObject)
             if (testValue == formationCampaignID)
             {
                 testIndex := testIndex + 0xC ; same for 64/32 bit
-                testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.GetGameObjectFromListValues(0, modronSavesSlot),,[testIndex])
+                testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.FormationSaves.GetGameObjectFromListValues(this.GameInstance, modronSavesSlot),,[testIndex])
                 formationSaveSlot := this.GenericGetValue(testValueObject)
                 break
             }
@@ -709,10 +715,10 @@ class IC_MemoryFunctions_Class
     {
         modronSavesSlot := ""
         activeGameInstance := this.ReadActiveGameInstance()
-        moronSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(0))
+        moronSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.size.GetGameObjectFromListValues(this.GameInstance))
         loop, %moronSavesSize%
         {
-            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(0, A_Index - 1)) == activeGameInstance)
+            if (this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(this.GameInstance, A_Index - 1)) == activeGameInstance)
             {
                 modronSavesSlot := A_Index - 1
                 return (A_Index - 1)
@@ -729,12 +735,12 @@ class IC_MemoryFunctions_Class
         if(!size)
             return ""
         ; After adding gameInstances list value, remove gameInstances ListIndex and increment ListIndexes values following it
-        testObject := this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.ID.GetGameObjectFromListValues(0)
+        testObject := this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.ID.GetGameObjectFromListValues(this.GameInstance)
         testObject := this.AdjustObjectListIndexes(testObject)
         ; Find the buff
         index := this.BinarySearchList(testObject, 1, size, buffID)
         if (index >= 0)
-            return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.InventoryAmount.GetGameObjectFromListValues(0, index - 1))
+            return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.InventoryAmount.GetGameObjectFromListValues(this.GameInstance, index - 1))
         else
             return ""
     }
@@ -744,34 +750,34 @@ class IC_MemoryFunctions_Class
         size := this.ReadInventoryItemsCount()
         if(!size)
             return ""
-        testObject := this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.ID.GetGameObjectFromListValues(0)
+        testObject := this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.ID.GetGameObjectFromListValues(this.GameInstance)
         testObject := this.AdjustObjectListIndexes(testObject)
         ; Find the buff
         index := this.BinarySearchList(testObject, 1, size, buffID)
         if (index >= 0)
-            return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.Name.GetGameObjectFromListValues(0, index - 1))
+            return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.inventoryBuffs.Name.GetGameObjectFromListValues(this.GameInstance, index - 1))
         else
             return ""
     }
 
     ReadInventoryBuffIDBySlot(index)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.ID.GetGameObjectFromListValues(0, index - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.ID.GetGameObjectFromListValues(this.GameInstance, index - 1))
     }
 
     ReadInventoryBuffNameBySlot(index)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.Name.GetGameObjectFromListValues(0, index - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.Name.GetGameObjectFromListValues(this.GameInstance, index - 1))
     }
 
     ReadInventoryBuffCountBySlot(index)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.InventoryAmount.GetGameObjectFromListValues(0, index - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.InventoryAmount.GetGameObjectFromListValues(this.GameInstance, index - 1))
     }
 
     ReadInventoryItemsCount()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.size.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.BuffHandler.InventoryBuffs.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
     /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
@@ -798,7 +804,7 @@ class IC_MemoryFunctions_Class
             ; Not using 64 bit , but need +0x10 offset for where  starts
             testIndex := this.Is64Bit ? 0x20 + ((slot-1) * 0x10) : 0x10 + ((slot-1) * 0x10)
             ; Add gameInstances[0] index to list
-            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
+            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(this.GameInstance)
             this.AdjustObjectListIndexes(testObject)
             ; Calculate chestID index offset and add it to object's offsets
             testObject.FullOffsets.Push(testIndex)
@@ -812,7 +818,7 @@ class IC_MemoryFunctions_Class
             ; Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
             ; Calculate count index offset and add it
             testIndex := this.Is64Bit ? 0x2C + ((slot-1) * 0x10) : 0x1C + ((slot-1) * 0x10)
-            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(0)
+            testObject := this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.GetGameObjectFromListValues(this.GameInstance)
             this.AdjustObjectListIndexes(testObject) 
             testObject.FullOffsets.Push(testIndex)
             ; return Chest Count
@@ -821,7 +827,7 @@ class IC_MemoryFunctions_Class
 
     ReadInventoryChestListSize()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.size.GetGameObjectFromListValues(0))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.ChestHandler.chestCounts.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
     GetChestNameByID(chestID)
@@ -903,8 +909,8 @@ class IC_MemoryFunctions_Class
 
     ReadPatronID()
     {
-        if (this.GenericGetValue(this.GameManager.game.gameInstances.PatronHandler.ActivePatron_k__BackingField.GetGameObjectFromListValues(0)))
-            return  this.GenericGetValue(this.GameManager.game.gameInstances.PatronHandler.ActivePatron_k__BackingField.ID.GetGameObjectFromListValues(0))
+        if (this.GenericGetValue(this.GameManager.game.gameInstances.PatronHandler.ActivePatron_k__BackingField.GetGameObjectFromListValues(this.GameInstance)))
+            return  this.GenericGetValue(this.GameManager.game.gameInstances.PatronHandler.ActivePatron_k__BackingField.ID.GetGameObjectFromListValues(this.GameInstance))
         return 0
     }
 
