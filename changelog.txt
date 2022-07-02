@@ -1,6 +1,10 @@
+July 1, 2022
+    Reverted pointers for EGS (64-bit) v455.
+    Updated offsets/Imports for v455 for 32/64-bit.
+
 June 24, 2022
-    Updated pointers for EGS (64-bit) v452
-    Updated pointers for Steam (32-bit) v452
+    Updated pointers for EGS (64-bit) v452.
+    Updated pointers for Steam (32-bit) v452.
     
 June 2, 2022
     Updated Readme.md for SharedFunctions.
