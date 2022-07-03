@@ -35,13 +35,13 @@ class IC_CrusadersGameDataSet64_Class
 
     GetVersion()
     {
-        return "v1.1.8, 2022-06-24, IC v0.452+, 64-bit"  
+        return "v1.1.9, 2022-07-01, IC v0.455+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0049CC50 ; v452
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00498C40 ; v433-455 (except v452)
         this.CrusadersGame := {}
         this.CrusadersGame.Defs := {}
         this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x0, 0xD0, 0x8, 0X1D0, 0x80] ) ; v435

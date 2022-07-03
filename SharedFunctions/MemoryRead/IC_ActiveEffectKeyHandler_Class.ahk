@@ -15,7 +15,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.1, 2022-06-02, IC v0.440+"  
+        return "v2.2, 2022-07-02, IC v0.440+"  
     }
 
     Refresh()
@@ -67,11 +67,11 @@ class IC_ActiveEffectKeyHandler_Class
         tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, champID - 1, 0 )
         ; add dictionary value from effectkeysbyname
         currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
-        tempObject.FullOffsets.InsertAt(15, currOffset)
-        _size := g_SF.Memory.GenericGetValue(tempObject)
+        tempObject.FullOffsets.InsertAt(tempObject.FullOffsets.Count() - 4, currOffset)
+        ;_size := g_SF.Memory.GenericGetValue(tempObject) ; currently unused but kept commented for debugging later
         ; Remove the "size" from the offsets list
         tempObject.FullOffsets.Pop()
-        tempObject.ValueType := g_SF.Memory.GameManager.Is64Bit() ? "Int64" : "Int"
+        tempObject.ValueType := g_SF.Memory.GameManager.Is64Bit() ? "Int64" : "UInt"
         ; insert first list offset (Assuming only 1 item in activeEffectKeys list)
         tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x10 : 0x8) ; _items
         address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0)
