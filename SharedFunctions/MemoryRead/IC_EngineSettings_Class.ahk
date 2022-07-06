@@ -2,7 +2,7 @@
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 class IC_EngineSettings32_Class
 {
-    StaticOffset := 0xF88
+    StaticOffset := 0xFC0
     __new()
     {
         this.Refresh()
@@ -19,7 +19,7 @@ class IC_EngineSettings32_Class
         this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A1C54
         this.UnityGameEngine := {}
         this.UnityGameEngine.Core := {}
-        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x1C])
+        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x20])
         this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
     }
