@@ -22,6 +22,7 @@ class IC_MemoryFunctions_Class
     GameSettings := ""
     EngineSettings := ""
     CrusadersGameDataSet := ""
+    DialogManager := ""
     Is64Bit := false
     ; Active GameInstance is 0 in the DLL so this should not need to change
     ;		public ChampionsGameInstance GetActiveChampionsInstance()
