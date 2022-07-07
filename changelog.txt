@@ -1,3 +1,11 @@
+July 6, 2022
+    Updated pointer for EngineSettings on v456 32 bit (where webroot is stored).
+    Removed including unused logging class.
+    When starting a gem farm, script requests a play server. This is a redundancy to accommodate load balancing when the game's play server cannot be read from memory.
+    Added a call to SetFormation after stacking to try to resolve the issue of the script jumping boss to boss after a rollback that lands on a boss area.
+    Added a Debug output for chest opening strings. This allows a savvy user to monitor when shiny gear is obtained from the chest opening calls while gem farming. (These messages will show up in programs such as DebugView).
+    Updated Imports for v456 (32 and 64 bit).
+
 July 2, 2022
     Fixed a bug that could cause memory to fail to read for Hero Handlers when the game uses high value memory addresses (int overflow).
     Added protection for hero handlers potentially failing when the IdleGameManager pointer needs to be updated/changed.
