@@ -25,6 +25,8 @@ class IC_ServerCalls_Class
     activePatronID := 0
     dummyData := ""
     webRoot := "https://ps6.idlechampions.com/~idledragons/"
+    timeoutVal := 10000
+    playServerExcludes := "2,3,4,8,14,15,16,17,18,19,20"
 
     __New( userID, userHash, instanceID := 0 )
     {
@@ -59,7 +61,7 @@ class IC_ServerCalls_Class
         response := ""
         URLtoCall := this.webRoot . "post.php?call=" . callName . parameters
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
-        WR.SetTimeouts( "10000", "10000", "10000", "10000" )
+        WR.SetTimeouts( this.timeoutVal, this.timeoutVal, this.timeoutVal, this.timeoutVal )  
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -224,5 +226,86 @@ class IC_ServerCalls_Class
         return response
     }
 
+    ; Get the loadbalanced Play Server
+    CallGetPlayServer() 
+    {
+        advParams := this.dummyData 
+        return this.ServerCall( "getPlayServerForDefinitions", advParams )
+    }
+
+    ; Iterate the possible play servers 
+    GetFastestPlayServer(numberOfTestsPerServer := 1)
+    {
+        oldTimeout := this.timeoutVal
+        oldWebRoot := this.webRoot
+        this.timeoutVal := 1000
+        newWebRoot := ""
+        highestPlayServerValue := 20
+        fastestProcessingTime := 10000
+        Loop, %highestPlayServerValue%
+        {
+            if A_Index in % this.playServerExcludes
+                continue
+            this.webRoot := "https://ps" . A_Index . ".idlechampions.com/~idledragons/"
+            response := this.CallGetPlayServer()
+            testCount := 1
+            if (response != "" and response.processing_time != "")
+            {
+                avgProcessingTime := totalProcessingTime := response.processing_time
+                loop, % (numberOfTestsPerServer - 1)
+                {
+                    response := this.CallGetPlayServer()
+                    if (response != "" and response.processing_time != "")
+                    {
+                        totalProcessingTime += response.processing_time
+                        ++testCount
+                    }
+                    avgProcessingTime := totalProcessingTime / testCount
+                }
+                OutputDebug, % "Average Processing Time for ps" . A_Index . " is: " . response.processing_time
+                if (avgProcessingTime < fastestProcessingTime)
+                {
+                    fastestProcessingTime := avgProcessingTime
+                    newWebRoot := this.webRoot
+                }
+            }
+            else
+                continue
+        }
+        this.webRoot := oldWebRoot
+        this.timeoutVal := oldTimeout
+        if (newWebRoot != "" AND fastestProcessingTime < 10000)
+            return newWebRoot
+        else
+            return oldWebRoot
+    }
+
+    ; Updates the play server used for server calls. If doPerforamnceTest is true, will test all playservers to find the one that appears to be processing fastest.
+    UpdatePlayServer(doPerformanceTest := False, doPerformanceTestOnFail := False, numberOfTestsPerServer := 1)
+    {
+        OutputDebug, % "Old web root is: " . this.webRoot
+        if(doPerformanceTest)
+        {
+            this.webRoot := this.GetFastestPlayServer(numberOfTestsPerServer)
+        }
+        else
+        {
+            oldWebRoot := this.webRoot
+            this.webRoot := "https://ps1.idlechampions.com/~idledragons/" ; assume ps1 will always be available (avoiding using master)
+            response := this.CallGetPlayServer()
+            if (response != "" AND response.play_server != "")
+                this.webRoot := response.play_server
+            else if (doPerformanceTestOnFail)
+                this.webRoot := this.GetFastestPlayServer(numberOfTestsPerServer)
+            else
+                this.webRoot := oldWebRoot
+        }
+        OutputDebug, % "New web root is: " . this.webRoot
+        response := this.CallGetPlayServer()
+        suggestedServer := "unknown"
+        if (response != "" AND response.play_server != "")
+            suggestedServer := response.play_server
+        OutputDebug, % "Server Suggested web root is: " . suggestedServer
+    }
     #include  *i IC_ServerCalls_Class_Extra.ahk
 }

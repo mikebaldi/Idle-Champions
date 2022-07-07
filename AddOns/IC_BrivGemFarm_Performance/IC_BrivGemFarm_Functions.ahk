@@ -141,6 +141,7 @@ class IC_BrivGemFarm_Class
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_SF.ResetServerCall()
+        g_ServerCall.UpdatePlayServer()
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationModron := g_SF.Memory.GetActiveModronFormation()
@@ -320,6 +321,8 @@ class IC_BrivGemFarm_Class
             this.StackRestart()
         else if (stacks < g_BrivUserSettings[ "TargetStacks" ])
             this.StackNormal()
+        ; SetFormation needs to occur before dashwait in case game erronously placed party on boss zone after stack restart
+        g_SF.SetFormation(g_BrivUserSettings) 
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
     }
@@ -359,6 +362,7 @@ class IC_BrivGemFarm_Class
                 Break  ; "Bad Save? Loaded below stack zone, see value."
             }
         }
+        OutputDebug, % var
         g_PreviousZoneStartTime := A_TickCount
         return
     }
