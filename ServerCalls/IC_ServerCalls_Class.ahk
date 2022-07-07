@@ -296,7 +296,7 @@ class IC_ServerCalls_Class
             if (response != "" AND response.play_server != "")
                 this.webRoot := response.play_server
             else if (doPerformanceTestOnFail)
-                this.webRoot := this.GetFastestPlayServer()
+                this.webRoot := this.GetFastestPlayServer(numberOfTestsPerServer)
             else
                 this.webRoot := oldWebRoot
         }
