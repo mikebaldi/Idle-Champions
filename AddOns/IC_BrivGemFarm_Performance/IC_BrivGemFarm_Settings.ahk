@@ -6,6 +6,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings := {}
         g_BrivUserSettings["WriteSettings"] := true
     }
+    if ( g_BrivUserSettings[ "RecoverFromRollBack" ] == "")
+	  g_BrivUserSettings[ "RecoverFromRollBack" ] := 0
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
     if ( g_BrivUserSettings[ "AvoidBosses" ] == "" )

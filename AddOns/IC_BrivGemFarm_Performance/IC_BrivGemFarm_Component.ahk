@@ -14,6 +14,7 @@ ReloadBrivGemFarmSettings()
 
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?
+Gui, ICScriptHub:Add, Checkbox, vRecoverFromRollBackCheck Checked%RecoverFromRollBack% x15 y+5, Recover from RollBack to a QT zone when Stacking? (4J/9J Briv Special)
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
 if(g_isDarkMode)
@@ -95,7 +96,8 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
-        GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ] 
+        GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
+	  GuiControl,ICScriptHub:, RecoverFromRollBackCheck, % g_BrivUserSettings[ "RecoverFromRollBack" ] 
     }
     
     Briv_Run_Clicked()
@@ -179,6 +181,7 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
         g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
+        g_BrivUserSettings[ "RecoverFromRollBack" ] := RecoverFromRollBackCheck
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {

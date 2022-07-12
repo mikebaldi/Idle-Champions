@@ -74,6 +74,7 @@ ReloadBrivGemFarmSettingsDisplay()
     LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
     LV_Add(, "Stacking Restart wait time: ", g_BrivUserSettings[ "RestartStackTime" ])
     LV_Add(, "Buy and open Chests? ", g_BrivUserSettings[ "DoChests" ] ? "Yes" : "No")
+    LV_Add(, "Recover from RollBack to a QT Zone? ", g_BrivUserSettings[ "RecoverFromRollBack" ] ? "Yes" : "No")	
     if(g_BrivUserSettings[ "DoChests" ])
     {
         LV_Add(, "Buy Silver? ", g_BrivUserSettings[ "BuySilvers" ] ? "Yes" : "No")
