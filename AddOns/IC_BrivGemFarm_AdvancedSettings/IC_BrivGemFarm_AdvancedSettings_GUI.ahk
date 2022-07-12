@@ -25,6 +25,7 @@ Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, DoChestsContinuous
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RestoreLastWindowOnGameOpen x15 y+5, RestoreLastWindowOnGameOpen
+Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RecoverFromRollBack x15 y+5, RecoverFromRollBack
 
 if(g_isDarkMode)
     Gui, ICScriptHub:Font, g_CustomColor

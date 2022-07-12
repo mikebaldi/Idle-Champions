@@ -97,7 +97,6 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
-	  GuiControl,ICScriptHub:, RecoverFromRollBackCheck, % g_BrivUserSettings[ "RecoverFromRollBack" ] 
     }
     
     Briv_Run_Clicked()

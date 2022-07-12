@@ -6,8 +6,6 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings := {}
         g_BrivUserSettings["WriteSettings"] := true
     }
-    if ( g_BrivUserSettings[ "RecoverFromRollBack" ] == "")
-	  g_BrivUserSettings[ "RecoverFromRollBack" ] := 0
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
     if ( g_BrivUserSettings[ "AvoidBosses" ] == "" )
@@ -52,6 +50,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "DisableDashWait" ] := false
     if ( g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] == "" )
         g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := false
+    if ( g_BrivUserSettings[ "RecoverFromRollBack" ] == "")
+	    g_BrivUserSettings[ "RecoverFromRollBack" ] := 0        
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")

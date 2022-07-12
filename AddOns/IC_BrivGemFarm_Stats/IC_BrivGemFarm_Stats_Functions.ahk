@@ -179,7 +179,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
-	  Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, RollBacks Hit Since Start:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, RollBacks Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalRollBacksID x+2 w200,  
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
@@ -427,7 +427,7 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.TotalBossesHit := 0
             SharedRunData.BossesHitThisRun := 0
             SharedRunData.TotalBossesHit := 0
-		SharedRunData.TotalRollBacks := 0
+		    SharedRunData.TotalRollBacks := 0
         }
     }
 

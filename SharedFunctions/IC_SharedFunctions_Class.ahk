@@ -581,9 +581,9 @@ class IC_SharedFunctions_Class
         ;bench briv if avoid bosses setting is on and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return true
-	  ;bench briv if recover from roll back is on and on any NON MOD 5 - 1 zone
-	  if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
-		return true 
+        ;bench briv if recover from roll back is on and on any NON MOD 5 = 1 zone
+        if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
+            return true 
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
             return false
@@ -598,14 +598,12 @@ class IC_SharedFunctions_Class
     ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
-
-		
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return false
-	  ;keep briv benched if recover from roll back is on and on any NON MOD 5 - 1 zone
-	  if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
-		return false 
+        ;keep briv benched if recover from roll back is on and on any NON MOD 5 = 1 zone
+        if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
+            return false 
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
             return true
