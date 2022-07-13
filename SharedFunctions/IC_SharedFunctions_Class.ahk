@@ -81,6 +81,7 @@ class IC_SharedFunctions_Class
     ErrorKeyUp := 0
     GameStartFormation := 1
     ModronResetZone := 0
+    PreferredBrivJumpZones := [0,1,1,0,0,0,1,1,0,0] ;bitmap 0-9 (e.g. [0,1,1,0,0,0,1,1,0,0] means zones 1,2,6,7)
 
     __new()
     {
@@ -581,9 +582,9 @@ class IC_SharedFunctions_Class
         ;bench briv if avoid bosses setting is on and on a boss zone
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return true
-        ;bench briv if recover from roll back is on and on any NON MOD 5 = 1 zone
-        if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
-            return true 
+        ;bench briv if recover from roll back is on and not in a preferred briv jump zone
+        if (settings[ "RecoverFromRollBack" ] AND (this["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 10) + 1] == 0))
+            return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
             return false
@@ -599,11 +600,11 @@ class IC_SharedFunctions_Class
     UnBenchBrivConditions(settings)
     {
         ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
-        if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
+        if (settings[ "AvoidBosses" ] AND !Mod( currZone := this.Memory.ReadCurrentZone(), 5 ))
             return false
-        ;keep briv benched if recover from roll back is on and on any NON MOD 5 = 1 zone
-        if (settings[ "RecoverFromRollBack" ] AND (Mod( this.Memory.ReadCurrentZone(), 5) != 1))
-            return false 
+        ; do not unbench briv if recover from roll back is on and party is not on a perferred briv jump zone.
+        if (settings[ "RecoverFromRollBack" ] AND (this["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 10) + 1] == 0))
+            return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
             return true
