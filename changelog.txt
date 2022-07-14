@@ -4,6 +4,7 @@ July 14, 2022
     Added PreferredBrivJumpZones advanced setting built off of HenkyPenky's RollBackRecovery modifications.
     IMPORTANT: REMOVED AvoidBosses setting! (Use PreferredBrivJumpZones to avoid bosses).
     Updated Addons links in Addons.md.
+    Updated Imports for 32 bit to v457.
 
 July 6, 2022
     Updated pointer for EngineSettings on v456 32 bit (where webroot is stored).
