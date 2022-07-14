@@ -583,7 +583,7 @@ class IC_SharedFunctions_Class
         if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
             return true
         ;bench briv if recover from roll back is on and not in a preferred briv jump zone
-        if (settings[ "RecoverFromRollBack" ] AND (this["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 10) + 1] == 0))
+        if (settings[ "RecoverFromRollBack" ] AND (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0))
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
@@ -603,7 +603,7 @@ class IC_SharedFunctions_Class
         if (settings[ "AvoidBosses" ] AND !Mod( currZone := this.Memory.ReadCurrentZone(), 5 ))
             return false
         ; do not unbench briv if recover from roll back is on and party is not on a perferred briv jump zone.
-        if (settings[ "RecoverFromRollBack" ] AND (this["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 10) + 1] == 0))
+        if (settings[ "RecoverFromRollBack" ] AND (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0))
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
