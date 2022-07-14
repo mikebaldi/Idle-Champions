@@ -29,7 +29,7 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
         }
     }
     
-    ; Saves teh settings for briv preferred jumps based on the boxes checked
+    ; Saves the settings for briv preferred jumps based on the boxes checked
     UpdateSettings()
     {
         g_BrivUserSettings[ "PreferredBrivJumpZones" ] := []
@@ -110,8 +110,6 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
                 }
                 loop, %currModVal%
                 {
-                    ;isChecked := PreferredBrivJumpSettingMod_%currModVal%_%A_Index% := currentModCheckedArray[A_Index]
-                    ;GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_%currModVal%_%A_Index%, %isChecked%
                     GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_%currModVal%_%A_Index%, % currentModCheckedArray[A_Index]
                 }
             }

@@ -66,7 +66,6 @@ ReloadBrivGemFarmSettingsDisplay()
     Gui, BrivPerformanceGemFarm:ListView, BrivFarmSettingsID
     LV_Delete()
     LV_Add(, "Using Fkeys? ", g_BrivUserSettings[ "Fkeys" ] ? "Yes" : "No")
-    LV_Add(, "Avoid Bosses? ", g_BrivUserSettings[ "AvoidBosses" ] ? "Yes" : "No")
     LV_Add(, "Stack Fail Recovery? ", g_BrivUserSettings[ "StackFailRecovery" ] ? "Yes" : "No")
     LV_Add(, "Disable Dash Wait ", g_BrivUserSettings[ "DisableDashWait" ] ? "Yes" : "No")
     LV_Add(, "Stack Zone: ", g_BrivUserSettings[ "StackZone" ])

@@ -8,8 +8,6 @@ ReloadBrivGemFarmSettings()
     }
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
-    if ( g_BrivUserSettings[ "AvoidBosses" ] == "" )
-        g_BrivUserSettings[ "AvoidBosses" ] := 0
     if ( g_BrivUserSettings[ "StackFailRecovery" ] == "" )
         g_BrivUserSettings[ "StackFailRecovery" ] := 1
     if ( g_BrivUserSettings[ "StackZone" ] == "" )

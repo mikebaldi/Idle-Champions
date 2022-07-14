@@ -13,7 +13,6 @@ Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 ReloadBrivGemFarmSettings()
 
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
-Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
 if(g_isDarkMode)
@@ -88,7 +87,6 @@ class IC_BrivGemFarm_Component
     UpdateGUICheckBoxes()
     {
         GuiControl,ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
-        GuiControl,ICScriptHub:, AvoidBossesCheck, % g_BrivUserSettings[ "AvoidBosses" ]
         GuiControl,ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
         GuiControl,ICScriptHub:, DoChestsCheck, % g_BrivUserSettings[ "DoChests" ]
         GuiControl,ICScriptHub:, BuySilversCheck, % g_BrivUserSettings[ "BuySilvers" ]
@@ -166,7 +164,6 @@ class IC_BrivGemFarm_Component
         global
         Gui, ICScriptHub:Submit, NoHide
         g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
-        g_BrivUserSettings[ "AvoidBosses" ] := AvoidBossesCheck
         g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
         g_BrivUserSettings[ "StackZone" ] := NewStackZone
         g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
