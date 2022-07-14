@@ -152,7 +152,6 @@ class IC_BrivGemFarm_Class
             return
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
-	    g_SharedData.RollBackCheck := 0
         loop
         {
             g_SharedData.LoopString := "Main Loop"
@@ -202,11 +201,6 @@ class IC_BrivGemFarm_Class
                     doKeySpam := false
                 }
                 g_SF.InitZone( keyspam )
-            }
-            if((g_SharedData.RollBackCheck == 0) AND ( g_SF.Memory.ReadCurrentZone() < g_SF.Memory.ReadHighestZone()))
-            {
-                g_SharedData.TotalRollBacks++
-                g_SharedData.RollBackCheck := 1
             }
             g_SF.ToggleAutoProgress( 1 )
             if(g_SF.CheckifStuck())
@@ -349,6 +343,7 @@ class IC_BrivGemFarm_Class
         {
             retryAttempt++
             this.StackFarmSetup()
+            g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             g_SF.CloseIC( "StackRestart" )
             g_SharedData.LoopString := "Stack Sleep"
             var := this.DoChests()

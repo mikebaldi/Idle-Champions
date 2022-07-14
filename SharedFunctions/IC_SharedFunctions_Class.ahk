@@ -30,7 +30,7 @@ class IC_SharedData_Class
     ShinyCount := 0
     TriggerStart := false
     TotalRollBacks := 0
-    RollBackCheck := 0
+    BadAutoProgress := 0
 
     Close()
     {
@@ -81,7 +81,7 @@ class IC_SharedFunctions_Class
     ErrorKeyUp := 0
     GameStartFormation := 1
     ModronResetZone := 0
-    PreferredBrivJumpZones := [0,1,1,0,0,0,1,1,0,0] ;bitmap 0-9 (e.g. [0,1,1,0,0,0,1,1,0,0] means zones 1,2,6,7)
+    CurrentZone := ""
 
     __new()
     {
@@ -754,6 +754,7 @@ class IC_SharedFunctions_Class
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
             this.RecoverFromGameClose(this.GameStartFormation)
+            this.BadSaveTest()
             return false
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
@@ -766,6 +767,14 @@ class IC_SharedFunctions_Class
             this.ResetServerCall()
         }
         return true
+    }
+
+    BadSaveTest()
+    {
+        if(this.CurrentZone != "" and this.CurrentZone > g_SF.Memory.ReadCurrentZone())
+            g_SharedData.TotalRollBacks++
+        else if (this.CurrentZone != "" and this.CurrentZone < g_SF.Memory.ReadCurrentZone())
+            g_SharedData.BadAutoProgress++
     }
 
     ; Reloads memory reads after game has closed. For updating GUI.

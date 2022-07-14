@@ -171,7 +171,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Tab, Stats
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h100 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h110 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
         Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
@@ -181,6 +181,8 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, RollBacks Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalRollBacksID x+2 w200,  
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Bad Autoprogression Since Start:
+        Gui, ICScriptHub:Add, Text, vBadAutoprogressesID x+2 w200,  
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
         GUIFunctions.SetThemeTextColor()
@@ -385,6 +387,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
+            GuiControl, ICScriptHub:, BadAutoprogressesID, % SharedRunData.BadAutoProgress
         }
         catch
         {
@@ -427,7 +430,8 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.TotalBossesHit := 0
             SharedRunData.BossesHitThisRun := 0
             SharedRunData.TotalBossesHit := 0
-		    SharedRunData.TotalRollBacks := 0
+            SharedRunData.TotalRollBacks := 0
+            SharedRunData.BadAutoProgress := 0
         }
     }
 
@@ -455,6 +459,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, BossesHitThisRunID, % IsObject(this.SharedRunData) ? SharedRunData.BossesHitThisRun : 0
         GuiControl, ICScriptHub:, TotalBossesHitID, % IsObject(this.SharedRunData) ? SharedRunData.TotalBossesHit : 0
         GuiControl, ICScriptHub:, TotalRollBacksID, % IsObject(this.SharedRunData) ? SharedRunData.TotalRollBacks : 0
+        GuiControl, ICScriptHub:, BadAutoProgressID, % IsObject(this.SharedRunData) ? SharedRunData.BadAutoProgress : 0
     }
 
     ; Resets stats stored on the stats tab.
