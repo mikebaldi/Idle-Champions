@@ -13,6 +13,8 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "WindowXPositon" ] := OptionSettingEdit_WindowXPositon
         g_BrivUserSettings[ "WindowYPositon" ] := OptionSettingEdit_WindowYPositon
         g_BrivUserSettings[ "RecoverFromRollBack" ] := OptionSettingCheck_RecoverFromRollBack
+        g_BrivUserSettings[ "PreferredBrivJumpZones" ] := OptionSettingList_PreferredBrivJumpZones
+        IC_BrivGemFarm_AdvancedSettings_Functions.UpdateSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
@@ -38,5 +40,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         GuiControl,ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
+        GuiControl,ICScriptHub:, OptionSettingCheck_RecoverFromRollBack, % g_BrivUserSettings[ "RecoverFromRollBack" ]
     }
 }
