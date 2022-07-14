@@ -51,7 +51,7 @@ ReloadBrivGemFarmSettings()
     if ( g_BrivUserSettings[ "RecoverFromRollBack" ] == "")
 	    g_BrivUserSettings[ "RecoverFromRollBack" ] := 0
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
-	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] 
+	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")
