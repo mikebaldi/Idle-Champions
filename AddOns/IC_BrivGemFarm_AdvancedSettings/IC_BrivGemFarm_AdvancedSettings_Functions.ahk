@@ -85,7 +85,8 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
                     ;local currIndex := (A_Index -1) * currModVal + currentModResult
                     ;local modIndex := Mod(A_Index, modVal) == "" ? Mod(A_Index, modVal) : currModVal
                     ;if(modIndex == currentModResult)
-                    if(Mod(A_Index, modVal) == currentModResult)
+                    modTest := Mod(A_Index, modVal) ? Mod(A_Index, modVal) : modVal
+                    if(modTest == currentModResult)
                     {
                         PreferredBrivJumpSettingMod_%currModVal%_%A_Index% := isChecked
                         GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_%currModVal%_%A_Index%, %isChecked%
@@ -97,7 +98,8 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
                 local currentModCheckedArray := []
                 Loop, 50
                 {
-                    if(Mod(A_Index, modVal) == currentModResult)
+                    modTest := Mod(A_Index, modVal) ? Mod(A_Index, modVal) : modVal
+                    if(modTest == currentModResult)
                     {
                         PreferredBrivJumpSettingMod_%currModVal%_%A_Index% := isChecked
                         GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_50_%A_Index%, %isChecked%
