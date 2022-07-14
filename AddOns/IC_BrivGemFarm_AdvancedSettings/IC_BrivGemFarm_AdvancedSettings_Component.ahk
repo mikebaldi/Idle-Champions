@@ -12,8 +12,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "ResetZoneBuffer" ] := OptionSettingEdit_ResetZoneBuffer
         g_BrivUserSettings[ "WindowXPositon" ] := OptionSettingEdit_WindowXPositon
         g_BrivUserSettings[ "WindowYPositon" ] := OptionSettingEdit_WindowYPositon
-        g_BrivUserSettings[ "RecoverFromRollBack" ] := OptionSettingCheck_RecoverFromRollBack
-        g_BrivUserSettings[ "PreferredBrivJumpZones" ] := OptionSettingList_PreferredBrivJumpZones
         IC_BrivGemFarm_AdvancedSettings_Functions.UpdateSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
@@ -28,7 +26,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GUIFunctions.AddToolTip( "OptionSettingCheck_DoChestsContinuous", "Whether The script will buy and open as many as it can within the stack sleep time set or just 99 max.")
             GUIFunctions.AddToolTip( "OptionSettingCheck_HiddenFarmWindow", "Disable the visibility of the second script window")
             GUIFunctions.AddToolTip( "OptionSettingCheck_RestoreLastWindowOnGameOpen", "Whether the script will try to switch focus back to the last active window immediately when the game opens")
-            GUIFunctions.AddToolTip( "OptionSettingCheck_RecoverFromRollBack", "Recover from RollBack to a QT zone when Stacking? (4J/9J Briv Special)")
             GUIFunctions.AddToolTip( "OptionSettingText_BrivJumpBuffer", "How many areas before a modron reset zone that switching to e formation over q formation is desired.")
             GUIFunctions.AddToolTip( "OptionSettingText_DashWaitBuffer", "The distance from your modron's reset zone where dashwait will stop being activated.")
             GUIFunctions.AddToolTip( "OptionSettingText_ResetZoneBuffer", "Change this value to increase the number of zones the script will go waiting for modron reset after stacking before manually resetting")
@@ -40,6 +37,5 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         GuiControl,ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
         GuiControl,ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
-        GuiControl,ICScriptHub:, OptionSettingCheck_RecoverFromRollBack, % g_BrivUserSettings[ "RecoverFromRollBack" ]
     }
 }

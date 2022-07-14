@@ -48,8 +48,6 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "DisableDashWait" ] := false
     if ( g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] == "" )
         g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := false
-    if ( g_BrivUserSettings[ "RecoverFromRollBack" ] == "")
-	    g_BrivUserSettings[ "RecoverFromRollBack" ] := 0
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
 	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
     if(g_BrivUserSettings["WriteSettings"] := true)

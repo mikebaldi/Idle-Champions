@@ -579,8 +579,8 @@ class IC_SharedFunctions_Class
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
         if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
             return true
-        ;bench briv if recover from roll back is on and not in a preferred briv jump zone
-        if (settings[ "RecoverFromRollBack" ] AND (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0))
+        ;bench briv not in a preferred briv jump zone
+        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
@@ -596,8 +596,8 @@ class IC_SharedFunctions_Class
     ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
-        ; do not unbench briv if recover from roll back is on and party is not on a perferred briv jump zone.
-        if (settings[ "RecoverFromRollBack" ] AND (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0))
+        ; do not unbench briv if party is not on a perferred briv jump zone.
+        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
