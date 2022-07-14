@@ -1,3 +1,10 @@
+July 14, 2022
+    Added timer to close tooltips after 3 seconds when an appropriate control is not being hovered over. This should help with tooltips stuck on screen after alt-tabbing.
+    Added messages indicating what the Briv Gem farm script is attempting to do when a button is clicked (Start/Stop/Connect/Save).
+    Added PreferredBrivJumpZones advanced setting built off of HenkyPenky's RollBackRecovery modifications.
+    IMPORTANT: REMOVED AvoidBosses setting! (Use PreferredBrivJumpZones to avoid bosses).
+    Updated Addons links in Addons.md.
+
 July 6, 2022
     Updated pointer for EngineSettings on v456 32 bit (where webroot is stored).
     Removed including unused logging class.
@@ -241,7 +248,7 @@ Jan 13, 2022
     Gem Farm script GUI will be shown again when pressing the play button if it is already open.
 
 Jan 12, 2022
-    Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in teh FormationSaveHandler.
+    Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in the FormationSaveHandler.
     Added memory functions:
         ReadFormationSaveIDBySlot
         ReadFormationCampaignID
