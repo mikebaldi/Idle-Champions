@@ -1059,7 +1059,7 @@ class IC_SharedFunctions_Class
         g_ServerCall.webroot := isWebRootValid ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
-        g_ServerCall.activePatronID := this.Memory.ReadPatronID() ; 0 = no patron
+        g_ServerCall.activePatronID := this.Memory.ReadPatronID() ? this.Memory.ReadPatronID() : g_ServerCall.activePatronID  ; 0 = no patron
         g_ServerCall.UpdateDummyData()
     }
 
