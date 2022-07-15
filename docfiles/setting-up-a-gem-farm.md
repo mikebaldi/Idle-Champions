@@ -86,9 +86,11 @@ It also automatically determines which F keys are needed from the formation load
 
 ### Swap to 'e' formation when on boss zones?
 
-This is only really important if you have a sufficiently high level `Briv` capable of jumping from Boss to Boss. 
+This is only really important if you have a sufficiently high level `Briv` capable of jumping from Boss to Boss.
 
 Anyone with a Briv that is not 4- or 9-skip can leave this box unchecked.
+
+>`NEW`: This setting has been removed and replaced with the advanced setting "Preferred Briv Jump Zones" in advanced settings. Disabling Mod5(5) will effectively accomplish the same thing. See "Gem Farm Hidden Settings" below to see where to find the new setting.
 
 ### Enable manual resets to recover from failed Briv stacking?
 
@@ -148,7 +150,7 @@ You may also have less reliable offline stacking if you reduce the number too mu
 
 ### Maximum time (ms) script will wait for Dash (0 disables)
 
-Most people can leave this as the default. This can be set to 0 when you are using enough potions to ensure that you have 10x acceleration at all times.
+This value no longer exists in the latest GUI and this entry will be removed when the screenshot is updated.
 
 ### Briv Jump Timer (ms)
 
