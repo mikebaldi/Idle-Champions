@@ -1,3 +1,6 @@
+July 15, 2022
+    Updated Gem Farm documentation.
+
 July 14, 2022
     Added timer to close tooltips after 3 seconds when an appropriate control is not being hovered over. This should help with tooltips stuck on screen after alt-tabbing.
     Added messages indicating what the Briv Gem farm script is attempting to do when a button is clicked (Start/Stop/Connect/Save).
