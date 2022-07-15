@@ -82,6 +82,7 @@ class IC_SharedFunctions_Class
     GameStartFormation := 1
     ModronResetZone := 0
     CurrentZone := ""
+    Settings := ""
 
     __new()
     {
@@ -412,6 +413,7 @@ class IC_SharedFunctions_Class
         while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !this.IsDashActive() )
         {
             this.ToggleAutoProgress(0)
+            this.SetFormation()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
         }
@@ -551,16 +553,20 @@ class IC_SharedFunctions_Class
     ; a method to swap formations and cancel briv's jump animation.
     SetFormation(settings := "")
     {
+        if(settings != "")
+        {
+            this.Settings := settings
+        }
         ;only send input messages if necessary
         brivBenched := this.Memory.ReadChampBenchedByID(58)
         ;check to bench briv
-        if (!brivBenched AND this.BenchBrivConditions(settings))
+        if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
             this.DirectedInput(,,["{e}"]*)
             g_SharedData.SwapsMadeThisRun++
         }
         ;check to unbench briv
-        else if (brivBenched AND this.UnBenchBrivConditions(settings))
+        else if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
         {
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
@@ -580,7 +586,7 @@ class IC_SharedFunctions_Class
         if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
             return true
         ;bench briv not in a preferred briv jump zone
-        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
+        if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
@@ -597,7 +603,7 @@ class IC_SharedFunctions_Class
     UnBenchBrivConditions(settings)
     {
         ; do not unbench briv if party is not on a perferred briv jump zone.
-        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
+        if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
