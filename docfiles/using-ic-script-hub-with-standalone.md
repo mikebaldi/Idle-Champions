@@ -37,6 +37,8 @@ It should reload your Script Hub for you but should you ever want to do a manual
 
 ### Step 1: Grab your support URL
 
+> ⚠️ Do not reveal your support URL, or your user_id and device_hash to anyone else ⚠️
+
 1. Start the game
 2. Press Escape
 3. Click Support
