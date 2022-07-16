@@ -29,6 +29,8 @@ class IC_SharedData_Class
     PurchasedSilverChests := 0
     ShinyCount := 0
     TriggerStart := false
+    TotalRollBacks := 0
+    BadAutoProgress := 0
 
     Close()
     {
@@ -79,6 +81,7 @@ class IC_SharedFunctions_Class
     ErrorKeyUp := 0
     GameStartFormation := 1
     ModronResetZone := 0
+    CurrentZone := ""
 
     __new()
     {
@@ -576,8 +579,8 @@ class IC_SharedFunctions_Class
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
         if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
             return true
-        ;bench briv if avoid bosses setting is on and on a boss zone
-        if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
+        ;bench briv not in a preferred briv jump zone
+        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
             return true
         ;perform no other checks if 'Briv Jump Buffer' setting is disabled
         if !(settings[ "BrivJumpBuffer" ])
@@ -593,8 +596,8 @@ class IC_SharedFunctions_Class
     ; True/False on whether Briv should be unbenched based on game conditions.
     UnBenchBrivConditions(settings)
     {
-        ;keep Briv benched if 'Avoid Bosses' setting is enabled and on a boss zone
-        if (settings[ "AvoidBosses" ] AND !Mod( this.Memory.ReadCurrentZone(), 5 ))
+        ; do not unbench briv if party is not on a perferred briv jump zone.
+        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
         if (!(settings[ "BrivJumpBuffer" ]) AND this.Memory.ReadFormationTransitionDir() == 0)
@@ -751,6 +754,7 @@ class IC_SharedFunctions_Class
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
             this.RecoverFromGameClose(this.GameStartFormation)
+            this.BadSaveTest()
             return false
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
@@ -763,6 +767,14 @@ class IC_SharedFunctions_Class
             this.ResetServerCall()
         }
         return true
+    }
+
+    BadSaveTest()
+    {
+        if(this.CurrentZone != "" and this.CurrentZone > g_SF.Memory.ReadCurrentZone())
+            g_SharedData.TotalRollBacks++
+        else if (this.CurrentZone != "" and this.CurrentZone < g_SF.Memory.ReadCurrentZone())
+            g_SharedData.BadAutoProgress++
     }
 
     ; Reloads memory reads after game has closed. For updating GUI.

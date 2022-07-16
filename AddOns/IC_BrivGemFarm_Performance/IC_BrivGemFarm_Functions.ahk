@@ -343,6 +343,7 @@ class IC_BrivGemFarm_Class
         {
             retryAttempt++
             this.StackFarmSetup()
+            g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             g_SF.CloseIC( "StackRestart" )
             g_SharedData.LoopString := "Stack Sleep"
             var := this.DoChests()

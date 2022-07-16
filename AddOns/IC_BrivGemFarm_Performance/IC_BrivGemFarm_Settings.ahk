@@ -8,8 +8,6 @@ ReloadBrivGemFarmSettings()
     }
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
-    if ( g_BrivUserSettings[ "AvoidBosses" ] == "" )
-        g_BrivUserSettings[ "AvoidBosses" ] := 0
     if ( g_BrivUserSettings[ "StackFailRecovery" ] == "" )
         g_BrivUserSettings[ "StackFailRecovery" ] := 1
     if ( g_BrivUserSettings[ "StackZone" ] == "" )
@@ -50,6 +48,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "DisableDashWait" ] := false
     if ( g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] == "" )
         g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := false
+    if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
+	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")
