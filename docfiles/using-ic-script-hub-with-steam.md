@@ -25,11 +25,13 @@ You may need to [install or update AutoHotKey](https://www.autohotkey.com/) if y
 ## Setting the Steam game location
 ### Step 0: Make sure your addons are enabled
 
-You'll want to make sure you have the game shortcut addon enabled. Click into the addons tab and ensure the addon highlighted by the green arrow is enabled and saved.
+You'll want to make sure you have the game shortcut addon enabled. Open the addons dialog and ensure the addon highlighted by the green arrow is enabled and saved.
+
+![Addons button](../docimages/addons-button.png)
 
 I recommend making sure the ones with the yellow arrow are also enabled too.
 
-![Addons tab](../docimages/addons-tab.png)
+![Addons tab](../docimages/addons-dialog.png)
 
 It should reload your Script Hub for you but should you ever want to do a manual reload (to reset the stats screen for instance, just remember to reconnect to your Gem Farm script if you do this) hit the reload button:
 
