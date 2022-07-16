@@ -1,0 +1,14 @@
+{
+	"Name":"Game Location Settings",
+	"Version": "v0.1.",
+    "Includes" : "IC_GameLocationSettings_Component.ahk",
+    "Author" : "Antiletual",
+    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_GameLocationSettings",
+    "Info" : "This AddOn will load add a GUI option to BrivGemFarm's settings screen that lets the user set the game's location.",
+    "Dependencies" : [
+        {
+            "Name":"Briv Gem Farm",
+            "Version":"v1.0."
+        }
+    ]
+}
