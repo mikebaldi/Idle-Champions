@@ -1,3 +1,6 @@
+July 16, 2022
+    Added a potential fix for patron adventures not restarting with their patron.
+
 July 15, 2022
     Updated Gem Farm documentation.
 
