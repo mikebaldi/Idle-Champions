@@ -777,7 +777,7 @@ class IC_SharedFunctions_Class
 
     BadSaveTest()
     {
-        if(this.CurrentZone != "" and this.CurrentZone > g_SF.Memory.ReadCurrentZone())
+        if(this.CurrentZone != "" and this.CurrentZone - 1 > g_SF.Memory.ReadCurrentZone())
             g_SharedData.TotalRollBacks++
         else if (this.CurrentZone != "" and this.CurrentZone < g_SF.Memory.ReadCurrentZone())
             g_SharedData.BadAutoProgress++
