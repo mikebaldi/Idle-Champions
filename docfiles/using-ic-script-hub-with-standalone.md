@@ -33,7 +33,7 @@ I recommend making sure the ones with the yellow arrow are also enabled too.
 
 It should reload your Script Hub for you but should you ever want to do a manual reload (to reset the stats screen for instance, just remember to reconnect to your Gem Farm script if you do this) hit the reload button:
 
-![Reload button](../docimages/reload-script-hub.png)
+![Reload button](../docimages/reload-script-hub-v2.png)
 
 ### Step 1: Grab your support URL
 

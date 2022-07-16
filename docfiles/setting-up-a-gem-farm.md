@@ -144,14 +144,6 @@ This will have side effects in that you may no longer have time to buy or open c
 
 You may also have less reliable offline stacking if you reduce the number too much.
 
-### Maximum time (ms) script will wait for Dash (0 disables)
-
-This value no longer exists in the latest GUI and this entry will be removed when the screenshot is updated.
-
-### Briv Jump Timer (ms)
-
-This value no longer exists in the latest GUI and this entry will be removed when the screenshot is updated.
-
 ### Enable server calls to buy and open chests during stack restart?
 
 If this is unchecked, none of the boxes below will have any effect.
@@ -187,9 +179,9 @@ Just pop the value of the gems you want to save up or keep as a buffer in here.
 * If you have opted to use health-share tanks to increase the number of stacks you get for `Briv`: create a copy of your Q formation, add these tanks into there, and set that formation as your Modron core formation. The tanks will get auto levelled in the early zones, but not slow down your run by being in the Q formation.
 * Turn off all damage nodes in your Modron core and save it as a new setup. Load this setup as a part of your Gem Farm pre-setup. This allows your Briv to stack earlier, both normally and in recovery situations.
 
-## Gem Farm: Hidden settings
+## Gem Farm: Advanced settings
 
-There are a number of settings that are hidden by default. [I cover those over here](gem-farm-hidden-settings.md).
+There are a number of settings that are hidden by default. These are available in the Gem Farm Advanced Settings addon, which is included by default. Click the Jigsaw icon, and enable the Gem Farm Advanced addon to see these. [I cover those over here](gem-farm-advanced-settings.md).
 
 [< Return to an Introduction to IC Script Hub](an-introduction-to-ic-script-hub.md)
 
