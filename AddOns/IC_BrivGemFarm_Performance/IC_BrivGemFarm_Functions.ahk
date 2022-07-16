@@ -579,7 +579,7 @@ class IC_BrivGemFarm_Class
         }
         if ( var == "" )
         {
-            return "No chests opened or purchased."
+            return " No chests opened or purchased."
         }
         else
         {
