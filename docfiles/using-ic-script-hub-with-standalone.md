@@ -1,6 +1,6 @@
 [< Return to the Readme](../Readme.md)
 
-# Setting Idle Champions game location for EGS
+# Setting Idle Champions game location for Standalone
 
 ## Overview
 
