@@ -16,7 +16,7 @@ Double-click on `ICScriptHub.ahk` in the explorer window that opens to launch `I
 
 You should see the `IC Script Hub` window and it should look something like this:
 
-![IC Script Hub window](../docimages/ic-script-hub.png)
+![IC Script Hub window](../docimages/ic-script-hub-v2.png)
 
 You may need to [install or update AutoHotKey](https://www.autohotkey.com/) if you receive an error at this point.
 

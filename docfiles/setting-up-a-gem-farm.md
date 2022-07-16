@@ -76,7 +76,7 @@ Here's a reminder of the Gem Farm setup screen (along with an explanation of wha
 
 ![Gem Farm setup screen](../docimages/gem-farm-screen.png)
 
-The screenshot is indicative only as `IC Script Hub` is going through rapid development right now.
+The screenshot may differ from what you see as `IC Script Hub` is still in active development.
 
 ### Level Champions with Fkeys?
 
@@ -84,11 +84,7 @@ This setting will determine whether F1-F12 are used to rapidly level your champi
 
 It also automatically determines which F keys are needed from the formation loaded in the Modron core.
 
-### Swap to 'e' formation when on boss zones?
-
-This is only really important if you have a sufficiently high level `Briv` capable of jumping from Boss to Boss.
-
-Anyone with a Briv that is not 4- or 9-skip can leave this box unchecked.
+### Swap to 'e' formation when on boss zones? (LEGACY)
 
 >`NEW`: This setting has been removed and replaced with the advanced setting "Preferred Briv Jump Zones" in advanced settings. Disabling Mod5(5) will effectively accomplish the same thing. See "Gem Farm Hidden Settings" below to see where to find the new setting.
 
