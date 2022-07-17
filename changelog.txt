@@ -1,6 +1,9 @@
 July 17, 2022
+    Fixed how buying/opening chests works. The sleep timer should now correctly start before opening chests instead of after.
+
+July 17, 2022
     Corrected the fix from previous version.
-    
+
 July 16, 2022
     Added a potential fix for patron adventures not restarting with their patron.
 

@@ -345,10 +345,12 @@ class IC_BrivGemFarm_Class
             this.StackFarmSetup()
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             g_SF.CloseIC( "StackRestart" )
-            g_SharedData.LoopString := "Stack Sleep"
-            var := this.DoChests()
-            ElapsedTime := 0
+            g_SharedData.LoopString := "Stack Sleep: "
             StartTime := A_TickCount
+            ElapsedTime := 0
+            if(g_BrivUserSettings["DoChests"])
+                g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
+            var := this.DoChests()
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
@@ -400,21 +402,21 @@ class IC_BrivGemFarm_Class
         {
             if(g_BrivUserSettings[ "DoChestsContinuous" ])
             {
-                while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
+                ElapsedTime := 0
+                while(g_BrivUserSettings[ "RestartStackTime" ] > ( ElapsedTime ))
                 {
+                    ElapsedTime := A_TickCount - StartTime
+                    g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
                     var2 := this.BuyOrOpenChests(StartTime)
                     var .= var2 . "`n" 
                     if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
                         break
-                    else
-                         continue
                 }
             }
             else
             {
                 var := this.BuyOrOpenChests() . " "
             }
-            g_SharedData.LoopString := "Sleep: " . var
         }
         return var
     }
