@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
-    return "v3.3.3, 2022-06-02"
+    return "v3.3.4, 2022-07-17"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
