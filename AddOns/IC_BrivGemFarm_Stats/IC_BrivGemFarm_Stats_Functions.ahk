@@ -428,9 +428,6 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.PurchasedGoldChests := 0
             SharedRunData.PurchasedSilverChests := 0
             SharedRunData.ShinyCount := 0
-            SharedRunData.TotalBossesHit := 0
-            SharedRunData.BossesHitThisRun := 0
-            SharedRunData.TotalBossesHit := 0
             SharedRunData.TotalRollBacks := 0
             SharedRunData.BadAutoProgress := 0
         }
