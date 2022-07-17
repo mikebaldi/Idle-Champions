@@ -1,5 +1,7 @@
 July 17, 2022
     Fixed how buying/opening chests works. The sleep timer should now correctly start before opening chests instead of after.
+    Slightly better messages for chest purchasing/opening when docontinuous option is checked.
+    Slightly improved timing when loading game to prevent unnecessary fallbacks.
 
 July 17, 2022
     Corrected the fix from previous version.
