@@ -92,6 +92,8 @@ ReloadAdvancedBrivGemFarmSettingsDisplay()
     LV_Delete()
     for k,v in g_BrivUserSettings
     {
+        if IsObject(v)
+            v := ArrFnc.GetDecFormattedArrayString(v)
         LV_Add(, k, v)
         columns += 1
     }
