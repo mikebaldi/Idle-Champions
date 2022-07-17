@@ -842,14 +842,15 @@ class IC_SharedFunctions_Class
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
-            ElapsedTime := A_TickCount - StartTime
             isCurrentFormation := this.IsCurrentFormation( formationFavorite )
+            ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
                 this.DirectedInput(,, spam* )
                 counter++
             }
         }
+        isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
             g_SharedData.LoopString := "Under attack. Retreating to change formations..."
