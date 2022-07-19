@@ -9,7 +9,18 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
             this.CloseIC( reason )
             ; TODO: If the steelbone stacks are > 1900000 the script will forever fail to fix a failed restack. Evaluate options.
             if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+            {
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
+            }
+            else if(this.sprint != "" AND this.steelbones != "")
+            {
+                response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
+                g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
+            }
+            else
+            {
+                g_SharedData.LoopString := "ServerCall: Restarting adventure (no manual stack conv.)"
+            }
             response := g_ServerCall.CallEndAdventure()
             response := g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
             g_SharedData.TriggerStart := true
