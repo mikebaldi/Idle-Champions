@@ -677,7 +677,11 @@ class IC_SharedFunctions_Class
             }
             ; Process exists, wait for the window:
             while(!(this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )) AND ElapsedTime < 32000)
+            {
+                WinGetActiveTitle, savedActive
+                this.SavedActiveWindow := savedActive
                 ElapsedTime := A_TickCount - StartTime
+            }
             this.ActivateLastWindow()
             Process, Priority, % this.PID, High
             this.Memory.OpenProcessReader()
