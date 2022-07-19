@@ -5,6 +5,7 @@ this.BrivUnnaturalHasteHandler.areasSkipped := New GameObjectStructure(this.Briv
 this.BrivUnnaturalHasteHandler.areaSkipChance := New GameObjectStructure(this.BrivUnnaturalHasteHandler,"Float", [0x68])
 this.BrivUnnaturalHasteHandler.areaSkipAmount := New GameObjectStructure(this.BrivUnnaturalHasteHandler,"Int", [0x6c])
 this.BrivUnnaturalHasteHandler.alwaysSkipOneLess := New GameObjectStructure(this.BrivUnnaturalHasteHandler,"Char", [0x70])
+this.BrivUnnaturalHasteHandler.originalConsume := New GameObjectStructure(this.BrivUnnaturalHasteHandler,"Int", [0x64])
 this.BrivUnnaturalHasteHandler.effectKey := New GameObjectStructure(this.BrivUnnaturalHasteHandler,"Int", [0x30])
 this.BrivUnnaturalHasteHandler.effectKey.parentEffectKeyHandler := New GameObjectStructure(this.BrivUnnaturalHasteHandler.effectKey,"Int", [0x10])
 this.BrivUnnaturalHasteHandler.effectKey.parentEffectKeyHandler.parent := New GameObjectStructure(this.BrivUnnaturalHasteHandler.effectKey.parentEffectKeyHandler,"Int", [0x10])
