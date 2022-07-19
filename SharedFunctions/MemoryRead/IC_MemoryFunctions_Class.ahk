@@ -44,7 +44,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.3, 2022-07-02, IC v0.415.1-v0.455+"
+        return "v1.10.4, 2022-07-19, IC v0.415.1-v0.457+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -484,6 +484,36 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize.GetGameObjectFromListValues(this.GameInstance))
     }
 
+    ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "". specNum is which spec in the list starting at 1. 
+    GetCoreSpecializationForHero(heroID, specNum := 1)
+    {
+        specNum--
+        formationSaveSlot := this.GetActiveModronFormationSaveSlot()
+        tempSizeObject := this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Specializations.size.GetGameObjectFromListValues(this.GameInstance, formationSaveSlot)
+        dictCount := g_SF.Memory.GenericGetValue(tempSizeObject)
+        i := 0
+        loop, % dictCount
+        {
+            tempObject := this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Specializations.GetGameObjectFromListValues(this.GameInstance, formationSaveSlot)
+            currKeyOffset := tempObject.CalculateDictOffset(["key", i])
+            currValOffset := tempObject.CalculateDictOffset(["value", i])
+            tempObject.FullOffsets.Push(currKeyOffset)
+            tempObject.ValueType := "Int"
+            currentHeroID := this.GenericGetValue(tempObject)
+            if (currentHeroID == heroID)
+            {
+                specObject := this.GameManager.game.gameInstances.FormationSaveHandler.formationSavesV2.Specializations.List.GetGameObjectFromListValues(this.GameInstance, formationSaveSlot, specNum)
+                insertLoc := specObject.FullOffsets.Length() - 1
+                specObject.FullOffsets.InsertAt(insertLoc, currValOffset + 0)
+                specVal := this.GenericGetValue(specObject)
+                return this.GenericGetValue(specObject)
+            }
+            ++i
+        }
+        return ""
+    }
+    
+
     ;==============================
     ;offlineprogress and modronsave
     ;==============================
@@ -663,6 +693,15 @@ class IC_MemoryFunctions_Class
     GetActiveModronFormation()
     {
         formation := ""
+        formationSaveSlot := this.GetActiveModronFormationSaveSlot()
+        ; Get the formation using the  index (slot)
+        if(formationSaveSlot >= 0)
+            formation := this.GetFormationSaveBySlot(formationSaveSlot)
+        return formation
+    }
+
+    GetActiveModronFormationSaveSlot()
+    {
         ; Find the Campaign ID (e.g. 1 is Sword Cost, 2 is Tomb, 1400001 is Sword Coast with Zariel Patron, etc. )
         formationCampaignID := this.ReadFormationCampaignID()
         ; Find the SaveID associated to the Campaign ID 
@@ -679,10 +718,7 @@ class IC_MemoryFunctions_Class
                 Break
             }
         }
-        ; Get the formation using the  index (slot)
-        if(formationSaveSlot >= 0)
-            formation := this.GetFormationSaveBySlot(formationSaveSlot)
-        return formation
+        return formationSaveSlot
     }
 
     ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
