@@ -1076,11 +1076,11 @@ class IC_SharedFunctions_Class
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1)
         jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
-        return 49 / (1+consume)**jumps
+        return Ceil(49 / (1+consume)**jumps)
     }
 
-    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
-    CalculateBrivStacksConsumedToReachModronResetZone()
+    ; Calculates the number of Haste stacks that will be left over once the modron reset zone has been reached.
+    CalculateBrivStacksLeftAtModronResetZone()
     {
         consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
@@ -1088,7 +1088,14 @@ class IC_SharedFunctions_Class
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1) - this.Memory.ReadCurrentZone()
         jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
-        return stacks - stacks*(1+consume)**jumps
+        return Floor(stacks*(1+consume)**jumps)
+    }
+
+    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
+    CalculateBrivStacksConsumedToReachModronResetZone()
+    {
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        return stacks - this.CalculateBrivStacksLeftAtModronResetZone()
     }
 
     ; Calculates the farthest zone Briv can jump to with his current stacks on his current zone.
