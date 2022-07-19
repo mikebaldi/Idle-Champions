@@ -28,6 +28,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, CalculateBrivStacksConsumedToReachModronRes
 Gui, ICScriptHub:Add, Text, vCalculateBrivStacksConsumedToReachModronResetZoneID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, LeftoverStacksAtReset: 
 Gui, ICScriptHub:Add, Text, vLeftoverStacksAtResetID x+2 w300,
+Gui, ICScriptHub:Add, Text, x15 y+5, BrivCalculatedTargetStacks: 
+Gui, ICScriptHub:Add, Text, vBrivCalculatedTargetStacksID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, CalculateMaxZone: 
 Gui, ICScriptHub:Add, Text, vCalculateMaxZoneID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, IsBrivMetalborn: 
@@ -59,5 +61,6 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, LeftoverStacksAtResetID, % Format("{:0.2f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks() - g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
         GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone())
         GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
+        GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtModronResetZone()
     }
 }
