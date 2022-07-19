@@ -11,7 +11,6 @@ Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
 ReloadBrivGemFarmSettings()
-
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
@@ -51,6 +50,7 @@ xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect (Beta Feature)
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
@@ -71,6 +71,22 @@ Briv_Connect_Clicked() {
 }
 Briv_Save_Clicked() {
     IC_BrivGemFarm_Component.Briv_Save_Clicked()
+}
+DisableBrivTargetStacksBox(g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
+
+BrivAutoDetectStacks_Click()
+{
+    Gui, ICScriptHub:Submit, NoHide
+    isChecked := %A_GuiControl%
+    DisableBrivTargetStacksBox(isChecked)
+}
+
+DisableBrivTargetStacksBox(doDisable)
+{
+    if(doDisable)
+        GuiControl,ICScriptHub:Disable, NewTargetStacks
+    else
+        GuiControl,ICScriptHub:Enable, NewTargetStacks
 }
 
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
@@ -100,6 +116,7 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
+        GuiControl,ICScriptHub:, BrivAutoCalcStatsCheck, % g_BrivUserSettings[ "AutoCalculateBrivStacks" ]
     }
     
     Briv_Run_Clicked()
@@ -205,6 +222,7 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
         g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
+        g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := BrivAutoCalcStatsCheck
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
