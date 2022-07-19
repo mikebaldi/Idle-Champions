@@ -1,3 +1,7 @@
+
+July 19, 2022
+    NEW! Added an automatic Briv stack detection to allow for seamless early stacking and to simplify setup.
+
 July 17, 2022
     Fixed how buying/opening chests works. The sleep timer should now correctly start before opening chests instead of after.
     Slightly better messages for chest purchasing/opening when docontinuous option is checked.
