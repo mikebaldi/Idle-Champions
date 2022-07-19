@@ -1069,25 +1069,34 @@ class IC_SharedFunctions_Class
     ;======================
 
     ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area.
-    CalculateBrivStacksToReachNextModronResetZone()
+    CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
     {
+        jumps := 0
         consume := -.032 ;Default := 4%, SteelBorn := 3.2%
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1)
-        jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+        if (worstCase)
+            jumps := Floor(distance / skipAmount)
+        else
+            jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
         return Ceil(49 / (1+consume)**jumps)
     }
 
     ; Calculates the number of Haste stacks that will be left over once the modron reset zone has been reached.
-    CalculateBrivStacksLeftAtModronResetZone()
+    CalculateBrivStacksLeftAtModronResetZone(worstCase := true)
     {
+        jumps := 0
         consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1) - this.Memory.ReadCurrentZone()
-        jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+        if (worstCase)
+            jumps := Floor(distance / skipAmount)
+        else
+            jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+
         return Floor(stacks*(1+consume)**jumps)
     }
 
