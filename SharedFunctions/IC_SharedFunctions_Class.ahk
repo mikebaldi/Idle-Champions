@@ -1068,7 +1068,7 @@ class IC_SharedFunctions_Class
     ; New Helper Functions
     ;======================
 
-    ; 
+    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area.
     CalculateBrivStacksToReachNextModronResetZone()
     {
         consume := -.032 ;Default := 4%, SteelBorn := 3.2%
@@ -1079,6 +1079,7 @@ class IC_SharedFunctions_Class
         return 49 / (1+consume)**jumps
     }
 
+    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
     CalculateBrivStacksConsumedToReachModronResetZone()
     {
         consume := -.032 ;Default := 4%, SteelBorn := 3.2%
@@ -1090,9 +1091,10 @@ class IC_SharedFunctions_Class
         return stacks - stacks*(1+consume)**jumps
     }
 
+    ; Calculates the farthest zone Briv can jump to with his current stacks on his current zone.
     CalculateMaxZone()
     {
-        consume := -.032 ;Default := 4%, SteelBorn := 3.2%
+        consume := -.032 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
         jumps := Floor(Log(49 / stacks) / Log(1+consume))
         currentZone := this.Memory.ReadCurrentZone()
@@ -1102,6 +1104,17 @@ class IC_SharedFunctions_Class
         zones := jumps * avgJumps
         return currentZone + zones
     }
+
+    ; Returns whether Briv's spec in the modron core is set to Metalborn.
+    IsBrivMetalborn()
+    {
+        brivID := 58
+        specID := this.Memory.GetCoreSpecializationForHero(brivID)
+        if (specID == 3455)
+            return true
+        return false
+    }
+
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 
     Parameters:
