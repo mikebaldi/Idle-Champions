@@ -138,6 +138,22 @@ class ActiveEffectKeySharedFunctions
             {
                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance)
             }
+
+            ReadHasteStacks()
+            {
+                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.sprintStacks.stackCount)
+            }
+
+            ReadSkipAmount()
+            {
+                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipAmount)
+            }
+
+            ReadAreasSkipped()
+            {
+                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areasSkipped)
+            }
+
         }
     }
 

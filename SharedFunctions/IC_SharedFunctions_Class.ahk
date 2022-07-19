@@ -1068,6 +1068,40 @@ class IC_SharedFunctions_Class
     ; New Helper Functions
     ;======================
 
+    ; 
+    CalculateBrivStacksToReachNextModronResetZone()
+    {
+        consume := -.032 ;Default := 4%, SteelBorn := 3.2%
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        distance := this.Memory.GetCoreTargetAreaByInstance(1)
+        jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+        return 49 / (1+consume)**jumps
+    }
+
+    CalculateBrivStacksConsumedToReachModronResetZone()
+    {
+        consume := -.032 ;Default := 4%, SteelBorn := 3.2%
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        distance := this.Memory.GetCoreTargetAreaByInstance(1) - this.Memory.ReadCurrentZone()
+        jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+        return stacks - stacks*(1+consume)**jumps
+    }
+
+    CalculateMaxZone()
+    {
+        consume := -.032 ;Default := 4%, SteelBorn := 3.2%
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        jumps := Floor(Log(49 / stacks) / Log(1+consume))
+        currentZone := this.Memory.ReadCurrentZone()
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        avgJumps := Floor(((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance)))
+        zones := jumps * avgJumps
+        return currentZone + zones
+    }
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 
     Parameters:
