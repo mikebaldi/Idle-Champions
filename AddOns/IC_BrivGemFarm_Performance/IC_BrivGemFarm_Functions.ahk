@@ -183,7 +183,7 @@ class IC_BrivGemFarm_Class
                 keyspam.Push("{ClickDmg}")
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
-                this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtModronResetZone() + 50 ; 50 stack safety net
+                this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(this.Memory.GetCoreTargetAreaByInstance(1)) + 50 ; 50 stack safety net
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
                 g_SharedData.StackFail := this.CheckForFailedConv()
@@ -234,7 +234,7 @@ class IC_BrivGemFarm_Class
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         ; Don't test while modron resetting.
-        if(CurrentZone < 0)
+        if(CurrentZone < 0 OR CurrentZone < g_SF.ModronResetZone)
             return
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
@@ -242,7 +242,7 @@ class IC_BrivGemFarm_Class
         forcedReset := false
         forcedResetReason := ""
         ; passed stack zone, start stack farm. Normal operation.
-        if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] AND CurrentZone < g_SF.ModronResetZone )
+        if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
             this.StackFarm()
         else
         {
