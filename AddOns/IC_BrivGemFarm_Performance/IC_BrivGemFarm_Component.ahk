@@ -13,7 +13,6 @@ Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 ReloadBrivGemFarmSettings()
 
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
-Gui, ICScriptHub:Add, Checkbox, vAvoidBossesCheck Checked%AvoidBosses% x15 y+5, Swap to 'e' formation when `on boss zones?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
 if(g_isDarkMode)
@@ -39,6 +38,7 @@ Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPl
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
+Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 vgBriv_Button_Status,
 
 ; Gui, ICScriptHub:Add, Button, x15 y+15 gBriv_Save_Clicked, Save Settings
 ; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Run_Clicked, `Run
@@ -75,6 +75,11 @@ Briv_Save_Clicked() {
 
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
 
+ClearBrivGemFarmStatusMessage()
+{
+    IC_BrivGemFarm_Component.UpdateStatus("")
+}
+
 class IC_BrivGemFarm_Component
 {
     BuildTooltips()
@@ -88,14 +93,13 @@ class IC_BrivGemFarm_Component
     UpdateGUICheckBoxes()
     {
         GuiControl,ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
-        GuiControl,ICScriptHub:, AvoidBossesCheck, % g_BrivUserSettings[ "AvoidBosses" ]
         GuiControl,ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
         GuiControl,ICScriptHub:, DoChestsCheck, % g_BrivUserSettings[ "DoChests" ]
         GuiControl,ICScriptHub:, BuySilversCheck, % g_BrivUserSettings[ "BuySilvers" ]
         GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
-        GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ] 
+        GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
     }
     
     Briv_Run_Clicked()
@@ -104,6 +108,7 @@ class IC_BrivGemFarm_Component
         {
             try
             {
+                this.UpdateStatus("Starting Miniscript: " . v)
                 Run, %A_AhkPath% "%v%"
             }
         }
@@ -132,25 +137,46 @@ class IC_BrivGemFarm_Component
     {
         for k,v in g_BrivFarmAddonStopFunctions
         {
+            this.UpdateStatus("Stopping Addon Function: " . v)
             v.Call()
         }
         for k,v in g_Miniscripts
         {
+            this.UpdateStatus("Stopping Miniscript: " . v)
             try
             {
                 SharedRunData := ComObjActive(k)
                 SharedRunData.Close()
             }
         }
+        this.UpdateStatus("Closing Gem Farm")
         try
         {
             SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
             SharedRunData.Close()
         }
+        catch, err
+        {
+            ; When the Close() function is called "0x800706BE - The remote procedure call failed." is thrown even though the function successfully executes.
+            if(err.Message != "0x800706BE - The remote procedure call failed.")
+                this.UpdateStatus("Gem Farm not running")
+            else
+                this.UpdateStatus("Gem Farm Stopped")
+        }
     }
 
     Briv_Connect_Clicked()
-    {    
+    {   
+        this.UpdateStatus("Connecting to Gem Farm...") 
+        Try 
+        {
+            ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+        }
+        Catch
+        {
+            this.UpdateStatus("Gem Farm not running.") 
+            return
+        }
         g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
         g_SF.Memory.OpenProcessReader()
         for k,v in g_BrivFarmAddonStartFunctions
@@ -164,9 +190,9 @@ class IC_BrivGemFarm_Component
     Briv_Save_Clicked()
     {
         global
+        this.UpdateStatus("Saving Settings...")
         Gui, ICScriptHub:Submit, NoHide
         g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
-        g_BrivUserSettings[ "AvoidBosses" ] := AvoidBossesCheck
         g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
         g_BrivUserSettings[ "StackZone" ] := NewStackZone
         g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
@@ -185,6 +211,7 @@ class IC_BrivGemFarm_Component
             local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
+        this.UpdateStatus("Save complete.")
         return
     }
 
@@ -193,6 +220,12 @@ class IC_BrivGemFarm_Component
         IfExist, %g_BrivFarmModLoc%
             FileDelete, %g_BrivFarmModLoc%
         FileAppend, `;THIS FILE IS AUTOMATICALLY GENERATED BY BRIV GEM FARM PERFORMANCE ADDON`n, %g_BrivFarmModLoc%
+    }
+
+    UpdateStatus(msg)
+    {
+        GuiControl, ICScriptHub:, gBriv_Button_Status, % msg
+        SetTimer, ClearBrivGemFarmStatusMessage,-3000
     }
 }
 

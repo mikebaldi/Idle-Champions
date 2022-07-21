@@ -3,6 +3,8 @@
 # Getting started with IC Script Hub using Zip
 ## What we'll cover
 
+> ⚠️ It is not recommended that you use IC Script Hub via this method. It is only added here for completion. [The recommended method is to use Github Desktop or another Git client](getting-started-with-ic-script-hub-using-git.md) ⚠️
+
 * Downloading the Zip file
 * Unzipping the Zip file to your local machine
 * Getting updates from the repository

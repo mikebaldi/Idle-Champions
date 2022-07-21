@@ -46,6 +46,21 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ResetZoneBuffer, R
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPositon, WindowXPositon
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowYPositon, WindowyPositon
 
+; ############ Preferred Briv Jump Zones #####################
+
+GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_WindowYPositon
+xyValY += 35
+xyValX := 10
+
+Gui, ICScriptHub:Font, w700
+Gui, ICScriptHub:Add, Text, x10 y%xyValY% vOptionSettingText_TitlePreferredJump, Preferred Briv Jump Zones
+Gui, ICScriptHub:Font, w400
+
+IC_BrivGemFarm_AdvancedSettings_Functions.BuildModTables(xyValX+20, xyValY)
+IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
+
+; ############################################################
+
 Gui, ICScriptHub:Add, Button , x10 y+10 gBrivGemFarmAdvancedSettingsSave, Save
 
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()

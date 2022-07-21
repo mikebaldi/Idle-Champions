@@ -1,3 +1,25 @@
+July 17, 2022
+    Fixed how buying/opening chests works. The sleep timer should now correctly start before opening chests instead of after.
+    Slightly better messages for chest purchasing/opening when docontinuous option is checked.
+    Slightly improved timing when loading game to prevent unnecessary fallbacks.
+
+July 17, 2022
+    Corrected the fix from previous version.
+
+July 16, 2022
+    Added a potential fix for patron adventures not restarting with their patron.
+
+July 15, 2022
+    Updated Gem Farm documentation.
+
+July 14, 2022
+    Added timer to close tooltips after 3 seconds when an appropriate control is not being hovered over. This should help with tooltips stuck on screen after alt-tabbing.
+    Added messages indicating what the Briv Gem farm script is attempting to do when a button is clicked (Start/Stop/Connect/Save).
+    Added PreferredBrivJumpZones advanced setting built off of HenkyPenky's RollBackRecovery modifications.
+    IMPORTANT: REMOVED AvoidBosses setting! (Use PreferredBrivJumpZones to avoid bosses).
+    Updated Addons links in Addons.md.
+    Updated Imports for 32 bit to v457.
+
 July 6, 2022
     Updated pointer for EngineSettings on v456 32 bit (where webroot is stored).
     Removed including unused logging class.
@@ -241,7 +263,7 @@ Jan 13, 2022
     Gem Farm script GUI will be shown again when pressing the play button if it is already open.
 
 Jan 12, 2022
-    Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in teh FormationSaveHandler.
+    Added offsets for where modron formations are stored, as well as FormationCampaignID  and SaveID in the FormationSaveHandler.
     Added memory functions:
         ReadFormationSaveIDBySlot
         ReadFormationCampaignID

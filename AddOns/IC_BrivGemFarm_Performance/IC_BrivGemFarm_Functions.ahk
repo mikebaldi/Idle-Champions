@@ -42,7 +42,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_ServerCall.webroot := isWebRootValid ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
-        g_ServerCall.activePatronID := this.Memory.ReadPatronID() ; 0 = no patron
+        g_ServerCall.activePatronID := this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
         g_ServerCall.UpdateDummyData()
     }
 
@@ -189,7 +189,7 @@ class IC_BrivGemFarm_Class
             if(CurrentZone > PreviousZone) ; needs to be greater than because offline could stacking getting stuck in descending zones.
             {
                 PreviousZone := CurrentZone
-                if(!Mod( g_SF.Memory.ReadHighestZone(), 5 ))
+                if(!Mod( g_SF.Memory.ReadCurrentZone(), 5 ))
                 {
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
@@ -343,11 +343,14 @@ class IC_BrivGemFarm_Class
         {
             retryAttempt++
             this.StackFarmSetup()
+            g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             g_SF.CloseIC( "StackRestart" )
-            g_SharedData.LoopString := "Stack Sleep"
-            var := this.DoChests()
-            ElapsedTime := 0
+            g_SharedData.LoopString := "Stack Sleep: "
             StartTime := A_TickCount
+            ElapsedTime := 0
+            if(g_BrivUserSettings["DoChests"])
+                g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
+            var := this.DoChests()
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
@@ -399,21 +402,21 @@ class IC_BrivGemFarm_Class
         {
             if(g_BrivUserSettings[ "DoChestsContinuous" ])
             {
-                while(g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - StartTime ))
+                ElapsedTime := 0
+                while(g_BrivUserSettings[ "RestartStackTime" ] > ( ElapsedTime ))
                 {
+                    ElapsedTime := A_TickCount - StartTime
+                    g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
                     var2 := this.BuyOrOpenChests(StartTime)
                     var .= var2 . "`n" 
                     if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
                         break
-                    else
-                         continue
                 }
             }
             else
             {
                 var := this.BuyOrOpenChests() . " "
             }
-            g_SharedData.LoopString := "Sleep: " . var
         }
         return var
     }
@@ -578,7 +581,7 @@ class IC_BrivGemFarm_Class
         }
         if ( var == "" )
         {
-            return "No chests opened or purchased."
+            return " No chests opened or purchased."
         }
         else
         {

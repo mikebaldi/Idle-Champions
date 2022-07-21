@@ -38,9 +38,9 @@ A dialog box will pop up. Click the `Choose...` button to pick the folder where 
 
 Click `Clone` and wait for the cloning process to complete.
 
-You'll see this (except it will be pointing at `main` rather than `master`):
+You'll see this:
 
-![GitHub Desktop window showing the master branch](../docimages/github-desktop-window.png)
+![GitHub Desktop window showing the master branch](../docimages/github-desktop-window-v2.png)
 
 A box may appear inviting you to create a Pull request. Ignore this if it shows up.
 
