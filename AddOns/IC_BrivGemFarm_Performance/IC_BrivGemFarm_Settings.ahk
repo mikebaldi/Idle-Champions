@@ -6,6 +6,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings := {}
         g_BrivUserSettings["WriteSettings"] := true
     }
+    if ( g_BrivUserSettings[ "ProfileInformation" ] == "" ) 
+        g_BrivUserSettings[ "ProfileInformation" ] := "Default"
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
     if ( g_BrivUserSettings[ "StackFailRecovery" ] == "" )

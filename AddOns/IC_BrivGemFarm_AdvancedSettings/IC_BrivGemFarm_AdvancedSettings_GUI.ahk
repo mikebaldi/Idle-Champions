@@ -63,6 +63,18 @@ IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
 
 Gui, ICScriptHub:Add, Button , x10 y+10 gBrivGemFarmAdvancedSettingsSave, Save
 
+; ############ Load and Save Profiles #####################
+
+Gui, ICScriptHub:Font, w700
+Gui, ICScriptHub:Add, Text, x10 y+10 vOptionSettingText_LoadAndSaveProfiles, Load and Save Profiles
+Gui, ICScriptHub:Font, w400
+
+Gui, ICScriptHub:Add, Button , w75 gBrivGemFarmAdvancedSettingsSaveProfile1, Save Profile 1
+Gui, ICScriptHub:Add, Button , w75 gBrivGemFarmAdvancedSettingsLoadProfile1, Load Profile 1
+Gui, ICScriptHub:Add, Button , w75 gBrivGemFarmAdvancedSettingsGetProfile1, Get Current Profile
+
+; ############################################################
+
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()
 IC_BrivGemFarm_AdvancedSettings_Component.Refresh()
 
@@ -72,4 +84,19 @@ IC_BrivGemFarm_AdvancedSettings_Component.Refresh()
 
 BrivGemFarmAdvancedSettingsSave(){
     IC_BrivGemFarm_AdvancedSettings_Component.SaveAdvancedSettings()
+}
+
+BrivGemFarmAdvancedSettingsSaveProfile1(){
+    IC_BrivGemFarm_AdvancedSettings_Component.SaveAdvancedSettings(1)
+}
+
+BrivGemFarmAdvancedSettingsLoadProfile1(){
+    MsgBox 4,, You are about to load Profile 1, Continue?
+    IfMsgBox Yes
+        IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings(1)
+        IC_BrivGemFarm_AdvancedSettings_Component.Refresh()
+}
+
+BrivGemFarmAdvancedSettingsGetProfile1(){
+    MsgBox, % g_BrivUserSettings[ "ProfileInformation" ]
 }
