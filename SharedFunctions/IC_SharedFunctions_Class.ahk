@@ -1117,7 +1117,7 @@ class IC_SharedFunctions_Class
     {
         consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        jumps := Floor(Log(49 / stacks) / Log(1+consume))
+        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
         currentZone := this.Memory.ReadCurrentZone()
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
