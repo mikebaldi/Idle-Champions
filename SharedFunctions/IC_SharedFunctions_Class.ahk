@@ -1116,15 +1116,16 @@ class IC_SharedFunctions_Class
         return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetCoreTargetAreaByInstance(1))
     }
 
-    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2
+    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
     CalculateMaxZone(avgMinOrMax := 0)
     {
+        ; 1 jump results will change based on the current zone depending on whether the previous zones had jumps and used stacks or not.
         consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
-        currentZone := this.Memory.ReadCurrentZone()
+        currentZone := this.Memory.ReadCurrentZone() 
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
         avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
         maxJumpDistance := skipAmount+1
         minJumpDistance := skipAmount
