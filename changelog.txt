@@ -1,3 +1,5 @@
+July 22, 2022
+    Fixed various GUI issues and calculations with automatic Briv stack detection.
 
 July 19, 2022
     NEW! Added an automatic Briv stack detection to allow for seamless early stacking and to simplify the gem farm setup.

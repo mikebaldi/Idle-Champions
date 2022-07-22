@@ -1084,7 +1084,7 @@ class IC_SharedFunctions_Class
         distance := this.Memory.GetCoreTargetAreaByInstance(1)
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         if (worstCase)
-            jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / skipAmount)
+            jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
         else
             jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
         stacks := Ceil(49 / (1+consume)**jumps)
