@@ -1,4 +1,4 @@
-;Load user settings
+﻿;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 global g_BrivFarmModLoc := A_LineFile . "\..\IC_BrivGemFarm_Mods.ahk"
@@ -121,6 +121,7 @@ class IC_BrivGemFarm_Component
     
     Briv_Run_Clicked()
     {
+        this.TestGameVersion()
         for k,v in g_Miniscripts
         {
             try
@@ -148,6 +149,19 @@ class IC_BrivGemFarm_Component
             }
             Run, %A_AhkPath% "%scriptLocation%"
         }
+    }
+
+    TestGameVersion()
+    {
+        gameVersion := g_SF.Memory.ReadBaseGameVersion()
+        importsVersion := g_SF.Memory.is64Bit() ? g_ImportsGameVersion64 : g_ImportsGameVersion32
+        GuiControl, ICScriptHub: +cRed, Warning_Imports_Bad, 
+        if (gameVersion == "")
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Memory Read Failure. Check for updated Imports."
+        else if( gameVersion > 100 AND gameVersion <= 999 AND gameVersion != importsVersion )
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Game version (" . gameVersion . ") does not match Imports version (" . importsVersion . ")."
+        else
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % ""
     }
 
     Briv_Run_Stop_Clicked()

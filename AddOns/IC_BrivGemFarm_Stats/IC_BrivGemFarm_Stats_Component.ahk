@@ -12,6 +12,9 @@ global g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
 GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats
 Gui, ICSCriptHub:Add, Button, x+5 gReset_Briv_Farm_Stats vReset_Briv_Farm_Stats_Button, Reset Stats
+Gui, ICScriptHub:Font, w700
+Gui, ICScriptHub:Add, Text, vWarning_Imports_Bad x+7 y+-17 w500, 
+Gui, ICScriptHub:Font, w400
 
 g_BrivGemFarmStats.AddStatsTabMod("AddCurrentRunGroup", "g_BrivGemFarmStats")
 g_BrivGemFarmStats.AddStatsTabMod("AddOncePerRunGroup", "g_BrivGemFarmStats")

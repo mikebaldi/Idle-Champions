@@ -47,6 +47,8 @@ global g_ConnectButton := A_LineFile . "\..\Images\connect-100x100.png"
 global g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-25x25.png"
 global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
+global g_ImportsGameVersion64 := 459
+global g_ImportsGameVersion32 := 459
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
 ;TODO: convert g_isDarkMode to use gui functions
