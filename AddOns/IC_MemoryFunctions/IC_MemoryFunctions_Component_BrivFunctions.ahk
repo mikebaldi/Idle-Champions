@@ -63,7 +63,7 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, CalculateBrivStacksToReachNextModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksToReachNextModronResetZone())
         GuiControl, ICScriptHub:, CalculateBrivStacksConsumedToReachModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
         GuiControl, ICScriptHub:, LeftoverStacksAtResetID, % Format("{:0.2f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks() - g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
-        GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone(1)) . " - " . Format("{:0.0f}", g_SF.CalculateMaxZone(2))
+        GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone(1)) . " - " . Format("{:0.0f}", g_SF.CalculateMaxZone(2)) . " (" . Format("{:0.0f}", g_SF.CalculateMaxZone(0)) . ")"
         GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
         GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1))
         Try 

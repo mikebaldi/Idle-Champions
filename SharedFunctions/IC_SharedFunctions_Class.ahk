@@ -1125,11 +1125,11 @@ class IC_SharedFunctions_Class
         currentZone := this.Memory.ReadCurrentZone()
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        avgJumpDistance := Floor(((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance)))
+        avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
         maxJumpDistance := skipAmount+1
         minJumpDistance := skipAmount
         ;zones := jumps * avgJumpDistance
-        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance
+        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
         return currentZone + zones
     }
 
