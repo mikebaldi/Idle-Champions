@@ -213,7 +213,10 @@ class IC_BrivGemFarm_Class
                     keyspam := ["{ClickDmg}"]
                     doKeySpam := false
                 }
+                lastModronResetZone := g_SF.ModronResetZone
                 g_SF.InitZone( keyspam )
+                if g_SF.ModronResetZone != lastModronResetZone
+                    g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
             }
             g_SF.ToggleAutoProgress( 1 )
             if(g_SF.CheckifStuck())
