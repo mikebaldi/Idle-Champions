@@ -1074,7 +1074,7 @@ class IC_SharedFunctions_Class
     ; New Helper Functions
     ;======================
 
-    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area.
+    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
     CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
     {
         jumps := 0
@@ -1091,7 +1091,7 @@ class IC_SharedFunctions_Class
         return stacks
     }
 
-    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached.
+    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached. worstCase default is true.
     CalculateBrivStacksLeftAtTargetZone(targetZone := 0, worstCase := true)
     {
         jumps := 0
