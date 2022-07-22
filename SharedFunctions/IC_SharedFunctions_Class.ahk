@@ -31,6 +31,8 @@ class IC_SharedData_Class
     TriggerStart := false
     TotalRollBacks := 0
     BadAutoProgress := 0
+    PreviousStacksFromOffline := 0
+    TargetStacks := 0
 
     Close()
     {
@@ -1080,10 +1082,11 @@ class IC_SharedFunctions_Class
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1)
+        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         if (worstCase)
-            jumps := Floor(distance / skipAmount)
+            jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / skipAmount)
         else
-            jumps := Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance))))
+            jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
         stacks := Ceil(49 / (1+consume)**jumps)
         return stacks
     }
@@ -1097,10 +1100,11 @@ class IC_SharedFunctions_Class
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := targetZone - this.Memory.ReadCurrentZone()
+        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         if (worstCase)
-            jumps := Max(Floor(distance / skipAmount), 0)
+            jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
         else
-            jumps := Max(Floor(distance / (((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance)))), 0)
+            jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
 
         return Floor(stacks*(1+consume)**jumps)
     }
@@ -1112,8 +1116,8 @@ class IC_SharedFunctions_Class
         return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.GetCoreTargetAreaByInstance(1))
     }
 
-    ; Calculates the farthest zone Briv can jump to with his current stacks on his current zone.
-    CalculateMaxZone()
+    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2
+    CalculateMaxZone(avgMinOrMax := 0)
     {
         consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
@@ -1121,8 +1125,11 @@ class IC_SharedFunctions_Class
         currentZone := this.Memory.ReadCurrentZone()
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        avgJumps := Floor(((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance)))
-        zones := jumps * avgJumps
+        avgJumpDistance := Floor(((skipAmount) * (1-skipChance)) + ((skipAmount+1) * (skipChance)))
+        maxJumpDistance := skipAmount+1
+        minJumpDistance := skipAmount
+        ;zones := jumps * avgJumpDistance
+        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance
         return currentZone + zones
     }
 
