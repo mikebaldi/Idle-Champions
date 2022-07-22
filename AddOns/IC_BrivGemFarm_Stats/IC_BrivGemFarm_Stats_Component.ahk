@@ -3,6 +3,7 @@
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_GUIFunctions_Class.ahk
 
 g_TabControlHeight := Max(g_TabControlHeight, 650)
+g_TabControlWidth := Max(g_TabControlWidth, 485)
 
 global g_LeftAlign
 global g_DownAlign
