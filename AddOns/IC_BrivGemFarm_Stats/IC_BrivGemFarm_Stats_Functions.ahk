@@ -185,7 +185,8 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vBadAutoprogressesID x+2 w200,  
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
-        g_TabControlHeight := Max(g_TabControlHeight, 700)
+        g_TabControlHeight := Max(g_TabControlHeight, 685)
+        GUIFunctions.RefreshTabControlSize()
         GUIFunctions.SetThemeTextColor()
     }
 

@@ -1,5 +1,5 @@
 /*
-    GameSettings Memory Reads (User Info)
+    Briv Related Memory Reads
 */
 
 g_TabControlHeight += 130
@@ -38,7 +38,6 @@ Gui, ICScriptHub:Add, Text, x15 y+5, IsBrivMetalborn:
 Gui, ICScriptHub:Add, Text, vIsBrivMetalbornID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, Stacks from previous stacking: 
 Gui, ICScriptHub:Add, Text, vPreviousStackingStacksID x+2 w300,
-
 
 class ReadMemoryFunctionsExtended
 {
