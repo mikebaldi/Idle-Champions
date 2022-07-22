@@ -30,10 +30,14 @@ Gui, ICScriptHub:Add, Text, x15 y+5, LeftoverStacksAtReset:
 Gui, ICScriptHub:Add, Text, vLeftoverStacksAtResetID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, BrivCalculatedTargetStacks: 
 Gui, ICScriptHub:Add, Text, vBrivCalculatedTargetStacksID x+2 w300,
+Gui, ICScriptHub:Add, Text, x15 y+5, BrivCalculatedTargetStacks (1 time): 
+Gui, ICScriptHub:Add, Text, vBrivCalculatedTargetStacks2ID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, CalculateMaxZone: 
 Gui, ICScriptHub:Add, Text, vCalculateMaxZoneID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, IsBrivMetalborn: 
 Gui, ICScriptHub:Add, Text, vIsBrivMetalbornID x+2 w300,
+Gui, ICScriptHub:Add, Text, x15 y+5, Stacks from previous stacking: 
+Gui, ICScriptHub:Add, Text, vPreviousStackingStacksID x+2 w300,
 
 
 class ReadMemoryFunctionsExtended
@@ -62,5 +66,12 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone())
         GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
         GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(this.Memory.GetCoreTargetAreaByInstance(1))
+        Try 
+        {
+            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            GuiControl, ICScriptHub:, PreviousStackingStacksID, % SharedRunData.PreviousStacksFromOffline
+            GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % SharedRunData.TargetStacks
+        }
+
     }
 }
