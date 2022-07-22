@@ -222,6 +222,7 @@ class IC_BrivGemFarm_Stats_Component
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
             previousZoneStartTime := A_TickCount ; Reset zone timer after modron reset
+            lastZone := 0
         }
 
         if !g_SF.Memory.ReadUserIsInited()
