@@ -6,6 +6,8 @@
 #include %A_LineFile%\..\IC_CrusadersGameDataSet_Class.ahk
 #include %A_LineFile%\..\IC_DialogManager_Class.ahk
 #include %A_LineFile%\..\IC_ActiveEffectKeyHandler_Class.ahk
+#include *i %A_LineFile%\..\Imports\IC_GameVersion32_Import.ahk
+#include *i %A_LineFile%\..\Imports\IC_GameVersion64_Import.ahk
 
 ;Check if you have installed the class correctly.
 if (_ClassMemory.__Class != "_ClassMemory")
