@@ -217,6 +217,8 @@ class IC_BrivGemFarm_Class
                 g_SF.InitZone( keyspam )
                 if g_SF.ModronResetZone != lastModronResetZone
                     g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
+                g_SF.ToggleAutoProgress( 1 )
+                continue
             }
             g_SF.ToggleAutoProgress( 1 )
             if(g_SF.CheckifStuck())
@@ -237,7 +239,7 @@ class IC_BrivGemFarm_Class
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         ; Don't test while modron resetting.
-        if(CurrentZone < 0 OR CurrentZone > g_SF.ModronResetZone)
+        if(CurrentZone < 0 OR CurrentZone >= g_SF.ModronResetZone)
             return
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
