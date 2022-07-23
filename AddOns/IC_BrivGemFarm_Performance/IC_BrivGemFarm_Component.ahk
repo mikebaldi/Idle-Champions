@@ -121,7 +121,6 @@ class IC_BrivGemFarm_Component
     
     Briv_Run_Clicked()
     {
-        this.TestGameVersion()
         for k,v in g_Miniscripts
         {
             try
@@ -149,6 +148,7 @@ class IC_BrivGemFarm_Component
             }
             Run, %A_AhkPath% "%scriptLocation%"
         }
+        this.TestGameVersion()
     }
 
     TestGameVersion()
