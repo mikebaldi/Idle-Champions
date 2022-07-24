@@ -1078,7 +1078,7 @@ class IC_SharedFunctions_Class
     CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
     {
         jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.4  ;Default := 4%, SteelBorn := 3.2%
+        consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetCoreTargetAreaByInstance(1)
@@ -1095,7 +1095,7 @@ class IC_SharedFunctions_Class
     CalculateBrivStacksLeftAtTargetZone(startZone := 1, targetZone := 1, worstCase := true)
     {
         jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
+        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
@@ -1120,7 +1120,7 @@ class IC_SharedFunctions_Class
     CalculateMaxZone(avgMinOrMax := 0)
     {
         ; 1 jump results will change based on the current zone depending on whether the previous zones had jumps and used stacks or not.
-        consume := this.IsBrivMetalborn() ? -.032 : -.4 ;Default := 4%, MetalBorn := 3.2%
+        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
         currentZone := this.Memory.ReadCurrentZone() 
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
