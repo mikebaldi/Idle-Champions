@@ -16,7 +16,7 @@ Once the settings have been saved, `IC_BrivGemFarm_Run.ahk` can be run by itself
 Instructions:
 1. Save your speed formation in formation save slot 1, in game hotkey "Q". This formation must include Briv and at least one familiar on the field.
 2. Save your stack farming formation in formation save slot 2, in game hotkey "W". Don't include any familiars on the field.
-3. Save your speed formation without Briv, Hew, or Melf in formation save slot 3, in game hotkey "E".
+3. Save your speed formation without Briv in formation save slot 3, in game hotkey "E".
 4. Adjust the settings on the settings tab.
 5. Click the save button to save your settings.
 6. Load into zone 1 of an adventure to farm gems.
