@@ -71,6 +71,10 @@ class ReadMemoryFunctionsExtended
             GuiControl, ICScriptHub:, PreviousStackingStacksID, % SharedRunData.PreviousStacksFromOffline
             GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % SharedRunData.TargetStacks
         }
+        catch
+        {
+            GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % "-- ERROR --"
+        }
 
     }
 }

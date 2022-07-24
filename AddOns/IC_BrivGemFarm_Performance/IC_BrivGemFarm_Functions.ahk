@@ -183,6 +183,7 @@ class IC_BrivGemFarm_Class
                 keyspam.Push("{ClickDmg}")
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
+                g_SF.Memory.ActiveEffectKeyHandler.Refresh()
                 g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
