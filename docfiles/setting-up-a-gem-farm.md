@@ -39,7 +39,7 @@ Remove ALL familiars from the field for this formation. If you're clicking, Briv
 
 ### Formation 3
 
-Formation 3, bound to E, will contain your Briv-swap team. This should (at minimum) be a copy of your Q team with the exception of `Briv` and `Hew Maan`. 
+Formation 3, bound to E, will contain your Briv-swap team. This should (at minimum) be a copy of your Q team with the exception of `Briv`. 
 
 Use the same familiar setup as your Q formation here.
 
