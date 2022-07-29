@@ -630,6 +630,7 @@ class IC_SharedFunctions_Class
     ;A function that closes IC. If IC takes longer than 60 seconds to save and close then the script will force it closed.
     CloseIC( string := "" )
     {
+        g_SharedData.LastCloseReason := string
         ; check that server call object is updated before closing IC in case any server calls need to be made
         ; by the script before the game restarts
         this.ResetServerCall()
