@@ -16,7 +16,7 @@
 
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_GameManager32_Class
+class IC_IdleGameManager32_Class
 {
     __new()
     {
@@ -53,7 +53,7 @@ class IC_GameManager32_Class
     }
 }
 
-class IC_GameManager64_Class
+class IC_IdleGameManager64_Class
 {
     __new()
     {

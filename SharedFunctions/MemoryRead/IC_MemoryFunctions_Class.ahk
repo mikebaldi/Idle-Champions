@@ -35,7 +35,7 @@ class IC_MemoryFunctions_Class
 
     __new()
     {
-        this.GameManager := new IC_GameManager32_Class
+        this.GameManager := new IC_IdleGameManager32_Class
         this.GameSettings := new IC_GameSettings32_Class
         this.EngineSettings := new IC_EngineSettings32_Class
         this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
@@ -58,7 +58,7 @@ class IC_MemoryFunctions_Class
         this.GameManager.Refresh()
         if(!this.Is64Bit and this.GameManager.is64Bit())
         {
-            this.GameManager := new IC_GameManager64_Class
+            this.GameManager := new IC_IdleGameManager64_Class
             this.GameSettings := new IC_GameSettings64_Class
             this.EngineSettings := new IC_EngineSettings64_Class
             this.CrusadersGameDataSet := new IC_CrusadersGameDataSet64_Class
@@ -67,7 +67,7 @@ class IC_MemoryFunctions_Class
         }
         else if (this.Is64Bit and !this.GameManager.is64Bit())
         {
-            this.GameManager := new IC_GameManager32_Class
+            this.GameManager := new IC_IdleGameManager32_Class
             this.GameSettings := new IC_GameSettings32_Class
             this.EngineSettings := new IC_EngineSettings32_Class
             this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
