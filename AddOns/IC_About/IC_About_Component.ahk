@@ -14,15 +14,15 @@ class IC_About_Component
         g_SF.Memory.OpenProcessReader()
         string := ""
         string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
-        gameVersion := g_SF.Memory.ReadGameVersion()
-        if(gameVersion == "")
-            gameVersion := " -- Game not found on Script Hub load. --"
+        gameVersionaArch := g_SF.Memory.GameManager.is64Bit() ? " (64 bit)" : " (32 bit)"
+        gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
         if(isFunc(g_SF.Memory.ReadGameVersion))
-            string .= "Idle Champions Game Version: " . gameVersion . "`n`n"
+            string .= "Idle Champions Game Version: " . gameVersion . "`n"
+        string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)`n`n"
         if(isFunc(IC_IdleGameManager32_Class.GetVersion))
-            string .= "GameManager Memory Functions (32-bit) : " . IC_IdleGameManager32_Class.GetVersion() . "`n"
+            string .= "GameManager Memory Functions (32-bit): " . IC_IdleGameManager32_Class.GetVersion() . "`n"
         if(isFunc(IC_GameSettings32_Class.GetVersion))
-            string .= "GameSettings Memory Functions (32-bit) : " . IC_GameSettings32_Class.GetVersion() . "`n"
+            string .= "GameSettings Memory Functions (32-bit): " . IC_GameSettings32_Class.GetVersion() . "`n"
         if(isFunc(IC_EngineSettings32_Class.GetVersion))
             string .= "EngineSettings Memory Functions (32-bit): " . IC_EngineSettings32_Class.GetVersion() . "`n"
         if(isFunc(IC_CrusadersGameDataSet32_Class.GetVersion))
