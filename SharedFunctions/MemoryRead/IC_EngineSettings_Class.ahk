@@ -35,13 +35,13 @@ class IC_EngineSettings64_Class
  
     GetVersion()
     {
-        return "v1.0.1, 2022-06-, IC v0.455+, 64-bit"  
+        return "v1.1.0, 2022-08-16, IC v0.463+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A3658 ; v435-v451, v453-v455
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A7678 ; v463+
         this.UnityGameEngine := {}
         this.UnityGameEngine.Core := {}
         this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure([0x2A0]) ; v452
