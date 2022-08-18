@@ -11,7 +11,7 @@ class IC_CrusadersGameDataSet_Class
  
     GetVersion()
     {
-        return "v2.0.0, 2022-08-18, IC v0.463+" 
+        return "v2.0.1, 2022-08-18, IC v0.463+" 
     }
 
     Refresh()
@@ -29,10 +29,10 @@ class IC_CrusadersGameDataSet_Class
         }
         else
         {
-            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0049C7C8 ; v463
+            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x0049C7C8 ; v463+
             this.CrusadersGame := {}
             this.CrusadersGame.Defs := {}
-            this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x40, 0xC50] ) ; v463
+            this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x40, 0xC30] ) ; v464
             this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
             this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := true
             #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
