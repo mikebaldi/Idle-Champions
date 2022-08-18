@@ -1,3 +1,9 @@
+August 18, 2022
+    Updated MemoryRead objects to be simpler in preperation of handling multiple 64 bit game clients.
+
+August 16, 2022
+    Created v463-Steam branch for temporary handling of new Steam 64 bit client.
+
 July 29, 2022
     Added a line to the stats tab that shows the reason the script closed the game last.
     Added more version information to the About tab, including imports version.

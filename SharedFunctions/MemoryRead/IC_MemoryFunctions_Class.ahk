@@ -35,18 +35,18 @@ class IC_MemoryFunctions_Class
 
     __new()
     {
-        this.GameManager := new IC_IdleGameManager32_Class
-        this.GameSettings := new IC_GameSettings32_Class
-        this.EngineSettings := new IC_EngineSettings32_Class
-        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
-        this.DialogManager := new IC_DialogManager32_Class
+        this.GameManager := new IC_IdleGameManager_Class
+        this.GameSettings := new IC_GameSettings_Class
+        this.EngineSettings := new IC_EngineSettings_Class
+        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
+        this.DialogManager := new IC_DialogManager_Class
         this.ActiveEffectKeyHandler := new IC_ActiveEffectKeyHandler_Class
     }
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.4, 2022-07-19, IC v0.415.1-v0.457+"
+        return "v1.10.5, 2022-08-18, IC v0.463+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -56,32 +56,12 @@ class IC_MemoryFunctions_Class
     OpenProcessReader()
     {
         this.GameManager.Refresh()
-        if(!this.Is64Bit and this.GameManager.is64Bit())
-        {
-            this.GameManager := new IC_IdleGameManager64_Class
-            this.GameSettings := new IC_GameSettings64_Class
-            this.EngineSettings := new IC_EngineSettings64_Class
-            this.CrusadersGameDataSet := new IC_CrusadersGameDataSet64_Class
-            this.DialogManager := new IC_DialogManager64_Class
-            this.Is64Bit := true
-        }
-        else if (this.Is64Bit and !this.GameManager.is64Bit())
-        {
-            this.GameManager := new IC_IdleGameManager32_Class
-            this.GameSettings := new IC_GameSettings32_Class
-            this.EngineSettings := new IC_EngineSettings32_Class
-            this.CrusadersGameDataSet := new IC_CrusadersGameDataSet32_Class
-            this.DialogManager := new IC_DialogManager32_Class
-            this.Is64Bit := false
-        }
-        else
-        {
-            this.GameSettings.Refresh()
-            this.EngineSettings.Refresh()
-            this.CrusadersGameDataSet.Refresh()
-            this.DialogManager.Refresh()
-        }
+        this.GameSettings.Refresh()
+        this.EngineSettings.Refresh()
+        this.CrusadersGameDataSet.Refresh()
+        this.DialogManager.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
+        this.Is64Bit := this.GameManager.is64Bit()
     }
 
     ;=====================
