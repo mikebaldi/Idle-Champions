@@ -4,6 +4,8 @@
 ; Searching for ptr depth of 1 has been fine.
 class IC_DialogManager_Class
 {
+    moduleOffset := 0x00499C70
+    structureOffsets := [0x9C0]
     __new()
     {
         this.Refresh()
@@ -11,33 +13,27 @@ class IC_DialogManager_Class
  
     GetVersion()
     {
-        return "v2.0.0, 2022-08-18, IC v0.463+" 
+        return "v2.0.1, 2022-08-18, IC v0.463+" 
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        this.UnityGameEngine := {}
+        this.UnityGameEngine.Dialogs := {}
+        structureOffsetsOverlay := this.structureOffsets.Clone()
+        structureOffsetsOverlay[1] += 0x010
+        offsets := (this.HasOverlay() AND this.Main.isTarget64bit) ? structureOffsetsOverlay : this.structureOffsets
+        this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
+        this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := this.Main.isTarget64bit
+        this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         if(!this.Main.isTarget64bit)
         {
-            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A31B8
-            this.UnityGameEngine := {}
-            this.UnityGameEngine.Dialogs := {}
-            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([0xD10])
-            this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := false
-            this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
             #include %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
         }
         else
         {
-            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00499C70
-            this.UnityGameEngine := {}
-            this.UnityGameEngine.Dialogs := {}
-            offset := 0x9C0
-            if(this.HasOverlay())
-                offset += 0x010
-            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure([offset])
-            this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := true
-            this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
             #include %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
         }
     }

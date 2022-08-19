@@ -18,6 +18,9 @@
 
 class IC_IdleGameManager_Class
 {
+    moduleOffset := 0x00495A90 ; v463
+    structureOffsets := [0xCB0] ; v463
+
     __new()
     {
         this.Refresh()
@@ -25,7 +28,7 @@ class IC_IdleGameManager_Class
 
     GetVersion()
     {
-        return "v2.0.0, 2022-08-18, IC v0.463+"
+        return "v2.0.1, 2022-08-19, IC v0.463+"
     }
 
     is64Bit()
@@ -44,28 +47,22 @@ class IC_IdleGameManager_Class
         ;structure pointers
         ;==================
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        ; special case for Dictionary<List<Action<action>>>
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
+        this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
+        this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
+        this.IdleGameManager.BaseAddress := this.BaseAddress
         if(!this.Main.isTarget64bit)
         {
-            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
-            this.IdleGameManager := New GameObjectStructure([0x658])
-            this.IdleGameManager.Is64Bit := false
-            this.IdleGameManager.BaseAddress := this.BaseAddress
             ; Build offsets for class using imported AHK files.
             #include %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
-            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
+            ; special case for Dictionary<List<Action<action>>>
+            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
         }
         else
         {
-        
-            this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00495A90 ;v463
-            ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
-            this.IdleGameManager := New GameObjectStructure([0xCB0]) 
-            this.IdleGameManager.Is64Bit := true
-            this.IdleGameManager.BaseAddress := this.BaseAddress
-            ; Build offsets for class using imported AHK files.
             #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
-            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
+            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
         }
     }
 }
