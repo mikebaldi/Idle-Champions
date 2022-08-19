@@ -1,4 +1,4 @@
-;Load user settings
+﻿;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 global g_BrivFarmModLoc := A_LineFile . "\..\IC_BrivGemFarm_Mods.ahk"
@@ -11,7 +11,6 @@ Gui, ICScriptHub:Add, Text, x15 y68 w120, User Settings:
 
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
 ReloadBrivGemFarmSettings()
-
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
@@ -51,6 +50,7 @@ xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect (Beta Feature)
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
@@ -71,6 +71,22 @@ Briv_Connect_Clicked() {
 }
 Briv_Save_Clicked() {
     IC_BrivGemFarm_Component.Briv_Save_Clicked()
+}
+DisableBrivTargetStacksBox(g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
+
+BrivAutoDetectStacks_Click()
+{
+    Gui, ICScriptHub:Submit, NoHide
+    isChecked := %A_GuiControl%
+    DisableBrivTargetStacksBox(isChecked)
+}
+
+DisableBrivTargetStacksBox(doDisable)
+{
+    if(doDisable)
+        GuiControl,ICScriptHub:Disable, NewTargetStacks
+    else
+        GuiControl,ICScriptHub:Enable, NewTargetStacks
 }
 
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
@@ -100,6 +116,7 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
+        GuiControl,ICScriptHub:, BrivAutoCalcStatsCheck, % g_BrivUserSettings[ "AutoCalculateBrivStacks" ]
     }
     
     Briv_Run_Clicked()
@@ -131,6 +148,20 @@ class IC_BrivGemFarm_Component
             }
             Run, %A_AhkPath% "%scriptLocation%"
         }
+        this.TestGameVersion()
+    }
+
+    TestGameVersion()
+    {
+        gameVersion := g_SF.Memory.ReadGameVersion()
+        importsVersion := g_SF.Memory.GameManager.is64Bit() ? g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64 : g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32
+        GuiControl, ICScriptHub: +cRed, Warning_Imports_Bad, 
+        if (gameVersion == "")
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Memory Read Failure. Check for updated Imports."
+        else if( gameVersion > 100 AND gameVersion <= 999 AND gameVersion != importsVersion )
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Game version (" . gameVersion . ") does not match Imports version (" . importsVersion . ")."
+        else
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % ""
     }
 
     Briv_Run_Stop_Clicked()
@@ -194,17 +225,18 @@ class IC_BrivGemFarm_Component
         Gui, ICScriptHub:Submit, NoHide
         g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
         g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
-        g_BrivUserSettings[ "StackZone" ] := NewStackZone
-        g_BrivUserSettings[ "MinStackZone" ] := NewMinStackZone
-        g_BrivUserSettings[ "TargetStacks" ] := NewTargetStacks
-        g_BrivUserSettings[ "RestartStackTime" ] := NewRestartStackTime
+        g_BrivUserSettings[ "StackZone" ] := StrReplace(NewStackZone, ",")
+        g_BrivUserSettings[ "MinStackZone" ] := StrReplace(NewMinStackZone, ",")
+        g_BrivUserSettings[ "TargetStacks" ] := StrReplace(NewTargetStacks, ",")
+        g_BrivUserSettings[ "RestartStackTime" ] := StrReplace(NewRestartStackTime, ",")
         g_BrivUserSettings[ "DisableDashWait" ] := DisableDashWaitCheck
         g_BrivUserSettings[ "DoChests" ] := DoChestsCheck
         g_BrivUserSettings[ "BuySilvers" ] := BuySilversCheck
         g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
         g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
-        g_BrivUserSettings[ "MinGemCount" ] := NewMinGemCount
+        g_BrivUserSettings[ "MinGemCount" ] := StrReplace(NewMinGemCount, ",")
+        g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := BrivAutoCalcStatsCheck
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {

@@ -87,7 +87,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
         posY := posY + 25
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h130 vCurrentRunGroupID, Current `Run:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h140 vCurrentRunGroupID, Current `Run:
         Gui, ICScriptHub:Font, w400
 
         Gui, ICScriptHub:Font, w700
@@ -105,6 +105,8 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
         Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Last Close Game Reason:
+        Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300, 
         GUIFunctions.SetThemeTextColor()
     }
 
@@ -171,7 +173,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Tab, Stats
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h110 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h125 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
         Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
@@ -185,6 +187,8 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vBadAutoprogressesID x+2 w200,  
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
+        g_TabControlHeight := Max(g_TabControlHeight, 700)
+        GUIFunctions.RefreshTabControlSize()
         GUIFunctions.SetThemeTextColor()
     }
 
@@ -222,6 +226,7 @@ class IC_BrivGemFarm_Stats_Component
             lastResetCount := g_SF.Memory.ReadResetsCount()
             previousLoopStartTime := A_TickCount
             previousZoneStartTime := A_TickCount ; Reset zone timer after modron reset
+            lastZone := 0
         }
 
         if !g_SF.Memory.ReadUserIsInited()
@@ -267,6 +272,8 @@ class IC_BrivGemFarm_Stats_Component
 
         dtCurrentLevelTime := Round( ( A_TickCount - previousZoneStartTime ) / 1000, 2 )
         GuiControl, ICScriptHub:, dtCurrentLevelTimeID, % dtCurrentLevelTime
+        if(IsObject(this.SharedRunData))
+            GuiControl, ICScriptHub:, LastCloseGameReasonID, % this.SharedRunData.LastCloseReason
         Critical, Off
     }
 

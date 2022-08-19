@@ -1,3 +1,29 @@
+July 29, 2022
+    Added a line to the stats tab that shows the reason the script closed the game last.
+    Added more version information to the About tab, including imports version.
+    Updated Imports for v461.1 (32/64 bit).
+    Updated pointer required for the chest purchasing addon (64 bit).
+
+July 28, 2022
+    Updated TestGameVersion to test for full game version including postfix.
+    Fixed TestGameVersion to test version for 64 bit properly.
+
+July 27, 2022
+    Fixed Briv stack calculations not correctly updating after modron reset if dashwait is disabled.
+    Updated docs with minor corrections for recommendations after the Hew nerf.
+    
+July 22, 2022
+    Fixed some Memory Read tab height issues.
+    Added version testing.
+    Fixed a case where stacking could occur on zone 1.
+    Fixed bug where non-metalborn stack calculations were incorrect.
+
+July 22, 2022
+    Fixed various GUI issues and calculations with automatic Briv stack detection.
+
+July 19, 2022
+    NEW! Added an automatic Briv stack detection to allow for seamless early stacking and to simplify the gem farm setup.
+
 July 17, 2022
     Fixed how buying/opening chests works. The sleep timer should now correctly start before opening chests instead of after.
     Slightly better messages for chest purchasing/opening when docontinuous option is checked.

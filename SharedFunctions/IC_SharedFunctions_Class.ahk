@@ -31,6 +31,8 @@ class IC_SharedData_Class
     TriggerStart := false
     TotalRollBacks := 0
     BadAutoProgress := 0
+    PreviousStacksFromOffline := 0
+    TargetStacks := 0
 
     Close()
     {
@@ -96,7 +98,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.5.4, 2022-02-15"
+        return "v2.5.5, 2022-07-19"
     }
 
     ;Gets data from JSON file
@@ -636,6 +638,7 @@ class IC_SharedFunctions_Class
     ;A function that closes IC. If IC takes longer than 60 seconds to save and close then the script will force it closed.
     CloseIC( string := "" )
     {
+        g_SharedData.LastCloseReason := string
         ; check that server call object is updated before closing IC in case any server calls need to be made
         ; by the script before the game restarts
         this.ResetServerCall()
@@ -685,7 +688,11 @@ class IC_SharedFunctions_Class
             }
             ; Process exists, wait for the window:
             while(!(this.Hwnd := WinExist( "ahk_exe IdleDragons.exe" )) AND ElapsedTime < 32000)
+            {
+                WinGetActiveTitle, savedActive
+                this.SavedActiveWindow := savedActive
                 ElapsedTime := A_TickCount - StartTime
+            }
             this.ActivateLastWindow()
             Process, Priority, % this.PID, High
             this.Memory.OpenProcessReader()
@@ -1075,6 +1082,76 @@ class IC_SharedFunctions_Class
     ;======================
     ; New Helper Functions
     ;======================
+
+    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
+    CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
+    {
+        jumps := 0
+        consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        distance := this.Memory.GetCoreTargetAreaByInstance(1)
+        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
+        if (worstCase)
+            jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
+        else
+            jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
+        stacks := Ceil(49 / (1+consume)**jumps)
+        return stacks
+    }
+
+    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached. Defaults: startZone=1, targetZone=1, worstCase=true.
+    CalculateBrivStacksLeftAtTargetZone(startZone := 1, targetZone := 1, worstCase := true)
+    {
+        jumps := 0
+        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        distance := targetZone - startZone
+        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
+        if (worstCase)
+            jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
+        else
+            jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
+
+        return Floor(stacks*(1+consume)**jumps)
+    }
+
+    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
+    CalculateBrivStacksConsumedToReachModronResetZone()
+    {
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetCoreTargetAreaByInstance(1))
+    }
+
+    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
+    CalculateMaxZone(avgMinOrMax := 0)
+    {
+        ; 1 jump results will change based on the current zone depending on whether the previous zones had jumps and used stacks or not.
+        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
+        currentZone := this.Memory.ReadCurrentZone() 
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
+        avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
+        maxJumpDistance := skipAmount+1
+        minJumpDistance := skipAmount
+        ;zones := jumps * avgJumpDistance
+        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
+        return currentZone + zones
+    }
+
+    ; Returns whether Briv's spec in the modron core is set to Metalborn.
+    IsBrivMetalborn()
+    {
+        brivID := 58
+        specID := this.Memory.GetCoreSpecializationForHero(brivID)
+        if (specID == 3455)
+            return true
+        return false
+    }
 
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.
 

@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
-    return "v3.3.4, 2022-07-17"
+    return "v3.3.5, 2022-07-29"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -159,7 +159,6 @@ HideToolTip()
     ToolTip
 }
 
-#include *i %A_ScriptDir%\AddOns\AddOnsIncluded.ahk
 ;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
 ; Shared Functions
 #include %A_ScriptDir%\SharedFunctions\IC_SharedFunctions_Class.ahk
@@ -167,6 +166,7 @@ HideToolTip()
 #include %A_ScriptDir%\SharedFunctions\IC_KeyHelper_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_GUIFunctions_Class.ahk
 #include %A_ScriptDir%\SharedFunctions\IC_UpdateClass_Class.ahk
+#include *i %A_ScriptDir%\AddOns\AddOnsIncluded.ahk
 
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe
 ;!LButton::WindowMouseDragMove()

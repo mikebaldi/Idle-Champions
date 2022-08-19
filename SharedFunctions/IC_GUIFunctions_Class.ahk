@@ -13,6 +13,12 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
+    RefreshTabControlSize()
+    {
+        GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+        Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+    }
+
     ; Add a Button across the top of the GUI.
     AddButton(Picture,FunctionToCall,VariableName){
         global

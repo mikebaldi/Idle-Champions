@@ -9,7 +9,18 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
             this.CloseIC( reason )
             ; TODO: If the steelbone stacks are > 1900000 the script will forever fail to fix a failed restack. Evaluate options.
             if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+            {
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
+            }
+            else if(this.sprint != "" AND this.steelbones != "")
+            {
+                response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
+                g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
+            }
+            else
+            {
+                g_SharedData.LoopString := "ServerCall: Restarting adventure (no manual stack conv.)"
+            }
             response := g_ServerCall.CallEndAdventure()
             response := g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
             g_SharedData.TriggerStart := true
@@ -123,6 +134,7 @@ class IC_BrivServerCall_Class extends IC_ServerCalls_Class
 class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
+    TargetStacks := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -171,6 +183,8 @@ class IC_BrivGemFarm_Class
                 keyspam.Push("{ClickDmg}")
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
+                g_SF.Memory.ActiveEffectKeyHandler.Refresh()
+                g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
                 g_SharedData.StackFail := this.CheckForFailedConv()
@@ -200,7 +214,12 @@ class IC_BrivGemFarm_Class
                     keyspam := ["{ClickDmg}"]
                     doKeySpam := false
                 }
+                lastModronResetZone := g_SF.ModronResetZone
                 g_SF.InitZone( keyspam )
+                if g_SF.ModronResetZone != lastModronResetZone
+                    g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
+                g_SF.ToggleAutoProgress( 1 )
+                continue
             }
             g_SF.ToggleAutoProgress( 1 )
             if(g_SF.CheckifStuck())
@@ -220,17 +239,22 @@ class IC_BrivGemFarm_Class
     TestForSteelBonesStackFarming()
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
-        stacks := this.GetNumStacksFarmed()
+        ; Don't test while modron resetting.
+        if(CurrentZone < 0 OR CurrentZone >= g_SF.ModronResetZone)
+            return
+        stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
         stackfail := 0
         forcedReset := false
         forcedResetReason := ""
         ; passed stack zone, start stack farm. Normal operation.
-        if ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
+        if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
             this.StackFarm()
         else
         {
+            targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : targetStacks
             ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
-            if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
+            if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < targetStacks AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
             {
                 stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
                 g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -239,7 +263,7 @@ class IC_BrivGemFarm_Class
             else
             { 
                 ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure
-                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > g_BrivUserSettings[ "TargetStacks" ] AND g_SF.Memory.ReadHighestZone() > 10)
+                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10)
                 {
                     stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
                     g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -248,7 +272,7 @@ class IC_BrivGemFarm_Class
                 }
                 ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
                 ; (for restarting after stacking without going to modron reset level)
-                if ( stacks > g_BrivUserSettings[ "TargetStacks" ] AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+                if ( stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
                 {
                     stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
                     g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -317,9 +341,11 @@ class IC_BrivGemFarm_Class
     ;Starts stacking SteelBones based on settings (Restart or Normal).
     StackFarm()
     {
-        if ( g_BrivUserSettings[ "RestartStackTime" ] AND stacks < g_BrivUserSettings[ "TargetStacks" ] )
+        stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
+        if ( g_BrivUserSettings[ "RestartStackTime" ] AND stacks < targetStacks )
             this.StackRestart()
-        else if (stacks < g_BrivUserSettings[ "TargetStacks" ])
+        else if (stacks < targetStacks)
             this.StackNormal()
         ; SetFormation needs to occur before dashwait in case game erronously placed party on boss zone after stack restart
         g_SF.SetFormation(g_BrivUserSettings) 
@@ -337,9 +363,10 @@ class IC_BrivGemFarm_Class
     ; Stack Briv's SteelBones by switching to his formation and restarting the game.
     StackRestart()
     {
-        stacks := this.GetNumStacksFarmed()
+        lastStacks := stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
         retryAttempt := 0
-        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND retryAttempt < 10 )
+        while ( stacks < targetStacks AND retryAttempt < 10 )
         {
             retryAttempt++
             this.StackFarmSetup()
@@ -357,14 +384,17 @@ class IC_BrivGemFarm_Class
                 g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
             }
             g_SF.SafetyCheck()
-            stacks := this.GetNumStacksFarmed()
+            stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
             if ( g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ] )
             {
                 g_SharedData.LoopString := "Stack Sleep: Failed (zone < min)"
                 Break  ; "Bad Save? Loaded below stack zone, see value."
             }
+            g_SharedData.PreviousStacksFromOffline := stacks - lastStacks
+            lastStacks := stacks
         }
+        
         OutputDebug, % var
         g_PreviousZoneStartTime := A_TickCount
         return
@@ -372,7 +402,8 @@ class IC_BrivGemFarm_Class
 
     StackNormal()
     {
-        stacks := this.GetNumStacksFarmed()
+        stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
         if (stacks >= g_BrivUserSettings[ "TargetStacks" ] OR g_SF.Memory.ReadCurrentZone() == 1 OR g_SF.Memory.ReadHasteStacks() >= g_BrivUserSettings[ "TargetStacks" ]) ; avoids attempts to stack again after stacking has been completed and level not reset yet.
             return
         this.StackFarmSetup()
@@ -380,10 +411,10 @@ class IC_BrivGemFarm_Class
         ElapsedTime := 0
         g_SharedData.LoopString := "Stack Normal"
         prevSB := g_SF.Memory.ReadSBStacks()
-        while ( stacks < g_BrivUserSettings[ "TargetStacks" ] AND ElapsedTime < 300000 AND g_SF.Memory.ReadCurrentZone() > g_BrivUserSettings[ "MinStackZone" ] )
+        while ( stacks < targetStacks AND ElapsedTime < 300000 AND g_SF.Memory.ReadCurrentZone() > g_BrivUserSettings[ "MinStackZone" ] )
         {
             g_SF.FallBackFromBossZone( ["{w}"] )
-            stacks := this.GetNumStacksFarmed()
+            stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
             if ( g_SF.Memory.ReadSBStacks() > prevSB)
                 StartTime := A_TickCount
             ElapsedTime := A_TickCount - StartTime
@@ -427,19 +458,20 @@ class IC_BrivGemFarm_Class
     CheckForFailedConv()
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
         ; Zone 10 gives plenty leeway for fast starts that skip level 1 while being low enough to not have received briv stacks
         ; needed to ensure DoPartySetup
         if ( g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone <= 10)
         {
             stacks := this.GetNumStacksFarmed()
-            If (g_SF.Memory.ReadHasteStacks() < g_BrivUserSettings[ "TargetStacks" ] AND stacks > g_BrivUserSettings[ "TargetStacks" ])
+            If (g_SF.Memory.ReadHasteStacks() < targetStacks AND stacks > targetStacks)
             {
                 g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
                 g_SF.RestartAdventure( "Failed Conversion" )
                 g_SF.SafetyCheck()
                 return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
             }
-            If (g_SF.Memory.ReadHasteStacks() < g_BrivUserSettings[ "TargetStacks" ] AND stacks <= 50)
+            If (g_SF.Memory.ReadHasteStacks() < targetStacks AND stacks <= 50)
             {
                 g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
                 return StackFailStates.FAILED_TO_KEEP_STACKS ; 5

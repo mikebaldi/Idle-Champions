@@ -11,16 +11,16 @@ class IC_CrusadersGameDataSet32_Class ; static loc is ==  its instance loc
  
     GetVersion()
     {
-        return "v1.1.7, 2022-06-24, IC v0.452+, 32-bit"  
+        return "v1.1.8, 2022-07-29, IC v0.461.1+, 32-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A4A64 ; v452
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A4DE0 ; v461.1
         this.CrusadersGame := {}
         this.CrusadersGame.Defs := {}
-        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x84, 0x94, 0x4, 0x80, 0x40] ) ; v452
+        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0xEC, 0x38, 0x24, 0x50, 0xE80] ) ; v461.1
         this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
     }
@@ -35,16 +35,16 @@ class IC_CrusadersGameDataSet64_Class
 
     GetVersion()
     {
-        return "v1.1.9, 2022-07-01, IC v0.455+, 64-bit"  
+        return "v1.2.0, 2022-08-17, IC v0.463+, 64-bit"  
     }
 
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00498C40 ; v433-455 (except v452)
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x004A33B8 ; v462
         this.CrusadersGame := {}
         this.CrusadersGame.Defs := {}
-        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x0, 0xD0, 0x8, 0X1D0, 0x80] ) ; v435
+        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( [0x210, 0xBC0] ) ; v463
         this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
         this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := true
         #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
