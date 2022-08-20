@@ -1,3 +1,6 @@
+August 20, 2022
+    Fixed Autodetect Briv Jump Stacks not working on parties other than the first.
+
 August 18, 2022
     Updated MemoryRead objects to be simpler in preperation of handling multiple 64 bit game clients.
 

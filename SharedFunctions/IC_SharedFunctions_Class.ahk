@@ -1082,7 +1082,7 @@ class IC_SharedFunctions_Class
         consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
         skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        distance := this.Memory.GetCoreTargetAreaByInstance(1)
+        distance := this.Memory.GetCoreTargetAreaByInstance(this.Memory.ReadActiveGameInstance())
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         if (worstCase)
             jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
@@ -1114,7 +1114,7 @@ class IC_SharedFunctions_Class
     CalculateBrivStacksConsumedToReachModronResetZone()
     {
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetCoreTargetAreaByInstance(1))
+        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetCoreTargetAreaByInstance(this.Memory.ReadActiveGameInstance()))
     }
 
     ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
