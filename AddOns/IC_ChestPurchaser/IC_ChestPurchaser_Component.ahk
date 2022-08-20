@@ -39,8 +39,13 @@ class IC_ChestPurchaser_Component
         else
             return
         size := g_SF.Memory.ReadChestDefinesSize()
-        if(!size)
+        if(!size OR size > 3000 OR size < 0)
+        {
+            comboBoxOptions := "-- Error Reading Chests --"
+            GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
+            GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
             return
+        }
         loop, %size%
         {
             chestID := g_SF.Memory.GetChestIDBySlot(A_Index)
