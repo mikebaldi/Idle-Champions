@@ -1,3 +1,12 @@
+August 20, 2022
+    Fixed Autodetect Briv Jump Stacks not working on parties other than the first.
+
+August 18, 2022
+    Updated MemoryRead objects to be simpler in preperation of handling multiple 64 bit game clients.
+
+August 16, 2022
+    Created v463-Steam branch for temporary handling of new Steam 64 bit client.
+
 July 29, 2022
     Added a line to the stats tab that shows the reason the script closed the game last.
     Added more version information to the About tab, including imports version.
@@ -11,7 +20,7 @@ July 28, 2022
 July 27, 2022
     Fixed Briv stack calculations not correctly updating after modron reset if dashwait is disabled.
     Updated docs with minor corrections for recommendations after the Hew nerf.
-    
+
 July 22, 2022
     Fixed some Memory Read tab height issues.
     Added version testing.
@@ -57,7 +66,7 @@ July 6, 2022
 July 2, 2022
     Fixed a bug that could cause memory to fail to read for Hero Handlers when the game uses high value memory addresses (int overflow).
     Added protection for hero handlers potentially failing when the IdleGameManager pointer needs to be updated/changed.
-    Update to MemoryFunctions for future IdleGameManager memory reading safety. 
+    Update to MemoryFunctions for future IdleGameManager memory reading safety.
 
 July 1, 2022
     Reverted pointers for EGS (64-bit) v455.
@@ -66,7 +75,7 @@ July 1, 2022
 June 24, 2022
     Updated pointers for EGS (64-bit) v452.
     Updated pointers for Steam (32-bit) v452.
-    
+
 June 2, 2022
     Updated Readme.md for SharedFunctions.
     Added HewMaan's ultimate ID and CoolDown time to ActiveEffectKeySharedFunctions.
@@ -123,7 +132,7 @@ April 16, 2022
     Updated pointers/offsets for EGS v430.
     Updated pointers/offsets for Steam v430.
     Bugfix - Added a check to verify webroot is a valid http string before  updating it. Should help prevent failed chest openings or failed resets on TR.
-    
+
     Fixed offset for ResetsSinceLastManual which was causing the script to fail to recognize it was on zone 1 instead of modron reset zone.
 
 April 14, 2022
