@@ -1,5 +1,7 @@
 August 20, 2022
     Fixed Autodetect Briv Jump Stacks not working on parties other than the first.
+    Fixed chest addon memory error.
+    Updated error message that happens when starting the gem farm script when no adventure is started. 
 
 August 18, 2022
     Updated MemoryRead objects to be simpler in preperation of handling multiple 64 bit game clients.
