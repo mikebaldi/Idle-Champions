@@ -1034,7 +1034,14 @@ class IC_SharedFunctions_Class
         CurrentObjID := this.Memory.ReadCurrentObjID()
         while ( CurrentObjID == "" OR CurrentObjID <= 0 )
         {
-            MsgBox, 5,, % "Please load into a valid adventure or confirm the correct memory file is being used. `nCurrent version: " . this.Memory.GameManager.GetVersion() . "`nDebug Value: " CurrentObjID
+            txtCheck := "Unable to read adventure data."
+            txtCheck .= "`n1. Please load into a valid adventure. Current adventure shows as: " . (CurrentObjID ? CurrentObjID : "-- Error --")
+            txtCheck .= "`n2. Check the correct memory file is being used. `n    Current version: " . this.Memory.GameManager.GetVersion()
+            txtcheck .= "`n3. If IC is running with admin privileges, then the script will also require admin privileges."
+            if (this.Memory.GameManager.is64bit())
+                txtcheck .= "`n4. Check AHK is 64bit."
+            MsgBox, 5,, % txtCheck
+
             IfMsgBox, Retry
             {
                 this.Memory.OpenProcessReader()
