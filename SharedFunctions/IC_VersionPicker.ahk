@@ -51,8 +51,11 @@ VersionPickerSaveChoice()
         return
     }
     WriteObjectToJSON(scriptLocation . "MemoryRead/CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
-    MsgBox, Settings saved! Close/Restart all running Script Hub scripts before continuing.
+    MsgBox, Settings saved! ; Close/Restart all running Script Hub scripts before continuing.
     OutputDebug, % "Pointer Version Saved!"
+    scriptHubLoc := A_LineFile . "\..\..\ICScriptHub.ahk"
+    Run, %scriptHubLoc%
+    ICScriptHubGuiClose()
 }
 
 ICScriptHubGuiClose()
