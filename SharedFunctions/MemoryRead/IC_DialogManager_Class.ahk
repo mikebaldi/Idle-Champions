@@ -4,10 +4,13 @@
 ; Searching for ptr depth of 1 has been fine.
 class IC_DialogManager_Class
 {
-    moduleOffset := 0x00499C70
-    structureOffsets := [0x9C0]
-    __new()
+    moduleOffset := 0
+    structureOffsets := 0
+
+    __new(moduleOffset := 0, structureOffsets := 0)
     {
+        this.moduleOffset := moduleOffset
+        this.structureOffsets := structureOffsets
         this.Refresh()
     }
  

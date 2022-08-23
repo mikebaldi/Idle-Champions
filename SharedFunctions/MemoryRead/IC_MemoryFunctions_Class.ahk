@@ -1,4 +1,5 @@
 ;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
+#include %A_LineFile%\..\..\json.ahk
 #include %A_LineFile%\..\classMemory.ahk
 #include %A_LineFile%\..\IC_IdleGameManager_Class.ahk
 #include %A_LineFile%\..\IC_GameSettings_Class.ahk
@@ -33,13 +34,22 @@ class IC_MemoryFunctions_Class
     ;   	}
     GameInstance := 0
 
-    __new()
+    __new(fileLoc := "CurrentPointers.json")
     {
-        this.GameManager := new IC_IdleGameManager_Class
-        this.GameSettings := new IC_GameSettings_Class
-        this.EngineSettings := new IC_EngineSettings_Class
-        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class
-        this.DialogManager := new IC_DialogManager_Class
+        FileRead, oData, %fileLoc%
+        if(oData == "")
+        {
+            MsgBox, Pointer data not found. Closing IC Script Hub and starting IC_VersionPicker. Please select the version and platform closest to your current version and restart IC Script Hub.
+            versionPickerLoc := A_LineFile . "\..\..\IC_VersionPicker.ahk"
+            Run, %versionPickerLoc%
+            ExitApp
+        }
+        currentPointers := JSON.parse( oData )
+        this.GameManager := new IC_IdleGameManager_Class(currentPointers.IdleGameManager.moduleAddress, currentPointers.IdleGameManager.moduleOffset)
+        this.GameSettings := new IC_GameSettings_Class(currentPointers.GameSettings.moduleAddress, currentPointers.GameSettings.staticOffset, currentPointers.GameSettings.moduleOffset)
+        this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
+        this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class(currentPointers.CrusadersGameDataSet.moduleAddress, currentPointers.CrusadersGameDataSet.moduleOffset)
+        this.DialogManager := new IC_DialogManager_Class(currentPointers.DialogManager.moduleAddress, currentPointers.DialogManager.moduleOffset)
         this.ActiveEffectKeyHandler := new IC_ActiveEffectKeyHandler_Class
     }
 

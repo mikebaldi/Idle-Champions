@@ -2,11 +2,15 @@
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 class IC_GameSettings_Class
 {
-    moduleOffset := 0x00497E40 ; v463
-    structureOffsets := [0x820] ; v463
-    StaticOffset := 0xA80
-    __new()
+    moduleOffset := 0
+    structureOffsets := 0
+    StaticOffset := 0
+
+    __new(moduleOffset := 0, staticOffset := 0, structureOffsets := 0)
     {
+        this.moduleOffset := moduleOffset
+        this.structureOffsets := structureOffsets
+        this.StaticOffset := staticOffset
         this.Refresh()
     }
  

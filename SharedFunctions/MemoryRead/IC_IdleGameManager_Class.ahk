@@ -18,11 +18,13 @@
 
 class IC_IdleGameManager_Class
 {
-    moduleOffset := 0x00495A90 ; v463
-    structureOffsets := [0xCB0] ; v463
+    moduleOffset := 0
+    structureOffsets := 0
 
-    __new()
+    __new(moduleOffset := 0, structureOffsets := 0)
     {
+        this.moduleOffset := moduleOffset
+        this.structureOffsets := structureOffsets
         this.Refresh()
     }
 

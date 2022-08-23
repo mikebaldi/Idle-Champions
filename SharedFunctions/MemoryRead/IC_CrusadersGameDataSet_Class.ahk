@@ -4,10 +4,13 @@
 
 class IC_CrusadersGameDataSet_Class 
 {
-    moduleOffset := 0x0049C7C8
-    structureOffsets := [0x40, 0xC30]
-    __new()
+    moduleOffset := 0
+    structureOffsets := 0
+
+    __new(moduleOffset := 0, structureOffsets := 0)
     {
+        this.moduleOffset := moduleOffset
+        this.structureOffsets := structureOffsets
         this.Refresh()
     }
  

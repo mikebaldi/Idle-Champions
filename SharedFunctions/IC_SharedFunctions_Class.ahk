@@ -88,7 +88,7 @@ class IC_SharedFunctions_Class
 
     __new()
     {
-        this.Memory := New IC_MemoryFunctions_Class
+        this.Memory := New IC_MemoryFunctions_Class(A_LineFile . "\..\MemoryRead\CurrentPointers.json")
     }
 
     ;=======================
@@ -98,7 +98,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.5.6, 2022-08-22"
+        return "v2.5.7, 2022-08-22"
     }
 
     ;Gets data from JSON file
