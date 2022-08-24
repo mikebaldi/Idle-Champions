@@ -16,16 +16,21 @@
 
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_IdleGameManager32_Class
+class IC_IdleGameManager_Class
 {
-    __new()
+    moduleOffset := 0
+    structureOffsets := 0
+
+    __new(moduleOffset := 0, structureOffsets := 0)
     {
+        this.moduleOffset := moduleOffset
+        this.structureOffsets := structureOffsets
         this.Refresh()
     }
 
     GetVersion()
     {
-        return "v1.10.11, 2022-04-16, IC v0.430+, 32-bit"
+        return "v2.0.1, 2022-08-19, IC v0.463+"
     }
 
     is64Bit()
@@ -44,44 +49,22 @@ class IC_IdleGameManager32_Class
         ;structure pointers
         ;==================
         this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x003A0574
-        this.IdleGameManager := New GameObjectStructure([0x658])
+        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
+        this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
+        this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
         this.IdleGameManager.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
-        ; special case for Dictionary<List<Action<action>>>
-        this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
-    }
-}
-
-class IC_IdleGameManager64_Class
-{
-    __new()
-    {
-        this.Refresh()
-    }
-
-    GetVersion()
-    {
-        return "v1.9.19, 2022-06-24, IC v0.453+, 64-bit"
-    }
-
-    is64Bit()
-    {
-        return this.Main.isTarget64bit
-    }
-
-    Refresh()
-    {
-        ;==================
-        ;structure pointers
-        ;==================
-        this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90 ;v455
-        this.IdleGameManager := New GameObjectStructure([0xC88]) ; Offsets 0xCB0,0, but 0 is a mod (+) and disappears.
-        this.IdleGameManager.Is64Bit := true
-        this.IdleGameManager.BaseAddress := this.BaseAddress
-        #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
-        ; special case for Dictionary<List<Action<action>>>
-        this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ;Push entries, value[0] (CE doesn't build this on it's own), _size
+        if(!this.Main.isTarget64bit)
+        {
+            ; Build offsets for class using imported AHK files.
+            #include %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
+            ; special case for Dictionary<List<Action<action>>>
+            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
+        }
+        else
+        {
+            #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
+            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
+        }
     }
 }

@@ -4,6 +4,7 @@ GUIFunctions.AddTab("FullMemoryFunctions")
 
 Gui, ICScriptHub:Tab, FullMemoryFunctions
 Gui, ICScriptHub:Add, Button, x+220 w160 gIC_MemoryFunctionsFullRead_Component.ReadAllFunctions, Load Memory Functions
+Gui, ICScriptHub:Add, Button, x+10 w145 gIC_MemoryFunctionsFullRead_Component.SwapPointers, Change Pointers
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 yp+5, `All Memory Functions:
 Gui, ICScriptHub:Font, w400
@@ -86,6 +87,14 @@ class IC_MemoryFunctionsFullRead_Component
             }
         }
         LV_ModifyCol()
+    }
+
+    SwapPointers()
+    {
+        MsgBox, Closing Script Hub and running the pointer version picker.
+        versionPickerLoc := A_LineFile . "\..\..\..\SharedFunctions\IC_VersionPicker.ahk"
+        Run, %versionPickerLoc%
+        ExitApp
     }
 }
 
