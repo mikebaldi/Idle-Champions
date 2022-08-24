@@ -2,7 +2,7 @@
 ; Note static loc is == its instance loc
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_CrusadersGameDataSet_Class 
+class IC_CrusadersGameDataSet_Class
 {
     moduleOffset := 0
     structureOffsets := 0
@@ -13,10 +13,10 @@ class IC_CrusadersGameDataSet_Class
         this.structureOffsets := structureOffsets
         this.Refresh()
     }
- 
+
     GetVersion()
     {
-        return "v2.0.2, 2022-08-19, IC v0.463+" 
+        return "v2.0.2, 2022-08-22, IC v0.463+"
     }
 
     Refresh()
