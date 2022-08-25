@@ -16,6 +16,19 @@ global scriptLocation := A_LineFile . "/../"
 global g_VersionPickerPlatformChoice
 global g_VersionPickerVersionChoice
 global GameObj := LoadObjectFromJSON( scriptLocation . "PointerData.json")
+global WRLPath := ""
+
+GetDataFromWRL(string, string2, occurance := 1)
+{
+    global WRLPath
+    FileRead, wrl, %WRLPath%
+    foundPos := InStr(wrl, string,,, occurance) + StrLen(string)
+    endPos := InStr(wrl, string2,, foundPos + 1)
+    length := endPos - foundPos
+    data := SubStr(wrl, foundPos, length)
+    wrl := ""
+    return data
+}
 
 ;Gets data from JSON file
 LoadObjectFromJSON( FileName )
@@ -29,7 +42,8 @@ WriteObjectToJSON( FileName, ByRef object )
 {
     objectJSON := JSON.stringify( object )
     objectJSON := JSON.Beautify( objectJSON )
-    FileDelete, %FileName%
+    if(FileExist(FileName))
+        FileDelete, %FileName%
     FileAppend, %objectJSON%, %FileName%
     return
 }
@@ -148,8 +162,9 @@ CheckPlatformBySettingsOverride(gamePath)
 ; check platform by WRL
 CheckPlatformByWRL(gamePath)
 {
+    global WRLPath
     WRLPath := gamePath . "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
-    return ""
+    return GetPlatformNameByID(GetDataFromWRL("network_id=", "&"))
 }
 
 CheckPlatformByLoadedModules()
@@ -159,12 +174,16 @@ CheckPlatformByLoadedModules()
     steamDLL := Main.getModuleBaseAddress("steam_api64.dll")
     if (steamDLL != -1)
         return "Steam"
-    ;KartridgeDLL := Main.getModuleBaseAddress("kartridge.dll")
-        ;return "Kartridge"
+    kartridgeDLL := Main.getModuleBaseAddress("kartridge-sdk.dll")
+    if(!kartridgeDLL) ; steam and EGS include kartridge dll while CNE does not. Kartridge not tested but assumed use it because Kartridge.
+         return "CNE" 
+    ;kartridgeDLL := Main.getModuleBaseAddress("kartridge.dll")
+        ;return "Kartridge"         
     ;CNEDLL := Main.getModuleBaseAddress("cne.dll")
         ;return "CNE"
     ;EGSDLL := Main.getModuleBaseAddress("EGS.dll")
-        ;return "CNE"
+        ;return "EGS"
+    return ""
 }
 
 ; returns platform name based on an ID
@@ -207,8 +226,9 @@ CheckVersionByPath(gamePath)
 ; check platform by WRL
 CheckVersionByWRL(gamePath)
 {
+    global WRLPath
     WRLPath := gamePath . "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
-    return ""
+    return GetDataFromWRL("mobile_client_version=", "&")
 }
 
 CheckDLLVersion(dllPath)
