@@ -97,7 +97,7 @@ ChooseRecommendation()
     if(!version)
         version := CheckVersionByPath(exePath)
 
-    recommended := "Script Hub Recommends: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
+    recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
     GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % recommended
 
     ; some check to say okay, yeah you picked the v463 pointer, but you don't have the v463 offsets.
