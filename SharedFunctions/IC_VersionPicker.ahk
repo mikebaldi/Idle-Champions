@@ -84,8 +84,8 @@ ChooseRecommendation()
     settingsGamePath := settings.InstallPath
 
     hWnd := WinExist("ahk_exe IdleDragons.exe")
-    WinGet, vPPath, ProcessPath, % "ahk_id " hWnd
-    exePath := PPath . "\..\"
+    WinGet, pPath, ProcessPath, % "ahk_id " hWnd
+    exePath := pPath . "\..\"
 
     platform := CheckPlatformByPath(settingsGamePath)
     if(!platform)
