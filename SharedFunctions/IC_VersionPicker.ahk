@@ -18,9 +18,12 @@ global g_VersionPickerVersionChoice
 global GameObj := LoadObjectFromJSON( scriptLocation . "PointerData.json")
 global WRLPath := ""
 
+; Searches the WebRequestLog for the Nth (param 3) string found between a start value (param 1) and end value (param 2)
 GetDataFromWRL(string, string2, occurance := 1)
 {
     global WRLPath
+    if(!FileExist(WRLPath))
+        return ""
     FileRead, wrl, %WRLPath%
     foundPos := InStr(wrl, string,,, occurance) + StrLen(string)
     endPos := InStr(wrl, string2,, foundPos + 1)
@@ -86,13 +89,14 @@ ICSHVersionPickerGuiClose()
     ExitApp
 }
 
-; This DLL check will be another version check.
-; Will attempt with most recent pointers to see if version is readable/within limits and pull info from that if possible.
-; Probably even iterate through all pointers if everything else fails just to see if something comes back with seemingly relevant info.
-;  user needs to have the right Offsets before trying the pointer otherwise they probably won't get good info 
-;  if while checking pointers one tries to access unavailable memory and crashes IC.. that'd be a problem
+; Attempts to find the best recommendation for platform and version.
 ChooseRecommendation()
 {
+    defaultPaths := []
+    defaultPaths[1] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\" ; Steam
+    defaultPaths[2] := "C:\Program Files\Epic Games\IdleChampions" ; Epic
+    defaultPaths[3] := "" ; Kartridge
+    defaultPaths[4] := "" ; CNE
     settingsJSONPath := A_LineFile . "\..\..\Settings.json"
     settings := LoadObjectFromJSON( settingsJSONPath )
     settingsGamePath := settings.InstallPath
@@ -105,11 +109,24 @@ ChooseRecommendation()
     if(!platform)
         platform := CheckPlatformByPath(exePath)
     if(!platform AND hWnd)
-        version := CheckPlatformByLoadedModules()
+        platform := CheckPlatformByLoadedModules()
+    for k,gamePath in defaultPaths
+    {
+        if(platform)
+            break
+        platform := CheckPlatformByPath(gamePath, false)
+    }
+
 
     version := CheckVersionByPath(settingsGamePath)
     if(!version)
         version := CheckVersionByPath(exePath)
+    for k,gamePath in defaultPaths
+    {
+        if(version)
+            break
+        version := CheckVersionByPath(gamePath)
+    }
 
     recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
     GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % recommended
@@ -120,11 +137,13 @@ ChooseRecommendation()
 ; Will check paths to get a guess at platform.. both what's saved in Script Hub and what's used by the currently running IdleDragons.exe
 ; Use WRL to also check platform.
 ; Attempts to retrieve platform information using currently running IdleDragons.exe path location.
-CheckPlatformByPath(gamePath)
+CheckPlatformByPath(gamePath, checkPath := True)
 {
+    platform := ""
     if(!gamePath)
         return ""
-    platform := CheckPlatformByPathContents(gamePath)
+    if(checkPath)
+        platform := CheckPlatformByPathContents(gamePath)
     if(!platform)
         platform := CheckPlatformBySettingsOverride(gamePath)
     if(!platform)
@@ -167,6 +186,7 @@ CheckPlatformByWRL(gamePath)
     return GetPlatformNameByID(GetDataFromWRL("network_id=", "&"))
 }
 
+; tries to find a platform based on dlls loaded in IdleDragons.exe
 CheckPlatformByLoadedModules()
 {
     main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
@@ -231,6 +251,7 @@ CheckVersionByWRL(gamePath)
     return GetDataFromWRL("mobile_client_version=", "&")
 }
 
+; Check DLL for version info
 CheckDLLVersion(dllPath)
 {
     
@@ -267,6 +288,10 @@ CheckDLLVersion(dllPath)
 }
 
 ; Attempts to verify working pointers by checking if a valid game version can be read.
+; Probably even iterate through all pointers if everything else fails just to see if something comes back with seemingly relevant info.
+; user needs to have the right Offsets before trying the pointer otherwise they probably won't get good info 
+; if while checking pointers one tries to access unavailable memory and crashes IC.. that'd be a problem
+; Will attempt with most recent pointers to see if version is readable/within limits and pull info from that if possible.
 TestPointersByGameVersion()
 {
     ; test gameVersion > 400 and < 2000
