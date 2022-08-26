@@ -94,6 +94,8 @@ VersionPickerSaveChoice()
 ; Closes the current Script
 ICSHVersionPickerGuiClose()
 {
+    scriptHubLoc := A_LineFile . "\..\..\ICScriptHub.ahk"
+    Run, %scriptHubLoc%
     ExitApp
 }
 
@@ -114,9 +116,10 @@ ChooseRecommendation()
     WinGet, pPath, ProcessPath, % "ahk_id " hWnd
     exePath := pPath . "\..\"
 
-    platform := CheckPlatformByPath(settingsGamePath)
+    
+    platform := CheckPlatformByPath(exePath)
     if(!platform)
-        platform := CheckPlatformByPath(exePath)
+        platform := CheckPlatformByPath(settingsGamePath)
     if(!platform AND hWnd)
         platform := CheckPlatformByLoadedModules()
     for k,gamePath in defaultPaths
@@ -126,10 +129,9 @@ ChooseRecommendation()
         platform := CheckPlatformByPath(gamePath, false)
     }
 
-
-    version := CheckVersionByPath(settingsGamePath)
+    version := CheckVersionByPath(exePath)
     if(!version)
-        version := CheckVersionByPath(exePath)
+        version := CheckVersionByPath(settingsGamePath)
     for k,gamePath in defaultPaths
     {
         if(version)
