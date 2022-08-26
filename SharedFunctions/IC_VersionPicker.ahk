@@ -92,6 +92,7 @@ ICSHVersionPickerGuiClose()
 ; Attempts to find the best recommendation for platform and version.
 ChooseRecommendation()
 {
+    global VersionPickerPlatformDropdown
     defaultPaths := []
     defaultPaths[1] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\" ; Steam
     defaultPaths[2] := "C:\Program Files\Epic Games\IdleChampions" ; Epic
@@ -131,6 +132,28 @@ ChooseRecommendation()
     recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
     GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % recommended
 
+    if(platform)
+    GuiControl, choosestring, VersionPickerPlatformDropdown, %platform%
+    VersionPickerUpdateVersions()
+    closest := 0
+    for k,v in GameObj[VersionPickerPlatformDropdown]
+    {
+        if (version == k)
+        {
+            closest := version
+            break
+        }
+        else if (version > k)
+        {
+            closest := k
+        }
+        else if version < k
+        {
+            closest := k
+            break
+        }
+    }
+    GuiControl, choosestring, VersionPickerVersionDropdown, %closest%
     ; some check to say okay, yeah you picked the v463 pointer, but you don't have the v463 offsets.
 }
 
