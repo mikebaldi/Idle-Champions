@@ -7,9 +7,10 @@ Gui, ICSHVersionPicker:+Resize -MaximizeBox
 Gui, ICSHVersionPicker:Add, Text, w100, Platform:
 Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w100 vVersionPickerPlatformDropdown gVersionPickerUpdateVersions,
 Gui, ICSHVersionPicker:Add, Text, y6 x+10 w50, Version:
-Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w50 vVersionPickerVersionDropdown,
+Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w50 vVersionPickerVersionDropdown gVersionPickerResetText,
 Gui, ICSHVersionPicker:Add, Button, x+5 w50 vVersionPickerSaveButton gVersionPickerSaveChoice, Save
-Gui, ICSHVersionPicker:Add, Text, x5 y+10 w290 vVersionPickerSuggestionText, Script Hub Recommends: Checking...
+Gui, ICSHVersionPicker:Add, Text, x10 y+5 w290 vVersionPickerSuggestionText, Checking...
+Gui, ICSHVersionPicker:Add, Text, x10 y+2 w290 vVersionPickerDetectionText, Script Hub Recommends: Checking...
 Gui, ICSHVersionPicker:Show,, Memory Version Picker
 
 global scriptLocation := A_LineFile . "/../"
@@ -51,11 +52,18 @@ WriteObjectToJSON( FileName, ByRef object )
     return
 }
 
+; Sets suggestion text back to empty
+VersionPickerResetText()
+{
+    GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % ""
+}
+
 ; Reads version numbers into version dropdown box.
 VersionPickerUpdateVersions()
 {
     global VersionPickerPlatformDropdown
     global VersionPickerVersionText
+    GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % ""
     Gui, ICSHVersionPicker:Submit, NoHide
     versionComboBoxOptions := "|"
     for k,v in GameObj[VersionPickerPlatformDropdown]
@@ -130,7 +138,7 @@ ChooseRecommendation()
     }
 
     recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
-    GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % recommended
+    GuiControl,ICSHVersionPicker:, VersionPickerDetectionText, % recommended
 
     if(platform)
     GuiControl, choosestring, VersionPickerPlatformDropdown, %platform%
@@ -154,6 +162,8 @@ ChooseRecommendation()
         }
     }
     GuiControl, choosestring, VersionPickerVersionDropdown, %closest%
+    if(version AND platform)
+        GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % "The closest match has been selected."
     ; some check to say okay, yeah you picked the v463 pointer, but you don't have the v463 offsets.
 }
 
