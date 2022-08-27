@@ -2,6 +2,8 @@
 #include %A_LineFile%\..\json.ahk
 #include %A_LineFile%\..\MemoryRead\classMemory.ahk
 #include %A_LineFile%\..\CLR.ahk
+#include %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
+#include %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
 Gui, ICSHVersionPicker:New
 Gui, ICSHVersionPicker:+Resize -MaximizeBox
 Gui, ICSHVersionPicker:Add, Text, w100, Platform:
@@ -9,9 +11,12 @@ Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w100 vVersionPickerPlatformDropd
 Gui, ICSHVersionPicker:Add, Text, y6 x+10 w50, Version:
 Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w50 vVersionPickerVersionDropdown gVersionPickerResetText,
 Gui, ICSHVersionPicker:Add, Button, x+5 w50 vVersionPickerSaveButton gVersionPickerSaveChoice, Save
-Gui, ICSHVersionPicker:Add, Text, x10 y+5 w290 vVersionPickerSuggestionText, Checking...
-Gui, ICSHVersionPicker:Add, Text, x10 y+2 w290 vVersionPickerDetectionText, Script Hub Recommends: Checking...
-Gui, ICSHVersionPicker:Show,, Memory Version Picker
+Gui, ICSHVersionPicker:Add, Text, x10 y+5 w300 vVersionPickerSuggestionText, Checking...
+;Gui, ICSHVersionPicker:Font, w700
+Gui, ICSHVersionPicker:Add, Text, x10 y+1 w300 h26 vVersionPickerSuggestionText2, 
+Gui, ICSHVersionPicker:Font, w400
+Gui, ICSHVersionPicker:Add, Text, x10 y+2 w300 vVersionPickerDetectionText, Script Hub Recommends: Checking...
+Gui, ICSHVersionPicker:Show, , Memory Version Picker
 
 global scriptLocation := A_LineFile . "/../"
 global g_VersionPickerPlatformChoice
@@ -163,10 +168,21 @@ ChooseRecommendation()
             break
         }
     }
+
+    successMessage := (version == closest) ? "A match has been selected." :  "The closest match has been selected."
+    importsVersionMessage := ""
+    if(IsVersionMatchToImports(platform, version))
+        importsVersionMessage .= "Imports match version [" . GetImportsVersionByPlatform(platform) . "]." 
+    else
+        importsVersionMessage .= "Imports version mismatch. Game [" . version . "], Script [" . GetImportsVersionByPlatform(platform) . "]`nCheck Discord and Github for updated Imports"
+    textColor := IsVersionMatchToImports(platform, version) ? "cGREEN" : "cF18500"
     GuiControl, choosestring, VersionPickerVersionDropdown, %closest%
     if(version AND platform)
-        GuiControl,ICSHVersionPicker:, VersionPickerSuggestionText, % "The closest match has been selected."
-    ; some check to say okay, yeah you picked the v463 pointer, but you don't have the v463 offsets.
+        GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % successMessage
+	Gui,Font, bold +%textColor%
+    GuiControl, ICSHVersionPicker:Font, VersionPickerSuggestionText2, 
+    Gui,Font,
+    GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText2, % importsVersionMessage
 }
 
 ; Will check paths to get a guess at platform.. both what's saved in Script Hub and what's used by the currently running IdleDragons.exe
@@ -322,6 +338,24 @@ CheckDLLVersion(dllPath)
     return version
 }
 
+IsVersionMatchToImports(platform, version)
+{
+    importsVersion := GetImportsVersionByPlatform(platform)
+    if(version == importsVersion)
+        return true
+    else
+        return false
+}
+
+GetImportsVersionByPlatform(platform)
+{
+    if(platform == "Steam" OR platform == "EGS")
+        importsVersion := g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64
+    else if(platform == "CNE")
+        importsVersion := g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32
+    return importsVersion
+}
+
 ; Attempts to verify working pointers by checking if a valid game version can be read.
 ; Probably even iterate through all pointers if everything else fails just to see if something comes back with seemingly relevant info.
 ; user needs to have the right Offsets before trying the pointer otherwise they probably won't get good info 
@@ -330,6 +364,7 @@ CheckDLLVersion(dllPath)
 TestPointersByGameVersion()
 {
     ; test gameVersion > 400 and < 2000
+
 }
 
 ; Attempts to verify working pointers by checking if a valid timescale can be read.

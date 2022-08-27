@@ -155,7 +155,7 @@ class IC_BrivGemFarm_Component
     {
         gameVersion := g_SF.Memory.ReadGameVersion()
         importsVersion := g_SF.Memory.GameManager.is64Bit() ? g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64 : g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32
-        GuiControl, ICScriptHub: +cffa500, Warning_Imports_Bad, 
+        GuiControl, ICScriptHub: +cF18500, Warning_Imports_Bad, 
         if (gameVersion == "")
             GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Memory Read Failure. Check for updated Imports."
         else if( gameVersion > 100 AND gameVersion <= 999 AND gameVersion != importsVersion )
