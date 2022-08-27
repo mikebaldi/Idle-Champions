@@ -171,6 +171,7 @@ ChooseRecommendation()
     }
 
     successMessage := (version == closest) ? "A match has been selected." :  "The closest match has been selected."
+    versionTextColor := (version == closest AND version != "") ?  "cGREEN" : "cF18500"
     importsVersionMessage := ""
     if(platform == "" AND version == "")
         importsVersionMessage := ""
@@ -186,6 +187,8 @@ ChooseRecommendation()
         GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % successMessage
     else
         GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % "Unsuccessful detection. Please manually select."
+    Gui,Font, bold +%versionTextColor%
+    GuiControl, ICSHVersionPicker:Font, VersionPickerSuggestionText, 
 	Gui,Font, bold +%textColor%
     GuiControl, ICSHVersionPicker:Font, VersionPickerSuggestionText2, 
     Gui,Font,
