@@ -1,3 +1,11 @@
+August 26, 2022
+    Updated offsets to v465.1
+    Updated Version Check script with automatic version detection.
+
+August 23, 2022
+    Added a VersionPicker script to allow selection of pointers by platform/version.
+    Added button on FullMemoryFunctions to access version change script.
+
 August 20, 2022
     Fixed Autodetect Briv Jump Stacks not working on parties other than the first.
     Fixed chest addon memory error.
