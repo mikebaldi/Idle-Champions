@@ -135,8 +135,9 @@ ChooseRecommendation()
     }
 
     version := CheckVersionByPath(exePath)
+    checkVersion := platform ? true : false
     if(!version)
-        version := CheckVersionByPath(settingsGamePath)
+        version := CheckVersionByPath(settingsGamePath, checkVersion)
     for k,gamePath in defaultPaths
     {
         if(version)
@@ -148,7 +149,7 @@ ChooseRecommendation()
     GuiControl,ICSHVersionPicker:, VersionPickerDetectionText, % recommended
 
     if(platform)
-    GuiControl, choosestring, VersionPickerPlatformDropdown, %platform%
+        GuiControl, choosestring, VersionPickerPlatformDropdown, %platform%
     VersionPickerUpdateVersions()
     closest := 0
     for k,v in GameObj[VersionPickerPlatformDropdown]
@@ -171,7 +172,11 @@ ChooseRecommendation()
 
     successMessage := (version == closest) ? "A match has been selected." :  "The closest match has been selected."
     importsVersionMessage := ""
-    if(IsVersionMatchToImports(platform, version))
+    if(platform == "" AND version == "")
+        importsVersionMessage := ""
+    else if(platform AND version == "")
+        importsVersionMessage .= "Unknown version. Selected [" . closest . "], Script [" . GetImportsVersionByPlatform(platform) . "]"
+    else if(IsVersionMatchToImports(platform, version))
         importsVersionMessage .= "Imports match version [" . GetImportsVersionByPlatform(platform) . "]." 
     else
         importsVersionMessage .= "Imports version mismatch. Game [" . version . "], Script [" . GetImportsVersionByPlatform(platform) . "]`nCheck Discord and Github for updated Imports"
@@ -179,6 +184,8 @@ ChooseRecommendation()
     GuiControl, choosestring, VersionPickerVersionDropdown, %closest%
     if(version AND platform)
         GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % successMessage
+    else
+        GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % "Unsuccessful detection. Please manually select."
 	Gui,Font, bold +%textColor%
     GuiControl, ICSHVersionPicker:Font, VersionPickerSuggestionText2, 
     Gui,Font,
@@ -277,7 +284,7 @@ GetPlatformNameByID(platformID)
 }
 
 ; Attempts to retrieve version based on game's path.
-CheckVersionByPath(gamePath)
+CheckVersionByPath(gamePath, checkPath := True)
 {
     if(!gamePath)
         return ""
