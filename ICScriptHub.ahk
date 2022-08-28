@@ -17,6 +17,7 @@ Process, Priority,, Normal
 
 CoordMode, Mouse, Client
 
+MsgBox, The IC Script Hub v463-Steam branch has been discontinued. Please switch to the main branch.
 
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
