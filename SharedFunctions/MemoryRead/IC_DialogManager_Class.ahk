@@ -16,7 +16,7 @@ class IC_DialogManager_Class
  
     GetVersion()
     {
-        return "v2.0.1, 2022-08-18, IC v0.463+" 
+        return "v2.0.2, 2022-08-28, IC v0.463+" 
     }
 
     Refresh()
