@@ -135,7 +135,7 @@ class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
     TargetStacks := 0
-    GemFarmGuid := ""
+    GemFarmGUID := ""
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm

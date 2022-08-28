@@ -33,7 +33,7 @@ class IC_BrivGemFarm_Stats_Component
         {
             try
             {
-                return ComObjActive(g_BrivFarm.GemFarmGuid)
+                return ComObjActive(g_BrivFarm.GemFarmGUID)
             }
             catch, Err
             {
@@ -385,7 +385,7 @@ class IC_BrivGemFarm_Stats_Component
         ;activeObjects := GetActiveObjects()
         try ; avoid thrown errors when comobject is not available.
         {
-            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             if(!g_isDarkMode)
                 GuiControl, ICScriptHub: +cBlack, LoopID, 
             else
@@ -423,7 +423,7 @@ class IC_BrivGemFarm_Stats_Component
     {
         try ; avoid thrown errors when comobject is not available.
         {
-            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.StackFailStats := new StackFailStates
             SharedRunData.LoopString := ""
             SharedRunData.TotalBossesHit := 0

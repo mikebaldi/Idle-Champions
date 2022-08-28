@@ -1,9 +1,11 @@
 ﻿;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
+g_BrivFarm.GemFarmGUID := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
 global g_BrivFarmModLoc := A_LineFile . "\..\IC_BrivGemFarm_Mods.ahk"
 global g_BrivFarmAddonStartFunctions := {}
 global g_BrivFarmAddonStopFunctions := {}
+global g_BrivFarmLastRunMiniscripts := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Miniscripts.json")
 
 GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
@@ -121,6 +123,7 @@ class IC_BrivGemFarm_Component
     
     Briv_Run_Clicked()
     {
+        g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_Miniscripts.json", g_Miniscripts)
         for k,v in g_Miniscripts
         {
             try
@@ -131,7 +134,7 @@ class IC_BrivGemFarm_Component
         }
         try
         {
-            SharedData := ComObjActive(g_BrivFarm.GemFarmGuid)
+            SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedData.ShowGui()
             Briv_Connect_Clicked()
         }
@@ -147,7 +150,8 @@ class IC_BrivGemFarm_Component
                 v.Call()
             }
             GuidCreate := ComObjCreate("Scriptlet.TypeLib")
-            g_BrivFarm.GemFarmGuid := guid := GuidCreate.Guid
+            g_BrivFarm.GemFarmGUID := guid := GuidCreate.Guid
+            g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", g_BrivFarm.GemFarmGUID)
             Run, %A_AhkPath% "%scriptLocation%" "%guid%"
         }
         this.TestGameVersion()
@@ -182,10 +186,18 @@ class IC_BrivGemFarm_Component
                 SharedRunData.Close()
             }
         }
+        for k,v in g_BrivFarmLastRunMiniscripts
+        {
+            try
+            {
+                SharedRunData := ComObjActive(k)
+                SharedRunData.Close()
+            }
+        }
         this.UpdateStatus("Closing Gem Farm")
         try
         {
-            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.Close()
         }
         catch, err
@@ -203,7 +215,7 @@ class IC_BrivGemFarm_Component
         this.UpdateStatus("Connecting to Gem Farm...") 
         Try 
         {
-            ComObjActive(g_BrivFarm.GemFarmGuid)
+            ComObjActive(g_BrivFarm.GemFarmGUID)
         }
         Catch
         {
@@ -242,7 +254,7 @@ class IC_BrivGemFarm_Component
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
-            local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
+            local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
         this.UpdateStatus("Save complete.")

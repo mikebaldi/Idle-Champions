@@ -56,5 +56,5 @@ ReloadBrivGemFarmSettings()
     {
         g_BrivUserSettings.Delete("WriteSettings")
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )   
-    }     
+    }
 }
