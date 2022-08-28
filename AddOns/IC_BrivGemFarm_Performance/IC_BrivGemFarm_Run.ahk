@@ -42,7 +42,7 @@ If !IsObject( g_UserSettings )
 {
     g_UserSettings := {}
     if ( g_UserSettings[ "InstallPath" ] == "" )
-        g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+        g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
     g_UserSettings[ "ExeName"] := "IdleDragons.exe"
     g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
 }
@@ -124,7 +124,7 @@ RefreshSettingsView()
         ReloadAdvancedBrivGemFarmSettingsDisplay()
 }
 
-ObjRegisterActive(g_SharedData, "{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+ObjRegisterActive(g_SharedData, A_Args[1])
 ; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
 
 g_BrivGemFarm.GemFarm()

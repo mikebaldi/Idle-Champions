@@ -126,19 +126,19 @@ class IC_BrivGemFarm_Component
             try
             {
                 this.UpdateStatus("Starting Miniscript: " . v)
-                Run, %A_AhkPath% "%v%"
+                Run, %A_AhkPath% "%v%" "%k%"
             }
         }
         try
         {
-            SharedData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            SharedData := ComObjActive(g_BrivFarm.GemFarmGuid)
             SharedData.ShowGui()
             Briv_Connect_Clicked()
         }
         catch
         {
             ;g_BrivGemFarm.GemFarm()
-            g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+            g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
             g_SF.Memory.OpenProcessReader()
             scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_Run.ahk"
             GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
@@ -146,7 +146,9 @@ class IC_BrivGemFarm_Component
             {
                 v.Call()
             }
-            Run, %A_AhkPath% "%scriptLocation%"
+            GuidCreate := ComObjCreate("Scriptlet.TypeLib")
+            g_BrivFarm.GemFarmGuid := guid := GuidCreate.Guid
+            Run, %A_AhkPath% "%scriptLocation%" "%guid%"
         }
         this.TestGameVersion()
     }
@@ -183,7 +185,7 @@ class IC_BrivGemFarm_Component
         this.UpdateStatus("Closing Gem Farm")
         try
         {
-            SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
             SharedRunData.Close()
         }
         catch, err
@@ -201,14 +203,14 @@ class IC_BrivGemFarm_Component
         this.UpdateStatus("Connecting to Gem Farm...") 
         Try 
         {
-            ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            ComObjActive(g_BrivFarm.GemFarmGuid)
         }
         Catch
         {
             this.UpdateStatus("Gem Farm not running.") 
             return
         }
-        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()
         for k,v in g_BrivFarmAddonStartFunctions
         {
@@ -240,7 +242,7 @@ class IC_BrivGemFarm_Component
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
-            local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
         this.UpdateStatus("Save complete.")

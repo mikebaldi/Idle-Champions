@@ -135,6 +135,7 @@ class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
     TargetStacks := 0
+    GemFarmGuid := ""
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -144,8 +145,9 @@ class IC_BrivGemFarm_Class
     {
         static lastResetCount := 0
         g_SharedData.TriggerStart := true
-        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
-        Process, Exist, IdleDragons.exe
+        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
+        existingProcessID := g_userSettings[ "ExeName"]
+        Process, Exist, %existingProcessID%
         g_SF.PID := ErrorLevel
         Process, Priority, % g_SF.PID, High
         g_SF.Memory.OpenProcessReader()

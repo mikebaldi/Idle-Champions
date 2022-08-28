@@ -66,7 +66,7 @@ If !IsObject( g_UserSettings )
     g_UserSettings[ "WriteSettings" ] := true
 }
 if ( g_UserSettings[ "InstallPath" ] == "" )
-    g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+    g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
 if ( g_UserSettings[ "WindowXPositon" ] == "" )
     g_UserSettings[ "WindowXPositon" ] := 0
 if ( g_UserSettings[ "WindowYPositon" ] == "" )
@@ -110,9 +110,9 @@ Reload_Clicked()
 
 Launch_Clicked()
 {
-    programLoc := g_UserSettings[ "InstallPath" ] . g_UserSettings ["ExeName" ]
+    programLoc := g_UserSettings[ "InstallPath" ]
     Run, %programLoc%
-    Process, Exist, IdleDragons.exe
+    Process, Exist, % g_UserSettings[ "ExeName"]
     g_SF.PID := ErrorLevel
 }
 

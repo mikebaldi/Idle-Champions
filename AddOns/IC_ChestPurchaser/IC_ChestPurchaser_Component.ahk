@@ -34,7 +34,7 @@ class IC_ChestPurchaser_Component
 {
     ReadChests()
     {
-        if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()
         else
             return

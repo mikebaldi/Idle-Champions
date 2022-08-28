@@ -107,7 +107,7 @@ class IC_InventoryView_Component
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "InventoryViewID")
         doAddToFirstRead := false
         lastUpdateString := "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
-        if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()
         else
             return

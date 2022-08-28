@@ -16,7 +16,7 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
-            local SharedRunData := ComObjActive("{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+            local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGuid)
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
         return

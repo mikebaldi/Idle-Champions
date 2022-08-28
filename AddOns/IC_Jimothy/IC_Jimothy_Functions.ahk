@@ -108,7 +108,7 @@ class Jimothy
 
     Initialize()
     {
-        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()
         ;this.CheckSetup()
         this.formationQ := g_SF.Memory.GetFormationByFavorite(1)
