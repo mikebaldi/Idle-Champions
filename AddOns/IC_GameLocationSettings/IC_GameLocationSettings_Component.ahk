@@ -44,6 +44,12 @@ class IC_GameLocationSettings_Component
         global
         Gui, InstallGUI:Default
         Gui, InstallGUI:Submit, NoHide
+        startPos := StrLen(NewInstallPath) - StrLen("\IdleChampions")
+        if(InStr(NewInstallPath, "\IdleChampions",, startPos) == startPos + 1)
+        {
+            NewInstallPath := NewInstallPath . "\"
+            GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
+        }
         g_UserSettings[ "InstallPath" ] := NewInstallPath
         g_UserSettings[ "ExeName"] := NewInstallExe
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
