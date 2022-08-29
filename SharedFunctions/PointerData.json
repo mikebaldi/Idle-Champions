@@ -86,9 +86,47 @@
 			"is64":1
 		}
 	},
-	"Kartridge":[
-		
-	],
+	"Kartridge":{
+		"465":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64,
+					3120
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":4824176,
+				"moduleOffset":[
+					2496
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":4879992,
+				"moduleOffset":[
+					672
+				],
+				"staticOffset":3936
+			},
+			"GameSettings":{
+				"moduleAddress":4816448,
+				"moduleOffset":[
+					2080
+				],
+				"staticOffset":2688
+			},
+			"IdleGameManager":{
+				"moduleAddress":4807312,
+				"moduleOffset":[
+					3248
+				],
+				"staticOffset":""
+			},
+			"is64":1
+		}
+	},
 	"Steam":{
 		"463":{
 			"CrusadersGameDataSet":{
