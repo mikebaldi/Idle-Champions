@@ -36,6 +36,7 @@ class IC_GameLocationSettings_Component
         GuiControl, InstallGUI:, NewInstallExe, % g_UserSettings[ "ExeName" ]
         Gui, InstallGUI:Hide
         Gui, ICScriptHub:Default
+        Gui, InstallGUI:Submit, NoHide
         Return
     }
 
@@ -74,6 +75,9 @@ class IC_GameLocationSettings_Component
 
     ChangeInstallLocation_Clicked()
     {
+        GuiControl, InstallGUI:, NewInstallPath, % g_UserSettings[ "InstallPath" ]
+        GuiControl, InstallGUI:, NewInstallExe, % g_UserSettings[ "ExeName" ]
+        Gui, InstallGUI:Submit, NoHide
         Gui, InstallGUI:Show,,Install Location
         Gui, InstallGUI:Default
         Return

@@ -66,7 +66,7 @@ If !IsObject( g_UserSettings )
 }
 if ( g_UserSettings[ "InstallPath" ] == "" )
     g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
-if (g_UserSettings[ "ExeName"] := "")
+if (g_UserSettings[ "ExeName"] == "")
     g_UserSettings[ "ExeName"] := "IdleDragons.exe"
 if ( g_UserSettings[ "WindowXPositon" ] == "" )
     g_UserSettings[ "WindowXPositon" ] := 0
