@@ -1,3 +1,24 @@
+August 30, 2022
+    Fixed bug that did a hard reset when landing on modron reset with no stacks left.
+    Changed: Should now walk to reset if stacks run out within 5 areas of modron reset area.
+    Removed Stats for Swaps made this run.
+    Added Briv's estimated target stacks to BrivGemFarm stats.
+    Updated platform specific readme docs.
+
+August 29, 2022
+    Added pointer data for Kartridge v465. 
+        Note: It is recommended to remove EOSSDK-Win64-Shipping.dll and GfxPluginEOSLoader_x64.dll from \IdleDragons_Data\Plugins\x86_64 for full pointer compatability.
+
+August 28, 2022
+    Changed how the Game Location Settings works.
+        - The exe must now be included in the path.
+        - A backslash is added to the end automatically when the path ends in "\IdleDragons" (steam) or "\309647" (Kartridge)
+        - If no exe is included in the two cases above, it will automatically be added. This is to keep setup consistent with previous versions.
+        - The exe is now used for the script to know where to read memory. 
+    Updated IC Script Hub to be able to handle renamed a IdleDragons.exe. 
+        - The above changes were in part to help facilitate this change.
+        - This allows for multiple platforms to be run at the same time as long as the exe names are different. (Still requires 2 copies of the script).
+
 August 26, 2022
     Updated offsets to v465.1
     Updated Version Check script with automatic version detection.
