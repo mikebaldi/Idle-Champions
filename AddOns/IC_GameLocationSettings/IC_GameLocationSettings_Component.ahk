@@ -68,7 +68,7 @@ class IC_GameLocationSettings_Component
         }
         if(InStr(NewInstallPath, endString,, startPos-1))
         {
-            NewInstallPath := newInstallPath . NewInstallExe
+            NewInstallPath := newInstallPath . (NewInstallExe ? NewInstallExe : "IdleDragons.exe")
             GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
         }
     }
