@@ -63,7 +63,7 @@ It should reload your Script Hub for you but should you ever want to do a manual
 1. Return to your `IC Script Hub` window
 2. Click the `Briv Gem Farm` tab
 3. Click the `Change Game Location` button at the bottom of the `Briv Gem Farm` window
-4. Paste the link copied from the `Idle Champions` shortcut into the top box and blank out the bottom box.
+4. Paste the link copied from the `Idle Champions` shortcut into the top box.
 5. Click `Save and Close`
 
 ## Now that's done, what can I do with this thing?

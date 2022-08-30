@@ -1,6 +1,6 @@
 [< Return to the Readme](../Readme.md)
 
-# Setting Idle Champions game location for EGS
+# Setting Idle Champions game location for Standalone
 
 ## Overview
 
@@ -20,7 +20,7 @@ You should see the `IC Script Hub` window and it should look something like this
 
 You may need to [install or update AutoHotKey](https://www.autohotkey.com/) if you receive an error at this point.
 
-## Setting the EGS game location
+## Setting the standalone game location
 ### Step 0: Make sure your addons are enabled
 
 You'll want to make sure you have the game shortcut addon enabled. Open the addons dialog and ensure the addon highlighted by the green arrow is enabled and saved.
@@ -35,15 +35,33 @@ It should reload your Script Hub for you but should you ever want to do a manual
 
 ![Reload button](../docimages/reload-script-hub-v2.png)
 
-### Step 1: Grab the shortcut you need
+### Step 1: Grab your support URL
 
-1. Open the `EGS client`
-2. Go to your `Library`
-3. Click the three dots underneath the `Idle Champions` game entry in your `Library` and pick `Create a Shortcut`
-4. Right click on the shortcut on your Desktop and pick `Properties`
-5. Copy the contents of the Url box that appears
+> ⚠️ Do not reveal your support URL, or your user_id and device_hash to anyone else ⚠️
 
-### Step 2: Populate the location in `IC Script Hub`
+1. Start the game
+2. Press Escape
+3. Click Support
+4. Copy the entire URL that is opened in your browser to Notepad or similar
+5. Look at the last portion of the Support URL to find your user_id and device_hash.
+
+### Step 2: Grab the shortcut you need
+
+1. Locate your `client`, typically in `%AppData%\..\Local\Kartridge.kongregate.com\games\309647`
+2. Find `IdleDragons.exe`
+3. Create a shortcut for `IdleDragons.exe`
+4. Edit the properties for the shortcut.
+5. Copy the entire path including `IdleDragons.exe`
+6. Right click on the shortcut on your Desktop and pick `Properties`
+8. Copy the contents of the Target box in the shortcut Properties.
+
+### Step 3: Additional step to prevent double loading IdleDragons.exe
+1. In the path that you found `IdleDragons.exe` create a new text file named `kong_gameid.txt`  
+![Reload button](../docimages/kartridge-add-text-file.png)  
+2. Open the text file and add the the game ID `309647`  
+3. Save and close the text file.  
+
+### Step 4: Populate the location in `IC Script Hub`
 
 1. Return to your `IC Script Hub` window
 2. Click the `Briv Gem Farm` tab
