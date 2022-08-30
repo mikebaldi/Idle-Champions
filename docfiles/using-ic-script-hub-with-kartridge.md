@@ -55,13 +55,7 @@ It should reload your Script Hub for you but should you ever want to do a manual
 6. Right click on the shortcut on your Desktop and pick `Properties`
 8. Copy the contents of the Target box in the shortcut Properties.
 
-### Step 3: Additional step to prevent double loading IdleDragons.exe
-1. In the path that you found `IdleDragons.exe` create a new text file named `kong_gameid.txt`  
-![Reload button](../docimages/kartridge-add-text-file.png)  
-2. Open the text file and add the the game ID `309647`  
-3. Save and close the text file.  
-
-### Step 4: Populate the location in `IC Script Hub`
+### Step 3: Populate the location in `IC Script Hub`
 
 1. Return to your `IC Script Hub` window
 2. Click the `Briv Gem Farm` tab
