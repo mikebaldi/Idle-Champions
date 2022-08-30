@@ -739,6 +739,12 @@ class IC_MemoryFunctions_Class
         return formationSaveSlot
     }
 
+    ; Finds the Modron Reset area for the current instance's core.
+    GetModronResetArea()
+    {
+        return this.GetCoreTargetAreaByInstance(this.ReadActiveGameInstance())
+    }
+
     ; Finds the index of the current modron in ModronHandlers
     GetCurrentModronSaveSlot()
     {

@@ -174,10 +174,8 @@ class IC_BrivGemFarm_Stats_Component
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         Gui, ICScriptHub:Font, w700
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h125 vBrivGemFarmStatsID, BrivGemFarm Stats:
-        Gui, ICScriptHub:Font, w400
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Formation Swaps Made `This `Run:
-        Gui, ICScriptHub:Add, Text, vSwapsMadeThisRunID x+2 w200, 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
+        Gui, ICScriptHub:Font, w400 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Boss Levels Hit `This `Run:
         Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
@@ -185,6 +183,8 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vTotalRollBacksID x+2 w200,  
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Bad Autoprogression Since Start:
         Gui, ICScriptHub:Add, Text, vBadAutoprogressesID x+2 w200,  
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Calculated Target Stacks:
+        Gui, ICScriptHub:Add, Text, vCalculatedTargetStacksID x+2 w200,
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
         g_TabControlHeight := Max(g_TabControlHeight, 700)
@@ -396,6 +396,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
             GuiControl, ICScriptHub:, BadAutoprogressesID, % SharedRunData.BadAutoProgress
+            GuiControl, ICScriptHub:, CalculatedTargetStacksID, % SharedRunData.TargetStacks 
         }
         catch
         {
