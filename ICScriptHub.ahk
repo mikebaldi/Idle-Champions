@@ -62,11 +62,12 @@ g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 If !IsObject( g_UserSettings )
 {
     g_UserSettings := {}
-    g_UserSettings[ "ExeName"] := "IdleDragons.exe"
     g_UserSettings[ "WriteSettings" ] := true
 }
 if ( g_UserSettings[ "InstallPath" ] == "" )
     g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
+if (g_UserSettings[ "ExeName"] := "")
+    g_UserSettings[ "ExeName"] := "IdleDragons.exe"
 if ( g_UserSettings[ "WindowXPositon" ] == "" )
     g_UserSettings[ "WindowXPositon" ] := 0
 if ( g_UserSettings[ "WindowYPositon" ] == "" )

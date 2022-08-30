@@ -47,6 +47,8 @@ class IC_GameLocationSettings_Component
         this.HandleEndString("\309647") ; Kartridge Path
         this.HandleEndString("\IdleChampions") ; Steam/EGS Path (if not using EGS launcher)
         g_UserSettings[ "InstallPath" ] := NewInstallPath
+        if( NewInstallExe == "")
+            NewInstallExe := "IdleDragons.exe"
         g_UserSettings[ "ExeName"] := NewInstallExe
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
         Gui, InstallGUI:Hide
