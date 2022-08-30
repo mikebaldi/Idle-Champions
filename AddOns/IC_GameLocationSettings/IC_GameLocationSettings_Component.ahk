@@ -44,23 +44,30 @@ class IC_GameLocationSettings_Component
         global
         Gui, InstallGUI:Default
         Gui, InstallGUI:Submit, NoHide
-        startPos := StrLen(NewInstallPath) - StrLen("\IdleChampions")
-        if(InStr(NewInstallPath, "\IdleChampions",, startPos) == startPos + 1)
-        {
-            NewInstallPath := NewInstallPath . "\"
-            GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
-        }
-        if(InStr(NewInstallPath, "\IdleChampions\",, startPos-1))
-        {
-            NewInstallPath := newInstallPath . NewInstallExe
-            GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
-        }
+        this.HandleEndString("\309647") ; Kartridge Path
+        this.HandleEndString("\IdleChampions") ; Steam/EGS Path (if not using EGS launcher)
         g_UserSettings[ "InstallPath" ] := NewInstallPath
         g_UserSettings[ "ExeName"] := NewInstallExe
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
         Gui, InstallGUI:Hide
         Gui, ICScriptHub:Default
         Return
+    }
+
+    HandleEndString(endString)
+    {
+        global
+        local startPos := StrLen(NewInstallPath) - StrLen(endString)
+        if(InStr(NewInstallPath, endString,, startPos) == startPos + 1)
+        {
+            NewInstallPath := NewInstallPath . "\"
+            GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
+        }
+        if(InStr(NewInstallPath, endString,, startPos-1))
+        {
+            NewInstallPath := newInstallPath . NewInstallExe
+            GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
+        }
     }
 
     ChangeInstallLocation_Clicked()
