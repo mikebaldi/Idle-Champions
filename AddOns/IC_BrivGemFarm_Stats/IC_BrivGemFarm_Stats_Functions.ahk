@@ -391,7 +391,6 @@ class IC_BrivGemFarm_Stats_Component
             else
                 GuiControl, ICScriptHub: +cSilver, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
-            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % SharedRunData.SwapsMadeThisRun
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
