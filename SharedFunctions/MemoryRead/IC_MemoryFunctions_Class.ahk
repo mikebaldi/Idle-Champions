@@ -56,7 +56,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.5, 2022-08-18, IC v0.463+"
+        return "v1.10.6, 2022-08-30, IC v0.463+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
