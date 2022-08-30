@@ -784,6 +784,7 @@ class IC_SharedFunctions_Class
         return true
     }
 
+    ; Checks for rollbacks after a stack restart.
     BadSaveTest()
     {
         if(this.CurrentZone != "" and this.CurrentZone - 1 > g_SF.Memory.ReadCurrentZone())
