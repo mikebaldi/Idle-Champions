@@ -29,3 +29,6 @@ The logic works like this:
 
   If the advanced setting ``DoChestsContinuous`` is set to 1, it will repeat this process as long as there is time during the Stack Reset.  
   > **WARNING:** Be careful setting this value to 1. MANY purchases can happen during a reset and gems will seemingly evaporate.  
+
+* **NEW! Can I run the Gem Farm script on multiple platforms at the same time?**  
+Yes! To run the script on multiple platforms first requires a copy of the entire IC Script Hub for each platform that will be used. Game detection is based on exe name so one platform will need the `IdleDragons.exe` to be renamed (e.g. IdleDragonsSteam.exe) and the `IdleDragons_Data` folder to be renamed in the same way (e.g. IdleDragonsSteam_Data). Set up each script with their own settings. The important thing is to remember to set the Install exe to the new renamed exe in the game location.

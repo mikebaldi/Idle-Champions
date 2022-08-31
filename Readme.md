@@ -53,6 +53,8 @@ Where do you play the game?
 
 [I play on Standalone](docfiles/using-ic-script-hub-with-standalone.md)
 
+[I play on Kartridge](docfiles/using-ic-script-hub-with-kartridge.md)
+
 ## Reading this documentation offline
 
 You can open Readme.md (this file) in any Markdown editor on Windows that has a preview function. I use VS Code. 
