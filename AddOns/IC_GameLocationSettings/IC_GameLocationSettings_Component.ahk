@@ -13,11 +13,15 @@ Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+5 w300 r3, % g_UserSettings[ "I
 Gui, InstallGUI:Add, Text, x15 y+5 w200, Install Exe
 Gui, InstallGUI:Add, Edit, vNewInstallExe x15 y+5 w300 r1, % g_UserSettings[ "ExeName"]
 Gui, InstallGUI:Add, Button, x15 y+15 vButtonSaveGameLocationSettings, Save and `Close
-Gui, InstallGUI:Add, Button, x+100 vButtonCancelGameLocationSettings, `Cancel
+Gui, InstallGUI:Add, Button, x+15 w140 vButtonCopyGameLocationFromRunninGame, Copy From Running Game
+Gui, InstallGUI:Add, Button, x+15 vButtonCancelGameLocationSettings, `Cancel
 SaveGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallOK_Clicked")
 CancelGameLocationSettingUpdate := ObjBindMethod(IC_GameLocationSettings_Component, "InstallCancel_Clicked")
+CopyGameLocationFromExeLocation := ObjBindMethod(IC_GameLocationSettings_Component, "CopyExePath_Clicked")
 GuiControl,InstallGUI: +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
 GuiControl,InstallGUI: +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
+GuiControl,InstallGUI: +g, ButtonCopyGameLocationFromRunninGame, % CopyGameLocationFromExeLocation
+
 
 ; Switch back to main GUI
 Gui, ICScriptHub:Default
@@ -71,6 +75,18 @@ class IC_GameLocationSettings_Component
             NewInstallPath := newInstallPath . (NewInstallExe ? NewInstallExe : "IdleDragons.exe")
             GuiControl, InstallGUI:, NewInstallPath, % NewInstallPath
         }
+        Return
+    }
+
+    CopyExePath_Clicked()
+    {
+        hWnd := WinExist("ahk_exe IdleDragons.exe")
+        if(!hWnd)
+            hWnd := WinExist("ahk_exe " . NewInstallExe )
+        WinGet, pPath, ProcessPath, % "ahk_id " hWnd
+        GuiControl, InstallGUI:, NewInstallPath, % pPath
+        Gui, InstallGUI:Submit, NoHide
+        Return
     }
 
     ChangeInstallLocation_Clicked()
