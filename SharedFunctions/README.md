@@ -46,6 +46,10 @@ IC_UpdateClass_Class is used to overwrite AHK classes. Since AHK does not protec
 
 IC_VersionHelper_Class contains a function which can be used to compare version numbers that are in a specific format. It is used for managing Addons properly.
 
+> IC_VersionPicker.ahk
+
+IC_VersionPicker detects the currently running game instance and tries to choose the best memory pointers to work with that version based on PointerData.json.
+
 > json.ahk  
 
 json is a library that allows for common json functionality such as loading and saving json to files. It has been expanded from the original to include json formatting functions.
