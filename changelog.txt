@@ -1,9 +1,13 @@
 August 30, 2022
+    3rd party Addons need to be updated for use with IC Script Hub. IdleDragons.exe is no longer hard coded and BrivGemFarm's GUID is no longer static.
+
+August 30, 2022
     Fixed bug that did a hard reset when landing on modron reset with no stacks left.
     Changed: Should now walk to reset if stacks run out within 5 areas of modron reset area.
     Removed Stats for Swaps made this run.
     Added Briv's estimated target stacks to BrivGemFarm stats.
     Updated platform specific readme docs.
+    Added enhanced Kartridge support for Briv Stacking.
 
 August 29, 2022
     Added pointer data for Kartridge v465. 
