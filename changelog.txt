@@ -1,3 +1,7 @@
+September 1, 2022
+    Added extra icon checks for the Gem Farm Script to handle Windows 7 and Wine better.
+    Added settings to save current inventory window checkbox selections between sessions.
+
 August 30, 2022
     3rd party Addons need to be updated for use with IC Script Hub. IdleDragons.exe is no longer hard coded and BrivGemFarm's GUID is no longer static.
 
