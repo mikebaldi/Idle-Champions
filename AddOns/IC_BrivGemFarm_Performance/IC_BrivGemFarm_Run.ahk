@@ -48,8 +48,13 @@ If !IsObject( g_UserSettings )
 }
 
 global isAdvancedBrivSettings := false
-if(A_OSVersion >= "10." && A_OSVersion < "W")
-    Menu Tray, Icon, shell32.dll, -51380
+try
+{
+    if(A_OSVersion >= "10." && A_OSVersion < "W")
+        Menu Tray, Icon, shell32.dll, -51380
+    else
+        Menu, Tray, Icon, shell32.dll, 138
+}
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
