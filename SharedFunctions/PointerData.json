@@ -1,5 +1,49 @@
 {
 	"CNE":{
+		"467":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":3821024,
+				"moduleOffset":[
+					236,
+					56,
+					36,
+					80,
+					3712
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":4824176,
+				"moduleOffset":[
+					2496
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":4879992,
+				"moduleOffset":[
+					672
+				],
+				"staticOffset":3936
+			},
+			"GameSettings":{
+				"moduleAddress":3821428,
+				"moduleOffset":[
+					8,
+					12,
+					96
+				],
+				"staticOffset":304
+			},
+			"IdleGameManager":{
+				"moduleAddress":3802484,
+				"moduleOffset":[
+					1624
+				],
+				"staticOffset":""
+			},
+			"is64":1
+		},
 		"461.2":{
 			"CrusadersGameDataSet":{
 				"moduleAddress":3821024,
