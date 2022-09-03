@@ -26,7 +26,7 @@ class IC_DialogManager_Class
         this.UnityGameEngine := {}
         this.UnityGameEngine.Dialogs := {}
         structureOffsetsOverlay := this.structureOffsets.Clone()
-        structureOffsetsOverlay[1] += 0x010
+        structureOffsetsOverlay[1] += 0x0 ;0x010
         offsets := (this.HasOverlay() AND this.Main.isTarget64bit) ? structureOffsetsOverlay : this.structureOffsets
         this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
         this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := this.Main.isTarget64bit
