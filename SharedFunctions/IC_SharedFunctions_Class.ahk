@@ -98,7 +98,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.6.1, 2022-08-30"
+        return "v2.6.2, 2022-09-04"
     }
 
     ;Gets data from JSON file
@@ -901,8 +901,10 @@ class IC_SharedFunctions_Class
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
         this.TotalGems := this.Memory.ReadGems()
-        this.TotalSilverChests := this.Memory.GetChestCountByID(1)
-        this.TotalGoldChests := this.Memory.GetChestCountByID(2)
+        silverChests := this.Memory.GetChestCountByID(1)
+        goldChests := this.Memory.GetChestCountByID(2)
+        this.TotalSilverChests := (silverChests != "") ? silverChests : 0
+        this.TotalGoldChests := (goldChests != "") ? goldChests : 0
     }
 
     ; Forces an adventure restart through closing IC and using server calls

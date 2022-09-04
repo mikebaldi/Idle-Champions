@@ -308,8 +308,10 @@ class IC_BrivGemFarm_Stats_Component
                 this.GemStart := g_SF.Memory.ReadGems()
                 this.GemSpentStart := g_SF.Memory.ReadGemsSpent()
                 this.LastResetCount := g_SF.Memory.ReadResetsCount()
-                this.SilverChestCountStart := g_SF.Memory.GetChestCountByID(1)
-                this.GoldChestCountStart := g_SF.Memory.GetChestCountByID(2)
+                silverChests := g_SF.Memory.GetChestCountByID(1)
+                goldChests := g_SF.Memory.GetChestCountByID(2)
+                this.SilverChestCountStart := (silverChests != "") ? silverChests : 0
+                this.GoldChestCountStart := (goldChests != "") ? goldChests : 0
                 
                 ; start count after first run since total chest count is counted after first run
                 if(IsObject(this.SharedRunData)) 
