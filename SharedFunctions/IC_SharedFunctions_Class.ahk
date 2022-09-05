@@ -98,7 +98,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.6.2, 2022-09-04"
+        return "v2.6.3, 2022-09-05"
     }
 
     ;Gets data from JSON file
@@ -654,16 +654,17 @@ class IC_SharedFunctions_Class
     ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
+        timeoutVal := 32000
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
         waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
         WinGetActiveTitle, savedActive
         this.SavedActiveWindow := savedActive
-        while ( !loadingZone AND ElapsedTime < 32000 )
+        while ( !loadingZone AND ElapsedTime < timeoutVal )
         {
             this.Hwnd := 0
             this.PID := 0
-            while (!this.PID)
+            while (!this.PID AND ElapsedTime < timeoutVal )
             {
                 StartTime := A_TickCount
                 ElapsedTime := 0
@@ -680,19 +681,22 @@ class IC_SharedFunctions_Class
                 }
             }
             ; Process exists, wait for the window:
-            while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < 32000)
+            while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < timeoutVal)
             {
                 WinGetActiveTitle, savedActive
                 this.SavedActiveWindow := savedActive
                 ElapsedTime := A_TickCount - StartTime
             }
-            this.ActivateLastWindow()
-            Process, Priority, % this.PID, High
-            this.Memory.OpenProcessReader()
-            loadingZone := this.WaitForGameReady()
-            this.ResetServerCall()
+            if(ElapsedTime < timeoutVal)
+            {
+                this.ActivateLastWindow()
+                Process, Priority, % this.PID, High
+                this.Memory.OpenProcessReader()
+                loadingZone := this.WaitForGameReady()
+                this.ResetServerCall()
+            }
         }
-        if(ElapsedTime >= 30000)
+        if(ElapsedTime >= timeoutVal)
             return -1 ; took too long to open
         else
             return 0
