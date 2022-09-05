@@ -2,13 +2,10 @@
 	"CNE":{
 		"467":{
 			"CrusadersGameDataSet":{
-				"moduleAddress":3821024,
+				"moduleAddress":4835272,
 				"moduleOffset":[
-					236,
-					56,
-					36,
-					80,
-					3712
+					64,
+					3120
 				],
 				"staticOffset":""
 			},
@@ -27,18 +24,16 @@
 				"staticOffset":3936
 			},
 			"GameSettings":{
-				"moduleAddress":3821428,
+				"moduleAddress":4816448,
 				"moduleOffset":[
-					8,
-					12,
-					96
+					2080
 				],
-				"staticOffset":304
+				"staticOffset":2688
 			},
 			"IdleGameManager":{
-				"moduleAddress":3802484,
+				"moduleAddress":4807312,
 				"moduleOffset":[
-					1624
+					3248
 				],
 				"staticOffset":""
 			},
