@@ -51,12 +51,10 @@ It should reload your Script Hub for you but should you ever want to do a manual
 2. Find `IdleDragons.exe`
 3. Create a shortcut for `IdleDragons.exe`
 4. Edit the properties for the shortcut.
-5. Copy the entire path including `IdleDragons.exe`
-6. Right click on the shortcut on your Desktop and pick `Properties`
-7. Edit the Target adding to the end of the URL:
+5. Edit the Target adding to the end of the URL:
    ` -user_id user_id_from_support_url -hash device_hash_from_support_url` (including the space at the start so it looks like `...IdleDragons.exe -user_id user_id_from_support_url -hash device_hash_from_support_url`)
-8. Test the shortcut
-9. If it works, copy the entire contents of the Target box in the shortcut Properties. If not, get it working, and then copy the contents of the Target box.
+6. Test the shortcut
+7. If it works, copy the entire contents of the Target box in the shortcut Properties. If not, get it working, and then copy the contents of the Target box.
 
 ### Step 3: Populate the location in `IC Script Hub`
 
