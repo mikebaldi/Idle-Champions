@@ -174,17 +174,17 @@ ChooseRecommendation()
     }
 
     successMessage := (version == closest) ? "A match has been selected." :  "The closest match has been selected."
-    versionTextColor := (version == closest AND version != "") ?  "cGREEN" : "cF18500"
+     versionTextColor := (version == closest AND version != "") ?  "cGREEN" : "cF18500"
     importsVersionMessage := ""
     if(platform == "" AND version == "")
         importsVersionMessage := ""
     else if(platform AND version == "")
-        importsVersionMessage .= "Unknown version. Selected [" . closest . "], Script [" . GetImportsVersionByPlatform(platform) . "]"
-    else if(IsVersionMatchToImports(platform, version))
-        importsVersionMessage .= "Imports match version [" . GetImportsVersionByPlatform(platform) . "]." 
+        importsVersionMessage .= "Unknown version. Selected [" . closest . "], Script [" . GetImportsVersion(platform, version, closest) . "]"
+    else if(GetImportsVersion(platform, version, closest) == version)
+        importsVersionMessage .= "Imports match version [" . GetImportsVersion(platform, version, closest) . "]." 
     else
-        importsVersionMessage .= "Imports version mismatch. Game [" . version . "], Script [" . GetImportsVersionByPlatform(platform) . "]`nCheck Discord and Github for updated Imports"
-    textColor := IsVersionMatchToImports(platform, version) ? "cGREEN" : "cF18500"
+        importsVersionMessage .= "Imports version mismatch. Game [" . version . "], Script [" . GetImportsVersion(platform, version, closest)  . "]`nCheck Discord and Github for updated Imports"
+    textColor := IsVersionMatchToImports(platform, version, closest) ? "cGREEN" : "cF18500"
     GuiControl, choosestring, VersionPickerVersionDropdown, %closest%
     if(version AND platform)
         GuiControl, ICSHVersionPicker:, VersionPickerSuggestionText, % successMessage
@@ -350,22 +350,32 @@ CheckDLLVersion(dllPath)
     return version
 }
 
-IsVersionMatchToImports(platform, version)
+IsVersionMatchToImports(platform, version, closest)
 {
-    importsVersion := GetImportsVersionByPlatform(platform)
+    importsVersion := GetImportsVersion(platform, version, closest)
     if(version == importsVersion)
         return true
     else
         return false
 }
 
-GetImportsVersionByPlatform(platform)
+GetImportsVersion(platform, version, closest := 0)
 {
-    if(platform == "Steam" OR platform == "EGS" OR platform == "Kartridge")
+    is64bit := GetArchitectureByPlatformAndVersion(platform, version)
+    if (is64bit == "")
+        is64bit := GetArchitectureByPlatformAndVersion(platform, closest)
+    if(is64bit)
         importsVersion := g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64
-    else if(platform == "CNE")
+    else
         importsVersion := g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32
     return importsVersion
+}
+
+GetArchitectureByPlatformAndVersion(platform, version)
+{
+    if(GameObj AND GameObj[platform] AND GameObj[platform][version])
+        is64Bit := GameObj[platform][version]["is64"]
+    return is64Bit
 }
 
 ; Attempts to verify working pointers by checking if a valid game version can be read.
