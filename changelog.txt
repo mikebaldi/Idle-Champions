@@ -1,3 +1,8 @@
+September 4, 2022
+    Updated Version Picker to more accurately determine if imports are matching.
+    Fixed CNE Stand Alone v467 Pointers.
+    Fixed bad initial reads for chests gained. 
+
 September 3, 2022
     Updated Imports for v467.
     Added pointers for CNE Stand Alone v467. Note: Mini-Blessings addon requires removing EGS overlay dlls from the game's plugins folder to function. (EOS DLls)
