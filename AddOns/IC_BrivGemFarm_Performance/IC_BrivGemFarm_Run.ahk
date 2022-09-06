@@ -129,7 +129,18 @@ RefreshSettingsView()
         ReloadAdvancedBrivGemFarmSettingsDisplay()
 }
 
-ObjRegisterActive(g_SharedData, A_Args[1])
+if(A_Args[1])
+{
+    ObjRegisterActive(g_SharedData, A_Args[1])
+    g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", A_Args[1])
+}
+else
+{
+    GuidCreate := ComObjCreate("Scriptlet.TypeLib")
+    guid := GuidCreate.Guid
+    ObjRegisterActive(g_SharedData, guid)
+    g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", guid)
+}
 ; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
 
 g_BrivGemFarm.GemFarm()

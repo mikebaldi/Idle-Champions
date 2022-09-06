@@ -134,9 +134,9 @@ class IC_BrivGemFarm_Component
         }
         try
         {
+            Briv_Connect_Clicked()
             SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedData.ShowGui()
-            Briv_Connect_Clicked()
         }
         catch
         {
@@ -151,10 +151,14 @@ class IC_BrivGemFarm_Component
             }
             GuidCreate := ComObjCreate("Scriptlet.TypeLib")
             g_BrivFarm.GemFarmGUID := guid := GuidCreate.Guid
-            g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", g_BrivFarm.GemFarmGUID)
             Run, %A_AhkPath% "%scriptLocation%" "%guid%"
         }
         this.TestGameVersion()
+    }
+
+    UpdateGUIDFromLast()
+    {
+        g_BrivFarm.GemFarmGUID := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
     }
 
     TestGameVersion()
@@ -213,6 +217,7 @@ class IC_BrivGemFarm_Component
     Briv_Connect_Clicked()
     {   
         this.UpdateStatus("Connecting to Gem Farm...") 
+        this.UpdateGUIDFromLast()
         Try 
         {
             ComObjActive(g_BrivFarm.GemFarmGUID)
