@@ -8,9 +8,9 @@ GuiControl,ICScriptHub: +g, ButtonOpenInstallGui, % OpenGameLocationSettingUpdat
 
 ;GUI to input a new install path.
 Gui, InstallGUI:New
-Gui, InstallGUI:Add, Text, x15 y+10 w200, Install Path
+Gui, InstallGUI:Add, Text, x15 y+10 w250, Launch Command [Used to start the game]
 Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+5 w300 r3, % g_UserSettings[ "InstallPath" ]
-Gui, InstallGUI:Add, Text, x15 y+5 w200, Install Exe
+Gui, InstallGUI:Add, Text, x15 y+5 w250, Game Exe [Used to read game memory]
 Gui, InstallGUI:Add, Edit, vNewInstallExe x15 y+5 w300 r1, % g_UserSettings[ "ExeName"]
 Gui, InstallGUI:Add, Button, x15 y+15 vButtonSaveGameLocationSettings, Save and `Close
 Gui, InstallGUI:Add, Button, x+15 w140 vButtonCopyGameLocationFromRunninGame, Copy From Running Game
