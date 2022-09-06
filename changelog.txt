@@ -1,3 +1,14 @@
+September 6, 2022
+    Updated text in Game Location Settings to be clearer.
+    Fixed boss hit counter counting falling back into a boss when it shouldn't.
+    Fixed chests gained stats to work as intended (Total of purchased + dropped) instead of useless values.
+    Fixed Briv Gem Farm connect button to work in more situations after the Multi-Run update broke them.
+    Added a checkbox to disable Champion handlers being loaded by default in FullMemoryFunctions
+
+September 5, 2022
+    Updated OpenIC to have better handling of failures to open the game.
+    Added minify to JSON functions.
+
 September 4, 2022
     Updated Version Picker to more accurately determine if imports are matching.
     Fixed CNE Stand Alone v467 Pointers.
