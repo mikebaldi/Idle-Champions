@@ -141,11 +141,11 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
-        Gui, ICScriptHub:Add, Text, vSilversPurchasedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, vSilversGainedID x+2 w200, 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silvers Opened:
         Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w200, 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Gained:
-        Gui, ICScriptHub:Add, Text, vGoldsPurchasedID x+2 w200, 0
+        Gui, ICScriptHub:Add, Text, vGoldsGainedID x+2 w200, 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Opened:
         Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w200, 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
@@ -361,13 +361,15 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
             GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
 
+            currentSilverChests := g_SF.Memory.GetChestCountByID(1) ; Start + Purchased + Dropped - Opened
+            currentGoldChests := g_SF.Memory.GetChestCountByID(2)
             if (IsObject(this.SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversPurchasedID, % g_SF.Memory.GetChestCountByID(1) - this.SilverChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : SilversPurchasedID)
-                GuiControl, ICScriptHub:, GoldsPurchasedID, % g_SF.Memory.GetChestCountByID(2) - this.GoldChestCountStart + (IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : GoldsPurchasedID)
-                GuiControl, ICScriptHub:, SilversOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : SilversOpenedID)
-                GuiControl, ICScriptHub:, GoldsOpenedID, % (IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : GoldsOpenedID)
-                GuiControl, ICScriptHub:, ShiniesID, % (IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : ShiniesID)
+                GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
+                GuiControl, ICScriptHub:, GoldsGainedID, % currentGoldChests - this.GoldChestCountStart + this.SharedRunData.OpenedGoldChests
+                GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
+                GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+                GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
             }
             ++this.TotalRunCount
             this.StackFail := 0
@@ -457,8 +459,8 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
         GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
         GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
-        GuiControl, ICScriptHub:, SilversPurchasedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : 0
-        GuiControl, ICScriptHub:, GoldsPurchasedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : 0
+        GuiControl, ICScriptHub:, SilversGainedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : 0
+        GuiControl, ICScriptHub:, GoldsGainedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : 0
         GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : 0
         GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : 0
         GuiControl, ICScriptHub:, ShiniesID, % IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : 0
