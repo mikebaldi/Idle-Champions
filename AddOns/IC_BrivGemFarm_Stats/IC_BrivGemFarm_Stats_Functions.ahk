@@ -37,7 +37,7 @@ class IC_BrivGemFarm_Stats_Component
             }
             catch, Err
             {
-                return new IC_SharedData_Class
+                return ""
             }
         }
     }
@@ -288,7 +288,7 @@ class IC_BrivGemFarm_Stats_Component
         }
 
         ;testReadAreaActive := g_SF.Memory.ReadAreaActive()
-        this.StackFail := Max(this.StackFail, this.SharedRunData.StackFail)
+        this.StackFail := Max(this.StackFail, IsObject(this.SharedRunData) ? this.SharedRunData.StackFail : 0)
         this.TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : this.LastTriggerStart
         if ( g_SF.Memory.ReadResetsCount() > this.LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND this.LastResetCount != 0 ) OR (this.TriggerStart AND this.LastTriggerStart != this.TriggerStart) )
         {
@@ -344,7 +344,8 @@ class IC_BrivGemFarm_Stats_Component
                 GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
                 this.FailRunTime += this.PreviousRunTime
                 GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
-                GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
+                if(IsObject(this.SharedRunData))
+                    GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
             }
 
             GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
@@ -452,7 +453,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, FastRunTimeID, % this.FastRunTime
         GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
         GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
-        GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
+        GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(IsObject(this.SharedRunData) ? this.SharedRunData.StackFailStats.TALLY : "")
         GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
         GuiControl, ICScriptHub:, dtTotalTimeID, % 0
         GuiControl, ICScriptHub:, AvgRunTimeID, % 0
