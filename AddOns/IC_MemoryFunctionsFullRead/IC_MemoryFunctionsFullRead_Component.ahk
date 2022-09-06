@@ -3,11 +3,12 @@ g_TabControlWidth := Max(g_TabControlHeight, (525+10))
 GUIFunctions.AddTab("FullMemoryFunctions")
 
 Gui, ICScriptHub:Tab, FullMemoryFunctions
-Gui, ICScriptHub:Add, Button, x+220 w160 gIC_MemoryFunctionsFullRead_Component.ReadAllFunctions, Load Memory Functions
-Gui, ICScriptHub:Add, Button, x+10 w145 gIC_MemoryFunctionsFullRead_Component.SwapPointers, Change Pointers
+Gui, ICScriptHub:Add, Button, x+215 w160 gIC_MemoryFunctionsFullRead_Component.ReadAllFunctions, Load Memory Functions
+Gui, ICScriptHub:Add, Button, x+10 w135 gIC_MemoryFunctionsFullRead_Component.SwapPointers, Change Pointers
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 yp+5, `All Memory Functions:
 Gui, ICScriptHub:Font, w400
+Gui, ICScriptHub:Add, Checkbox,x145 yp+0 vMemoryFunctionsFullRead_LoadHandlers, Champions
 
 if(g_isDarkMode)
     Gui, Font, g_CustomColor
@@ -21,7 +22,6 @@ if(g_isDarkMode)
 class IC_MemoryFunctionsFullRead_Component
 {
     static exclusionList := [ "__Init", "__new",  "BinarySearchList", "ConvQuadToString", "ConvQuadToString2", "ConvQuadToString3", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "ReadUserHash", "ReadUserID", "ReadTimeScaleMultipliersKeyByIndex", "AdjustObjectListIndexes" ]
-
     InExclusionsList(value)
     {
         static
@@ -47,6 +47,8 @@ class IC_MemoryFunctionsFullRead_Component
     ;   ReadUltimateButtonChampIDByItem - Must have at least 2 ultimate abilities unlocked or this will error.
     ReadAllFunctions()
     {
+        Gui, ICScriptHub:Submit, NoHide
+        global MemoryFunctionsFullRead_LoadHandlers
         IC_MemoryFunctionsFullRead_Component.RefreshSize()
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "MemoryFunctionsViewID")
         valueToPass := 1
@@ -65,7 +67,11 @@ class IC_MemoryFunctionsFullRead_Component
                 LV_Add(, parameterString, valuePassedString, value)
             }
         }
-
+        if(!MemoryFunctionsFullRead_LoadHandlers)
+        {
+            LV_ModifyCol()
+            return
+        }
         for k,v in ActiveEffectKeySharedFunctions ; Class
         {
             for k1, v1 in v ; Champions
