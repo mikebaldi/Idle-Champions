@@ -18,7 +18,7 @@ Gui, ICSHVersionPicker:Font, w400
 Gui, ICSHVersionPicker:Add, Text, x10 y+2 w300 vVersionPickerDetectionText, Script Hub Recommends: Checking...
 Gui, ICSHVersionPicker:Show, , Memory Version Picker
 
-global scriptLocation := A_LineFile . "/../"
+global scriptLocation := A_LineFile . "\..\"
 global g_VersionPickerPlatformChoice
 global g_VersionPickerVersionChoice
 global GameObj := LoadObjectFromJSON( scriptLocation . "PointerData.json")
@@ -88,7 +88,7 @@ VersionPickerSaveChoice()
         MsgBox, Please select both the platform and version.
         return
     }
-    failedWrite := WriteObjectToJSON(scriptLocation . "MemoryRead/CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
+    failedWrite := WriteObjectToJSON(scriptLocation . "MemoryRead\CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
     if !failedWrite
     {
         MsgBox, Settings saved! ; Close/Restart all running Script Hub scripts before continuing.
