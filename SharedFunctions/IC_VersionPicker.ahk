@@ -54,7 +54,7 @@ WriteObjectToJSON( FileName, ByRef object )
     if(FileExist(FileName))
         FileDelete, %FileName%
     FileAppend, %objectJSON%, %FileName%
-    return
+    return ErrorLevel
 }
 
 ; Sets suggestion text back to empty
@@ -88,11 +88,20 @@ VersionPickerSaveChoice()
         MsgBox, Please select both the platform and version.
         return
     }
-    WriteObjectToJSON(scriptLocation . "MemoryRead/CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
-    MsgBox, Settings saved! ; Close/Restart all running Script Hub scripts before continuing.
+    failedWrite := WriteObjectToJSON(scriptLocation . "MemoryRead/CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
+    if !failedWrite
+    {
+        MsgBox, Settings saved! ; Close/Restart all running Script Hub scripts before continuing.
+    }
+    else
+    {
+        MsgBox,1,, There was a problem saving the settings. Closing script.
+        IfMsgBox, OK
+            ExitApp
+        IfMsgBox, Cancel
+            return
+    }
     OutputDebug, % "Pointer Version Saved!"
-    scriptHubLoc := A_LineFile . "\..\..\ICScriptHub.ahk"
-    Run, %scriptHubLoc%
     ICSHVersionPickerGuiClose()
 }
 
