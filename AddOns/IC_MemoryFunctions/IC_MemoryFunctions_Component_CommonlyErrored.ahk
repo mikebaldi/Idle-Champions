@@ -107,7 +107,7 @@ class ReadMemoryFunctionsExtended
             multipliersString := "["
         loop, %size%
         {
-            value := g_SF.Memory.ReadTimeScaleMultiplierKeyByIndex(i)
+            value := g_SF.Memory.ReadTimeScaleMultipliersKeyByIndex(i)
             if(i == size - 1)
                 multipliersString .= value . "]"
             else
