@@ -162,17 +162,6 @@ class IC_MemoryFunctions_Class
         return Round(this.GenericGetValue(timeScaleObject), 2)
     }
 
-    ;this read will only return a valid key if it is reading from TimeScaleWhenNotAttackedHandler object
-    ;TODO: Rewrite for new auto offsets system or this can break.
-    ; ReadTimeScaleMultipliersKeyByIndex(index := 0)
-    ; {
-    ;     if (this.Is64Bit)
-    ;        key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0),, [0x20 + 0x8 + (index * 0x18), 0x28, 0x10, 0x10, 0x18, 0x10]) ; 20 start -> handler, effectKey, parentEffectKeyHandler, parent, source, ID
-    ;     else
-    ;         key := New GameObjectStructure(this.GameManager.game.gameInstances.timeScales.Multipliers.GetGameObjectFromListValues(this.GameInstance,0),, [0x10 + 0x8 + (index * 0x10), 0x14, 0x8, 0x8, 0xC, 0x8]) ; 10 start, values at 18,28,38..etc to get to handler, effectKey, parentEffectKeyHandler, parent, source, ID
-    ;     return this.GenericGetValue(key)
-    ; }
-
     ReadTimeScaleMultipliersCount()
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances.TimeScales.Multipliers.size.GetGameObjectFromListValues(this.GameInstance,0))
