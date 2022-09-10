@@ -1,3 +1,13 @@
+September 9, 2022
+    Added IsVersionNewer to IC_VersionHelper_Class.
+    Updated Imports for v469.
+    Updated error message that occurs when failing to read memory when starting BrivGemFarm.
+    Removed outdated/nonfunctional ReadTimeScaleMultipliersKeyByIndex function from SharedFunctions.
+
+
+September 8, 2022
+    Fixed unescapable loop when pointer settings cannot be saved.
+
 September 6, 2022
     Updated text in Game Location Settings to be clearer.
     Fixed boss hit counter counting falling back into a boss when it shouldn't.
