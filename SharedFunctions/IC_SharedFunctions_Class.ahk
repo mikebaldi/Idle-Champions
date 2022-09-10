@@ -1045,10 +1045,11 @@ class IC_SharedFunctions_Class
         {
             txtCheck := "Unable to read adventure data."
             txtCheck .= "`n1. Please load into a valid adventure. Current adventure shows as: " . (CurrentObjID ? CurrentObjID : "-- Error --")
-            txtCheck .= "`n2. Check the correct memory file is being used. `n    Current version: " . this.Memory.GameManager.GetVersion()
-            txtcheck .= "`n3. If IC is running with admin privileges, then the script will also require admin privileges."
+            txtcheck .= "`n2. Make sure the game exe in Game Location settings is set to ""IdleDragons.exe"""
+            txtCheck .= "`n3. Check the correct memory file is being used. `n    Current version: " . this.Memory.GameManager.GetVersion()
+            txtcheck .= "`n4. If IC is running with admin privileges, then the script will also require admin privileges."
             if (this.Memory.GameManager.is64bit())
-                txtcheck .= "`n4. Check AHK is 64bit."
+                txtcheck .= "`n5. Check AHK is 64bit."
             MsgBox, 5,, % txtCheck
 
             IfMsgBox, Retry
