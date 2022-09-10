@@ -139,7 +139,7 @@ class Jimothy
             g_SF.ToggleAutoProgress(0)
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
             g_SF.WaitForTransition()
-            g_SF.SummonDembo()
+            ;g_SF.SummonDembo()
             ;ultButton := g_SF.GetUltimateButtonByChampID(56)
             ;if (ultButton != -1)
             ;    g_SF.DirectedInput(,, ultButton)

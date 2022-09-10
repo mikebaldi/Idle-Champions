@@ -501,12 +501,7 @@ class IC_BrivGemFarm_Class
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
         if(isHavilarInFormation)
-        {
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
-            ultButton := g_SF.GetUltimateButtonByChampID(56)
-            if (ultButton != -1)
-                g_SF.DirectedInput(,, ultButton)
-        }
         if(g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
