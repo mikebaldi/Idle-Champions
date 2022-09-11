@@ -806,7 +806,6 @@ class IC_MemoryFunctions_Class
 
     /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
     */
-    ; TODO: Update GetChestCount with BinarySearch
     GetChestCountByID(chestID)
     {
         size := this.ReadInventoryChestListSize()

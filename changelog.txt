@@ -4,7 +4,6 @@ September 9, 2022
     Updated error message that occurs when failing to read memory when starting BrivGemFarm.
     Removed outdated/nonfunctional ReadTimeScaleMultipliersKeyByIndex function from SharedFunctions.
 
-
 September 8, 2022
     Fixed unescapable loop when pointer settings cannot be saved.
 
