@@ -52,7 +52,7 @@ xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect (Beta Feature)
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
