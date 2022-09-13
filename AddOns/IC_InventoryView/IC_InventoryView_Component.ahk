@@ -18,8 +18,13 @@ Gui, ICScriptHub:Add, Button, x+15 yp+0 w75 vButtonResetInventory, Reset
 buttonFunc := ObjBindMethod(g_InventoryView, "ResetInventory")
 GuiControl,ICScriptHub: +g, ButtonResetInventory, % buttonFunc
 
-Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewChestsCheckbox x+15 yp+3 Checked, Chests
-Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewBuffsCheckbox x+15 Checked, Buffs
+Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewChestsCheckbox x+15 yp+3, Chests
+Gui, ICScriptHub:Add, Checkbox, vg_InventoryViewBuffsCheckbox x+15, Buffs
+buttonFunc := ObjBindMethod(g_InventoryView, "SaveSettings")
+GuiControl,ICScriptHub: +g, g_InventoryViewChestsCheckbox, % buttonFunc
+GuiControl,ICScriptHub: +g, g_InventoryViewBuffsCheckbox, % buttonFunc
+buttonFunc := ObjBindMethod(g_InventoryView, "LoadSettings")
+buttonFunc.Call()
 
 Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+15 w455, % "Last Updated: "
 
@@ -67,13 +72,43 @@ class IC_InventoryView_Component
         }
     }
 
+    ; Resets inventory stats.
     ResetInventory()
     {
         this.FirstReadBuffValues := ""
         this.FirstReadChestValues := ""
         this.ReadCombinedInventory(1)
     }
+
+    ; Loads settings from the addon's setting.json file.
+    LoadSettings()
+    {
+        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
+        if(this.Settings == "")
+        {
+            this.Settings := {}
+            this.Settings["LoadChests"] := True
+            this.Settings["LoadBuffs"] := True
+            this.SaveSettings()
+        }
+        if(this.Settings["LoadChests"] == "")
+            this.Settings["LoadChests"] := True
+        if(this.Settings["LoadBuffs"] == "")
+            this.Settings["LoadBuffs"] := True
+        GuiControl,ICScriptHub:, g_InventoryViewChestsCheckbox, % this.Settings["LoadChests"]
+        GuiControl,ICScriptHub:, g_InventoryViewBuffsCheckbox, % this.Settings["LoadBuffs"]
+        Gui, Submit, NoHide
+    }
     
+    ; Saves settings to addon's setting.json file.
+    SaveSettings()
+    {
+        Gui, Submit, NoHide
+        this.Settings["LoadChests"] := g_InventoryViewChestsCheckbox
+        this.Settings["LoadBuffs"] := g_InventoryViewBuffsCheckbox
+        g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json", this.Settings )
+    }
+
     ; Reads the game memory for all chests in the inventory and their counts and shows it in the inventory view.
     ReadChests(runCount := 1, doAddToFirstRead := false)
     {
@@ -102,12 +137,13 @@ class IC_InventoryView_Component
         }
     }
 
+    ; Reads inventory from memory and displays it in the ListView
     ReadCombinedInventory(runCount := 1)
     {
         restore_gui_on_return := GUIFunctions.LV_Scope("ICScriptHub", "InventoryViewID")
         doAddToFirstRead := false
         lastUpdateString := "Last Updated: " . A_YYYY . "/" A_MM "/" A_DD " at " A_Hour . ":" A_Min 
-        if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()
         else
             return

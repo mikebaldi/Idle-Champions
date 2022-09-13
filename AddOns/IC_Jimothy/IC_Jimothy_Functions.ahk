@@ -108,7 +108,7 @@ class Jimothy
 
     Initialize()
     {
-        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
+        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()
         ;this.CheckSetup()
         this.formationQ := g_SF.Memory.GetFormationByFavorite(1)
@@ -139,7 +139,7 @@ class Jimothy
             g_SF.ToggleAutoProgress(0)
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
             g_SF.WaitForTransition()
-            g_SF.SummonDembo()
+            ;g_SF.SummonDembo()
             ;ultButton := g_SF.GetUltimateButtonByChampID(56)
             ;if (ultButton != -1)
             ;    g_SF.DirectedInput(,, ultButton)

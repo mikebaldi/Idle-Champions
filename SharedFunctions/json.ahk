@@ -380,6 +380,12 @@ class JSON
 			return _JSON
 		}
 	}
+
+	Minify(JSON)
+	{
+		return this.Uglify(JSON)
+	}
+
 	Beautify(JSON, gap:="`t") {
 		JSON := this.Uglify(JSON)
 		StringReplace,JSON,JSON, \\, % Chr(1),A  ;convert '\\' to '\1'

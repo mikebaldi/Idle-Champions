@@ -34,13 +34,19 @@ class IC_ChestPurchaser_Component
 {
     ReadChests()
     {
-        if(WinExist("ahk_exe IdleDragons.exe")) ; only update when the game is open
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
             g_SF.Memory.OpenProcessReader()
         else
             return
         size := g_SF.Memory.ReadChestDefinesSize()
-        if(!size)
+        comboBoxOptions := "|"
+        if(!size OR size > 3000 OR size < 0)
+        {
+            comboBoxOptions .= "-- Error Reading Chests --"
+            GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
+            GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
             return
+        }
         loop, %size%
         {
             chestID := g_SF.Memory.GetChestIDBySlot(A_Index)

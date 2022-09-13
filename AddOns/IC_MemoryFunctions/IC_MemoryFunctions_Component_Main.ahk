@@ -79,7 +79,7 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadScreenWidthID, % g_SF.Memory.ReadScreenWidth()
         GuiControl, ICScriptHub:, ReadScreenHeightID, % g_SF.Memory.ReadScreenHeight()
         GuiControl, ICScriptHub:, ReadMonstersSpawnedID, % g_SF.Memory.ReadMonstersSpawned()
-        GuiControl, ICScriptHub:, ReadCoreTargetAreaID, % g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance())
+        GuiControl, ICScriptHub:, ReadCoreTargetAreaID, % g_SF.Memory.GetModronResetArea()
         GuiControl, ICScriptHub:, ReadGemsID, % g_SF.Memory.ReadGems()
         GuiControl, ICScriptHub:, ReadGemsSpentID, % g_SF.Memory.ReadGemsSpent()
         GuiControl, ICScriptHub:, ReadRedGemsID, % g_SF.Memory.ReadRedGems()

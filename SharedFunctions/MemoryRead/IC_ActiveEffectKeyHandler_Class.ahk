@@ -15,12 +15,12 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.2, 2022-07-02, IC v0.440+"  
+        return "v2.2.0, 2022-07-02, IC v0.440+"  
     }
 
     Refresh()
     {
-        this.Main := new _ClassMemory("ahk_exe IdleDragons.exe", "", hProcessCopy)
+        this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
         this.BrivUnnaturalHasteHandler := this.GetEffectHandler("BrivUnnaturalHasteHandler")
         this.HavilarImpHandler := this.GetEffectHandler("HavilarImpHandler")
         this.NerdWagonHandler := this.GetEffectHandler("NerdWagonHandler")

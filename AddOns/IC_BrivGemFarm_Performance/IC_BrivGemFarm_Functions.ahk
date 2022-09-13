@@ -135,6 +135,7 @@ class IC_BrivGemFarm_Class
 {
     TimerFunctions := {}
     TargetStacks := 0
+    GemFarmGUID := ""
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -144,8 +145,9 @@ class IC_BrivGemFarm_Class
     {
         static lastResetCount := 0
         g_SharedData.TriggerStart := true
-        g_SF.Hwnd := WinExist("ahk_exe IdleDragons.exe")
-        Process, Exist, IdleDragons.exe
+        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
+        existingProcessID := g_userSettings[ "ExeName"]
+        Process, Exist, %existingProcessID%
         g_SF.PID := ErrorLevel
         Process, Priority, % g_SF.PID, High
         g_SF.Memory.OpenProcessReader()
@@ -184,7 +186,7 @@ class IC_BrivGemFarm_Class
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
                 g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-                g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
+                g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1) + 50 ; 50 stack safety net
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
                 g_SharedData.StackFail := this.CheckForFailedConv()
@@ -203,7 +205,7 @@ class IC_BrivGemFarm_Class
             if(CurrentZone > PreviousZone) ; needs to be greater than because offline could stacking getting stuck in descending zones.
             {
                 PreviousZone := CurrentZone
-                if(!Mod( g_SF.Memory.ReadCurrentZone(), 5 ))
+                if((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
                 {
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
@@ -217,7 +219,7 @@ class IC_BrivGemFarm_Class
                 lastModronResetZone := g_SF.ModronResetZone
                 g_SF.InitZone( keyspam )
                 if g_SF.ModronResetZone != lastModronResetZone
-                    g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetCoreTargetAreaByInstance(1) + 1) + 50 ; 50 stack safety net
+                    g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1) + 50 ; 50 stack safety net
                 g_SF.ToggleAutoProgress( 1 )
                 continue
             }
@@ -263,7 +265,7 @@ class IC_BrivGemFarm_Class
             else
             { 
                 ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure
-                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10)
+                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
                 {
                     stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
                     g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -499,19 +501,14 @@ class IC_BrivGemFarm_Class
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
         if(isHavilarInFormation)
-        {
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
-            ultButton := g_SF.GetUltimateButtonByChampID(56)
-            if (ultButton != -1)
-                g_SF.DirectedInput(,, ultButton)
-        }
         if(g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
             keyspam.Push("{ClickDmg}")
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
-        g_SF.ModronResetZone := g_SF.Memory.GetCoreTargetAreaByInstance(g_SF.Memory.ReadActiveGameInstance()) ; once per zone in case user changes it mid run.
+        g_SF.ModronResetZone := g_SF.Memory.GetModronResetArea() ; once per zone in case user changes it mid run.
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1, false, true )

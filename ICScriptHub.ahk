@@ -21,7 +21,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
-    return "v3.3.5, 2022-07-29"
+    return "v3.5.1, 2022-09-01"
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -62,11 +62,12 @@ g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 If !IsObject( g_UserSettings )
 {
     g_UserSettings := {}
-    g_UserSettings[ "ExeName"] := "IdleDragons.exe"
     g_UserSettings[ "WriteSettings" ] := true
 }
 if ( g_UserSettings[ "InstallPath" ] == "" )
-    g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+    g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
+if (g_UserSettings[ "ExeName"] == "")
+    g_UserSettings[ "ExeName"] := "IdleDragons.exe"
 if ( g_UserSettings[ "WindowXPositon" ] == "" )
     g_UserSettings[ "WindowXPositon" ] := 0
 if ( g_UserSettings[ "WindowYPositon" ] == "" )
@@ -99,7 +100,7 @@ Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 if(g_isDarkMode)
     Gui, ICScriptHub:Color, % g_CustomColor
-Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, IC Script Hub
+Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
 
 Reload_Clicked()
@@ -110,9 +111,9 @@ Reload_Clicked()
 
 Launch_Clicked()
 {
-    programLoc := g_UserSettings[ "InstallPath" ] . g_UserSettings ["ExeName" ]
+    programLoc := g_UserSettings[ "InstallPath" ]
     Run, %programLoc%
-    Process, Exist, IdleDragons.exe
+    Process, Exist, % g_UserSettings[ "ExeName"]
     g_SF.PID := ErrorLevel
 }
 

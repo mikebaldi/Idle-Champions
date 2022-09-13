@@ -47,6 +47,7 @@ this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdere
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.specializationName := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"UTF-16", [0x20])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.RequiredLevel := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Int", [0x4c])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.RequiredUpgradeID := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Int", [0x54])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.defaultSpecGraphic := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Int", [0x58])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.health := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Double", [0x1d8])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Int", [0x18c])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.Owned := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Char", [0x188])

@@ -42,14 +42,19 @@ If !IsObject( g_UserSettings )
 {
     g_UserSettings := {}
     if ( g_UserSettings[ "InstallPath" ] == "" )
-        g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+        g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
     g_UserSettings[ "ExeName"] := "IdleDragons.exe"
     g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
 }
 
 global isAdvancedBrivSettings := false
-if(A_OSVersion >= "10." && A_OSVersion < "W")
-    Menu Tray, Icon, shell32.dll, -51380
+try
+{
+    if(A_OSVersion >= "10." && A_OSVersion < "W")
+        Menu Tray, Icon, shell32.dll, -51380
+    else
+        Menu, Tray, Icon, shell32.dll, 138
+}
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
@@ -124,7 +129,18 @@ RefreshSettingsView()
         ReloadAdvancedBrivGemFarmSettingsDisplay()
 }
 
-ObjRegisterActive(g_SharedData, "{416ABC15-9EFC-400C-8123-D7D8778A2103}")
+if(A_Args[1])
+{
+    ObjRegisterActive(g_SharedData, A_Args[1])
+    g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", A_Args[1])
+}
+else
+{
+    GuidCreate := ComObjCreate("Scriptlet.TypeLib")
+    guid := GuidCreate.Guid
+    ObjRegisterActive(g_SharedData, guid)
+    g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", guid)
+}
 ; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
 
 g_BrivGemFarm.GemFarm()
