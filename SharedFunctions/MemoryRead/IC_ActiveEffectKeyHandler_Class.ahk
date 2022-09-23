@@ -15,7 +15,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.2.0, 2022-07-02, IC v0.440+"  
+        return "v2.2.1, 2022-09-22, IC v0.440+"
     }
 
     Refresh()
@@ -174,7 +174,10 @@ class ActiveEffectKeySharedFunctions
         {
             ReadNumContractsFulfilled()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+                contractsFulfilled := g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+                if(contractsFulfilled != "" AND contractsFulfilled <= 100)
+                    return contractsFulfilled
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.obligationsFufilled)
             }
 
             ReadSecondsOnGoldFind()
