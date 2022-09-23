@@ -64,6 +64,7 @@ class IC_ActiveEffectKeyHandler_Class
     GetBaseAddress(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]
+        ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
         tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, champID - 1, 0 )
         ; add dictionary value from effectkeysbyname
         currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
