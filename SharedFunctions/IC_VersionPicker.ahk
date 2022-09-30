@@ -6,16 +6,17 @@
 #include %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
 Gui, ICSHVersionPicker:New
 Gui, ICSHVersionPicker:+Resize -MaximizeBox
-Gui, ICSHVersionPicker:Add, Text, w100, Platform:
+Gui, ICSHVersionPicker:Add, GroupBox, w300 h75, Pointer Select: 
+Gui, ICSHVersionPicker:Add, Text, xp+10 yp+15 w100, Platform:
 Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w100 vVersionPickerPlatformDropdown gVersionPickerUpdateVersions,
-Gui, ICSHVersionPicker:Add, Text, y6 x+10 w50, Version:
+Gui, ICSHVersionPicker:Add, Text, y22 x+10 w50, Version:
 Gui, ICSHVersionPicker:Add, DropDownList, yp+15 w50 vVersionPickerVersionDropdown gVersionPickerResetText,
 Gui, ICSHVersionPicker:Add, Button, x+5 w50 vVersionPickerSaveButton gVersionPickerSaveChoice, Save
-Gui, ICSHVersionPicker:Add, Text, x10 y+5 w300 vVersionPickerSuggestionText, Checking...
+Gui, ICSHVersionPicker:Add, Text, x20 y+5 w275 vVersionPickerSuggestionText, Checking...
 ;Gui, ICSHVersionPicker:Font, w700
-Gui, ICSHVersionPicker:Add, Text, x10 y+1 w300 h26 vVersionPickerSuggestionText2, 
+Gui, ICSHVersionPicker:Add, Text, x20 y+8 w300 h26 vVersionPickerSuggestionText2, 
 Gui, ICSHVersionPicker:Font, w400
-Gui, ICSHVersionPicker:Add, Text, x10 y+2 w300 vVersionPickerDetectionText, Script Hub Recommends: Checking...
+Gui, ICSHVersionPicker:Add, Text, x13 y+2 w300 vVersionPickerDetectionText, Script Hub Recommends: Checking...
 Gui, ICSHVersionPicker:Show, , Memory Version Picker
 
 global scriptLocation := A_LineFile . "\..\"
@@ -171,11 +172,11 @@ ChooseRecommendation()
             closest := version
             break
         }
-        else if (version > k)
+        else if (version > k AND closest < k)
         {
             closest := k
         }
-        else if version < k
+        else if (version < k)
         {
             closest := k
             break
