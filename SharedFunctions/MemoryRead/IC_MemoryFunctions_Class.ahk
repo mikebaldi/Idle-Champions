@@ -56,7 +56,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.6, 2022-08-30, IC v0.463+"
+        return "v1.10.7, 2022-09-30, IC v0.463+"
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -237,38 +237,38 @@ class IC_MemoryFunctions_Class
 
     ReadChampHealthByID(ChampID := 0 )
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampSlotByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampBenchedByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ; TODO: Depricate older unused versions
     ReadChampLvlByID(ChampID:= 0)
     {
-        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         return val
     }
 
     ReadChampSeatByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampNameByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ;=============================
@@ -991,6 +991,14 @@ class IC_MemoryFunctions_Class
             i++
         }
         return gameObject
+    }
+
+    ; Returns the index of HeroHandler the champion is expected to be at. As of v472 hero defines became missing in the defines so champID can no longer be used as an index.
+    GetHeroHandlerIndexByChampID(champID)
+    {
+        if(champID < 107)
+            return champID - 1
+        return champID - 2
     }
 
     #include *i IC_MemoryFunctions_Extended.ahk

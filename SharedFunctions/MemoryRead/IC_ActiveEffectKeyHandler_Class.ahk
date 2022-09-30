@@ -15,7 +15,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.2.1, 2022-09-22, IC v0.440+"
+        return "v2.3.0, 2022-09-30, IC v0.440+"
     }
 
     Refresh()
@@ -65,7 +65,7 @@ class IC_ActiveEffectKeyHandler_Class
     {
         champID := this.HeroHandlerIDs[handlerName]
         ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, champID - 1, 0 )
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID), 0 )
         ; add dictionary value from effectkeysbyname
         currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
         tempObject.FullOffsets.InsertAt(tempObject.FullOffsets.Count() - 4, currOffset)
@@ -84,12 +84,12 @@ class IC_ActiveEffectKeyHandler_Class
     {
         champID := this.HeroHandlerIDs[handlerName]
         effectName := this.HeroEffectNames[handlerName]
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, ChampID - 1)
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
         dictCount := g_SF.Memory.GenericGetValue(tempObject)
         i := 0
         loop, % dictCount
         {
-            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, ChampID - 1)
+            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
             currOffset := tempObject.CalculateDictOffset(["key", i])
             tempObject.FullOffsets.Push(currOffset)
             tempObject.ValueType := "UTF-16"
