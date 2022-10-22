@@ -183,10 +183,10 @@ class ActiveEffectKeySharedFunctions
                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.obligationsFufilled)
             }
 
-            ReadSecondsOnGoldFind()
-            {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
-            }
+            ; ReadSecondsOnGoldFind()
+            ; {
+            ;     return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
+            ; }
         }
     }
 
