@@ -543,12 +543,12 @@ class IC_MemoryFunctions_Class
     ;=================
     ReadOfflineTime()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.OfflineTimeSimulated_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.inGameNumSecondsToProcess.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadOfflineDone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentStopReason_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.finishedOfflineProgressType.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadResetsCount()
