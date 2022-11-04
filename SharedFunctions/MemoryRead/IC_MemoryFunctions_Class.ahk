@@ -9,6 +9,8 @@
 #include %A_LineFile%\..\IC_ActiveEffectKeyHandler_Class.ahk
 #include *i %A_LineFile%\..\Imports\IC_GameVersion32_Import.ahk
 #include *i %A_LineFile%\..\Imports\IC_GameVersion64_Import.ahk
+#include *i %A_LineFile%\..\Imports\IC_OfflineProgressHandlerOLD32_Import.ahk
+#include *i %A_LineFile%\..\Imports\IC_OfflineProgressHandlerOLD64_Import.ahk
 
 ;Check if you have installed the class correctly.
 if (_ClassMemory.__Class != "_ClassMemory")
@@ -543,12 +545,12 @@ class IC_MemoryFunctions_Class
     ;=================
     ReadOfflineTime()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.inGameNumSecondsToProcess.GetGameObjectFromListValues(this.GameInstance))
+        return this.GenericGetValue(this.OfflineProgressHandlerOLD.inGameNumSecondsToProcess.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadOfflineDone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.finishedOfflineProgressType.GetGameObjectFromListValues(this.GameInstance))
+        return this.GenericGetValue(this.OfflineProgressHandlerOLD.finishedOfflineProgressType.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadResetsCount()
