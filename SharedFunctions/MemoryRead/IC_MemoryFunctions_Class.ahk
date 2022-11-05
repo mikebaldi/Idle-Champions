@@ -543,12 +543,15 @@ class IC_MemoryFunctions_Class
     ;=================
     ReadOfflineTime()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.OfflineTimeSimulated_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.OfflineTimeRequested_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadOfflineDone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentStopReason_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        handlerState := this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentState_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        stopReason := this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentStopReason_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        return handlerState == 0 AND stopReason != "" ; handlerstate is "inactive" and stopReason is not null
     }
 
     ReadResetsCount()
