@@ -57,13 +57,13 @@ class IC_IdleGameManager_Class
         if(!this.Main.isTarget64bit)
         {
             ; Build offsets for class using imported AHK files.
-            #include %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
             ; special case for Dictionary<List<Action<action>>>
             this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
         }
         else
         {
-            #include %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
             this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
         }
     }

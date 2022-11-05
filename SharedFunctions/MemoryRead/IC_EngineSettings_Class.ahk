@@ -30,11 +30,11 @@ class IC_EngineSettings_Class
         this.UnityGameEngine.Core.EngineSettings.Is64Bit := this.Main.isTarget64bit
         if(!this.Main.isTarget64bit)
         {
-            #include %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
         }
         else
         {
-            #include %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
+            #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
         }
     }
 }
