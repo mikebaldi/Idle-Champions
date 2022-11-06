@@ -1,3 +1,6 @@
+November 6, 2022
+    Fixed script counting multiple runs when doing a stack restart.
+
 November 5, 2022
     Updated includes for imports to be optional. This allows the script to be loaded with only 64 or 32 bit offsets when only one is needed/available.
     Removed 32 bit imports.
