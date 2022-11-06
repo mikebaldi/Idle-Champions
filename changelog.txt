@@ -1,3 +1,35 @@
+November 5, 2022
+    Updated includes for imports to be optional. This allows the script to be loaded with only 64 or 32 bit offsets when only one is needed/available.
+    Removed 32 bit imports.
+    Updated Imports for v476.
+    Updated Offline progress functions to use new offline handler in the recent game update.
+    Updated StackRestart to turn autoprogress back on before closing IC.
+
+October 22, 2022
+    Updated Imports for v474.1.
+    Added bounds check for AffectKeyHandler so bad memory reads do not cause a freeze.
+    Updated pointer database (Beta / Steam / EGS).
+    Removed an unused/depricated function for Omin.
+
+October 6, 2022
+    Updated Imports for v472.1
+
+September 30, 2022
+    Updated Imports for v472.
+    Fixed reads that would be broken for champions with IDs larger than 106. (e.g. Egbert)
+    Added Group Box to version picker to show it's selecting pointers.
+    Fixed pointer selection being incorrect for some pointers in VersionPicker.
+    Updated pointer database.
+
+September 24, 2022
+    Updated Imports for v471.
+
+September 22, 2022
+    Fixed Omin's Contractual Obligations function to work with game update.
+
+September 12, 2022
+    Updated addon and README docs.
+
 September 9, 2022
     Added IsVersionNewer to IC_VersionHelper_Class.
     Updated Imports for v469.
