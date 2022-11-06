@@ -280,6 +280,9 @@ class IC_BrivGemFarm_Stats_Component
     ;Updates the stats tab's once per run stats
     UpdateStartLoopStats()
     {
+        ; Do not calculate stacks if game/script do not appear to be in a normal state.
+        if(IsObject(!this.SharedRunData) OR this.SharedRunData.LoopString != "Main Loop") 
+            return
         Critical, On
         if !this.isStarted
         {
@@ -506,7 +509,7 @@ class IC_BrivGemFarm_Stats_Component
     ; Adds timed functions (typically to be started when briv gem farm is started)
     CreateTimedFunctions()
     {
-        this.TimedFunctions := {}
+        this.TimerFunctions := {}
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
         this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
