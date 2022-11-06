@@ -2,8 +2,8 @@
 #include %A_LineFile%\..\json.ahk
 #include %A_LineFile%\..\MemoryRead\classMemory.ahk
 #include %A_LineFile%\..\CLR.ahk
-#include %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
-#include %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
+#include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
+#include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
 Gui, ICSHVersionPicker:New
 Gui, ICSHVersionPicker:+Resize -MaximizeBox
 Gui, ICSHVersionPicker:Add, GroupBox, w300 h75, Pointer Select: 
