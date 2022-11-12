@@ -105,7 +105,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
         currentFormation := this.Memory.GetCurrentFormation()
         isShandieInFormation := this.IsChampInFormation( 47, currentFormation )
-        return (!g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation)
+        hasHasteStacks := this.Memory.ReadHasteStacks() > 50
+        return (!g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation AND hasHasteStacks)
     }
 }
 
