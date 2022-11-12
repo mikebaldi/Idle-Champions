@@ -26,6 +26,7 @@ class IC_BrivGemFarm_Stats_Component
     TotalRunCountRetry := 0
     PreviousRunTime := 0
     GemsTotal := 0
+    SbLastStacked := ""
     
     SharedRunData[]
     {
@@ -251,8 +252,11 @@ class IC_BrivGemFarm_Stats_Component
             {
                 sbStackMessage := "[" . sbStackMessage . "] last seen"
             }
-        } else {
-            sbStackMessage := sbStacks
+        } 
+        else 
+        {
+            lastStackedSB := (this.SbLastStacked > 0) ? (" [" . this.SbLastStacked . "] total last run") : ""
+            sbStackMessage := lastStacked + lastStackedSB
         }
         hasteStacks := g_SF.Memory.ReadHasteStacks()
         if (hasteStacks == "")
@@ -333,6 +337,7 @@ class IC_BrivGemFarm_Stats_Component
             }
             this.LastResetCount := g_SF.Memory.ReadResetsCount()
             this.PreviousRunTime := round( ( A_TickCount - this.RunStartTime ) / 60000, 2 )
+            this.SbLastStacked = g_SF.Memory.ReadHasteStacks()
             GuiControl, ICScriptHub:, PrevRunTimeID, % this.PreviousRunTime
 
             if (this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
