@@ -56,12 +56,13 @@ class IC_ServerCalls_Class
     ;Various server call functions that should be pretty obvious.
     ;============================================================
     ;Except this one, it is used internally and shouldn't be called directly.
-    ServerCall( callName, parameters ) 
+    ServerCall( callName, parameters, timeout := "" ) 
     {
         response := ""
         URLtoCall := this.webRoot . "post.php?call=" . callName . parameters
+        timeout := timeout ? timeout : this.timeoutVal
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
-        WR.SetTimeouts( this.timeoutVal, this.timeoutVal, this.timeoutVal, this.timeoutVal )  
+        WR.SetTimeouts( timeout, timeout, timeout, timeout )  
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -156,7 +157,7 @@ class IC_ServerCalls_Class
             return
         chestParams := "&gold_per_second=0&checksum=4c5f019b6fc6eefa4d47d21cfaf1bc68&user_id=" this.userID "&hash=" this.userHash 
             . "&instance_id=" this.instanceID "&chest_type_id=" chestid "&game_instance_id=" this.activeModronID "&count=" chests
-        return this.ServerCall( "opengenericchest", chestParams )
+        return this.ServerCall( "opengenericchest", chestParams, 30000 )
     }
 
     ;A method to check if the party is on the world map. Necessary state to use callLoadAdventure()
