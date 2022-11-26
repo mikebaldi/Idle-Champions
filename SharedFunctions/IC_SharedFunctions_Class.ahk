@@ -140,6 +140,39 @@ class IC_SharedFunctions_Class
     ;====================================================
     ;General use functions, useful for a variety of tasks
     ;====================================================
+
+    /*  KillCurrentBoss - Switches to e formation and kills the boss
+
+        Parameters:
+        maxLoopTime ;Maximum time, in milliseconds, the loop will continue.
+
+        Returns: 1 on current boss zone cleared, 0 otherwise
+
+    */
+    KillCurrentBoss( maxLoopTime := 25000 )
+    {
+        CurrentZone := this.Memory.ReadCurrentZone()
+        if mod( CurrentZone, 5 )
+            return 1
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        counter := 0
+        sleepTime := 67
+        g_SharedData.LoopString := "Killing boss before stacking."
+        while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
+        {
+            ElapsedTime := A_TickCount - StartTime
+            this.DirectedInput(,,"{e}")
+            if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
+                this.ToggleAutoProgress(1,0,false)
+            Sleep, %sleepTime%
+        }
+        if(ElapsedTime >= maxLoopTime)
+            return 0
+        this.WaitForTransition()
+        return 1
+    }
+
     /*  FallBackFromBossZone - A function that does what it says.
 
         Parameters:
@@ -741,7 +774,7 @@ class IC_SharedFunctions_Class
         }
         ; timed out
         secondsToTimeout := Floor(timeout/ 1000)
-        this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )
+        this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )       
         return false
     }
 
