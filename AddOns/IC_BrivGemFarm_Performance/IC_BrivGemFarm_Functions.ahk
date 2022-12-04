@@ -368,6 +368,8 @@ class IC_BrivGemFarm_Class
     {
         lastStacks := stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
+        numSilverChests := g_SF.Memory.GetChestCountByID(1)
+        numGoldChests := g_SF.Memory.GetChestCountByID(2)
         retryAttempt := 0
         while ( stacks < targetStacks AND retryAttempt < 10 )
         {
@@ -381,7 +383,7 @@ class IC_BrivGemFarm_Class
             ElapsedTime := 0
             if(g_BrivUserSettings["DoChests"])
                 g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-            var := this.DoChests()
+            var := this.DoChests(numSilverChests, numGoldChests)
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
@@ -429,7 +431,7 @@ class IC_BrivGemFarm_Class
         return
     }
 
-    DoChests()
+    DoChests(numSilverChests, numGoldChests)
     {
         StartTime := A_TickCount
         var := ""
@@ -450,7 +452,7 @@ class IC_BrivGemFarm_Class
             }
             else
             {
-                var := this.BuyOrOpenChests() . " "
+                var := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
             }
         }
         return var
@@ -545,13 +547,13 @@ class IC_BrivGemFarm_Class
 
         Note: First line is ignoring fact that once every 49 days this func can potentially be called w/ startTime at 0 ms.
     */
-    BuyOrOpenChests( startTime := 0 )
+    BuyOrOpenChests( startTime := 0, numSilverChestsToOpen := 99, numGoldChestsToOpen := 99 )
     {
         startTime := startTime ? startTime : A_TickCount
         var := ""
         var2 := ""
-        openSilverChestTimeEst := 3000 ; 3s
-        openGoldChestTimeEst := 7000 ; 7s
+        openSilverChestTimeEst := numSilverChestsToOpen * 30.3 ; ~3s
+        openGoldChestTimeEst := numGoldChestsToOpen * 70.7 ; ~7s
         purchaseTime := 100 ; .1s
         gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
         if ( g_BrivUserSettings[ "BuySilvers" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime) )
