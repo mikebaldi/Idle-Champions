@@ -1,3 +1,8 @@
+December 4, 2022
+    Merged OfflineBeta branch into main.
+    Fixed stacks stats display. Now current run's total starting stacks (Last Reset).
+    Updated chest purchasing times be based linearly on number of chests opened, where 0-99 gold chests takes 0-7s and 0-99 silver chests takes 0-3s.
+    Updated Imports for v479.
 
 November 12, 2022
     Updated Imports for v476.4
