@@ -103,9 +103,9 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, SB Stack `Count:
-        Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w100, % g_StackCountSB
+        Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w200, % g_StackCountSB
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
-        Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w100, % g_StackCountH
+        Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w200, % g_StackCountH
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Last Close Game Reason:
         Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300, 
         GUIFunctions.SetThemeTextColor()
@@ -248,24 +248,26 @@ class IC_BrivGemFarm_Stats_Component
         sbStacks := g_SF.Memory.ReadSBStacks()
         if (sbStacks == "")
         {
-            if (SubStr(sbStackMessage, 1, 1) != "[")
+            if (SubStr(sbStackMessage, StrLen(sbStackMessage), 1) != "]")
             {
-                sbStackMessage := "[" . sbStackMessage . "] last seen"
+                sbStackMessage := sbStackMessage . " [last]"
             }
         } 
         else 
         {
-            lastStackedSB := (this.SbLastStacked > 0) ? (" [" . this.SbLastStacked . "] total last run") : ""
-            sbStackMessage := lastStacked + lastStackedSB
+            lastStackedSB := (this.SbLastStacked > 0) ? (" (Last reset: " . this.SbLastStacked . ")") : ""
+            sbStackMessage := sbStacks . lastStackedSB
         }
         hasteStacks := g_SF.Memory.ReadHasteStacks()
         if (hasteStacks == "")
         {
-            if (SubStr(hasteStackMessage, 1, 1) != "[")
+            if (SubStr(hasteStackMessage, StrLen(hasteStackMessage), 1) != "]")
             {
-                hasteStackMessage := "[" . hasteStackMessage . "] last seen"
+                hasteStackMessage := hasteStackMessage . " [last]"
             }
-        } else {
+        } 
+        else 
+        {
             hasteStackMessage := hasteStacks
         }
         GuiControl, ICScriptHub:, g_StackCountSBID, % sbStackMessage
