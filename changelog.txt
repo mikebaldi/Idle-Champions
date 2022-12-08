@@ -2,6 +2,7 @@ December 8, 2022
     Updated Steam/EGS pointers for v480 so the chest names will load in the chest purchaser addon.
     Updated offsets for v480.
     Fixed a bug that prevented purchasing chests by ID # when the chest purchasing addon was not able to load the chest data from the game.
+    Updated Kartridge/CNE pointers for v478.
 
 December 4, 2022
     Merged OfflineBeta branch into main.
