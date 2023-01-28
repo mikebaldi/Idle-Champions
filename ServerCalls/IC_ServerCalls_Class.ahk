@@ -263,7 +263,7 @@ class IC_ServerCalls_Class
                     }
                     avgProcessingTime := totalProcessingTime / testCount
                 }
-                OutputDebug, % "Average Processing Time for ps" . A_Index . " is: " . response.processing_time
+                OutputDebug, % "Average Processing Time for ps" . A_Index . " is: " . avgProcessingTime
                 if (avgProcessingTime < fastestProcessingTime)
                 {
                     fastestProcessingTime := avgProcessingTime
