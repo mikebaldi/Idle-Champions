@@ -1,6 +1,7 @@
 January 28, 2023
     Updated 64 bit Imports for v499
     Updated VersionPicker to sort versions numerically.
+    Fixed bug where the correct play server was not being read from memory resulting in a using a default of ps6.
 
 January 9, 2023
     Updated 64 bit Imports for v485.1

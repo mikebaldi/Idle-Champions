@@ -48,9 +48,9 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         if(version != "")
             g_ServerCall.clientVersion := version
         tempWebRoot := this.Memory.ReadWebRoot()
-        httpString := StrSplit(tempWebRoot,":")
+        httpString := StrSplit(tempWebRoot,":")[1]
         isWebRootValid := httpString == "http" or httpString == "https"
-        g_ServerCall.webroot := isWebRootValid ? this.Memory.ReadWebRoot() : g_ServerCall.webroot
+        g_ServerCall.webroot := isWebRootValid ? tempWebRoot : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
         g_ServerCall.activePatronID := this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
@@ -155,8 +155,8 @@ class IC_BrivGemFarm_Class
         if(g_SF.VerifyAdventureLoaded() < 0)
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
-        g_SF.ResetServerCall()
         g_ServerCall.UpdatePlayServer()
+        g_SF.ResetServerCall()
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationModron := g_SF.Memory.GetActiveModronFormation()
