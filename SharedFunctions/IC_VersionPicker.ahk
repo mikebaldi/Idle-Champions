@@ -76,6 +76,7 @@ VersionPickerUpdateVersions()
     {
         versionComboBoxOptions .= k . "|"
     }
+    Sort, versionComboBoxOptions, N D|
     GuiControl,ICSHVersionPicker:, VersionPickerVersionDropdown, %versionComboBoxOptions%
 }
 
