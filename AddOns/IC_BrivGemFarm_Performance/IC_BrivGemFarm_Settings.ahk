@@ -42,6 +42,10 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "ResetZoneBuffer" ] := 41
     if ( g_BrivUserSettings[ "MinStackZone" ] == "" )
         g_BrivUserSettings[ "MinStackZone" ] := 200
+    if ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] == "" )
+        g_BrivUserSettings[ "ForceOfflineGemThreshold" ] := 0
+    if ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] == "" )
+        g_BrivUserSettings[ "ForceOfflineRunThreshold" ] := 0
     if ( g_BrivUserSettings[ "BrivJumpBuffer" ] == "" )
         g_BrivUserSettings[ "BrivJumpBuffer" ] := 0
     if ( g_BrivUserSettings[ "DisableDashWait" ] == "" )

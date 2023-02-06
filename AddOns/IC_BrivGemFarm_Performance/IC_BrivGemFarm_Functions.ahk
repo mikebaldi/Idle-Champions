@@ -289,11 +289,38 @@ class IC_BrivGemFarm_Class
         return stackfail
     }
 
+    ShouldOfflineStack()
+    {
+        gemsMax := g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
+        runsMax := g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
+        if ( (gemsMax > 1) OR (runsMax > 0) )
+        {
+            if ( runsMax > 1 )
+            {
+                memRead := g_SF.Memory.ReadResetsCount()
+                if (memRead > 0 AND Mod( memRead, runsMax ) = 0)
+                {
+                    return 1
+                }
+            }
+            if ( gemsMax > 0 )
+            {
+                memRead := g_SF.Memory.ReadGems()
+                if (memRead > (gemsMax + g_BrivUserSettings[ "MinGemCount" ] ) )
+                {
+                    return 1
+                }
+            }
+            return 0
+        }
+        return ( g_BrivUserSettings [ "RestartStackTime" ] > 0 )
+    }
+
     ;thanks meviin for coming up with this solution
     ;Gets total of SteelBonesStacks + Haste Stacks
     GetNumStacksFarmed()
     {
-        if ( g_BrivUserSettings[ "RestartStackTime" ] )
+        if this.ShouldOfflineStack()
         {
             return g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
         }
@@ -346,7 +373,10 @@ class IC_BrivGemFarm_Class
     {
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
-        if ( g_BrivUserSettings[ "RestartStackTime" ] AND stacks < targetStacks )
+
+        offline := this.ShouldOfflineStack()
+
+        if ( ( stacks < targetStacks ) AND offline )
             this.StackRestart()
         else if (stacks < targetStacks)
             this.StackNormal()
