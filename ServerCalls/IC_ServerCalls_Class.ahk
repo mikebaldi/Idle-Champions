@@ -24,9 +24,9 @@ class IC_ServerCalls_Class
     userDetails := ""
     activePatronID := 0
     dummyData := ""
-    webRoot := "https://ps6.idlechampions.com/~idledragons/"
+    webRoot := "https://ps23.idlechampions.com/~idledragons/"
     timeoutVal := 10000
-    playServerExcludes := "2,3,4,8,14,15,16,17,18,19,20"
+    playServerExcludes := "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
 
     __New( userID, userHash, instanceID := 0 )
     {
@@ -63,6 +63,7 @@ class IC_ServerCalls_Class
         timeout := timeout ? timeout : this.timeoutVal
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
         WR.SetTimeouts( timeout, timeout, timeout, timeout )  
+        ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -201,6 +202,7 @@ class IC_ServerCalls_Class
         URLtoCall := this.webroot "post.php?call=saveuserdetails&"
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
         WR.SetTimeouts( "10000", "10000", "10000", "10000" )
+        ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
         Try {
             WR.Open( "POST", URLtoCall, true )
             boundaryHeader = 
@@ -241,7 +243,7 @@ class IC_ServerCalls_Class
         oldWebRoot := this.webRoot
         this.timeoutVal := 1000
         newWebRoot := ""
-        highestPlayServerValue := 20
+        highestPlayServerValue := 23
         fastestProcessingTime := 10000
         Loop, %highestPlayServerValue%
         {
@@ -292,7 +294,7 @@ class IC_ServerCalls_Class
         else
         {
             oldWebRoot := this.webRoot
-            this.webRoot := "https://ps1.idlechampions.com/~idledragons/" ; assume ps1 will always be available (avoiding using master)
+            this.webRoot := "https://ps23.idlechampions.com/~idledragons/" ; assume ps23 will always be available (avoiding using master)
             response := this.CallGetPlayServer()
             if (response != "" AND response.play_server != "")
                 this.webRoot := response.play_server
