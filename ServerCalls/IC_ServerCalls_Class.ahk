@@ -25,7 +25,7 @@ class IC_ServerCalls_Class
     activePatronID := 0
     dummyData := ""
     webRoot := "https://ps23.idlechampions.com/~idledragons/"
-    timeoutVal := 10000
+    timeoutVal := 60000
     playServerExcludes := "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
 
     __New( userID, userHash, instanceID := 0 )
@@ -62,7 +62,8 @@ class IC_ServerCalls_Class
         URLtoCall := this.webRoot . "post.php?call=" . callName . parameters
         timeout := timeout ? timeout : this.timeoutVal
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
-        WR.SetTimeouts( timeout, timeout, timeout, timeout )  
+        ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
+        WR.SetTimeouts( 0, 45000, 30000, timeout )  
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
         Try {
             WR.Open( "POST", URLtoCall, true )
@@ -76,7 +77,7 @@ class IC_ServerCalls_Class
                 ; TODO: Add check for outdated Instance ID
                 if(!(response.switch_play_server == ""))
                 {
-                    return this.ServerCall( callName, parameters ) 
+                    return this.ServerCall( callName, parameters, timeoutVal ) 
                 }
             }
             ;catch "Failed to fetch valid JSON response from server."
@@ -158,7 +159,7 @@ class IC_ServerCalls_Class
             return
         chestParams := "&gold_per_second=0&checksum=4c5f019b6fc6eefa4d47d21cfaf1bc68&user_id=" this.userID "&hash=" this.userHash 
             . "&instance_id=" this.instanceID "&chest_type_id=" chestid "&game_instance_id=" this.activeModronID "&count=" chests
-        return this.ServerCall( "opengenericchest", chestParams, 30000 )
+        return this.ServerCall( "opengenericchest", chestParams, 60000 )
     }
 
     ;A method to check if the party is on the world map. Necessary state to use callLoadAdventure()
@@ -199,9 +200,10 @@ class IC_ServerCalls_Class
     ServerCallSave( saveBody ) 
     {
         response := ""
-        URLtoCall := this.webroot "post.php?call=saveuserdetails&"
+        URLtoCall := this.webroot . "post.php?call=saveuserdetails&"
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
-        WR.SetTimeouts( "10000", "10000", "10000", "10000" )
+        ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
+        WR.SetTimeouts( "0", "60000", "30000", "120000" )
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
         Try {
             WR.Open( "POST", URLtoCall, true )
