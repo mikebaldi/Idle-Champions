@@ -1,3 +1,7 @@
+February 21, 2023
+    Updated 64 bit Imports for v497.
+    Added available pointers for EGS v497.
+    
 February 18, 2023
     Updated shared functions version of ResetServerCall to fix the ps6 bug for any addons that might be using it.
     Updated ServerCalls to use currently working servers as defaults since play servers 1-16 were recently dropped and are currently non-functional. Possibly a temporary change. The default is now ps23.
