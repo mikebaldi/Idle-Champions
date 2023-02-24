@@ -470,11 +470,13 @@ class IC_BrivGemFarm_Class
             if(g_BrivUserSettings[ "DoChestsContinuous" ])
             {
                 ElapsedTime := 0
-                while(g_BrivUserSettings[ "RestartStackTime" ] > ( ElapsedTime ))
+                hybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) or ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+                while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) or hybridStacking)
                 {
                     ElapsedTime := A_TickCount - StartTime
                     g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
-                    var2 := this.BuyOrOpenChests(StartTime)
+                    effectiveStartTime := hybridStacking ? A_TickCount + 12000 : StartTime
+                    var2 := this.BuyOrOpenChests(effectiveStartTime)
                     var .= var2 . "`n" 
                     if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
                         break

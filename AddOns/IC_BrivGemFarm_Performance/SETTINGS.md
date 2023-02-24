@@ -19,10 +19,10 @@ If you are not satisfied with only 100/99 Buy/Open chests per run you can set th
 
 > **WARNING:** Chest purchases happen very quickly. If the maintain gems setting is set incorrectly and this option is turned on, all gems could easily be spent, especially when buying gold chests.
 
-* **ForceOfflineGemThreshold**
-Aimed at high jump levels and online "Tatyana stacking". Makes the script prefer stacking online regardless of what `RestartStackTime` says, but do offline stacking once in a while to clear memory leaks and buy/open chests. Specified as available gems above the normal reserved amount.
+> Particularly interesting when using hybrid stacking strategy and restarting e.g. every 100k gems. If hybrid stacking is activated together with continuous chest, script will continue buying even after Stack Reset Time has elapsed - only way for it to stop automatically is when all non-reserved gems are spent and all chests are open.
 
-Set RestartStackTime to appropriately high value to allow all gems to be spent when using this.
+* **ForceOfflineGemThreshold**
+Activates "hybrid stackign" (a.k. HamerStein method a.k.a. Tatyana stacking). Makes the script prefer stacking online regardless of what `RestartStackTime` says, but do offline stacking once in a while to clear memory leaks and buy/open chests. Specified as available gems above the normal reserved amount.
 
 * **ForceOfflineRunThreshold**
 Same as `ForceOfflineGemThreshold`, but specified as max amount of runs based on "Resets Done", as reported by current core. Reset is forced on the last run (so setting to 1 also disables this setting, every run will be offline). If both thresholds are enabled, any of them matching will trigger offline restart.
