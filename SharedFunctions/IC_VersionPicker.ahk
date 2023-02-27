@@ -90,7 +90,10 @@ VersionPickerSaveChoice()
         MsgBox, Please select both the platform and version.
         return
     }
-    failedWrite := WriteObjectToJSON(scriptLocation . "MemoryRead\CurrentPointers.json", GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown] )
+    pointersToWrite := GameObj[VersionPickerPlatformDropdown][VersionPickerVersionDropdown]
+    pointersToWrite["Platform"] := VersionPickerPlatformDropdown
+    pointersToWrite["Version"] := VersionPickerVersionDropdown
+    failedWrite := WriteObjectToJSON(scriptLocation . "MemoryRead\CurrentPointers.json", pointersToWrite )
     if !failedWrite
     {
         MsgBox, Settings saved! ; Close/Restart all running Script Hub scripts before continuing.

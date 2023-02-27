@@ -1,3 +1,9 @@
+February 27, 2023
+    Added current pointer version to "About" addon.
+    Added MemoryFunctions version to "About" addon.
+    Updated VersionPicker to include platform and version in CurrentPointers.json (required for display on about tab).
+    Updated version numbers for updated scripts.
+
 February 24, 2023
     Added available pointers for CNE v497.
 
