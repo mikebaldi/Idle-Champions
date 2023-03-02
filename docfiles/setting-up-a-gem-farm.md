@@ -29,6 +29,8 @@ Your Modron core should also be set to load a formation that contains every cham
 
 ### Formation 2
 
+Formation 2 is used to farm Steelbones stacks. 
+
 Formation 2, bound to W, will contain your tank team. At minimum this will contain `Briv`. You can also add in health-share champions to this formation. 
 
 Be aware that Gem Farms prosper most when they are right on the edge of success and failure. 
@@ -39,6 +41,7 @@ Remove ALL familiars from the field for this formation. If you're clicking, Briv
 
 ### Formation 3
 
+Formation 3 is used to cancel Briv's jump animation.  
 Formation 3, bound to E, will contain your Briv-swap team. This should (at minimum) be a copy of your Q team with the exception of `Briv`. 
 
 Use the same familiar setup as your Q formation here.
