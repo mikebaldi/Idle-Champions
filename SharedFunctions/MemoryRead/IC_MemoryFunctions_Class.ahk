@@ -33,6 +33,7 @@ class IC_MemoryFunctions_Class
     ;   		return this.gameInstances[0];
     ;   	}
     GameInstance := 0
+    PointerVersionString := ""
 
     __new(fileLoc := "CurrentPointers.json")
     {
@@ -45,6 +46,7 @@ class IC_MemoryFunctions_Class
             ExitApp
         }
         currentPointers := JSON.parse( oData )
+        this.PointerVersionString := currentPointers.Version . (currentPointers.Platform ? (" (" currentPointers.Platform  . ") ") : "")
         this.GameManager := new IC_IdleGameManager_Class(currentPointers.IdleGameManager.moduleAddress, currentPointers.IdleGameManager.moduleOffset)
         this.GameSettings := new IC_GameSettings_Class(currentPointers.GameSettings.moduleAddress, currentPointers.GameSettings.staticOffset, currentPointers.GameSettings.moduleOffset)
         this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
@@ -56,7 +58,12 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.7, 2022-09-30, IC v0.463+"
+        return "v1.10.8, 2023-2-27, IC v0.463+"
+    }
+
+    GetPointersVersion()
+    {
+        return this.PointerVersionString
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
