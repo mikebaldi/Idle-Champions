@@ -1,8 +1,23 @@
+March 5, 2023
+    Merged huan's updates to allow for hybrid stacking via new options in BrivGF Advanced tab. See the SETTINGS.md file in the BrivGemFarm addon's folder for descriptions of the new settings.
+    Fixed script saying chests were purchased/opened when they werent. (credit: huan)
+    Updated offline message to indicate how many chests were bought/opened while offline stacking. (credit: huan)
+    Updated 64 bit Imports for v499.1. 
+    Moved ParseChestResults from servercalls to shared functions.
+    Updated function to save shinies found by hero/slot instead of returning a string.
+    Created new function GetToolTipTarget in GUIFunctions for finding the ClassNN value of a control.
+    Updated chest purchaser addon to use the new parse function. (This loses functionality to show what champ/slot found a shiny. Will return in the future.)
+    Updated the stats tab to show found shinies by champ/slot as a mouseover tooltip on the shiny count.
+    Updated some code to better match Scritp Hub's code styling.
+    Updated DoChests to share purchased/opened chest counts in SharedData.
+    Fixed a bug that broke failed stacking recovery when Auto detect for stacks is enabled but the value in Target Haste stacks is less than the calculated value. 
+
 February 27, 2023
     Added current pointer version to "About" addon.
     Added MemoryFunctions version to "About" addon.
-    Updated VersionPicker to include platform and version in CurrentPointers.json (required for display on about tab).
+    Updated VersionPicker to include platform and version in CurrentPointers.json (required for display on about tab). 
     Updated version numbers for updated scripts.
+    Added available pointers for Steam v498. (Updated pointer for DialogManager which handles looking up blessings/favor.)
 
 February 24, 2023
     Added available pointers for CNE v497.
