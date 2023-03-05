@@ -439,7 +439,7 @@ class IC_BrivGemFarm_Class
     {
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
-        if (stacks >= g_BrivUserSettings[ "TargetStacks" ] OR g_SF.Memory.ReadCurrentZone() == 1 OR g_SF.Memory.ReadHasteStacks() >= g_BrivUserSettings[ "TargetStacks" ]) ; avoids attempts to stack again after stacking has been completed and level not reset yet.
+        if (this.AvoidRestackTest())
             return
         this.StackFarmSetup()
         StartTime := A_TickCount
@@ -458,6 +458,20 @@ class IC_BrivGemFarm_Class
         g_SF.FallBackFromZone()
         g_SF.ToggleAutoProgress( 1 )
         return
+    }
+
+    ; avoids attempts to stack again after stacking has been completed and level not reset yet.
+    AvoidRestackTest()
+    {
+        if(stacks >= g_BrivUserSettings[ "TargetStacks" ])
+            return 1
+        if(g_SF.Memory.ReadCurrentZone() == 1)
+            return 1
+        if(!g_BrivUserSettings["AutoCalculateBrivStacks"] AND g_SF.Memory.ReadHasteStacks() >= g_BrivUserSettings[ "TargetStacks" ])
+            return 1
+        if(g_BrivUserSettings["AutoCalculateBrivStacks"]  AND g_SF.Memory.ReadHasteStacks() >= g_SharedData.TargetStacks)
+            return 1
+        return 0
     }
 
     DoChests(numSilverChests, numGoldChests)
