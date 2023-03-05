@@ -65,6 +65,7 @@ class IC_ServerCalls_Class
         ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
         WR.SetTimeouts( 0, 45000, 30000, timeout )  
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
+        WR.SetProxy( 2, "127.0.0.1:9877" )
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -181,22 +182,7 @@ class IC_ServerCalls_Class
         else
             return 0
     }
-
-    ParseChestResults( chestResults )
-    {
-        this.shinies := 0
-        string := ""
-        for k, v in chestResults.loot_details
-        {
-            if v.gilded
-            {
-                this.shinies += 1
-                string .= "New shiny! Champ ID: " . v.hero_id . " (Slot " . v.slot_id . ")`n"
-            }
-        }
-        return string
-    }
-
+    
     ServerCallSave( saveBody ) 
     {
         response := ""
@@ -205,6 +191,7 @@ class IC_ServerCalls_Class
         ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
         WR.SetTimeouts( "0", "60000", "30000", "120000" )
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
+        WR.SetProxy( 2, "127.0.0.1:9877" )
         Try {
             WR.Open( "POST", URLtoCall, true )
             boundaryHeader = 

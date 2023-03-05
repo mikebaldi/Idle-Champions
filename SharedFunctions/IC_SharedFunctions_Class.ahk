@@ -33,6 +33,8 @@ class IC_SharedData_Class
     BadAutoProgress := 0
     PreviousStacksFromOffline := 0
     TargetStacks := 0
+    ShiniesByChamp := {}
+    ShiniesByChampJson := ""
 
     Close()
     {
@@ -135,6 +137,24 @@ class IC_SharedFunctions_Class
             }
         }
         return false
+    }
+
+    ; Parses a response from an open chests call to tally shiny counts by champ and slot. Returns count of shinies
+    ParseChestResults( chestResults )
+    {
+        shinies := 0
+        for k, v in chestResults.loot_details
+        {
+            if v.gilded
+            {
+                shinies += 1
+                g_SharedData.ShiniesByChamp[v.hero_id] := (g_SharedData.ShiniesByChamp[v.hero_id] != "" ? g_SharedData.ShiniesByChamp[v.hero_id] : {})
+                g_SharedData.ShiniesByChamp[v.hero_id][v.slot_id] := ((g_SharedData.ShiniesByChamp[v.hero_id][v.slot_id] != "") ? (g_SharedData.ShiniesByChamp[v.hero_id][v.slot_id] + 1) : 1)
+                ;string := "New shiny! Champ ID: " . v.hero_id . " (Slot " . v.slot_id . ")`n"
+            }
+        }
+        g_SharedData.ShiniesByChampJson := JSON.Stringify(g_SharedData.ShiniesByChamp)
+        return shinies
     }
 
     ;====================================================
