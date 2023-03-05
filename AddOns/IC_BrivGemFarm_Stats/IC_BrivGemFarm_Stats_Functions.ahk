@@ -151,6 +151,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w200, 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
         Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
+        ShiniesClassNN := GUIFunctions.GetToolTipTarget("ShiniesID")
 
         Gui, ICScriptHub:Font, cBlue w700
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
@@ -380,6 +381,8 @@ class IC_BrivGemFarm_Stats_Component
                 GuiControl, ICScriptHub:, GoldsGainedID, % currentGoldChests - this.GoldChestCountStart + this.SharedRunData.OpenedGoldChests
                 GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
                 GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+                global ShiniesClassNN
+                g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
                 GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
             }
             ++this.TotalRunCount
@@ -391,6 +394,37 @@ class IC_BrivGemFarm_Stats_Component
         if (IsObject(this.SharedRunData))
             this.LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
+    }
+
+    ; Returns a string listing shinies found by champion.
+    GetShinyCountTooltip()
+    {
+        if (IsObject(this.SharedRunData))
+        {
+            stackFailString := ""
+            shiniesJson := this.SharedRunData.ShiniesByChampJson
+            shiniesByChamp := JSON.parse(shiniesJson)
+            for champID, slots in shiniesByChamp
+            {
+                champName := g_SF.Memory.ReadChampNameByID(champID)
+                stackFailString .= champName . ": Slots ["
+                for k,v in slots
+                {
+                    stackFailString .= k . ","
+                }
+                if(slots != "")
+                {
+                    stackFailString := SubStr(stackFailString,1,StrLen(stackFailString)-1)
+                }                
+                stackFailString .= "]`n"
+            }
+            stackFailString := SubStr(stackFailString, 1, StrLen(stackFailString)-1)
+            return stackFailString
+        }
+        else
+        {
+            return "Cannot read data for Shiny counts."
+        }
     }
 
     ; Updates data on the stats tab page that is collected from the Briv Gem Farm script.
