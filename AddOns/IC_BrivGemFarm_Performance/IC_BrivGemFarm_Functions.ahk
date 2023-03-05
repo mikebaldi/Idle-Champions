@@ -289,6 +289,7 @@ class IC_BrivGemFarm_Class
         return stackfail
     }
 
+    ; Determines if offline stacking is expected with current settings and conditions.
     ShouldOfflineStack()
     {
         gemsMax := g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
@@ -374,9 +375,9 @@ class IC_BrivGemFarm_Class
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
 
-        offline := this.ShouldOfflineStack()
+        doOfflineStacking := this.ShouldOfflineStack()
 
-        if ( ( stacks < targetStacks ) AND offline )
+        if ( ( stacks < targetStacks ) AND doOfflineStacking )
             this.StackRestart()
         else if (stacks < targetStacks)
             this.StackNormal()
@@ -417,7 +418,7 @@ class IC_BrivGemFarm_Class
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
-                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
+                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . var
             }
             g_SF.SafetyCheck()
             stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
@@ -430,8 +431,6 @@ class IC_BrivGemFarm_Class
             g_SharedData.PreviousStacksFromOffline := stacks - lastStacks
             lastStacks := stacks
         }
-        
-        OutputDebug, % var
         g_PreviousZoneStartTime := A_TickCount
         return
     }
@@ -464,32 +463,57 @@ class IC_BrivGemFarm_Class
     DoChests(numSilverChests, numGoldChests)
     {
         StartTime := A_TickCount
-        var := ""
+        loopString := ""
         if ( g_BrivUserSettings[ "DoChests" ] )
         {
             if(g_BrivUserSettings[ "DoChestsContinuous" ])
             {
+                startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
+                startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
+                startingOpenedGoldChests := g_SharedData.OpenedGoldChests
+                startingOpenedSilverChests := g_SharedData.OpenedSilverChests
+                currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
                 ElapsedTime := 0
-                hybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) or ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-                while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) or hybridStacking)
+                doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+                while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
                 {
                     ElapsedTime := A_TickCount - StartTime
-                    g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . var
-                    effectiveStartTime := hybridStacking ? A_TickCount + 12000 : StartTime
-                    var2 := this.BuyOrOpenChests(effectiveStartTime)
-                    var = var2 . "`n"
-                    if(var2 == "No chests opened or purchased.") ; call failed, likely ran out of time. Don't want to call more if out of time.
+                    g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
+                    effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
+                    this.BuyOrOpenChests(effectiveStartTime)
+                    updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
+                    thisLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
+                    loopString := thisLoopString == "" ? loopString : thisLoopString
+                    if(updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
                     {
-                        break
+                        OutputDebug, % loopString
+                        loopString := loopString == "" ? "Chests ----" : loopString
+                        return loopString
                     }
+                    currentChestTallies := updatedTallies
                 }
             }
             else
             {
-                var := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
+                loopString := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
+                OutputDebug, % loopString
             }
         }
-        return var
+        return loopString
+    }
+
+    ; Builds a string that shows how many chests have been opened/bought above the values passed into this function.
+    GetChestDifferenceString(lastPurchasedSilverChests, lastPurchasedGoldChests, lastOpenedGoldChests, lastOpenedSilverChests )
+    {
+        boughtSilver := g_SharedData.PurchasedSilverChests - lastPurchasedSilverChests 
+        boughtGold := g_SharedData.PurchasedGoldChests - lastPurchasedGoldChests
+        openedSilver := g_SharedData.OpenedSilverChests - lastOpenedSilverChests
+        openedGold := g_SharedData.OpenedGoldChests - lastOpenedGoldChests
+        buyString := (boughtSilver > 0 AND boughtGold > 0) ? "Buy: (" . boughtSilver . "s, " . boughtGold . "g)" : ""
+        openString := (openedSilver > 0 AND openedGold > 0) ? "Open: (" . openedSilver . "s, " . openedGold . "g)" : ""
+        separator := ((boughtSilver > 0 OR boughtGold > 0) AND (openedSilver > 0 OR openedGold > 0)) ? ", " : ""
+        returnString := buyString . separator . openString
+        return ((returnString != "") ? "Chests - " . returnString : "")
     }
 
     /* ;A function that checks if farmed SB stacks from previous run failed to convert to haste.
@@ -573,13 +597,18 @@ class IC_BrivGemFarm_Class
 
         Parameters:
         startTime - The number of milliseconds that have elapsed since the system was started, up to 49.7 days.
+        numSilverChestsToOpen and numGoldChestsToOpen - expected number of chests to open in this iteration of calls.
+            Used to estimate if there is enough time to perform those actions before attempting to do them.
 
         Return Values:
-        If no calls were made, will return a string noting so.
-        On success opening or buying, will return string noting so.
-        On success and shinies found, will return a string noting so.
+        None
 
-        Note: First line is ignoring fact that once every 49 days this func can potentially be called w/ startTime at 0 ms.
+        Side Effects:
+        On success opening or buying, will update g_SharedData.
+        On success and shinies found, will increment g_SharedData.ShinyCount by number of shinies found.
+
+        Notes:
+        First line is ignoring fact that once every 49 days this func can potentially be called w/ startTime at 0 ms.
     */
     BuyOrOpenChests( startTime := 0, numSilverChestsToOpen := 99, numGoldChestsToOpen := 99 )
     {
@@ -598,10 +627,9 @@ class IC_BrivGemFarm_Class
                 response := g_ServerCall.callBuyChests( chestID := 1, amount )
                 if(response.okay AND response.success)
                 {
-                    g_sharedData.PurchasedSilverChests += amount
+                    g_SharedData.PurchasedSilverChests += amount
                     g_SF.TotalGems := response.currency_remaining
                     gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-                    var .= " Bought " . amount . " silver chests."
                 }
             }
         }
@@ -613,10 +641,9 @@ class IC_BrivGemFarm_Class
                 response := g_ServerCall.callBuyChests( chestID := 2, amount )
                 if(response.okay AND response.success)
                 {
-                    g_sharedData.PurchasedGoldChests += amount
+                    g_SharedData.PurchasedGoldChests += amount
                     g_SF.TotalGems := response.currency_remaining
                     gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-                    var .= " Bought " . amount . " gold chests."
                 }
             }
         }
@@ -626,11 +653,9 @@ class IC_BrivGemFarm_Class
             chestResults := g_ServerCall.callOpenChests( chestID := 1, amount )
             if(chestResults.success)
             {
-                g_sharedData.OpenedSilverChests += amount
+                g_SharedData.OpenedSilverChests += amount
                 g_SF.TotalSilverChests := chestResults.chests_remaining
-                var2 .= g_ServerCall.ParseChestResults( chestResults )
-                g_sharedData.ShinyCount += g_ServerCall.shinies
-                var .= " Opened " . amount . " silver chests."
+                g_SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
             }
         }
         if ( g_BrivUserSettings[ "OpenGolds" ] AND g_SF.TotalGoldChests > 0 AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openGoldChestTimeEst) )
@@ -639,22 +664,10 @@ class IC_BrivGemFarm_Class
             chestResults := g_ServerCall.callOpenChests( chestID := 2, amount )
             if(chestResults.success)
             {
-                g_sharedData.OpenedGoldChests += amount
+                g_SharedData.OpenedGoldChests += amount
                 g_SF.TotalGoldChests := chestResults.chests_remaining
-                var2 .= g_ServerCall.ParseChestResults( chestResults )
-                g_sharedData.ShinyCount += g_ServerCall.shinies
-                var .= " Opened " . amount . " gold chests."
+                g_SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
             }
-        }
-        if ( var == "" )
-        {
-            return "No chests opened or purchased."
-        }
-        else
-        {
-            if ( var2 != "" )
-                var .= "`n" . var2
-            return var
         }
     }
 }
