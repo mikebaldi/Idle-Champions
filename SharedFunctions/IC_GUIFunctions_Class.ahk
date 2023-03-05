@@ -31,10 +31,17 @@ class GUIFunctions
     AddToolTip(controlVariableName, tipMessage)
     {
         global
+        toolTipTarget := this.GetToolTipTarget(controlVariableName)
+        g_MouseToolTips[toolTipTarget] := tipMessage
+    }
+
+    GetToolTipTarget(controlVariableName)
+    {
+        global
         WinGet ICScriptHub_ID, ID, A
         GuiControl ICScriptHub:Focus, %controlVariableName%
         ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
-        g_MouseToolTips[toolTipTarget] := tipMessage
+        return toolTipTarget
     }
 
     SetThemeTextColor()
