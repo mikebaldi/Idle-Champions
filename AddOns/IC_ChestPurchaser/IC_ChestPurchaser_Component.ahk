@@ -99,7 +99,7 @@ class IC_ChestPurchaser_Component
         chestName := splitArray[2]
         MsgBox % "Opening " . ChestOpenCountID . " of " . chestName . " (ID: " . chestID . ") Make sure the game is closed before continuing."
         openCount := ChestOpenCountID
-        shinyMessage := ""
+        shinyCount := 0
         while(openCount > 0)
         {
             GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " openCount " chests..."
@@ -114,10 +114,11 @@ class IC_ChestPurchaser_Component
                 MsgBox % "Failed because " . response.failure_reason . response.fail_message
                 return 
             }
-            shinyMessage .= g_ServerCall.ParseChestResults(response)
+            shinyCount += g_SF.ParseChestResults(response)
             openCount -= 99
         }
+        ; TODO: restore functioality to display champion/slot for shinies found.
         GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " Max(openCount,0) " chests..."
-        MsgBox % "Done`n" . (shinyMessage != "" ? shinyMessage : "No shiny gear found.")
+        MsgBox % "Done`n" . (shinyCount > 0 ? ("Shinies found: " . shinyCount) : "No shiny gear found.")
     }
 }
