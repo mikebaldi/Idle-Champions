@@ -3,11 +3,11 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     steelbones := ""
     sprint := ""
     
+    ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
-            ; TODO: If the steelbone stacks are > 1900000 the script will forever fail to fix a failed restack. Evaluate options.
             if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             {
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
@@ -26,6 +26,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
             g_SharedData.TriggerStart := true
     }
 
+    ; Store important user data [UserID, Hash, InstanceID, Briv Stacks, Gems, Chests]
     SetUserCredentials()
     {
         this.UserID := this.Memory.ReadUserID()
@@ -69,8 +70,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         ElapsedTime := 0
         g_SharedData.LoopString := "Modron Resetting..."
         this.SetUserCredentials()
-        if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
-            response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
+        ; if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+        ;     response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
@@ -248,44 +249,38 @@ class IC_BrivGemFarm_Class
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
         stackfail := 0
-        forcedReset := false
         forcedResetReason := ""
         ; passed stack zone, start stack farm. Normal operation.
         if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
-            this.StackFarm()
-        else
         {
-            targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : targetStacks
-            ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
-            if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < targetStacks AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
-            {
-                stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
-                g_SharedData.StackFailStats.TALLY[stackfail] += 1
-                this.StackFarm()
-            }
-            else
-            { 
-                ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure
-                if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
-                {
-                    stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
-                    g_SharedData.StackFailStats.TALLY[stackfail] += 1
-                    forcedReset := true
-                    forcedResetReason := "Briv ran out of jumps but has enough stacks for a new adventure"
-                }
-                ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
-                ; (for restarting after stacking without going to modron reset level)
-                if ( stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
-                {
-                    stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
-                    g_SharedData.StackFailStats.TALLY[stackfail] += 1
-                    forcedReset := true
-                    forcedResetReason := " Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone"
-                }
-                if(forcedReset)
-                    g_SF.RestartAdventure(forcedResetReason)
-            }
+            this.StackFarm()
+            return 0
         }
+        ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
+        if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < targetStacks AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
+        {
+            stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
+            g_SharedData.StackFailStats.TALLY[stackfail] += 1
+            this.StackFarm()
+            return stackfail
+        }
+        ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure. With protections from repeating too early or resetting within 5 zones of a reset.
+        if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
+        {
+            stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
+            g_SharedData.StackFailStats.TALLY[stackfail] += 1
+            forcedResetReason := "Briv ran out of jumps but has enough stacks for a new adventure"
+            g_SF.RestartAdventure(forcedResetReason)
+        }
+        ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
+        ; (for restarting after stacking without going to modron reset level)
+        if ( stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+        {
+            stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
+            g_SharedData.StackFailStats.TALLY[stackfail] += 1
+            forcedResetReason := " Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone"
+            g_SF.RestartAdventure(forcedResetReason)
+        }           
         return stackfail
     }
 
@@ -294,27 +289,27 @@ class IC_BrivGemFarm_Class
     {
         gemsMax := g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
         runsMax := g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
-        if ( (gemsMax > 1) OR (runsMax > 0) )
+        ; hybrid stacking not used. Use default test for offline stacking. 
+        if !( (gemsMax > 1) OR (runsMax > 0) )
         {
-            if ( runsMax > 1 )
-            {
-                memRead := g_SF.Memory.ReadResetsCount()
-                if (memRead > 0 AND Mod( memRead, runsMax ) = 0)
-                {
-                    return 1
-                }
-            }
-            if ( gemsMax > 0 )
-            {
-                memRead := g_SF.Memory.ReadGems()
-                if (memRead > (gemsMax + g_BrivUserSettings[ "MinGemCount" ] ) )
-                {
-                    return 1
-                }
-            }
-            return 0
+            return ( g_BrivUserSettings [ "RestartStackTime" ] > 0 )
         }
-        return ( g_BrivUserSettings [ "RestartStackTime" ] > 0 )
+        ; hybrid stacking by number of gems.
+        if ( gemsMax > 0 AND g_SF.Memory.ReadGems() > (gemsMax + g_BrivUserSettings[ "MinGemCount" ]) )
+        {
+            return 1
+        }
+        ; hybrid stacking by number of runs.
+        if ( runsMax > 1 )
+        {
+            memRead := g_SF.Memory.ReadResetsCount()
+            if (memRead > 0 AND Mod( memRead, runsMax ) = 0)
+            {
+                return 1
+            }
+        }
+        ; hybrid stacking enabled but conditions for offline stacking not met
+        return 0
     }
 
     ;thanks meviin for coming up with this solution
@@ -410,15 +405,18 @@ class IC_BrivGemFarm_Class
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             g_SF.CloseIC( "StackRestart" )
             g_SharedData.LoopString := "Stack Sleep: "
+            chestsCompletedString := ""
             StartTime := A_TickCount
             ElapsedTime := 0
             if(g_BrivUserSettings["DoChests"])
+            {
                 g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-            var := this.DoChests(numSilverChests, numGoldChests)
+                chestsCompletedString := " " . this.DoChests(numSilverChests, numGoldChests)
+            }
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 ElapsedTime := A_TickCount - StartTime
-                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . var
+                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . chestsCompletedString
             }
             g_SF.SafetyCheck()
             stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
@@ -435,6 +433,13 @@ class IC_BrivGemFarm_Class
         return
     }
 
+    /*  StackNormal - Stack Briv's SteelBones by switching to his formation and waiting for stacks to build.
+
+    Parameters:
+
+    Returns:
+    */
+    ; Stack Briv's SteelBones by switching to his formation.
     StackNormal()
     {
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
@@ -474,44 +479,40 @@ class IC_BrivGemFarm_Class
         return 0
     }
 
+    ; Sends calls for buying or opening chests and tracks chest metrics.
     DoChests(numSilverChests, numGoldChests)
     {
         StartTime := A_TickCount
         loopString := ""
-        if ( g_BrivUserSettings[ "DoChests" ] )
+        if(!g_BrivUserSettings[ "DoChestsContinuous" ])
         {
-            if(g_BrivUserSettings[ "DoChestsContinuous" ])
+            loopString := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
+            OutputDebug, % loopString
+            return loopString
+        }
+        startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
+        startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
+        startingOpenedGoldChests := g_SharedData.OpenedGoldChests
+        startingOpenedSilverChests := g_SharedData.OpenedSilverChests
+        currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
+        ElapsedTime := 0
+        doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+        while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
+        {
+            ElapsedTime := A_TickCount - StartTime
+            g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
+            effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
+            this.BuyOrOpenChests(effectiveStartTime)
+            updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
+            thisLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
+            loopString := thisLoopString == "" ? loopString : thisLoopString
+            if(updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
             {
-                startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
-                startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
-                startingOpenedGoldChests := g_SharedData.OpenedGoldChests
-                startingOpenedSilverChests := g_SharedData.OpenedSilverChests
-                currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
-                ElapsedTime := 0
-                doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-                while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
-                {
-                    ElapsedTime := A_TickCount - StartTime
-                    g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
-                    effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
-                    this.BuyOrOpenChests(effectiveStartTime)
-                    updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
-                    thisLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
-                    loopString := thisLoopString == "" ? loopString : thisLoopString
-                    if(updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
-                    {
-                        OutputDebug, % loopString
-                        loopString := loopString == "" ? "Chests ----" : loopString
-                        return loopString
-                    }
-                    currentChestTallies := updatedTallies
-                }
-            }
-            else
-            {
-                loopString := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
                 OutputDebug, % loopString
+                loopString := loopString == "" ? "Chests ----" : loopString
+                return loopString
             }
+            currentChestTallies := updatedTallies
         }
         return loopString
     }
@@ -537,23 +538,27 @@ class IC_BrivGemFarm_Class
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
+        automaticStackCalcVariationLeeway := 25
         ; Zone 10 gives plenty leeway for fast starts that skip level 1 while being low enough to not have received briv stacks
         ; needed to ensure DoPartySetup
-        if ( g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone <= 10)
+        if ( !g_BrivUserSettings[ "StackFailRecovery" ] OR CurrentZone > 10)
         {
-            stacks := this.GetNumStacksFarmed()
-            If (g_SF.Memory.ReadHasteStacks() < targetStacks AND stacks > targetStacks)
-            {
-                g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
-                g_SF.RestartAdventure( "Failed Conversion" )
-                g_SF.SafetyCheck()
-                return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
-            }
-            If (g_SF.Memory.ReadHasteStacks() < targetStacks AND stacks <= 50)
-            {
-                g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
-                return StackFailStates.FAILED_TO_KEEP_STACKS ; 5
-            }
+            return 0
+        }
+        stacks := g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
+        ; stacks not converted to haste properly. Buffer allows for automatic calc variations and possible early jump before calculation done.
+        If ((g_SF.Memory.ReadHasteStacks() + automaticStackCalcVariationLeeway) < targetStacks AND stacks >= targetStacks)
+        {
+            g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
+            g_SF.RestartAdventure( "Failed Conversion" )
+            g_SF.SafetyCheck()
+            return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
+        }
+        ; all stacks were lost on reset. Stack leeway given for automatic calc variations.
+        If ((g_SF.Memory.ReadHasteStacks() + automaticStackCalcVariationLeeway) < targetStacks AND g_SF.Memory.ReadSBStacks() <= 0)
+        {
+            g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
+            return StackFailStates.FAILED_TO_KEEP_STACKS ; 5
         }
         return 0
     }
@@ -630,7 +635,7 @@ class IC_BrivGemFarm_Class
         var := ""
         var2 := ""
         openSilverChestTimeEst := numSilverChestsToOpen * 30.3 ; ~3s
-        openGoldChestTimeEst := numGoldChestsToOpen * 70.7 ; ~7s
+        openGoldChestTimeEst := numGoldChestsToOpen * 60.6 ; ~7s
         purchaseTime := 100 ; .1s
         gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
         if ( g_BrivUserSettings[ "BuySilvers" ] AND g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime) )
