@@ -253,7 +253,7 @@ class IC_BrivGemFarm_Class
         if(CurrentZone < 0 OR CurrentZone >= g_SF.ModronResetZone)
             return
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
-        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks + this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
+        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks - this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
         
         stackfail := 0
         forcedResetReason := ""
