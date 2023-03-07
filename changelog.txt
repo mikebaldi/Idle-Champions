@@ -1,3 +1,12 @@
+March 7, 2023
+    Removed Briv's stack conversion safety call from modron reset since it is unlikely to be helpful anymore.
+    Updated some function documentation.
+    Updated some functions with nested if statements to be more simplified.
+    Updated Gold Chest server call to estimate 6 seconds for 99 chests instead of 7 seconds.
+    Updated memory view stats to show skip chance up to 16 decimals instead of just 2. 
+    Added a worst case toggle option to auto-detect briv stacks.
+    Fixed a bug that was mistakenly showing failed stack conversions.
+
 March 5, 2023
     Merged huan's updates to allow for hybrid stacking via new options in BrivGF Advanced tab. See the SETTINGS.md file in the BrivGemFarm addon's folder for descriptions of the new settings.
     Fixed script saying chests were purchased/opened when they werent. (credit: huan)
