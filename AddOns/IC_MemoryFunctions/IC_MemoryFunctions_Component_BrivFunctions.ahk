@@ -55,7 +55,7 @@ class ReadMemoryFunctionsExtended
         test := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         if(test == "")
             g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-        GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.2f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
+        GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.16f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
         GuiControl, ICScriptHub:, BrivHasteStacksID, % Format("{:0.1f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks())
         GuiControl, ICScriptHub:, BrivSkipAmountID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         GuiControl, ICScriptHub:, BrivAreasSkippedID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadAreasSkipped()
