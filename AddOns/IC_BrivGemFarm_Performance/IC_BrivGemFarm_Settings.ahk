@@ -54,6 +54,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := false
     if ( g_BrivUserSettings[ "AutoCalculateBrivStacks" ] == "" )
         g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := true
+    if (g_BrivUserSettings[ "AutoCalculateWorstCase" ] == "" )
+        g_BrivUserSettings[ "AutoCalculateWorstCase" ] := false
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
 	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
     if(g_BrivUserSettings["WriteSettings"] := true)

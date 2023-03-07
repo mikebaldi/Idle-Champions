@@ -53,6 +53,7 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zo
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
 Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck Checked%BrivAutoCalcStats% x+10, Worst Case
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
@@ -119,6 +120,7 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
         GuiControl,ICScriptHub:, BrivAutoCalcStatsCheck, % g_BrivUserSettings[ "AutoCalculateBrivStacks" ]
+        GuiControl,ICScriptHub:, BrivAutoCalcStatsWorstCaseCheck, % g_BrivUserSettings[ "AutoCalculateWorstCase" ]
     }
     
     Briv_Run_Clicked()
@@ -256,6 +258,7 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
         g_BrivUserSettings[ "MinGemCount" ] := StrReplace(NewMinGemCount, ",")
         g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := BrivAutoCalcStatsCheck
+        g_BrivUserSettings[ "AutoCalculateWorstCase" ] := BrivAutoCalcStatsWorstCaseCheck
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
