@@ -107,6 +107,16 @@ class IC_SharedFunctions_Class
     LoadObjectFromJSON( FileName )
     {
         FileRead, oData, %FileName%
+        data := "" 
+        try
+        {
+            data := JSON.parse( oData )
+        }
+        catch err
+        {
+            err.Message := err.Message . "`nFile:`t" . FileName
+            throw err
+        }
         return JSON.parse( oData )
     }
 
