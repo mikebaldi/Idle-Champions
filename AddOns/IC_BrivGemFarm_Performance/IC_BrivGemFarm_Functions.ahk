@@ -545,7 +545,7 @@ class IC_BrivGemFarm_Class
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? this.TargetStacks : g_BrivUserSettings[ "TargetStacks" ]
-        automaticStackCalcVariationLeeway := 25
+        variationLeeway := 10
         ; Zone 10 gives plenty leeway for fast starts that skip level 1 while being low enough to not have received briv stacks
         ; needed to ensure DoPartySetup
         if ( !g_BrivUserSettings[ "StackFailRecovery" ] OR CurrentZone > 10)
@@ -554,15 +554,15 @@ class IC_BrivGemFarm_Class
         }
         stacks := g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
         ; stacks not converted to haste properly. Buffer allows for automatic calc variations and possible early jump before calculation done.
-        If ((g_SF.Memory.ReadHasteStacks() + automaticStackCalcVariationLeeway) < targetStacks AND stacks >= targetStacks)
+        If ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND stacks >= targetStacks)
         {
             g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
             g_SF.RestartAdventure( "Failed Conversion" )
             g_SF.SafetyCheck()
             return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
         }
-        ; all stacks were lost on reset. Stack leeway given for automatic calc variations.
-        If ((g_SF.Memory.ReadHasteStacks() + automaticStackCalcVariationLeeway) < targetStacks AND g_SF.Memory.ReadSBStacks() <= 0)
+        ; all stacks were lost on reset. Stack leeway given for automatic calc variations. 
+        If ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND g_SF.Memory.ReadSBStacks() <= variationLeeway)
         {
             g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
             return StackFailStates.FAILED_TO_KEEP_STACKS ; 5
