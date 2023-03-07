@@ -179,6 +179,7 @@ class IC_BrivGemFarm_Class
             {
                 g_SharedData.BossesHitThisRun := 0
                 g_SF.ToggleAutoProgress( 0, false, true )
+                g_SharedData.StackFail := this.CheckForFailedConv()
                 g_SF.WaitForFirstGold()
                 keyspam := Array()
                 if g_BrivUserSettings[ "Fkeys" ]
@@ -193,7 +194,6 @@ class IC_BrivGemFarm_Class
                 this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1, worstCase)
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
-                g_SharedData.StackFail := this.CheckForFailedConv()
                 g_SharedData.SwapsMadeThisRun := 0
                 g_SharedData.TriggerStart := false
                 g_SharedData.LoopString := "Main Loop"
