@@ -100,7 +100,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.6.3, 2022-09-05"
+        return "v2.6.4, 2023-03-06"
     }
 
     ;Gets data from JSON file
@@ -1182,10 +1182,10 @@ class IC_SharedFunctions_Class
     }
 
     ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
-    CalculateBrivStacksConsumedToReachModronResetZone()
+    CalculateBrivStacksConsumedToReachModronResetZone(worstCase := true)
     {
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetModronResetArea())
+        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetModronResetArea() + 1, worstCase)
     }
 
     ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
