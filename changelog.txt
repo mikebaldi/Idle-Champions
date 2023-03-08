@@ -6,6 +6,7 @@ March 7, 2023
     Updated memory view stats to show skip chance up to 16 decimals instead of just 2. 
     Fixed a bug that was mistakenly showing failed stack conversions.
     Added diagnostic info when in the error when Script Hub fails to parse a settings file.
+    Updated 64 bit Imports for v500.
 
 March 5, 2023
     Merged huan's updates to allow for hybrid stacking via new options in BrivGF Advanced tab. See the SETTINGS.md file in the BrivGemFarm addon's folder for descriptions of the new settings.
