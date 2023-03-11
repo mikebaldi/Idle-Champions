@@ -40,7 +40,6 @@ global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.M
 global g_InputsSent := 0
 global g_TabList := ""
 global g_CustomColor := 0x333333
-global g_isDarkMode := false
 global g_PlayButton := A_LineFile . "\..\Images\play-100x100.png"
 global g_StopButton := A_LineFile . "\..\Images\stop-100x100.png"
 global g_ConnectButton := A_LineFile . "\..\Images\connect-100x100.png"
@@ -49,11 +48,6 @@ global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
-;TODO: convert g_isDarkMode to use gui functions
-if (g_isDarkMode)
-    GUIfunctions.isDarkMode := true
-if (g_isDarkMode)
-    g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
 ;Load user settings
 g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
@@ -76,11 +70,20 @@ if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
     g_UserSettings[ "NoCtrlKeypress" ] := 0
 if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
     g_UserSettings[ "WaitForProcessTime" ] := 0
+if ( g_UserSettings[ "UseDarkMode" ] == "" )
+    g_UserSettings[ "UseDarkMode" ] := 0    
 if(g_UserSettings[ "WriteSettings" ] := true)
 {
     g_UserSettings.Delete("WriteSettings")
     g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
 }
+
+global g_isDarkMode := g_UserSettings[ "UseDarkMode" ]
+;TODO: convert g_isDarkMode to use gui functions
+if (g_isDarkMode)
+    GUIfunctions.isDarkMode := true
+if (g_isDarkMode)
+    g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New

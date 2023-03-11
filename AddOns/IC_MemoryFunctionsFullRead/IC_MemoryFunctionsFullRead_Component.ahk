@@ -15,7 +15,7 @@ if(g_isDarkMode)
 Gui, ICScriptHub:Add, ListView, x15 y+8 w525 h650 vMemoryFunctionsViewID, Function|x|Value
 if(g_isDarkMode)
 {
-    GuiControl,ICScriptHub: +Background888888, MemoryFunctionsViewID
+    GuiControl,ICScriptHub: +Background555555, MemoryFunctionsViewID
     Gui, ICScriptHub:Font, cSilver
 }
 

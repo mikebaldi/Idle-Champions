@@ -153,11 +153,18 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
         ShiniesClassNN := GUIFunctions.GetToolTipTarget("ShiniesID")
 
-        Gui, ICScriptHub:Font, cBlue w700
+        if(g_isDarkMode)
+            Gui, ICScriptHub:Font, c8888FF w700
+        else
+            Gui, ICScriptHub:Font, cBlue w700
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
         Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w50, % bossesPhr
 
-        Gui, ICScriptHub:Font, cGreen
+
+        if(g_isDarkMode)
+            Gui, ICScriptHub:Font, c88FF88 w700
+        else
+            Gui, ICScriptHub:Font, cGreen
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
         Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
