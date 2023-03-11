@@ -586,6 +586,11 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.size.GetGameObjectFromListValues(this.GameInstance))
     }
 
+    ReadWelcomeBackActive()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active.GetGameObjectFromListValues(this.GameInstance))
+    }
+
     ;======================
     ; Retrieving Formations
     ;======================
