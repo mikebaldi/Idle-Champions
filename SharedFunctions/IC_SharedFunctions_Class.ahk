@@ -117,7 +117,7 @@ class IC_SharedFunctions_Class
             err.Message := err.Message . "`nFile:`t" . FileName
             throw err
         }
-        return JSON.parse( oData )
+        return data
     }
 
     ;Writes beautified json (object) to a file (FileName)
@@ -808,7 +808,7 @@ class IC_SharedFunctions_Class
         return false
     }
 
-    ; Waits until stats are finished updating from offline progress calculations. (Currently just Sleep, 1200)
+    ; Waits until stats are finished updating from offline progress calculations.
     WaitForFinalStatUpdates()
     {
         g_SharedData.LoopString := "Waiting for offline progress (Area Active)..."
