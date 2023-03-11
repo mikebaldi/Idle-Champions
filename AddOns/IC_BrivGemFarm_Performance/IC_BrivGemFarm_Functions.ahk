@@ -410,6 +410,12 @@ class IC_BrivGemFarm_Class
             this.StackFarmSetup()
             g_SF.ToggleAutoProgress( 1 , false, true ) ; 
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
+            modronResetZone := g_SF.Memory.GetModronResetArea()
+            if(modronResetZone != "" AND g_SF.CurrentZone > modronResetZone)
+            {
+                g_SharedData.LoopString := "Attempted to offline stack after modron reset - verify settings"
+                break
+            }
             g_SF.CloseIC( "StackRestart" )
             g_SharedData.LoopString := "Stack Sleep: "
             chestsCompletedString := ""
