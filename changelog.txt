@@ -8,6 +8,7 @@ March 12, 2023
         Themes\ includes sample Default and Dark theme settings. Copy contents CurrentTheme.json to update theme.
     Updated Addon Management, Version Picker, and Briv Gem Farm's running window to use the new Themes.
     Fixed dependencies not displaying in Addon info window.
+    Updated the .gitignore to ignore settings files.
 
 March 7, 2023
     Removed Briv's stack conversion safety call from modron reset since it is unlikely to be helpful anymore.
