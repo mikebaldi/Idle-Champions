@@ -9,6 +9,9 @@ March 12, 2023
     Updated Addon Management, Version Picker, and Briv Gem Farm's running window to use the new Themes.
     Fixed dependencies not displaying in Addon info window.
     Updated the .gitignore to ignore settings files.
+    Fixed MemoryRead addon to be decoupled from Stats addon. (No longer requires stats addon to update MemoryRead tab automatically when farming gems).
+    Added new error message to Chest Purchaser addon when no user details have been loaded.
+    Added counting shiny gear per hero back into results from opening chests in the Chest Purchaser addon.
 
 March 7, 2023
     Removed Briv's stack conversion safety call from modron reset since it is unlikely to be helpful anymore.
