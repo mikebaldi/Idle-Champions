@@ -257,7 +257,6 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
-    ; TODO: Depricate older unused versions
     ReadChampLvlByID(ChampID:= 0)
     {
         val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
