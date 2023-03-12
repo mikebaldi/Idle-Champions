@@ -51,6 +51,8 @@ class GUIFunctions
     LoadTheme(guiName := "ICScriptHub")
     {
         this.GUIName := guiName
+        if(this.CurrentTheme != "")
+            return
         FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
         FileRead, objData, %FileName%
         this.CurrentTheme := JSON.parse( objData )
