@@ -51,10 +51,20 @@ class GUIFunctions
     LoadTheme(guiName := "ICScriptHub")
     {
         this.GUIName := guiName
+        objData := ""
         if(this.CurrentTheme != "")
             return
         FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
-        FileRead, objData, %FileName%
+        if(FileExist(FileName))
+        {
+            FileRead, objData, %FileName%
+        }
+        else
+        {
+            FileName := A_LineFile . "\..\..\Themes\DefaultTheme.json"
+            FileRead, objData, %FileName%
+        }
+        
         this.CurrentTheme := JSON.parse( objData )
         this.isDarkMode := this.currentTheme["UseDarkThemeGraphics"]
     }
