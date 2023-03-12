@@ -1,3 +1,14 @@
+March 12, 2023
+    Added available pointers for Steam v500 (Fixes DialogManager).
+    Added memory read for the Welcome Back notification being active.
+    Added a safety check to prevent stacking while modron is resetting.
+    Fixed double JSON parsing bug.
+    Added simple color themes.
+        Themes\CurrentTheme.json is the theme currently in use.
+        Themes\ includes sample Default and Dark theme settings. Copy contents CurrentTheme.json to update theme.
+    Updated Addon Management, Version Picker, and Briv Gem Farm's running window to use the new Themes.
+    Fixed dependencies not displaying in Addon info window.
+
 March 7, 2023
     Removed Briv's stack conversion safety call from modron reset since it is unlikely to be helpful anymore.
     Updated some function documentation.
