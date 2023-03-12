@@ -74,7 +74,6 @@ class IC_ServerCalls_Class
             Try
             {
                 response := JSON.parse(data)
-                ; TODO: Add check for outdated Instance ID
                 if(!(response.switch_play_server == ""))
                 {
                     return this.ServerCall( callName, parameters, timeoutVal ) 
@@ -205,7 +204,6 @@ class IC_ServerCalls_Class
             Try
             {
                 response := JSON.parse(data)
-                ; TODO: Add check for outdated Instance ID
                 if(!(response.switch_play_server == ""))
                 {
                     return this.ServerCallSave( saveBody ) 
