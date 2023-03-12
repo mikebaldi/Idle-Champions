@@ -58,6 +58,9 @@ Gui, ICScriptHub:Add, Text, vReadFormationFavoriteIDBySlotID x+2 w200,
 ; Primary Memory Read
 class ReadMemoryFunctions
 {
+
+    TimerFunctions := ""
+
     CheckReads()
     {
         this.MainReads()
@@ -92,6 +95,51 @@ class ReadMemoryFunctions
         GuiControl, ICScriptHub:, ReadSecSinceStartID, % g_SF.Memory.ReadSecondsSinceAreaStart()
         GuiControl, ICScriptHub:, ReadAreaActiveID, % g_SF.Memory.ReadAreaActive()
     }
+
+    ReadMemory()
+    {
+        if(g_SF.Memory.ReadCurrentZone() != "" AND g_SF.Memory.ReadGems() != "")
+        {
+            if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
+                ReadMemoryFunctionsExtended.CheckReads()
+            else if (IsFunc(Func("ReadMemoryFunctions.CheckReads")))
+                ReadMemoryFunctions.CheckReads()
+        }
+    }
+
+    ; Adds timed functions (typically to be started when briv gem farm is started)
+    CreateTimedFunctions()
+    {
+        this.TimerFunctions := {}
+        fncToCallOnTimer :=  ObjBindMethod(this, "ReadMemory")
+        this.TimerFunctions[fncToCallOnTimer] := 250
+    }
+
+    ; Starts the saved timed functions (typically to be started when briv gem farm is started)
+    StartTimedFunctions()
+    {
+        for k,v in this.TimerFunctions
+        {
+            SetTimer, %k%, %v%, 0
+        }
+    }
+
+    ; Stops the saved timed functions (typically to be stopped when briv gem farm is stopped)
+    StopTimedFunctions()
+    {
+        for k,v in this.TimerFunctions
+        {
+            SetTimer, %k%, Off
+            SetTimer, %k%, Delete
+        }
+    }
+}
+
+if(IsObject(IC_BrivGemFarm_Component))
+{
+    g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(ReadMemoryFunctions, "CreateTimedFunctions"))
+    g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(ReadMemoryFunctions, "StartTimedFunctions"))
+    g_BrivFarmAddonStopFunctions.Push(ObjBindMethod(ReadMemoryFunctions, "StopTimedFunctions"))
 }
 ;======================================================================================
 ; Unused

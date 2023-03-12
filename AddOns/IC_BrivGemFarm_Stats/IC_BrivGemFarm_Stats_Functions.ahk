@@ -553,12 +553,6 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
         this.TimerFunctions[fncToCallOnTimer] := 3000
-        ; TODO: add this from IC_MemoryFunctions and remove from here
-        if(IsFunc(Func("IC_MemoryFunctions_ReadMemory")))
-        {
-            fncToCallOnTimer :=  Func("IC_MemoryFunctions_ReadMemory")
-            this.TimerFunctions[fncToCallOnTimer] := 250
-        }
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
         fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
