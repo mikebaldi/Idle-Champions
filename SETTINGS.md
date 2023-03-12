@@ -15,6 +15,3 @@ This option allows you to set where Script Hub will appear horizontally across y
 
 * **WindowYPositon**: 0+ (Default: 0)
 This option allows you to set where Script Hub will appear vertically on your screen. 0 is default and is the verey top of the screen.
-
-* **UseDarkMode**: 0 / 1 (Default: 0)
-If this is set to 1, the script will try to use colors that follow a darker theme.

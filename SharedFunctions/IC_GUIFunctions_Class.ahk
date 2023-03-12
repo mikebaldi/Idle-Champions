@@ -1,6 +1,10 @@
+#include %A_LineFile%\..\json.ahk
+
 class GUIFunctions
 {
     isDarkMode := false
+    CurrentTheme := ""
+
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
@@ -44,13 +48,34 @@ class GUIFunctions
         return toolTipTarget
     }
 
-    SetThemeTextColor()
-    {  
-        if(this.isDarkMode)
-            Gui, ICScriptHub:Font, cSilver w400
-        else
-            Gui, ICScriptHub:Font, cDefault w400
+    LoadTheme()
+    {
+        FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
+        FileRead, objData, %FileName%
+        this.CurrentTheme := JSON.parse( objData )
+        this.isDarkMode := this.currentTheme["UseDarkThemeGraphics"]
     }
+
+    UseThemeTextColor(textType := "default", weight := 400)
+    {  
+        if(textType == "default")
+            textType := "DefaultTextColor"
+        textColor := this.CurrentTheme[textType]
+        Gui, ICScriptHub:Font, c%textColor% w%weight%
+    }
+
+    UseThemeBackgroundColor()
+    {
+        windowColor := this.CurrentTheme[ "WindowColor" ]
+        Gui, ICScriptHub:Color, % windowColor
+    }
+
+    UseThemeListViewBackgroundColor(controlID := "")
+    {
+        bgColor := this.CurrentTheme[ "TableBackgroundColor" ]
+        GuiControl,ICScriptHub: +Background%bgColor%, %controlID%
+    }
+
     ;------------------------------
     ;
     ; Function: LVM_CalculateSize

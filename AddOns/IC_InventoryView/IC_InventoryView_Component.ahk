@@ -28,14 +28,9 @@ buttonFunc.Call()
 
 Gui, ICScriptHub:Add, Text, vInventoryViewTimeStampID x15 y+15 w455, % "Last Updated: "
 
-if(g_isDarkMode)
-    Gui, ICScriptHub:Font, g_CustomColor
+GUIFunctions.UseThemeTextColor("TableTextColor")
 Gui, ICScriptHub:Add, ListView, x15 y+5 w450 h450 vInventoryViewID, `ID|Name|Amount|Change|Per `Run
-if(g_isDarkMode)
-{
-    GuiControl,ICScriptHub: +Background888888, InventoryViewID
-    Gui, ICScriptHub:Font, cSilver
-}
+GUIFunctions.UseThemeListViewBackgroundColor("InventoryViewID")
 
 ; Highly recommended to use classes to reduce chance of interference with other addons/code.
 ; Below is the functionality included with the component. For readability in more complex addons, these will often be separated 

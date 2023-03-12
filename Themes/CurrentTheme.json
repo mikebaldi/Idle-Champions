@@ -1,0 +1,13 @@
+{
+	"DefaultTextColor":"Default",
+	"HeaderTextColor":"Black",
+	"WarningTextColor":"Default",
+	"ErrorTextColor":"Red",
+	"SpecialTextColor1":"Blue",
+	"SpecialTextColor2":"Green",
+	"TableTextColor":"Default",
+	"TableBackgroundColor":"Default",
+	"InputBoxTextColor":"Default",
+	"WindowColor":"Default",
+	"UseDarkThemeGraphics":false
+}

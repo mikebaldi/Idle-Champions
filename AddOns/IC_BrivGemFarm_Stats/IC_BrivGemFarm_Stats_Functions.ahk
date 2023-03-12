@@ -108,7 +108,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w200, % g_StackCountH
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Last Close Game Reason:
         Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300, 
-        GUIFunctions.SetThemeTextColor()
+        GUIFunctions.UseThemeTextColor()
     }
 
     ; Adds the Once per run group box to the stats tab page under the current run group.
@@ -153,18 +153,12 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
         ShiniesClassNN := GUIFunctions.GetToolTipTarget("ShiniesID")
 
-        if(g_isDarkMode)
-            Gui, ICScriptHub:Font, c8888FF w700
-        else
-            Gui, ICScriptHub:Font, cBlue w700
+        GUIFunctions.UseThemeTextColor("SpecialTextColor1", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
         Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w50, % bossesPhr
 
 
-        if(g_isDarkMode)
-            Gui, ICScriptHub:Font, c88FF88 w700
-        else
-            Gui, ICScriptHub:Font, cGreen
+        GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
         Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
@@ -172,7 +166,7 @@ class IC_BrivGemFarm_Stats_Component
         
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
-        GUIFunctions.SetThemeTextColor()
+        GUIFunctions.UseThemeTextColor()
     }
 
     ; Adds the briv gem farm stats group to the stats page below the current run group 
@@ -198,7 +192,7 @@ class IC_BrivGemFarm_Stats_Component
         g_DownAlign := g_DownAlign + posH -5
         g_TabControlHeight := Max(g_TabControlHeight, 700)
         GUIFunctions.RefreshTabControlSize()
-        GUIFunctions.SetThemeTextColor()
+        GUIFunctions.UseThemeTextColor()
     }
 
     ; Calls the functions that have been added to the stats tab via the AddStatsTabMod function
@@ -442,10 +436,7 @@ class IC_BrivGemFarm_Stats_Component
         try ; avoid thrown errors when comobject is not available.
         {
             SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
-            if(!g_isDarkMode)
-                GuiControl, ICScriptHub: +cBlack, LoopID, 
-            else
-                GuiControl, ICScriptHub: +cSilver, LoopID, 
+            GUIFunctions.UseThemeTextColor("HeaderTextColor", 700)
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit

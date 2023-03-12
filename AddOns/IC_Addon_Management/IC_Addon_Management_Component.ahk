@@ -16,7 +16,7 @@ AddonManagement.FirstRunCheck()
 ; ############################################################
 
 AddonLinkToPicture := ""
-if(g_isDarkMode)
+if(GUIFunctions.isDarkMode)
 	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBarDark.png"
 else
 	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
