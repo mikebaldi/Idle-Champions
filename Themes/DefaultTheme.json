@@ -1,7 +1,7 @@
 {
 	"DefaultTextColor":"Default",
 	"HeaderTextColor":"Black",
-	"WarningTextColor":"Default",
+	"WarningTextColor":"0xF18500",
 	"ErrorTextColor":"Red",
 	"SpecialTextColor1":"Blue",
 	"SpecialTextColor2":"Green",

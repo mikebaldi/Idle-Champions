@@ -1,7 +1,7 @@
 {
 	"DefaultTextColor":"Silver",
 	"HeaderTextColor":"Silver",
-	"WarningTextColor":"Default",
+	"WarningTextColor":"0xF18500",
 	"ErrorTextColor":"Red",
 	"SpecialTextColor1":"0x8888FF",
 	"SpecialTextColor2":"0x88FF88",
