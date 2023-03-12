@@ -37,4 +37,5 @@ AddonInfoVisitUrl(){
 }
 
 ; Going back to the ICScripthub gui 
+GUIFunctions.LoadTheme()
 ;Gui, ICScriptHub:Default
