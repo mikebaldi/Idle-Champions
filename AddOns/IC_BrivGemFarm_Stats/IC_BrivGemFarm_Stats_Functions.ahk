@@ -402,25 +402,25 @@ class IC_BrivGemFarm_Stats_Component
     {
         if (IsObject(this.SharedRunData))
         {
-            stackFailString := ""
+            shnieisByChampString := ""
             shiniesJson := this.SharedRunData.ShiniesByChampJson
             shiniesByChamp := JSON.parse(shiniesJson)
             for champID, slots in shiniesByChamp
             {
                 champName := g_SF.Memory.ReadChampNameByID(champID)
-                stackFailString .= champName . ": Slots ["
+                shnieisByChampString .= champName . ": Slots ["
                 for k,v in slots
                 {
-                    stackFailString .= k . ","
+                    shnieisByChampString .= k . ","
                 }
                 if(slots != "")
                 {
-                    stackFailString := SubStr(stackFailString,1,StrLen(stackFailString)-1)
+                    shnieisByChampString := SubStr(shnieisByChampString,1,StrLen(shnieisByChampString)-1)
                 }                
-                stackFailString .= "]`n"
+                shnieisByChampString .= "]`n"
             }
-            stackFailString := SubStr(stackFailString, 1, StrLen(stackFailString)-1)
-            return stackFailString
+            shnieisByChampString := SubStr(shnieisByChampString, 1, StrLen(shnieisByChampString)-1)
+            return shnieisByChampString
         }
         else
         {
