@@ -4,7 +4,12 @@
 #include %A_LineFile%\..\CLR.ahk
 #include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
 #include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
+#include %A_LineFile%\..\IC_GUIFunctions_Class.ahk
+
 Gui, ICSHVersionPicker:New
+GUIFunctions.LoadTheme("ICSHVersionPicker")
+GUIFunctions.UseThemeBackgroundColor()
+GUIFunctions.UseThemeTextColor()
 Gui, ICSHVersionPicker:+Resize -MaximizeBox
 Gui, ICSHVersionPicker:Add, GroupBox, w300 h75, Pointer Select: 
 Gui, ICSHVersionPicker:Add, Text, xp+10 yp+15 w100, Platform:

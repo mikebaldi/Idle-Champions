@@ -1,7 +1,10 @@
 AddonInfowColLeft:=70
 
 Gui, AddonInfo:New , ,Addon info
+GUIFunctions.LoadTheme("AddonInfo")
 Gui, AddonInfo:+Resize -MaximizeBox
+GUIFunctions.UseThemeBackgroundColor()
+GUIFunctions.UseThemeTextColor()
 
 Gui, AddonInfo:Font, w700
 Gui, AddonInfo:Add, Text, x10 y10 w200 vAddonInfoNameID, Addon Name
@@ -17,7 +20,9 @@ Gui, AddonInfo:Add, Text, vAddonInfoFoldernameID x+2 w600,
 
 Gui, AddonInfo:Add, Text, x10 y+2 w%AddonInfowColLeft% Right, Url:
 Gui, AddonInfo:Font, underline 
-Gui, AddonInfo:Add, Text, gAddonInfoVisitUrl vAddonInfoUrlID x+2 w600 cBlue ,
+GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
+Gui, AddonInfo:Add, Text, gAddonInfoVisitUrl vAddonInfoUrlID x+2 w600,
+GUIFunctions.UseThemeTextColor()
 Gui, AddonInfo:Font, norm
 Gui, AddonInfo:Add, Text, x10 y+2 w%AddonInfowColLeft% Right, Author: 
 Gui, AddonInfo:Add, Text, vAddonInfoAuthorID x+2 w600,
