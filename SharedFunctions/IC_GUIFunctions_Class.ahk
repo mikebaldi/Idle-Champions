@@ -48,8 +48,9 @@ class GUIFunctions
         return toolTipTarget
     }
 
-    LoadTheme()
+    LoadTheme(guiName := "ICScriptHub")
     {
+        this.GUIName := guiName
         FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
         FileRead, objData, %FileName%
         this.CurrentTheme := JSON.parse( objData )
@@ -58,22 +59,25 @@ class GUIFunctions
 
     UseThemeTextColor(textType := "default", weight := 400)
     {  
+        guiName := this.GUIName
         if(textType == "default")
             textType := "DefaultTextColor"
         textColor := this.CurrentTheme[textType]
-        Gui, ICScriptHub:Font, c%textColor% w%weight%
+        Gui, %guiName%:Font, c%textColor% w%weight%
     }
 
     UseThemeBackgroundColor()
     {
+        guiName := this.GUIName
         windowColor := this.CurrentTheme[ "WindowColor" ]
-        Gui, ICScriptHub:Color, % windowColor
+        Gui, %guiName%:Color, % windowColor
     }
 
     UseThemeListViewBackgroundColor(controlID := "")
     {
+        guiName := this.GUIName
         bgColor := this.CurrentTheme[ "TableBackgroundColor" ]
-        GuiControl,ICScriptHub: +Background%bgColor%, %controlID%
+        GuiControl, %guiName%: +Background%bgColor%, %controlID%
     }
 
     ;------------------------------

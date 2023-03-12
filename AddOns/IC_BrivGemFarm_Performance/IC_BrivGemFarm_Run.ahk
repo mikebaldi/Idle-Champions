@@ -36,6 +36,7 @@ global g_BrivUserSettingsFromAddons := {}
 #include %A_LineFile%\..\..\..\SharedFunctions\IC_SaveHelper_Class.ahk
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\IC_GUIFunctions_Class.ahk
 
 ;check if first run
 If !IsObject( g_UserSettings )
@@ -57,9 +58,13 @@ try
 }
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
+GUIFunctions.LoadTheme("BrivPerformanceGemFarm")
+GUIFunctions.UseThemeBackgroundColor()
+GUIFunctions.UseThemeTextColor()
 Gui, BrivPerformanceGemFarm:+Resize -MaximizeBox
 Gui BrivPerformanceGemFarm:Add, GroupBox, w400 h315, BrivFarm Settings: 
 Gui BrivPerformanceGemFarm:Add, ListView, xp+15 yp+25 w375 h270 vBrivFarmSettingsID -HDR, Setting|Value
+GUIFunctions.UseThemeListViewBackgroundColor("BrivFarmSettingsID")
 Gui, BrivPerformanceGemFarm:Add, Checkbox, vAdvancedBrivSettingsCheck Checked%isAdvancedBrivSettings% gReloadSettingsView_Click x55 y+5, See Advanced (All) Settings.
 ReloadBrivGemFarmSettingsDisplay() ; load settings file.
 if ( !g_BrivUserSettings[ "HiddenFarmWindow" ])
