@@ -16,11 +16,3 @@ Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x10 y+10 , This is a demo text
 
 Gui, ICScriptHub:Add, Button , x10 y+10 gExampleButtonClicked, Testbutton
-
-; ############################################################
-;                          Buttons
-; ############################################################
-
-ExampleButtonClicked(){
-    ExampleVariable.Prompt("Hello World")
-}
