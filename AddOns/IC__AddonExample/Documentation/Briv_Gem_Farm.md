@@ -1,9 +1,11 @@
-## Addons that interact with BrivGemFarm:
+!Unfinished
 
-### Timed functions that run at the start of a gem farm
+# Addons that interact with BrivGemFarm
 
-### Connecting to Briv Gem Farm's Script
+## **Timed functions that run at the start of a gem farm**
 
-### Extending Classes
+## **Connecting to Briv Gem Farm's Script**
 
-### Replacing Behavior Through Overwriting Function
+## **Extending Classes**
+
+## **Replacing Behavior Through Overwriting Function**
