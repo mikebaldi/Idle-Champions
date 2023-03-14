@@ -1,4 +1,10 @@
 March 12, 2023
+    Updated the Example Addon with more sample code and documentation (more coming).
+    Fixed theme not applying to GameLocationSettings.
+    Added title bar color swapping between dark/light themes.
+    Updated LoadTheme to allow a filename of a theme to be passed and used instead of the default.
+
+March 12, 2023
     Added available pointers for Steam v500 (Fixes DialogManager).
     Added memory read for the Welcome Back notification being active.
     Added a safety check to prevent stacking while modron is resetting.
