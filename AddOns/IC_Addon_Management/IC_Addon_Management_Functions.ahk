@@ -481,6 +481,7 @@ Class AddonManagement
         }
         GuiControl, AddonInfo: , AddonInfoDependenciesID, % DependenciesText
         Gui, AddonInfo:Show
+        GUIFunctions.UseThemeTitleBar("AddonInfo")
     }
 
     WriteAddonManagementSettings(){

@@ -26,5 +26,6 @@ AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()
 	AddonManagement.NeedSave := 0
 	Gui, AddonManagement:Show
+	GUIFunctions.UseThemeTitleBar("AddonManagement")
 }
 

@@ -23,6 +23,7 @@ Gui, ICSHVersionPicker:Add, Text, x20 y+8 w300 h26 vVersionPickerSuggestionText2
 Gui, ICSHVersionPicker:Font, w400
 Gui, ICSHVersionPicker:Add, Text, x13 y+2 w300 vVersionPickerDetectionText, Script Hub Recommends: Checking...
 Gui, ICSHVersionPicker:Show, , Memory Version Picker
+GUIFunctions.UseThemeTitleBar("ICSHVersionPicker")
 
 global scriptLocation := A_LineFile . "\..\"
 global g_VersionPickerPlatformChoice

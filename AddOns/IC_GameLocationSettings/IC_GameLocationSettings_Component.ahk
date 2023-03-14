@@ -8,6 +8,9 @@ GuiControl,ICScriptHub: +g, ButtonOpenInstallGui, % OpenGameLocationSettingUpdat
 
 ;GUI to input a new install path.
 Gui, InstallGUI:New
+GUIFunctions.LoadTheme("InstallGUI")
+GUIFunctions.UseThemeTextColor()
+GUIFunctions.UseThemeBackgroundColor()
 Gui, InstallGUI:Add, Text, x15 y+10 w250, Launch Command [Used to start the game]
 Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+5 w300 r3, % g_UserSettings[ "InstallPath" ]
 Gui, InstallGUI:Add, Text, x15 y+5 w250, Game Exe [Used to read game memory]
@@ -21,6 +24,7 @@ CopyGameLocationFromExeLocation := ObjBindMethod(IC_GameLocationSettings_Compone
 GuiControl,InstallGUI: +g, ButtonSaveGameLocationSettings, % SaveGameLocationSettingUpdate
 GuiControl,InstallGUI: +g, ButtonCancelGameLocationSettings, % CancelGameLocationSettingUpdate
 GuiControl,InstallGUI: +g, ButtonCopyGameLocationFromRunninGame, % CopyGameLocationFromExeLocation
+
 
 
 ; Switch back to main GUI
@@ -95,6 +99,7 @@ class IC_GameLocationSettings_Component
         GuiControl, InstallGUI:, NewInstallExe, % g_UserSettings[ "ExeName" ]
         Gui, InstallGUI:Submit, NoHide
         Gui, InstallGUI:Show,,Install Location
+        GUIFunctions.UseThemeTitleBar("InstallGUI")
         Gui, InstallGUI:Default
         Return
     }
