@@ -53,7 +53,7 @@ Tells the script to use the value of "TableBackgroundColor" to color a ListView'
 
 ``"controlID"`` (required) is the variable name of the ListView control must be passed to the function.
 
-## **``GUIFunctions.UseThemeTitleBar(guiName)``**
+## **``GUIFunctions.UseThemeTitleBar(guiName, refresh)``**
 Use immediately after setting the ``Show`` property on the GUI (e.g. after ``Gui, ICScriptHub:Show``)
 
 Sets the window title bar to dark if theme is a dark theme. 
@@ -61,6 +61,8 @@ Sets the window title bar to dark if theme is a dark theme.
 ``"guiName"`` (required) is the name of the GUI (e.g. "ICScriptHub").
 
 > Note: Even though the GUIName is set with LoadTheme, this function still also requires it to be passed in otherwise it may show other GUIs that have loaded themes previously.  
+
+``"refresh"`` (optional) by default the function shows/hides the GUI to make the bar correctly refresh colors. If a GUI is meant to remain hidden this should be set to false.
   
 # Other theme configuration settings:
 
