@@ -32,6 +32,7 @@ GuiControl,InstallGUI: +g, ButtonCopyGameLocationFromRunninGame, % CopyGameLocat
 
 ; Switch back to main GUI
 Gui, ICScriptHub:Default
+GUIFunctions.LoadTheme()
 
 InstallGUIGuiClose()
 {
