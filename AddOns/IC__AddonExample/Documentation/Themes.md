@@ -13,12 +13,15 @@ Script Hub uses customizable themes. When building an addon, use of themes are a
 
 # Functions
 
-## **``GUIFunctions.LoadTheme(guiName)``**  
+## **``GUIFunctions.LoadTheme(guiName, fileOverride)``**  
 Use this function immediately after ``Gui, <GUIName>:New``.
 
 This function loads the settings if they have not been previously loaded and sets tells the script which GUI to use for future functions.
 
-``"guiName"`` (required) is the name of the GUI (e.g. "ICScriptHub"). 
+``"guiName"`` (required unless default) is the name of the GUI (e.g. "ICScriptHub"). 
+
+``"fileOverride"`` (optional) A theme json file location passed to the function will force the new theme to be used. 
+> Note: When using ``fileOverride`` use a ``GuiFunctions.LoadTheme()`` when done to allow the rest of the script to use its own configuration.
 
 ## **``GUIFunctions.UseThemeTextColor(textType, weight)``**
 Use this function before any text that needs coloring. 

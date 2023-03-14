@@ -4,6 +4,7 @@ class GUIFunctions
 {
     isDarkMode := false
     CurrentTheme := ""
+    FileOverride := ""
 
     AddTab(Tabname){
         addedTabs := Tabname . "|"
@@ -47,13 +48,23 @@ class GUIFunctions
         return toolTipTarget
     }
 
-    LoadTheme(guiName := "ICScriptHub")
+    LoadTheme(guiName := "ICScriptHub", fileOverride := "")
     {
         this.GUIName := guiName
         objData := ""
-        if(this.CurrentTheme != "")
+        if(this.CurrentTheme != "" AND fileOverride == "" AND this.FileOverride == "")
             return
-        FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
+        FileName := ""
+        if (fileOverride != "")
+        {
+            FileName := fileOverride
+            this.FileOverride := fileOverride
+        }
+        if (FileName == "" )
+        {
+            FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
+            this.FileOverride := ""
+        }
         if(FileExist(FileName))
         {
             FileRead, objData, %FileName%
