@@ -92,9 +92,9 @@ class GUIFunctions
     }
 
     ; Sets the window title bar to dark if theme is a dark theme. GUI must be shown before calling.
-    UseThemeTitleBar(GUIName)
+    UseThemeTitleBar(guiName)
     {
-        if(this.isDarkMode AND GUIName != "")
+        if(this.isDarkMode AND guiName != "")
         {
             if (A_OSVersion >= "10.0.17763" && SubStr(A_OSVersion, 1, 3) = "10.") 
             {
@@ -102,11 +102,11 @@ class GUIFunctions
                 if (A_OSVersion >= "10.0.18985") {
                     attr := 20
                 }
-                Gui, %GuiName%: +hwndGuiID
+                Gui, %guiName%: +hwndGuiID
                 DllCall("dwmapi\DwmSetWindowAttribute", "ptr", GuiID, "int", attr, "int*", true, "int", 4)
                 ; refresh window
-                Gui, %GuiName%:Hide
-                Gui, %GuiName%:Show
+                Gui, %guiName%:Hide
+                Gui, %guiName%:Show
             }
         }
     }
