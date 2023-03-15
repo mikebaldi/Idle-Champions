@@ -40,4 +40,6 @@ BuildExampleAddonGUI(UseCustomTheme := false)
     Gui, ExampleAddon:Add, ListView , x10 w500 vExampleListViewID hWndhLV ,  Name|Value
     GUIFunctions.UseThemeListViewBackgroundColor("ExampleListViewID")
     GUIFunctions.UseThemeTitleBar("ExampleAddon", false)
+    ; restore original theme when done
+    GUIFunctions.LoadTheme()
 }
