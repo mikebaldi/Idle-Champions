@@ -5,8 +5,8 @@ class IC_ActiveEffectKeyHandler_Class
 {
     ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
     ; chance_multiply_monster_quest_rewards (Hew Maan effect)
-    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87, "HewMaanTeamworkHandler":75}
-    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon", "HewMaanTeamworkHandler":"hewmaan_teamwork"}
+    HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87, "HewMaanTeamworkHandler":75, "SpurtWaspirationHandlerV2":43}
+    HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon", "HewMaanTeamworkHandler":"hewmaan_teamwork", "SpurtWaspirationHandlerV2":"spurt_waspiration_v2"}
     
     __new()
     {
@@ -27,6 +27,7 @@ class IC_ActiveEffectKeyHandler_Class
         this.OminContractualObligationsHandler := this.GetEffectHandler("OminContractualObligationsHandler")
         this.TimeScaleWhenNotAttackedHandler := this.GetEffectHandler("TimeScaleWhenNotAttackedHandler")
         this.HewMaanTeamworkHandler := this.GetEffectHandler("HewMaanTeamworkHandler")
+        this.SpurtWaspirationHandlerV2 := this.GetEffectHandler("SpurtWaspirationHandlerV2")
         if g_SF.Memory.GameManager.Is64Bit()
             this.Refresh64()
         else
@@ -41,6 +42,7 @@ class IC_ActiveEffectKeyHandler_Class
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler32_Import.ahk
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler32_Import.ahk
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_SpurtWaspirationHandlerV232_Import.ahk
     }
 
     Refresh64()
@@ -51,14 +53,15 @@ class IC_ActiveEffectKeyHandler_Class
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler64_Import.ahk
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler64_Import.ahk
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_SpurtWaspirationHandlerV264_Import.ahk
     }
 
     GetEffectHandler(handlerName)
     {
         baseAddress := this.GetBaseAddress(handlerName)
         gameObject := New GameObjectStructure([])
-        gameObject.BaseAddress := baseAddress
         gameObject.Is64Bit := g_SF.Memory.GameManager.Is64Bit()
+        gameObject.BaseAddress := baseAddress
         return gameObject
     }
 
@@ -242,6 +245,23 @@ class ActiveEffectKeySharedFunctions
             ReadNerd2Type()
             {
                 return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd2()]
+            }
+        }
+    }
+
+    class Spurt
+    {
+        class WaspirationHandler
+        {
+
+            ReadSpurtStacksLeft()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.remainingStacksNeededForNextEffect)
+            }
+
+            ReadSpurtWasps()
+            {
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.activeWasps.size)
             }
         }
     }
