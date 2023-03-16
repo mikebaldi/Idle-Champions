@@ -58,6 +58,7 @@ class IC_ActiveEffectKeyHandler_Class
         baseAddress := this.GetBaseAddress(handlerName)
         gameObject := New GameObjectStructure([])
         gameObject.BaseAddress := baseAddress
+        gameObject.Is64Bit := g_SF.Memory.GameManager.Is64Bit()
         return gameObject
     }
 
