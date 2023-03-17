@@ -2,7 +2,7 @@ GUIFunctions.AddTab("Chests")
 
 Gui, ICScriptHub:Tab, Chests
 Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data and read chests into lists."
-Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only buy or open chests while game is closed. (Yes, this is a hassle.)"
+Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only open chests while game is closed. (Yes, this is a hassle.)"
 Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchaseID, Buy Chests: 
 Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestPurchaseComboBoxID
 Gui, ICScriptHub:Add, Picture, x+35 h18 w18 vButtonRefreshChestPurchaser, %g_ReloadButton%
