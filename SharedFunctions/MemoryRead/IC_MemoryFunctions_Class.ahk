@@ -471,6 +471,7 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides.ActionListSize)
     }
 
+    ; TODO: FIX
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
     GetCoreSpecializationForHero(heroID)
     {
@@ -693,6 +694,7 @@ class IC_MemoryFunctions_Class
 ;         return formation
 ;     }
 
+    ; TODO: FIX
     GetActiveModronFormationSaveSlot()
     {
         ; Find the Campaign ID (e.g. 1 is Sword Cost, 2 is Tomb, 1400001 is Sword Coast with Zariel Patron, etc. )
@@ -714,6 +716,7 @@ class IC_MemoryFunctions_Class
         return formationSaveSlot
     }
 
+    ; TODO: FIX
     ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
     GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
     {
@@ -748,6 +751,7 @@ class IC_MemoryFunctions_Class
 ;         return this.GetCoreTargetAreaByInstance(this.ReadActiveGameInstance())
 ;     }
 
+    ; TODO: FIX
     ; Finds the index of the current modron in ModronHandlers
     GetCurrentModronSaveSlot()
     {
@@ -947,7 +951,7 @@ class IC_MemoryFunctions_Class
 ;     ReadPatronID()
 ;     {
 ;         if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField))
-;             return  this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID)
+;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID)
 ;         return 0
 ;     }
 
