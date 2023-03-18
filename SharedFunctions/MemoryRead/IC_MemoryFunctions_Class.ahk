@@ -512,39 +512,39 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ActiveUserGameInstance)
     }
 
-;     GetCoreTargetAreaByInstance(InstanceID := 1)
-;     {
-;         ;reads memory for the number of cores        
-;         saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
-;         ;cycle through saved formations to find save slot of Favorite
-;         i := 0
-;         loop, %saveSize%
-;         {
-;             if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(this.GameInstance, i)) == InstanceID)
-;             {
-;                 return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.targetArea.GetGameObjectFromListValues(this.GameInstance, i))
-;             }
-;             ++i
-;         }
-;         return -1
-;     }
+    GetCoreTargetAreaByInstance(InstanceID := 1)
+    {
+        ;reads memory for the number of cores        
+        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
+        ;cycle through saved formations to find save slot of Favorite
+        i := 0
+        loop, %saveSize%
+        {
+            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].InstanceID) == InstanceID)
+            {
+                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].targetArea)
+            }
+            ++i
+        }
+        return -1
+    }
 
-;     GetCoreXPByInstance(InstanceID := 1)
-;     {
-;         ;reads memory for the number of cores        
-;         saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
-;         ;cycle through saved formations to find save slot of Favorite
-;         i := 0
-;         loop, %saveSize%
-;         {
-;             if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.InstanceID.GetGameObjectFromListValues(this.GameInstance, i)) == InstanceID)
-;             {
-;                 return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.ExpTotal.GetGameObjectFromListValues(this.GameInstance, i))
-;             }
-;             ++i
-;         }
-;         return -1
-;     }  
+    GetCoreXPByInstance(InstanceID := 1)
+    {
+        ;reads memory for the number of cores        
+        saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
+        ;cycle through saved formations to find save slot of Favorite
+        i := 0
+        loop, %saveSize%
+        {
+            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].InstanceID) == InstanceID)
+            {
+                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].ExpTotal)
+            }
+            ++i
+        }
+        return -1
+    }  
 
     ;=================
     ; New
