@@ -159,6 +159,7 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.TimeScale)
     }
 
+    ; TODO: Find more automated method of dictionary lookups for non-standard dictionary types?
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
         ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
@@ -902,64 +903,64 @@ class IC_MemoryFunctions_Class
 
 
 
-;     ;===================
-;     ;Currency Conversion
-;     ;===================
+    ;===================
+    ;Currency Conversion
+    ;===================
 
-;     ReadDialogsListSize()
-;     {
-;         return this.GenericGetValue(this.DialogManager.dialogs.size)
-;     }
+    ReadDialogsListSize()
+    {
+        return this.GenericGetValue(this.DialogManager.dialogs.size)
+    }
 
-;     ReadConversionCurrencyBySlot(slot := 0)
-;     {
-;         return this.GenericGetValue(this.DialogManager.dialogs.currentCurrency.ID.GetGameObjectFromListValues(slot))
-;     }
+    ReadConversionCurrencyBySlot(slot := 0)
+    {
+        return this.GenericGetValue(this.DialogManager.dialogs[slot].currentCurrency.ID)
+    }
 
-;     ReadDialogNameBySlot(slot := 0)
-;     {
-;         return this.GenericGetValue(this.DialogManager.dialogs.sprite.gameObjectName.GetGameObjectFromListValues(slot))
-;     }
+    ReadDialogNameBySlot(slot := 0)
+    {
+        return this.GenericGetValue(this.DialogManager.dialogs[slot].sprite.gameObjectName)
+    }
 
-;     ReadForceConvertFavorBySlot(slot := 0)
-;     {
-;         return this.GenericGetValue(this.DialogManager.dialogs.forceConvertFavor.GetGameObjectFromListValues(slot))
-;     }
+    ReadForceConvertFavorBySlot(slot := 0)
+    {
+        return this.GenericGetValue(this.DialogManager.dialogs[slot].forceConvertFavor)
+    }
 
-;     GetBlessingsDialogSlot()
-;     {
-;         size := this.ReadDialogsListSize()
-;         loop, %size%
-;         {
-;             name := this.GenericGetValue(this.DialogManager.dialogs.sprite.gameObjectName.GetGameObjectFromListValues(A_Index - 1))
-;             if (name == "BlessingsStoreDialog")
-;                 return (A_Index - 1)
-;         }
-;         return ""
-;     }
+    GetBlessingsDialogSlot()
+    {
+        size := this.ReadDialogsListSize()
+        loop, %size%
+        {
+            name := this.GenericGetValue(this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName)
+            if (name == "BlessingsStoreDialog")
+                return (A_Index - 1)
+        }
+        return ""
+    }
 
-;     GetBlessingsCurrency()
-;     {
-;         return this.ReadConversionCurrencyBySlot(this.GetBlessingsDialogSlot())
-;     }
+    GetBlessingsCurrency()
+    {
+        return this.ReadConversionCurrencyBySlot(this.GetBlessingsDialogSlot())
+    }
 
-;     GetForceConvertFavor()
-;     {
-;         ; slot := this.GetBlessingsDialogSlot()
-;         ; value := this.ReadForceConvertFavorBySlot(slot)
-;         return this.ReadForceConvertFavorBySlot(this.GetBlessingsDialogSlot())
-;     }
+    GetForceConvertFavor()
+    {
+        ; slot := this.GetBlessingsDialogSlot()
+        ; value := this.ReadForceConvertFavorBySlot(slot)
+        return this.ReadForceConvertFavorBySlot(this.GetBlessingsDialogSlot())
+    }
 
-;     ReadPatronID()
-;     {
-;         if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField))
-;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID)
-;         return 0
-;     }
+    ReadPatronID()
+    {
+        if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField))
+            return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID)
+        return 0
+    }
 
-;     ;==============
-;     ;Helper Methods
-;     ;==============
+    ;==============
+    ;Helper Methods
+    ;==============
 
     ; Converts 16 byte Quad value into a string representation.
     ConvQuadToString3( FirstEight, SecondEight )
