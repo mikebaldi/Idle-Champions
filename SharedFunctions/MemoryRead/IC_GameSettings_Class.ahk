@@ -1,22 +1,10 @@
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
-class IC_GameSettings_Class
+#include %A_LineFile%\..\IC_StaticMemoryPointer_Class.ahk
+class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
 {
-    moduleOffset := 0
-    structureOffsets := 0
-    StaticOffset := 0
-
-    __new(moduleOffset := 0, staticOffset := 0, structureOffsets := 0)
-    {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
-        this.StaticOffset := staticOffset
-        this.Refresh()
-    }
- 
     GetVersion()
     {
-        return "v2.0.2, 2022-08-28, IC v0.463+"  
+        return "v2.1.0, 2023-03-18"
     }
 
     Refresh()

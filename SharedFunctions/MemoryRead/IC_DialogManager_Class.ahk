@@ -1,22 +1,12 @@
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
+#include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
 ; DialogManager class contains IC's DialogManager class structure. Useful for finding information in dialogues such as what Favor needs to be converted.
 ; DialogList needs to open a BlessingsStoreDialog object instead of a Dialog object.
 ; Searching for ptr depth of 1 has been fine.
-class IC_DialogManager_Class
+class IC_DialogManager_Class extends IC_MemoryPointer_Class
 {
-    moduleOffset := 0
-    structureOffsets := 0
-
-    __new(moduleOffset := 0, structureOffsets := 0)
-    {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
-        this.Refresh()
-    }
- 
     GetVersion()
     {
-        return "v2.0.2, 2022-08-28, IC v0.463+" 
+        return "v2.1.0, 2023-03-18"
     }
 
     Refresh()

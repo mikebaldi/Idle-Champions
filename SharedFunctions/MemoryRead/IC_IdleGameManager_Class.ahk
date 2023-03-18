@@ -14,42 +14,14 @@
 ;   as hero_id will tell it which hero from the HeroList is being accessed.
 ;   Each extra list used will require an extra location passed. e.g. GetGameObjectFromListValues( first_id, second_id, third_id )
 
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
+#include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
 
-class IC_IdleGameManager_Class
+class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
 {
-    moduleOffset := 0
-    structureOffsets := 0
-
-    __new(moduleOffset := 0, structureOffsets := 0)
-    {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
-        this.Refresh()
-    }
-
-    __Get(key)
-    {
-        if(this.HasKey(key))
-        {
-            if(IsObject(this[key])) ; This will never get triggered because __Get does not get called if the key already exists (not as a property/function)
-            {
-                this[key].FullOffsets.Push(this.structureOffsets*)
-                this[key].FullOffsets.Push(this[key].Offset*)
-            }
-            ;return ; Not returning a value allows AHK to use standard behavior for gets.
-            return this[key] 
-        }
-    }
 
     GetVersion()
     {
-        return "v2.0.2, 2022-08-28, IC v0.463+"
-    }
-
-    is64Bit()
-    {
-        return this.Main.isTarget64bit
+        return "v2.1.0, 2023-03-18"
     }
 
     Refresh()
