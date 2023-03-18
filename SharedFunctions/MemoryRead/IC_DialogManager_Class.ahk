@@ -12,22 +12,26 @@ class IC_DialogManager_Class extends IC_MemoryPointer_Class
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
-        this.UnityGameEngine := {}
-        this.UnityGameEngine.Dialogs := {}
-        structureOffsetsOverlay := this.structureOffsets.Clone()
-        structureOffsetsOverlay[1] += 0x0 ;0x010
-        offsets := (this.HasOverlay() AND this.Main.isTarget64bit) ? structureOffsetsOverlay : this.structureOffsets
-        this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
-        this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := this.Main.isTarget64bit
-        this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
-        if(!this.Main.isTarget64bit)
+        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        if(baseAddress != this.BaseAddress)
         {
-            #include *i %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
-        }
-        else
-        {
-            #include *i %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
+            this.BaseAddress := baseAddress
+            this.UnityGameEngine := {}
+            this.UnityGameEngine.Dialogs := {}
+            structureOffsetsOverlay := this.structureOffsets.Clone()
+            structureOffsetsOverlay[1] += 0x0 ;0x010
+            offsets := (this.HasOverlay() AND this.Main.isTarget64bit) ? structureOffsetsOverlay : this.structureOffsets
+            this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
+            this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := this.Main.isTarget64bit
+            this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
+            if(!this.Main.isTarget64bit)
+            {
+                #include *i %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
+            }
+            else
+            {
+                #include *i %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
+            }
         }
     }
 

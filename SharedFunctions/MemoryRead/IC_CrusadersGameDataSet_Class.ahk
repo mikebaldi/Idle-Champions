@@ -22,19 +22,23 @@ class IC_CrusadersGameDataSet_Class
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset ; v463+
-        this.CrusadersGame := {}
-        this.CrusadersGame.Defs := {}
-        this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.structureOffsets ) ; v464
-        this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
-        this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := this.Main.isTarget64bit
-        if(!this.Main.isTarget64bit)
+        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        if(baseAddress != this.BaseAddress)
         {
-            #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
-        }
-        else
-        {
-            #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
+            this.BaseAddress := baseAddress
+            this.CrusadersGame := {}
+            this.CrusadersGame.Defs := {}
+            this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.structureOffsets )
+            this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
+            this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := this.Main.isTarget64bit
+            if(!this.Main.isTarget64bit)
+            {
+                #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
+            }
+            else
+            {
+                #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
+            }
         }
     }
 }

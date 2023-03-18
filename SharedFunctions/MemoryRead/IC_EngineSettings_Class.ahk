@@ -10,19 +10,23 @@ class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
-        this.UnityGameEngine := {}
-        this.UnityGameEngine.Core := {}
-        this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.structureOffsets)
-        this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
-        this.UnityGameEngine.Core.EngineSettings.Is64Bit := this.Main.isTarget64bit
-        if(!this.Main.isTarget64bit)
+        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        if(baseAddress != this.BaseAddress)
         {
-            #include *i %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
-        }
-        else
-        {
-            #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
+            this.BaseAddress := baseAddress
+            this.UnityGameEngine := {}
+            this.UnityGameEngine.Core := {}
+            this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.structureOffsets)
+            this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
+            this.UnityGameEngine.Core.EngineSettings.Is64Bit := this.Main.isTarget64bit
+            if(!this.Main.isTarget64bit)
+            {
+                #include *i %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
+            }
+            else
+            {
+                #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
+            }
         }
     }
 }

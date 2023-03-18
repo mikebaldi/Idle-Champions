@@ -35,23 +35,27 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
         ;structure pointers
         ;==================
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
-        ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
-        this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
-        this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
-        this.IdleGameManager.BaseAddress := this.BaseAddress
-        this.IdleGameManager.IsBaseObject := true
-        if(!this.Main.isTarget64bit)
+        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        if(baseAddress != this.BaseAddress)
         {
-            ; Build offsets for class using imported AHK files.
-            #include *i %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
-            ; special case for Dictionary<List<Action<action>>>
-            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
-        }
-        else
-        {
-            #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
-            this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
+            this.BaseAddress := baseAddress
+            ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
+            this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
+            this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
+            this.IdleGameManager.BaseAddress := this.BaseAddress
+            this.IdleGameManager.IsBaseObject := true
+            if(!this.Main.isTarget64bit)
+            {
+                ; Build offsets for class using imported AHK files.
+                #include *i %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
+                ; special case for Dictionary<List<Action<action>>>
+                this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
+            }
+            else
+            {
+                #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
+                this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
+            }
         }
     }
 }

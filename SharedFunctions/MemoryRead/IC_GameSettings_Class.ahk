@@ -10,18 +10,22 @@ class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
-        this.CrusadersGame := {}
-        this.CrusadersGame.GameSettings := new GameObjectStructure(this.structureOffsets)
-        this.CrusadersGame.GameSettings.Is64Bit := this.Main.isTarget64bit
-        this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
-        if(!this.Main.isTarget64bit)
+        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        if(baseAddress != this.BaseAddress)
         {
-            #include *i %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
-        }
-        else
-        {
-            #include *i %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
+            this.BaseAddress := baseAddress
+            this.CrusadersGame := {}
+            this.CrusadersGame.GameSettings := new GameObjectStructure(this.structureOffsets)
+            this.CrusadersGame.GameSettings.Is64Bit := this.Main.isTarget64bit
+            this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
+            if(!this.Main.isTarget64bit)
+            {
+                #include *i %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
+            }
+            else
+            {
+                #include *i %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
+            }
         }
     }
 }
