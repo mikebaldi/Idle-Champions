@@ -163,7 +163,7 @@ class IC_MemoryFunctions_Class
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
         ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
-        ; dictionary <IEffectSource, Int> / <System.Collections.Generic.Dictionary<CrusadersGame.Effects.IEffectSource, System.Single>
+        ; dictionary <IEffectSource, Float> / <System.Collections.Generic.Dictionary<CrusadersGame.Effects.IEffectSource, System.Single>
         if (this.Is64Bit)
             timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0x18, 0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
         else
@@ -723,29 +723,30 @@ class IC_MemoryFunctions_Class
     ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
     GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
     {
-        ; ; note: current best interpretation of a <int,int> dictionary.
-        ; formationSaveSlot := ""
-        ; ; Find which modron core is being used
+        ; note: current best interpretation of a <int,int> dictionary.
+        formationSaveSlot := ""
+        ; Find which modron core is being used
         modronSavesSlot := this.GetCurrentModronSaveSlot()
-        ; ; Find SaveID for given formationCampaignID
-        ; modronFormationsSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves.size)
-        ; loop, %modronFormationsSavesSize%
-        ; {
-        ;     ; 64 bit starts values at offset 0x20, 32 bit at 0x10
-        ;     ; testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
-        ;     testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves,,[testIndex])
-        ;     testValue := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
-        ;     if (testValue == formationCampaignID)
-        ;     {
-        ;         testIndex := testIndex + 0xC ; same for 64/32 bit
-        ;         testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves,,[testIndex])
-        ;         formationSaveSlot := this.GenericGetValue(testValueObject)
-        ;         break
-        ;     }
-        ; }
-        ; return formationSaveSlot
-        value := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
-        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
+        ; Find SaveID for given formationCampaignID
+        modronFormationsSavesSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves.size)
+        loop, %modronFormationsSavesSize%
+        {
+            ; 64 bit starts values at offset 0x20, 32 bit at 0x10
+            testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
+            testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves,,[0x18, testIndex])
+            testValue := this.GenericGetValue(testValueObject)
+            if (testValue == formationCampaignID)
+            {
+                testIndex := testIndex + 0xC ; same for 64/32 bit
+                testValueObject.FullOffsets.Pop()
+                testValueObject.FullOffsets.Push(testIndex)
+                formationSaveSlot := this.GenericGetValue(testValueObject)
+                break
+            }
+        }
+        return formationSaveSlot
+        ; value := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
+        ; return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
     }
 
 ;     ; Finds the Modron Reset area for the current instance's core.
@@ -754,7 +755,6 @@ class IC_MemoryFunctions_Class
 ;         return this.GetCoreTargetAreaByInstance(this.ReadActiveGameInstance())
 ;     }
 
-    ; TODO: FIX
     ; Finds the index of the current modron in ModronHandlers
     GetCurrentModronSaveSlot()
     {
