@@ -24,16 +24,6 @@ class GameObjectStructure
     ; When a key is not found for objects which have collections, use this function. 
     __Get(key)
     {
-        if(this.HasKey(key))
-        {
-            if(IsObject(this[key])) ; This will never get triggered because __Get does not get called if the key already exists (not as a property/function)
-            {
-                this[key].FullOffsets := this.FullOffsets.Clone()
-                this[key].FullOffsets.Push(this[key].Offset*)
-            }
-            ;return ; Not returning a value allows AHK to use standard behavior for gets.
-            return this[key] 
-        }
         ; Properties are not found using HasKey(). size is a property so ignore it.
         if(key == "size")
         {
@@ -63,34 +53,38 @@ class GameObjectStructure
                 return ""
             }
         }
-        else
+        ; Special case for collections in a gameobject.
+        else if(this.ValueType == "List")
         {
-            ; Special case for collections in a gameobject.
-            ; Calculate the offset using the value.
-            if(this.ValueType == "List")
+            if key is integer
             {
                 offset := this.CalculateOffset(key)
                 collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
-            }
-            else if(this.ValueType == "HashSet")
-            {
-                ; TODO: Verify hashset has same offsets as lists
-                offset := this.CalculateOffset(key)
-                collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
-            }
-            else if(this.ValueType == "Dict")
-            {
-                offset := this.CalculateDictOffset(["value",v]) + 0
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
+                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
             else
             {
                 return
             }
-            this[key] := this.Clone()
-            this[key].Offset := offset
-            this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         }
+        else if(this.ValueType == "HashSet")
+        {
+            ; TODO: Verify hashset has same offsets as lists
+            offset := this.CalculateOffset(key)
+            collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
+            this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+        }
+        else if(this.ValueType == "Dict")
+        {
+            offset := this.CalculateDictOffset(["value",v]) + 0
+            collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
+            this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+        }
+        else
+        {
+            return
+        }
+        return this[key]
     }
  
     ; Creates a new instance of GameObjectStructure
@@ -102,8 +96,20 @@ class GameObjectStructure
             this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
             this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
             this.Offset := appendedOffsets[1]
+            this.FullOffsets := baseStructureOrFullOffsets.FullOffsets.Clone()
+            this.FullOffsets.Push(this.Offset*)
+        }
+        else
+        {
+            this.FullOffsets.Push(baseStructureOrFullOffsets*)
         }
         ; this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+    }
+
+    ; Returns the full offsets of this object after BaseAddress.
+    GetOffsets()
+    {
+        return this.FullOffsets
     }
 
     ; Function makes copy of the current object and its lists but not a full deep copy.
@@ -135,10 +141,26 @@ class GameObjectStructure
         return var
     }
 
-    ; Returns the full offsets of this object after BaseAddress.
-    GetOffsets()
+    ; Creates a gameobject at key, updates its offsets, and updates all children's offsets. 
+    UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
     {
-        return this.FullOffsets
+        this[key] := this.Clone()
+        location := this.FullOffsets.Count() + 1
+        this[key].FullOffsets.Push(collectionEntriesOffset, offset)
+        this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
+    }
+
+    ; Starting at key, updates the fulloffsets variable in key and all children of key recursively.
+    UpdateChildrenWithFullOffsets(key, insertLoc := 0, offset := "")
+    {
+        for k,v in key
+        {
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" and v.FullOffsets != "")
+            {
+                v.FullOffsets.InsertAt(insertLoc, offset*)
+                v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
+            }
+        }
     }
 
     ; Used to calculate offsets the offsets of an item in a list by its index value.
