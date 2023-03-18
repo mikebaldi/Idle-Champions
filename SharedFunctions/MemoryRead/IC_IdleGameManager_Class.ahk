@@ -28,6 +28,20 @@ class IC_IdleGameManager_Class
         this.Refresh()
     }
 
+    __Get(key)
+    {
+        if(this.HasKey(key))
+        {
+            if(IsObject(this[key])) ; This will never get triggered because __Get does not get called if the key already exists (not as a property/function)
+            {
+                this[key].FullOffsets.Push(this.structureOffsets*)
+                this[key].FullOffsets.Push(this[key].Offset*)
+            }
+            ;return ; Not returning a value allows AHK to use standard behavior for gets.
+            return this[key] 
+        }
+    }
+
     GetVersion()
     {
         return "v2.0.2, 2022-08-28, IC v0.463+"
@@ -54,6 +68,7 @@ class IC_IdleGameManager_Class
         this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
         this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
         this.IdleGameManager.BaseAddress := this.BaseAddress
+        this.IdleGameManager.IsBaseObject := true
         if(!this.Main.isTarget64bit)
         {
             ; Build offsets for class using imported AHK files.
