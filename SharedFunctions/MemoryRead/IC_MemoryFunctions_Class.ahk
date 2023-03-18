@@ -546,51 +546,51 @@ class IC_MemoryFunctions_Class
 ;         return -1
 ;     }  
 
-;     ;=================
-;     ; New
-;     ;=================
-;     ReadOfflineTime()
-;     {
-;         ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.OfflineTimeRequested_k__BackingField)
-;     }
+    ;=================
+    ; New
+    ;=================
+    ReadOfflineTime()
+    {
+        ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.OfflineTimeRequested_k__BackingField)
+    }
 
-;     ReadOfflineDone()
-;     {
-;         handlerState := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.CurrentState_k__BackingField)
-;         stopReason := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.CurrentStopReason_k__BackingField)
-;         return handlerState == 0 AND stopReason != "" ; handlerstate is "inactive" and stopReason is not null
-;     }
+    ReadOfflineDone()
+    {
+        handlerState := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.CurrentState_k__BackingField)
+        stopReason := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.CurrentStopReason_k__BackingField)
+        return handlerState == 0 AND stopReason != "" ; handlerstate is "inactive" and stopReason is not null
+    }
 
-;     ReadResetsCount()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].ResetsSinceLastManual)
-;     }
+    ReadResetsCount()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].ResetsSinceLastManual)
+    }
 
-;     ;=================
-;     ;UI
-;     ;=================
+    ;=================
+    ;UI
+    ;=================
 
-;     ReadAutoProgressToggled()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButton.toggled)
-;     }
+    ReadAutoProgressToggled()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.topBar.objectiveProgressBox.areaBar.autoProgressButton.toggled)
+    }
 
-;     ;reads the champ id associated with an ultimate button
-;     ReadUltimateButtonChampIDByItem(item := 0)
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems.hero.def.ID.GetGameObjectFromListValues(this.GameInstance, item))
-;     }
+    ;reads the champ id associated with an ultimate button
+    ReadUltimateButtonChampIDByItem(item := 0)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].hero.def.ID)
+    }
 
-;     ReadUltimateButtonListSize()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems.size)
-;     }
+    ReadUltimateButtonListSize()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems.size)
+    }
 
-;     ReadWelcomeBackActive()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active)
-;     }
+    ReadWelcomeBackActive()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active)
+    }
 
 ;     ;======================
 ;     ; Retrieving Formations
@@ -800,30 +800,30 @@ class IC_MemoryFunctions_Class
 ;         ; Find the buff
 ;         index := this.BinarySearchList(testObject, 1, size, buffID)
 ;         if (index >= 0)
-;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.Name.GetGameObjectFromListValues(this.GameInstance, index - 1))
+;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.Name)
 ;         else
 ;             return ""
 ;     }
 
-;     ReadInventoryBuffIDBySlot(index)
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.ID.GetGameObjectFromListValues(this.GameInstance, index - 1))
-;     }
+    ReadInventoryBuffIDBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs[index - 1].ID)
+    }
 
-;     ReadInventoryBuffNameBySlot(index)
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.Name.GetGameObjectFromListValues(this.GameInstance, index - 1))
-;     }
+    ReadInventoryBuffNameBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs[index - 1].Name)
+    }
 
-;     ReadInventoryBuffCountBySlot(index)
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.InventoryAmount.GetGameObjectFromListValues(this.GameInstance, index - 1))
-;     }
+    ReadInventoryBuffCountBySlot(index)
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs[index - 1].InventoryAmount)
+    }
 
-;     ReadInventoryItemsCount()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.size)
-;     }
+    ReadInventoryItemsCount()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.size)
+    }
 
 ;     /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
 ;     */
@@ -869,37 +869,37 @@ class IC_MemoryFunctions_Class
 ;             return this.GenericGetValue(testObject)
 ;     }
 
-;     ReadInventoryChestListSize()
-;     {
-;         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.size)
-;     }
+    ReadInventoryChestListSize()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.size)
+    }
 
-;     GetChestNameByID(chestID)
-;     {
-;         size := this.ReadChestDefinesSize()   
-;         if(!size)
-;             return "" 
-;         index := this.BinarySearchList(this.CrusadersGameDataSet.ChestTypeDefines.ID, 1, size, chestID)
-;         if (index >= 0)
-;             return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.NamePlural.GetGameObjectFromListValues(index - 1))
-;         else
-;             return ""
-;     }
+    GetChestNameByID(chestID)
+    {
+        size := this.ReadChestDefinesSize()   
+        if(!size)
+            return "" 
+        index := this.BinarySearchList(this.CrusadersGameDataSet.ChestTypeDefines, ["ID"], 1, size, chestID)
+        if (index >= 0)
+            return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines[index - 1].NamePlural)
+        else
+            return ""
+    }
 
-;     GetChestNameBySlot(index)
-;     { 
-;         return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.Name.GetGameObjectFromListValues(index - 1))
-;     }
+    GetChestNameBySlot(index)
+    { 
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines[index - 1].Name)
+    }
 
-;     GetChestIDBySlot(index)
-;     {
-;         return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.ID.GetGameObjectFromListValues(index - 1))
-;     }
+    GetChestIDBySlot(index)
+    {
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines[index - 1].ID)
+    }
 
-;     ReadChestDefinesSize()
-;     {
-;         return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.size) 
-;     }
+    ReadChestDefinesSize()
+    {
+        return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.size) 
+    }
 
 
 
@@ -975,7 +975,7 @@ class IC_MemoryFunctions_Class
         return significand . "e" . exponent
     }
 
-    BinarySearchList(gameObject, leftIndex, rightIndex, searchValue)
+    BinarySearchList(gameListObject, lookupKeys, leftIndex, rightIndex, searchValue)
     {
         if(rightIndex < leftIndex)
         {
@@ -984,7 +984,12 @@ class IC_MemoryFunctions_Class
         else
         {
             middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
-            IDValue := this.GenericGetValue(gameObject.GetGameObjectFromListValues(middle - 1))
+            newGameObject := gameListObject[middle - 1]
+            for k,v in lookupKeys
+            {
+                newGameObject := newGameObject[v]
+            }
+            IDValue := this.GenericGetValue(newGameObject)
             ; failed memory read
             if(IDValue == "")
                 return -1
@@ -993,17 +998,12 @@ class IC_MemoryFunctions_Class
                 return middle
             ; else if value larger that middle value, check larger half
             else if (IDValue > searchValue)
-                return this.BinarySearchList(gameObject, leftIndex, middle-1, searchValue)
+                return this.BinarySearchList(gameListObject, lookupKeys, leftIndex, middle-1, searchValue)
             ; else if value smaller than middle value, check smaller half
             else
-                return this.BinarySearchList(gameObject, middle+1, rightIndex, searchValue)
+                return this.BinarySearchList(gameListObject, lookupKeys, middle+1, rightIndex, searchValue)
         }
     }
-
-;     ; Removes the first ListIndex value and increments the rest by adjustmentValue 
-;     AdjustObjectListIndexes(gameObject, adjustmentValue := 1)
-;     {
-;     }
 
     ; Returns the index of HeroHandler the champion is expected to be at. As of v472 hero defines became missing in the defines so champID can no longer be used as an index.
     GetHeroHandlerIndexByChampID(champID)
