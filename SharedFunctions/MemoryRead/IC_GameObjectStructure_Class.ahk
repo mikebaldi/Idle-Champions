@@ -76,7 +76,7 @@ class GameObjectStructure
         }
         else if(this.ValueType == "Dict")
         {
-            offset := this.CalculateDictOffset(["value",v]) + 0
+            offset := this.CalculateDictOffset(["value",key]) + 0
             collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
@@ -103,7 +103,8 @@ class GameObjectStructure
         {
             this.FullOffsets.Push(baseStructureOrFullOffsets*)
         }
-        ; this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
     }
 
     ; Returns the full offsets of this object after BaseAddress.
@@ -159,12 +160,14 @@ class GameObjectStructure
             {
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
+                ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+                v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
         }
     }
 
     ; Used to calculate offsets the offsets of an item in a list by its index value.
-    ; Note: Some EGS lists will still use 4 byte offsets. In these cases, pass (index/2) to GetGameObjectFromListValues 
+    ; Note: Some EGS lists will still use 4 byte offsets. In these cases, pass (index/2) as the index of the list. 
     CalculateOffset( listItem, indexStart := 0 )
     {
         if(indexStart) ; If list is not 0 based indexing
@@ -178,6 +181,14 @@ class GameObjectStructure
     ; Used to calculate offsets of an item in a dict. requires an array with "key" or "value" as first entry and the dict index as second. indices start at 0.
     CalculateDictOffset(array)
     {
+        ; Special Case not included here:
+        ; 64-Bit Entries start at 0x18
+        ; Values follow rule: [0x20 + 0x10 + (index * 0x18)
+        ; 0x20 = baseOffset ? 
+        ; 0x10 = valueOffset ? 
+        ; index = array.2
+        ; 0x18 = offsetInterval
+
         if(this.Is64Bit)
         {
             baseOffset := 0x28

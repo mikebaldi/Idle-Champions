@@ -159,13 +159,14 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.TimeScale)
     }
 
-    ; TODO: FIX
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
+        ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
+        ; dictionary <IEffectSource, Int> / <System.Collections.Generic.Dictionary<CrusadersGame.Effects.IEffectSource, System.Single>
         if (this.Is64Bit)
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
+            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0x18, 0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
         else
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
+            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0xC, 0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
         return Round(this.GenericGetValue(timeScaleObject), 2)
     }
 
@@ -178,7 +179,8 @@ class IC_MemoryFunctions_Class
     {
         multiplierTotal := 1
         i := 0
-        loop, % this.ReadTimeScaleMultipliersCount()
+        size := this.ReadTimeScaleMultipliersCount()
+        loop, %size%
         {
             value := this.ReadTimeScaleMultiplierByIndex(i)
             multiplierTotal *= Max(1.0, value)
@@ -500,9 +502,9 @@ class IC_MemoryFunctions_Class
     }
     
 
-;     ;==============================
-;     ;offlineprogress and modronsave
-;     ;==============================
+    ;==============================
+    ;offlineprogress and modronsave
+    ;==============================
 
     ReadActiveGameInstance()
     {
