@@ -20,49 +20,6 @@ class GameObjectStructure
     Offset := 0x0
     IsBaseObject := false
 
-    ; DEBUG: Helps debug missing objects in dot chains of GameObjectStructures.
-    ; __Get(index)
-    ; {
-    ;     if index is not integer
-    ;         OutputDebug, %index%
-    ; }
-
-    ; returns a a GameObjectStructure which can point to the size of a memory structure such as a Dictionary, List, or HashSet
-    size[]
-    {
-        get
-        {
-            if(this.ValueType == "List")
-            {
-                sizeObject := this.QuickClone()
-                sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Pop()
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
-                return sizeObject
-            }
-            else if(this.ValueType == "Dict")
-            {
-                sizeObject := this.QuickClone()
-                sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Pop()
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x40 : 0x20)
-                return sizeObject
-            }
-            else if(this.ValueType == "HashSet")
-            {
-                sizeObject := this.QuickClone()
-                sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Pop()
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
-                return sizeObject
-            }
-            else
-            {
-                return ""
-            }
-        }
-    }
-
     ; BEWARE of cases where you may be looking in a dictionary for a key that is the same as a value of the object in the dictionary (e.g. dictionary["Effect"].Effect)
     ; When a key is not found for objects which have collections, use this function. 
     __Get(key)
@@ -80,7 +37,31 @@ class GameObjectStructure
         ; Properties are not found using HasKey(). size is a property so ignore it.
         if(key == "size")
         {
-            return
+            if(this.ValueType == "List")
+            {
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
+                return sizeObject
+            }
+            else if(this.ValueType == "Dict")
+            {
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x40 : 0x20)
+                return sizeObject
+            }
+            else if(this.ValueType == "HashSet")
+            {
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
+                return sizeObject
+            }
+            else
+            {
+                return ""
+            }
         }
         else
         {
@@ -110,11 +91,6 @@ class GameObjectStructure
             this[key].Offset := offset
             this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         }
-    }
-
-    __Set(key, value)
-    {
-        
     }
  
     ; Creates a new instance of GameObjectStructure
@@ -164,132 +140,6 @@ class GameObjectStructure
     {
         return this.FullOffsets
     }
-
-    ; Takes an array of values. Each value in the array is an offset to multiply the offsets by in a list.
-    ; There can be multiple values as there can be multiple lists in a memory location.
-    ; Note: iterates from first items in list and checks in order. There is no picking and choosing which list items to grab.
-    ; GetOffsetsWithListOrDictValues(insertType := "List", values*)
-    ; {
-    ;     if( (values.Count() > this.ListIndexes.Count() AND insertType == "List") OR (values.Count() > this.DictIndexes.Count() AND insertType == "Dict") )
-    ;     {
-    ;         stringVal := "More parameters were passed than there are list objects"
-    ;         throw stringVal
-    ;     }
-    ;     currentOffsets := this.FullOffsets.Clone()
-    ;     i := 0
-    ;     for k,v in values
-    ;     {
-    ;         ; insert which item
-    ;         if (insertType == "List")
-    ;             currentOffsets.InsertAt(this.ListIndexes[i+1] + i+1, this.CalculateOffset(v))
-    ;         else if (insertType == "Dict")
-    ;             currentOffsets.InsertAt(this.DictIndexes[i+1] + i+1, (this.CalculateDictOffset(["value",v]) + 0))
-    ;             ;currentOffsets[this.DictIndexes[i+1] + i] += (this.CalculateDictOffset(["value",v]) + 0)
-    ;         i++
-    ;     }
-    ;     return currentOffsets
-    ; }
-
-    ; Uses list location values to create a new object that has the correst FullOffsets and ValueType of the item being looked up.
-    ; GetGameObjectFromListValues(values*)
-    ; {
-    ;     newObject := this.QuickClone()
-    ;     newObject.FullOffsets := newObject.GetOffsetsWithListOrDictValues("List", values*)
-    ;     return newObject
-    ; }
-
-    ; Note: Must update IndexType (e.g. list) after other collection (e.g. dict) becaust the Update<Collection> functions remove objects that the other (dict) needs for comparisons.
-    ; Uses list location values to create a new object that has the correst FullOffsets and ValueType of the item being looked up.
-    ; GetFullGameObjectFromListOrDictValues(indexType := "List", values*)
-    ; {
-    ;     recursive = true
-    ;     valueCount := values.Count()
-    ;     newObject := this.Clone()
-    ;     ; Recursively update offsets
-    ;     if(recursive)
-    ;         newObject.UpdateOffsetsFromListOrDict(indexType, values*)
-    ;     else
-    ;         newObject.FullOffsets := newObject.GetOffsetsWithListOrDictValues(indexType, values*)
-    ;     newObject.UpdateCollections(indexType, valueCount, recursive)
-    ;     return newObject
-    ; }
-
-    ; Helper function for GetFullGameObjectFromListOrDictValues
-    ; Updates the DictIndexs
-    ; DeepUpdate updates DictIndexes in all sub objects as well
-    ; UpdateCollections(collectionType, valueCount, deepUpdate := false)
-    ; {
-    ;     ; Assumes only 2 types, Dict and List
-    ;     otherType := collectionType == "Dict" ? "List" : "Dict"
-    ;     collectionCount := collectionType == "Dict" ? this.ListIndexes.Count() : this.DictIndexes.Count()
-    ;     ; other collection first 
-    ;     loop, %collectionCount%
-    ;     {
-    ;         increaseAmount := 0
-    ;         currIndex := A_Index
-    ;         ; Note: can reduce time complexity by doing a binary search on value count.
-    ;         ; But it is unlikely to matter since list indexes are not likely to be > 3
-    ;         loop, %valueCount%
-    ;         {
-    ;             if(collectionType == "Dict")
-    ;             {
-    ;                 if(this.ListIndexes[currIndex] > this.DictIndexes[A_Index])
-    ;                     increaseAmount += 1
-    ;                 else
-    ;                     break
-    ;             }
-    ;             else if (collectionType == "List")
-    ;             {
-    ;                 if(this.DictIndexes[currIndex] > this.ListIndexes[A_Index])
-    ;                     increaseAmount += 1
-    ;                 else
-    ;                     break
-    ;             }
-    ;         }
-    ;         if(collectionType == "Dict")
-    ;             this.ListIndexes[currIndex] += increaseAmount 
-    ;         else if (collectionType == "List")
-    ;             this.DictIndexes[currIndex] += increaseAmount
-    ;     }
-    ;     if(collectionType == "Dict")
-    ;         this.DictIndexes.RemoveAt(1, valueCount)
-    ;     else if (collectionType == "List")
-    ;         this.ListIndexes.RemoveAt(1, valueCount)
-
-    ;     ; Update remainning values with added increased indexes
-    ;     collectionCount := collectionType == "Dict" ? this.DictIndexes.Count() : this.ListIndexes.Count()
-    ;     loop, %collectionCount%
-    ;     {
-    ;         if(collectionType == "Dict")
-    ;             this.DictIndexes[A_Index] += valueCount
-    ;         else if (collectionType == "List")
-    ;             this.ListIndexes[A_Index] += valueCount
-    ;     }   
-    ;     if(deepUpdate)
-    ;     {
-    ;         for k,v in this
-    ;         {
-    ;             ; Note: Automatically ignores call if 'this' is not a GameObject
-    ;             ; All GameObjects have a DictIndexes field
-    ;             if (IsObject(this[k]))
-    ;                 this[k].UpdateCollections(collectionType, valueCount, deepUpdate)
-    ;         }
-    ;     }
-    ; }
-
-    ; Helper function for GetFullGameObjectFromListOrDictValues
-    ; Updates the FullOffsets recursively
-    ; UpdateOffsetsFromListOrDict(indexType := "List", values*)
-    ; {
-    ;     this.FullOffsets := this.GetOffsetsWithListOrDictValues(indexType, values*)
-    ;     for k,v in this
-    ;     {
-    ;         if(IsObject(this[k]) AND this[k]["FullOffsets"] != "")
-    ;         {
-    ;             this[k].UpdateOffsetsFromListOrDict(indexType, values*)
-    ;         }
-    ;     }
-    ; }
 
     ; Used to calculate offsets the offsets of an item in a list by its index value.
     ; Note: Some EGS lists will still use 4 byte offsets. In these cases, pass (index/2) to GetGameObjectFromListValues 

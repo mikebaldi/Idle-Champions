@@ -141,6 +141,7 @@ class IC_MemoryFunctions_Class
 
     ReadMonstersSpawned()
     {
+        ;test := this.GameManager.__Get("game").__Get("gameInstances").size
         test := this.GameManager.__Get("game").__Get("gameInstances")[this.GameInstance].__Get("Controller").__Get("area").__Get("basicMonstersSpawnedThisArea")
         return this.GenericGetValue(test)
         ; return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.area.basicMonstersSpawnedThisArea)
