@@ -27,11 +27,11 @@ class IC_MemoryFunctions_Class
     CrusadersGameDataSet := ""
     DialogManager := ""
     Is64Bit := false
-    ; Active GameInstance is 0 in the DLL so this should not need to change
-    ;		public ChampionsGameInstance GetActiveChampionsInstance()
-    ;   	{
-    ;   		return this.gameInstances[0];
-    ;   	}
+    ; Active GameInstance is 0 in the DLL so GameInstance should not need to change. DLL Code:
+    ;public ChampionsGameInstance GetActiveChampionsInstance()
+    ;{
+    ;    return this.gameInstances[0];
+    ;}
     GameInstance := 0
     PointerVersionString := ""
 
@@ -159,7 +159,7 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.TimeScale)
     }
 
-    ; TODO: Find more automated method of dictionary lookups for non-standard dictionary types?
+    ; TODO: Special Case Dictionary Solution. Find more automated method of dictionary lookups for non-standard dictionary types?
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
         ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
@@ -479,8 +479,7 @@ class IC_MemoryFunctions_Class
     GetCoreSpecializationForHero(heroID)
     {
         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
-        tempSizeObject := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.size
-        dictCount := g_SF.Memory.GenericGetValue(tempSizeObject)
+        dictCount := g_SF.Memory.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.size)
         i := 0
         loop, % dictCount
         {
@@ -697,7 +696,6 @@ class IC_MemoryFunctions_Class
 ;         return formation
 ;     }
 
-    ; TODO: FIX
     GetActiveModronFormationSaveSlot()
     {
         ; Find the Campaign ID (e.g. 1 is Sword Cost, 2 is Tomb, 1400001 is Sword Coast with Zariel Patron, etc. )
@@ -719,7 +717,7 @@ class IC_MemoryFunctions_Class
         return formationSaveSlot
     }
 
-    ; TODO: FIX
+    ; TODO: Special Case Dictionary Solution
     ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
     GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
     {
