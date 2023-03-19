@@ -69,14 +69,10 @@ class IC_ActiveEffectKeyHandler_Class
     {
         champID := this.HeroHandlerIDs[handlerName]
         ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
-        tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[this.GetDictIndex(handlerName)].List.parentEffectKeyHandler.activeEffectHandlers.size
-        _size := g_SF.Memory.GenericGetValue(tempObject) ; currently unused but kept commented for debugging later
-        ; Remove the "size" from the offsets list
-        tempObject.FullOffsets.Pop()
-        tempObject.ValueType := g_SF.Memory.GameManager.Is64Bit() ? "Int64" : "UInt"
-        ; insert first list offset (Assuming only 1 item in activeEffectKeys list)
-        tempObject.FullOffsets.Push(g_SF.Memory.GameManager.Is64Bit() ? 0x10 : 0x8) ; _items
-        address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0)
+        ; need _items value to use offsets later
+        tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[this.GetDictIndex(handlerName)].List[0].parentEffectKeyHandler.activeEffectHandlers._items
+        ; use first item in the _items list as base address so offsets work later
+        address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0) 
         return address
     }
 

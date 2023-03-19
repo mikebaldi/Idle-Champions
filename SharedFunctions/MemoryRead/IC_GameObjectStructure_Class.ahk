@@ -78,6 +78,14 @@ class GameObjectStructure
                 collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
+            else if (key == "_items")
+            {
+                collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
+                _items := this.StableClone()
+                _items.FullOffsets.Push(collectionEntriesOffset)
+                _items.ValueType := this.Is64Bit ? "Int64" : "UInt"
+                return _items
+            }
             else
             {
                 return
