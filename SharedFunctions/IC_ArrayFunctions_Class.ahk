@@ -21,6 +21,8 @@ class ArrFnc
     ; Creates a string from an array of numbers showing the array in hex format. e.g. [0x1, 0x2, 0xF]
     GetHexFormattedArrayString(array1)
     {
+        if(!array1.MaxIndex()) ; Array test
+            return ""
         itemCount := array1.Count()
         var := "[ "
         loop, %itemCount%
@@ -39,6 +41,8 @@ class ArrFnc
     ; Creates a string from an array of numbers showing the array in decimal format. e.g. [1, 2, 3]
     GetDecFormattedArrayString(array1)
     {
+        if(!array1.MaxIndex()) ; Array test
+            return ""
         itemCount := array1.Count()
         var := "[ "
         loop, %itemCount%
@@ -62,7 +66,7 @@ class ArrFnc
         for k, v in array1
         {
             if IsObject(v)
-                var .= this.GetDecFormattedArrayString(v) . "] "
+                var .= this.GetDecFormattedAssocArrayString(v) . "] "
             if ( A_Index < itemCount )
                 var .= k . ":" . Format("{:d}", v) . ", "
             else
@@ -74,13 +78,15 @@ class ArrFnc
 
     ; Creates a string from an array. e.g. [1, F2, q, 6]
     GetAlphaNumericArrayString(array1)
-    {
+    {   
+        if(!array1.MaxIndex()) ; Array test
+            return ""
         itemCount := array1.Count()
         var := "[ "
         loop, %itemCount%
         {
             if IsObject(array1[A_Index])
-                  var .= this.GetDecFormattedArrayString(array1[A_Index]) . "] "
+                  var .= this.GetAlphaNumericArrayString(array1[A_Index]) . "] "
             if ( A_Index < itemCount )
             var .= array1[A_Index] . ", "
             else
