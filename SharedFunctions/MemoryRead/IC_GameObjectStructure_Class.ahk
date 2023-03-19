@@ -19,6 +19,7 @@ class GameObjectStructure
     Is64Bit := 0
     Offset := 0x0
     IsBaseObject := false
+    IsAddedIndex := false
 
     ; BEWARE of cases where you may be looking in a dictionary for a key that is the same as a value of the object in the dictionary (e.g. dictionary["Effect"].Effect)
     ; When a key is not found for objects which have collections, use this function. 
@@ -142,19 +143,44 @@ class GameObjectStructure
         return var
     }
 
+    ; For cloning without copying dynamically added items to the clone.
+    StableClone()
+    {
+        var := new GameObjectStructure
+        ; Iterate all the elements of the game object structure and clone time
+        for k,v in this
+        {
+            if(!IsObject(v))
+            {
+                var[k] := v
+                continue
+            }
+            if(ObjGetBase(v).__Class == "GameObjectStructure" AND !v.IsAddedIndex)
+            {   
+                var[k] := v.StableClone()
+            }
+            else if(ObjGetBase(v).__Class != "GameObjectStructure")
+            {
+                var[k] := v.Clone()
+            }
+        }
+        return var
+    }
+
     ; Creates a gameobject at key, updates its offsets, and updates all children's offsets. 
     UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
     {
-        this[key] := this.Clone()
+        this[key] := this.StableClone()
+        this[key].IsAddedIndex := true
         location := this.FullOffsets.Count() + 1
         this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
     }
 
-    ; Starting at key, updates the fulloffsets variable in key and all children of key recursively.
-    UpdateChildrenWithFullOffsets(key, insertLoc := 0, offset := "")
+    ; Starting at currentObj, updates the fulloffsets variable in key and all children of key recursively.
+    UpdateChildrenWithFullOffsets(currentObj, insertLoc := 0, offset := "")
     {
-        for k,v in key
+        for k,v in currentObj
         {
             if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" and v.FullOffsets != "")
             {
@@ -188,6 +214,8 @@ class GameObjectStructure
         ; 0x10 = valueOffset ? 
         ; index = array.2
         ; 0x18 = offsetInterval
+        ; Second Special case:
+        ; 0x20 + (A_index - 1) * 0x10 | 0x10 + (A_Index - 1) * 0x10
 
         if(this.Is64Bit)
         {
