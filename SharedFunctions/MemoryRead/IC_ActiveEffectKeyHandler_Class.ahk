@@ -1,6 +1,5 @@
 ; ActiveEffectKeyHandler finds base addresses for ActiveEffectKeyHandler classes such as BrivUnnaturalHasteHandler and imports the offsets used for them.
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
-#include %A_LineFile%\..\IC_IdleGameManager_Class.ahk
 class IC_ActiveEffectKeyHandler_Class
 {
     ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
@@ -15,11 +14,12 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.3.0, 2022-09-30, IC v0.440+"
+        return "v2.4.0, 2023-03-19"
     }
 
     Refresh()
     {
+        this.GameInstance := 0
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
         this.BrivUnnaturalHasteHandler := this.GetEffectHandler("BrivUnnaturalHasteHandler")
         this.HavilarImpHandler := this.GetEffectHandler("HavilarImpHandler")
@@ -69,11 +69,8 @@ class IC_ActiveEffectKeyHandler_Class
     {
         champID := this.HeroHandlerIDs[handlerName]
         ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID), 0 )
-        ; add dictionary value from effectkeysbyname
-        currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
-        tempObject.FullOffsets.InsertAt(tempObject.FullOffsets.Count() - 4, currOffset)
-        ;_size := g_SF.Memory.GenericGetValue(tempObject) ; currently unused but kept commented for debugging later
+        tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[this.GetDictIndex(handlerName)].List.parentEffectKeyHandler.activeEffectHandlers.size
+        _size := g_SF.Memory.GenericGetValue(tempObject) ; currently unused but kept commented for debugging later
         ; Remove the "size" from the offsets list
         tempObject.FullOffsets.Pop()
         tempObject.ValueType := g_SF.Memory.GameManager.Is64Bit() ? "Int64" : "UInt"
@@ -87,22 +84,18 @@ class IC_ActiveEffectKeyHandler_Class
     GetDictIndex(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]
+        heroIndex := g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)
         effectName := this.HeroEffectNames[handlerName]
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
-        dictCount := g_SF.Memory.GenericGetValue(tempObject)
+        dictCount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[heroIndex].effects.effectKeysByKeyName.size)
         if(dictCount > 100 OR dictCount < 0) ; skip the loop if the value is clearly unreasonable to prevent freezes.
             return -1 
-        i := 0
         loop, % dictCount
         {
-            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
-            currOffset := tempObject.CalculateDictOffset(["key", i])
-            tempObject.FullOffsets.Push(currOffset)
+            tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[heroIndex].effects.effectKeysByKeyName["key", A_Index - 1].Clone()
             tempObject.ValueType := "UTF-16"
             keyName := g_SF.Memory.GenericGetValue(tempObject)
             if (keyName == effectName)
-                return i
-            ++i
+                return A_Index - 1
         }
         return -1
     }
