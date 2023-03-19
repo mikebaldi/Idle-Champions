@@ -77,7 +77,7 @@ class IC_MemoryFunctions_Class
         this.EngineSettings.Refresh()
         this.CrusadersGameDataSet.Refresh()
         this.DialogManager.Refresh()
-        ;this.ActiveEffectKeyHandler.Refresh()
+        this.ActiveEffectKeyHandler.Refresh()
         this.Is64Bit := this.GameManager.is64Bit()
     }
 
@@ -88,6 +88,7 @@ class IC_MemoryFunctions_Class
     ; Not for general use.
     GenericGetValue(GameObject)
     {
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
@@ -490,7 +491,6 @@ class IC_MemoryFunctions_Class
         }
         return ""
     }
-    
 
     ;==============================
     ;offlineprogress and modronsave
