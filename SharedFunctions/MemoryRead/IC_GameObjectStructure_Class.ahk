@@ -23,7 +23,7 @@ class GameObjectStructure
 
     ; BEWARE of cases where you may be looking in a dictionary for a key that is the same as a value of the object in the dictionary (e.g. dictionary["Effect"].Effect)
     ; When a key is not found for objects which have collections, use this function. 
-    __Get(key)
+    __Get(key, index := 0)
     {
         ; Properties are not found using HasKey(). size is a property so ignore it.
         if(key == "size")
@@ -53,7 +53,7 @@ class GameObjectStructure
             {
                 return ""
             }
-        }
+        } 
         ; Special case for collections in a gameobject.
         else if(this.ValueType == "List")
         {
@@ -77,9 +77,21 @@ class GameObjectStructure
         }
         else if(this.ValueType == "Dict")
         {
-            offset := this.CalculateDictOffset(["value",key]) + 0
-            collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
-            this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+            if (key == "key")
+            {
+                offset := this.CalculateDictOffset([keyOrVal,index]) + 0
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
+                tempObj := this.Clone()
+                tempObj.FullOffsets.Push(collectionEntriesOffset, offset)
+                tempObj.UpdateChildrenWithFullOffsets(tempObj, tempObj.FullOffsets.Count() + 1, [collectionEntriesOffset, offset])
+                return tempObj
+            }
+            else
+            {
+                offset := this.CalculateDictOffset(["value",key]) + 0
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
+                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+            }
         }
         else
         {
@@ -87,7 +99,7 @@ class GameObjectStructure
         }
         return this[key]
     }
- 
+
     ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
