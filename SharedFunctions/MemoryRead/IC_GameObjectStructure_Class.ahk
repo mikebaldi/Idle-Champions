@@ -57,7 +57,7 @@ class GameObjectStructure
         ; Special case for collections in a gameobject.
         else if(this.ValueType == "List")
         {
-            if key is integer
+            if key is number
             {
                 offset := this.CalculateOffset(key)
                 collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8

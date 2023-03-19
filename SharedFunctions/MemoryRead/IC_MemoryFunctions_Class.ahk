@@ -584,28 +584,28 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active)
     }
 
-;     ;======================
-;     ; Retrieving Formations
-;     ;======================
-;     /*
-;         read the champions saved in a given formation save slot. returns an array of champ ID with -1 representing an empty formation slot
-;         when parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array
-;     */
-;     GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0 )
-;     {
-;         Formation := Array()
-;         _size := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size)
-;         loop, %_size%
-;         {
-;             heroLoc := this.GameManager.Is64Bit() ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
-;             champID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.GetGameObjectFromListValues(this.GameInstance, slot, heroLoc))
-;             if (!ignoreEmptySlots or champID != -1)
-;             {
-;                 Formation.Push( champID )
-;             }
-;         }
-;         return Formation
-;     }
+    ;======================
+    ; Retrieving Formations
+    ;======================
+    /*
+        read the champions saved in a given formation save slot. returns an array of champ ID with -1 representing an empty formation slot
+        when parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array
+    */
+    GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0 )
+    {
+        Formation := Array()
+        _size := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size)
+        loop, %_size%
+        {
+            heroLoc := this.GameManager.Is64Bit() ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
+            champID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation[heroLoc])
+            if (!ignoreEmptySlots or champID != -1)
+            {
+                Formation.Push( champID )
+            }
+        }
+        return Formation
+    }
 
 ;     /*
 ;         A function that looks for a saved formation matching a favorite. Returns -1 on failure.
