@@ -115,11 +115,12 @@ class IC_MemoryFunctions_Class
         return var
     }
 
-;     ;=========================================
-;     ;General Game Values
-;     ;=========================================
-;     ; The following Read___ functions are shorthand for GenericGetValue(GameObjectStructure). 
-;     ; They are not necessary but they do increase readability of code and increase ease of use.
+    ;=========================================
+    ;General Game Values
+    ;=========================================
+    ; The following Read functions are shorthand for GenericGetValue(GameObjectStructure). 
+    ; Please use them where possible to reduce chances of code breaking when Script Hub is updated.
+    ; They also help increase readability of code and ease of use.
 
     ReadGameVersion()
     {
@@ -319,12 +320,10 @@ class IC_MemoryFunctions_Class
         gameLoc := this.ReadGameLocation()
         splitStringArray := StrSplit(gameLoc, "\")
         newString := ""
-        i := 1
         size := splitStringArray.Count() - 1
         loop, %size%
         {
-            newString := newString . splitStringArray[i] . "\"
-            i++
+            newString := newString . splitStringArray[A_Index] . "\"
         }
         newString := newString . "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
         return newString
@@ -345,7 +344,7 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.redRubiesSpent)
     }
 
-    ReadRedGems() ; BlackViper Red Gems
+    ReadRedGems() 
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.StatHandler.BlackViperTotalGems) 
     }
@@ -480,7 +479,6 @@ class IC_MemoryFunctions_Class
         specNum--
         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
         dictCount := g_SF.Memory.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.size)
-        i := 0
         loop, % dictCount
         {
             currentHeroID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations["key", A_Index - 1])
@@ -489,7 +487,6 @@ class IC_MemoryFunctions_Class
                 specVal := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[A_Index - 1].List[specNum])
                 return specVal
             }
-            ++i
         }
         return ""
     }
@@ -509,14 +506,12 @@ class IC_MemoryFunctions_Class
         ;reads memory for the number of cores        
         saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
         ;cycle through saved formations to find save slot of Favorite
-        i := 0
         loop, %saveSize%
         {
-            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].InstanceID) == InstanceID)
+            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID) == InstanceID)
             {
-                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].targetArea)
+                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].targetArea)
             }
-            ++i
         }
         return -1
     }
@@ -526,14 +521,12 @@ class IC_MemoryFunctions_Class
         ;reads memory for the number of cores        
         saveSize := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size)
         ;cycle through saved formations to find save slot of Favorite
-        i := 0
         loop, %saveSize%
         {
-            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].InstanceID) == InstanceID)
+            if (this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID) == InstanceID)
             {
-                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[i].ExpTotal)
+                return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].ExpTotal)
             }
-            ++i
         }
         return -1
     }  
@@ -541,9 +534,9 @@ class IC_MemoryFunctions_Class
     ;=================
     ; New
     ;=================
+    ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
     ReadOfflineTime()
     {
-        ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].OfflineHandler.OfflineTimeRequested_k__BackingField)
     }
 
@@ -587,10 +580,7 @@ class IC_MemoryFunctions_Class
     ;======================
     ; Retrieving Formations
     ;======================
-    /*
-        read the champions saved in a given formation save slot. returns an array of champ ID with -1 representing an empty formation slot
-        when parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array
-    */
+    ; Read the champions saved in a given formation save slot. returns an array of champ ID with -1 representing an empty formation slot. When parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array. 
     GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0 )
     {
         Formation := Array()
@@ -607,87 +597,75 @@ class IC_MemoryFunctions_Class
         return Formation
     }
 
-;     /*
-;         A function that looks for a saved formation matching a favorite. Returns -1 on failure.
-;         Optional Paramater Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E)
+    ; Looks for a saved formation matching a favorite. Returns -1 on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E)
+    GetSavedFormationSlotByFavorite(favorite := 1)
+    {
+        ;reads memory for the number of saved formations
+        formationSavesSize := this.ReadFormationSavesSize()
+        ;cycle through saved formations to find save slot of Favorite
+        formationSaveSlot := -1
+        loop, %formationSavesSize%
+        {
+            if (this.ReadFormationFavoriteIDBySlot(A_Index - 1) == favorite)
+            {
+                formationSaveSlot := A_Index - 1
+                Break
+            }
+        }
+        return formationSaveSlot
+    }
 
-;         Requires #include classMemory.ahk and OpenProcessReader() is called each time client is restarted
-;     */
-;     GetSavedFormationSlotByFavorite(favorite := 1)
-;     {
-;         ;reads memory for the number of saved formations
-;         formationSavesSize := this.ReadFormationSavesSize() ;+ 1
-;         ;cycle through saved formations to find save slot of Favorite
-;         formationSaveSlot := -1
-;         i := 0
-;         loop, %formationSavesSize%
-;         {
-;             if (this.ReadFormationFavoriteIDBySlot(i) == favorite)
-;             {
-;                 formationSaveSlot := i
-;                 Break
-;             }
-;             ++i
-;         }
-;         return formationSaveSlot ; formationSaveSlot is ID which starts at 1,  index starts at 0, so we subtract 1
-;     }
+    ;Returns the formation stored at the favorite value passed in.
+    GetFormationByFavorite( favorite := 0 )
+    {
+        slot := this.GetSavedFormationSlotByFavorite(favorite)
+        formation := this.GetFormationSaveBySlot(slot)
+        return Formation
+    }
 
-;     ;Returns the formation stored at the favorite value passed in.
-;     GetFormationByFavorite( favorite := 0 )
-;     {
-;         slot := this.GetSavedFormationSlotByFavorite(favorite)
-;         formation := this.GetFormationSaveBySlot(slot)
-;         return Formation
-;     }
+    ; Returns an array containing the current formation. Note: Slots with no hero are converted from 0 to -1 to match other formation saves.
+    GetCurrentFormation()
+    {
+        size := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots.size)
+        formation := size > 0 ? Array() : ""
+        loop, %size%
+        {
+            heroID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots[A_index - 1].hero.def.ID)
+            heroID := heroID > 0 ? heroID : -1
+            formation.Push(heroID)
+        }
+        return formation
+    }
 
-;     ; Returns an array containing the current formation. Note: Slots with no hero are converted from 0 to -1 to match other formation saves.
-;     GetCurrentFormation()
-;     {
-;         formation := Array()
-;         size := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots.size)
-;         if(!size)
-;             return ""
-;         loop, %size%
-;         {
-;             heroID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots.hero.def.ID.GetGameObjectFromListValues(this.GameInstance, A_index - 1))
-;             heroID := heroID > 0 ? heroID : -1
-;             formation.Push(heroID)
-;         }
-;         return formation
-;     }
+    ReadBoughtLastUpgrade( seat := 1)
+    {
+        val := true
+        ; The nextUpgrade pointer could be null if no upgrades are found.
+        if(this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade))
+        {
+            val := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade.IsPurchased)
+        }
+        return val
+    }
 
-;     ReadBoughtLastUpgrade( seat := 1)
-;     {
-;         ; The nextUpgrade pointer could be null if no upgrades are found.
-;         if(this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.GetGameObjectFromListValues(this.GameInstance, seat - 1)))
-;         {
-;             val := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes.nextupgrade.IsPurchased.GetGameObjectFromListValues(this.GameInstance, seat - 1))
-;             return val
-;         }
-;         else
-;         {
-;             return True
-;         }
-;     }
+    ; ; TODO: FIX
+    ; GetHeroOrderedUpgrade(champID := 1, upgradeID := 0)
+    ; {
+    ;     orderedUpgradeEntry := 0
+    ;     orderedUpgrade := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID]
+    ;     return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID]
+    ; }
 
-;     GetHeroOrderedUpgrade(champID := 1, upgradeID := 0)
-;     {
-;         orderedUpgrade := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered.GetFullGameObjectFromListOrDictValues("List", 0, champID)
-;         orderedUpgrade := orderedUpgrade.GetFullGameObjectFromListOrDictValues("Dict", 0)
-;         orderedUpgrade := orderedUpgrade.List.GetFullGameObjectFromListOrDictValues("List", upgradeID)
-;         return orderedUpgrade
-;     }
-
-;     ; Returns the formation array of the formation used in the currently active modron.
-;     GetActiveModronFormation()
-;     {
-;         formation := ""
-;         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
-;         ; Get the formation using the  index (slot)
-;         if(formationSaveSlot >= 0)
-;             formation := this.GetFormationSaveBySlot(formationSaveSlot)
-;         return formation
-;     }
+    ; Returns the formation array of the formation used in the currently active modron.
+    GetActiveModronFormation()
+    {
+        formation := ""
+        formationSaveSlot := this.GetActiveModronFormationSaveSlot()
+        ; Get the formation using the  index (slot)
+        if(formationSaveSlot >= 0)
+            formation := this.GetFormationSaveBySlot(formationSaveSlot)
+        return formation
+    }
 
     GetActiveModronFormationSaveSlot()
     {
