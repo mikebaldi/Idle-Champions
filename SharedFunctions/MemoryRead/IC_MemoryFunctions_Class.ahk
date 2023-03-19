@@ -468,15 +468,12 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots[slot].heroAlive)
     }
 
+    ; TransitionOverrides + [0x18, 0x30, 0x18] | TransitionOverrides[0] + [0x18] 
+    ; TransitionOverrides["value", 0].size | TransitionOverrides.entries.value0.size
     ; should read 1 if briv jump animation override is loaded to , 0 otherwise
     ReadTransitionOverrideSize()
     {
-         ; TransitionOverrides + [0x18, 0x30, 0x18] | TransitionOverrides[0] + [0x18] 
-         ; TransitionOverrides["value", 0].size | TransitionOverrides.entries.value0.size
-        TransitionsAddress := this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides[0].Clone()
-        TransitionsAddress.ValueType := "List"
-        TransitionsAddress := TransitionsAddress.size
-        return this.GenericGetValue(TransitionsAddress)
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides[0].List.size)
     }
 
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
