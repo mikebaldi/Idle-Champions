@@ -5,14 +5,12 @@
 ; - Variable names are based on the layout within the structure not including GameManager itself. e.g. this.Game.GameUser will be IdleGameManager->Game->GameUser.
 ; - Each offset is built off of a previous offsets. e.g. this.Game.GameUser.ID will be this.game.GameUser + ID, or IdleGameManager->Game->GameUser->ID
 ; - GameObjectStructure is what is used to combine offsets.
-; - Items defined by "List" will have an Item[x] offset that is dynamically selected in code via object.GetGameObjectFromListValues(x).
+; - Note: 03/2023 lookup behavior has changed. GetGameObjectFromListValues is no longer used.
+; - Items defined by "List" will have an Item[x] offset that is dynamically selected in code via object[x].
 ; - There can be multiple missing list offsets as the game can traverse multiple lists to get to the value you want.
-; - i.e. Instead of using:
-;            this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount
-;   you would use
-;            this.Game.GameInstance.Controller.UserData.HeroHandler.HeroList.UpgradeCount.GetGameObjectFromListValues( hero_id )
-;   as hero_id will tell it which hero from the HeroList is being accessed.
-;   Each extra list used will require an extra location passed. e.g. GetGameObjectFromListValues( first_id, second_id, third_id )
+; - Dictionary lookups are done by index of its entry in memory. To find a specific key you must loop over the entries until you find the key that matches.
+; - Dictionary entry values are looked up using the format of: dictObject[entryIndex]
+; - Dictionary key values are looked up using the format of: dictObject["key", entryIndex]
 
 #include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
 
@@ -21,7 +19,7 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
 
     GetVersion()
     {
-        return "v2.1.0, 2023-03-18"
+        return "v2.1.0, 2023-03-19"
     }
 
     Refresh()
