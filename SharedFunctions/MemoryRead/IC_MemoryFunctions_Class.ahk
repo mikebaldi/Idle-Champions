@@ -745,11 +745,11 @@ class IC_MemoryFunctions_Class
         ; value := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
     }
 
-;     ; Finds the Modron Reset area for the current instance's core.
-;     GetModronResetArea()
-;     {
-;         return this.GetCoreTargetAreaByInstance(this.ReadActiveGameInstance())
-;     }
+    ; Finds the Modron Reset area for the current instance's core.
+    GetModronResetArea()
+    {
+        return this.GetCoreTargetAreaByInstance(this.ReadActiveGameInstance())
+    }
 
     ; Finds the index of the current modron in ModronHandlers
     GetCurrentModronSaveSlot()
@@ -816,49 +816,45 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.size)
     }
 
-;     /* Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
-;     */
-;     GetChestCountByID(chestID)
-;     {
-;         size := this.ReadInventoryChestListSize()
-;         if(!size)
-;             return "" 
-;         loop, %size%
-;         {
-;             currentChestID := this.GetInventoryChestIDBySlot(A_Index)
-;             if(currentChestID == chestID)
-;             {
-;                 return this.GetInventoryChestCountBySlot(A_Index)
-;             }
-;         }
-;         return "" 
-;     }
+    ; Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
+    ; TODO: Specialized dictionary
+    GetChestCountByID(chestID)
+    {
+        size := this.ReadInventoryChestListSize()
+        if(!size)
+            return "" 
+        loop, %size%
+        {
+            currentChestID := this.GetInventoryChestIDBySlot(A_Index)
+            if(currentChestID == chestID)
+            {
+                return this.GetInventoryChestCountBySlot(A_Index)
+            }
+        }
+        return "" 
+    }
 
-;     GetInventoryChestIDBySlot(slot)
-;     {
-;             ; Not using 64 bit , but need +0x10 offset for where  starts
-;             testIndex := this.Is64Bit ? 0x20 + ((slot-1) * 0x10) : 0x10 + ((slot-1) * 0x10)
-;             ; Add gameInstances[0] index to list
-;             testObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts
-;             this.AdjustObjectListIndexes(testObject)
-;             ; Calculate chestID index offset and add it to object's offsets
-;             testObject.FullOffsets.Push(testIndex)
-;             ; return Chest ID
-;             return this.GenericGetValue(testObject)
-;     }
+    ; TODO: Specialized dictionary
+    GetInventoryChestIDBySlot(slot)
+    {
+            ; Calculate chestID index offset and add it to object's offsets. Not using 64 bit but need +0x10 offset for where starts
+            dictIndex := this.Is64Bit ? 0x20 + ((slot-1) * 0x10) : 0x10 + ((slot-1) * 0x10)
+            dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
+            dictObject.FullOffsets.Push(0x18, dictIndex)
+            return this.GenericGetValue(dictObject)
+            ;return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", dictIndex])
+    }
 
-;     GetInventoryChestCountBySlot(slot)
-;     {
-;             ; Calculate offset 
-;             ; Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
-;             ; Calculate count index offset and add it
-;             testIndex := this.Is64Bit ? 0x2C + ((slot-1) * 0x10) : 0x1C + ((slot-1) * 0x10)
-;             testObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts
-;             this.AdjustObjectListIndexes(testObject) 
-;             testObject.FullOffsets.Push(testIndex)
-;             ; return Chest Count
-;             return this.GenericGetValue(testObject)
-;     }
+    ; TODO: Specialized dictionary
+    GetInventoryChestCountBySlot(slot)
+    {
+            ;  Calculate offset: Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
+            dictIndex := this.Is64Bit ? 0x2C + ((slot-1) * 0x10) : 0x1C + ((slot-1) * 0x10)
+            dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
+            dictObject.FullOffsets.Push(0x18, dictIndex)
+            return this.GenericGetValue(dictObject)
+            ;return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts[dictIndex])
+    }
 
     ReadInventoryChestListSize()
     {
@@ -891,8 +887,6 @@ class IC_MemoryFunctions_Class
     {
         return this.GenericGetValue(this.CrusadersGameDataSet.ChestTypeDefines.size) 
     }
-
-
 
     ;===================
     ;Currency Conversion
