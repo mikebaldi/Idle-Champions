@@ -477,7 +477,6 @@ class IC_MemoryFunctions_Class
         TransitionsAddress.ValueType := "List"
         TransitionsAddress := TransitionsAddress.size
         return this.GenericGetValue(TransitionsAddress)
-        
     }
 
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".

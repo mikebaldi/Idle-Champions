@@ -195,6 +195,8 @@ class GameObjectStructure
         this[key].IsAddedIndex := true
         location := this.FullOffsets.Count() + 1
         this[key].FullOffsets.Push(collectionEntriesOffset, offset)
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
         this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
     }
 
