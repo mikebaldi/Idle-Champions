@@ -94,12 +94,18 @@ class GameObjectStructure
         {
             if (key == "key")
             {
-                offset := this.CalculateDictOffset([keyOrVal,index]) + 0
+                offset := this.CalculateDictOffset(["key",index]) + 0
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
                 tempObj := this.Clone()
                 tempObj.FullOffsets.Push(collectionEntriesOffset, offset)
                 tempObj.UpdateChildrenWithFullOffsets(tempObj, tempObj.FullOffsets.Count() + 1, [collectionEntriesOffset, offset])
                 return tempObj
+            }
+            else if (key == "value")
+            {
+                offset := this.CalculateDictOffset(["value",index]) + 0
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
+                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
             else
             {
@@ -194,7 +200,7 @@ class GameObjectStructure
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
                 ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-                ;v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
+                ; v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
         }
     }
