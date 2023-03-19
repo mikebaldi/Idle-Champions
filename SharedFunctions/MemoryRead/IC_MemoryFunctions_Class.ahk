@@ -471,7 +471,13 @@ class IC_MemoryFunctions_Class
     ; should read 1 if briv jump animation override is loaded to , 0 otherwise
     ReadTransitionOverrideSize()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides.ActionListSize)
+         ; TransitionOverrides + [0x18, 0x30, 0x18] | TransitionOverrides[0] + [0x18] 
+         ; TransitionOverrides["value", 0].size | TransitionOverrides.entries.value0.size
+        TransitionsAddress := this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides[0].Clone()
+        TransitionsAddress.ValueType := "List"
+        TransitionsAddress := TransitionsAddress.size
+        return this.GenericGetValue(TransitionsAddress)
+        
     }
 
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
@@ -479,17 +485,8 @@ class IC_MemoryFunctions_Class
     {
         specNum--
         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
-        dictCount := g_SF.Memory.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.size)
-        loop, % dictCount
-        {
-            currentHeroID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations["key", A_Index - 1])
-            if (currentHeroID == heroID)
-            {
-                specVal := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[A_Index - 1].List[specNum])
-                return specVal
-            }
-        }
-        return ""
+        dictIndex := this.DictIndexOfKey(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations,heroID)
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[dictIndex].List[specNum])
     }
 
     ;==============================
@@ -842,7 +839,6 @@ class IC_MemoryFunctions_Class
             dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
             dictObject.FullOffsets.Push(0x18, dictIndex)
             return this.GenericGetValue(dictObject)
-            ;return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", dictIndex])
     }
 
     ; TODO: Specialized dictionary
@@ -853,7 +849,6 @@ class IC_MemoryFunctions_Class
             dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
             dictObject.FullOffsets.Push(0x18, dictIndex)
             return this.GenericGetValue(dictObject)
-            ;return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts[dictIndex])
     }
 
     ReadInventoryChestListSize()
@@ -996,6 +991,19 @@ class IC_MemoryFunctions_Class
         if(champID < 107)
             return champID - 1
         return champID - 2
+    }
+
+    DictIndexOfKey(dict, key)
+    {
+        dictCount := g_SF.Memory.GenericGetValue(dict.size)
+        loop, % dictCount
+        {
+            currKey := this.GenericGetValue(dict["key", A_Index - 1])
+            if (currKey == key)
+            {
+                return A_Index - 1
+            }
+        }
     }
 
     #include *i IC_MemoryFunctions_Extended.ahk

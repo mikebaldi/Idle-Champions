@@ -9,7 +9,7 @@
 ; - Items defined by "List" will have an Item[x] offset that is dynamically selected in code via object[x].
 ; - There can be multiple missing list offsets as the game can traverse multiple lists to get to the value you want.
 ; - Dictionary lookups are done by index of its entry in memory. To find a specific key you must loop over the entries until you find the key that matches.
-; - Dictionary entry values are looked up using the format of: dictObject[entryIndex]
+; - Dictionary entry values are looked up using the format of: dictObject[entryIndex] or dictObject["value", entryIndex]
 ; - Dictionary key values are looked up using the format of: dictObject["key", entryIndex]
 
 #include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
@@ -45,13 +45,10 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
             {
                 ; Build offsets for class using imported AHK files.
                 #include *i %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
-                ; special case for Dictionary<List<Action<action>>>
-                this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x1C, 0xC]) ; entries, value[0] (CE doesn't build this on it's own), _size
             }
             else
             {
                 #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
-                this.game.gameInstances.Controller.formation.TransitionOverrides.ActionListSize := New GameObjectStructure(this.game.gameInstances.Controller.formation.TransitionOverrides,, [0x30, 0x18]) ; entries, value[0] (CE doesn't build this on it's own), _size
             }
         }
     }
