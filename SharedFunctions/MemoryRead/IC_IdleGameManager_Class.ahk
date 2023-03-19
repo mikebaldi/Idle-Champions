@@ -43,7 +43,6 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
             this.IdleGameManager := New GameObjectStructure(this.structureOffsets)
             this.IdleGameManager.Is64Bit := this.Main.isTarget64bit
             this.IdleGameManager.BaseAddress := this.BaseAddress
-            this.IdleGameManager.IsBaseObject := true
             if(!this.Main.isTarget64bit)
             {
                 ; Build offsets for class using imported AHK files.

@@ -1,10 +1,6 @@
 #include %A_LineFile%\..\..\IC_ArrayFunctions_Class.ahk
-; GameManager class contains the in game data structure layout
-; LastUpdated := "2022-02-01"
-
-
-; Class used to describe a memory location. 
-; ListIndexes is an array that contains the locations of where to insert offsets when accessing specific items in lists.
+; Class used to describe a memory locations. 
+; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 
 ;       Note: "List", "Dict", and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
 ; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
@@ -12,14 +8,33 @@
 
 class GameObjectStructure
 {
-    FullOffsets := Array()
-    FullOffsetsHexString := ""
-    ValueType := "Int"
-    BaseAddress := 0x0
-    Is64Bit := 0
-    Offset := 0x0
-    IsBaseObject := false
-    IsAddedIndex := false
+    FullOffsets := Array()          ; Full list of offsets required to get from base pointer to this object
+    FullOffsetsHexString := ""      ; Same as above but in readable hex string format. (Enable commented lines assigning this value to use for debugging)
+    ValueType := "Int"              ; What type of value should be expected for the memory read.
+    BaseAddress := 0x0              ; The address the base pointer points to. Must read memory from target exe first to set this.
+    Is64Bit := 0                    ; Boolean indicating the system is 64 bit and not 32.
+    Offset := 0x0                   ; The offset from last object to this object.
+    IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
+
+    ; Creates a new instance of GameObjectStructure
+     __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
+    {
+        this.ValueType := ValueType
+        if(appendedOffsets[1]) ; Copy base and add offset
+        {
+            this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
+            this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
+            this.Offset := appendedOffsets[1]
+            this.FullOffsets := baseStructureOrFullOffsets.FullOffsets.Clone()
+            this.FullOffsets.Push(this.Offset*)
+        }
+        else
+        {
+            this.FullOffsets.Push(baseStructureOrFullOffsets*)
+        }
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        ; this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+    }
 
     ; BEWARE of cases where you may be looking in a dictionary for a key that is the same as a value of the object in the dictionary (e.g. dictionary["Effect"].Effect)
     ; When a key is not found for objects which have collections, use this function. 
@@ -100,26 +115,6 @@ class GameObjectStructure
         return this[key]
     }
 
-    ; Creates a new instance of GameObjectStructure
-     __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
-    {
-        this.ValueType := ValueType
-        if(appendedOffsets[1]) ; Copy base and add offset
-        {
-            this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
-            this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
-            this.Offset := appendedOffsets[1]
-            this.FullOffsets := baseStructureOrFullOffsets.FullOffsets.Clone()
-            this.FullOffsets.Push(this.Offset*)
-        }
-        else
-        {
-            this.FullOffsets.Push(baseStructureOrFullOffsets*)
-        }
-        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        this.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
-    }
-
     ; Returns the full offsets of this object after BaseAddress.
     GetOffsets()
     {
@@ -179,7 +174,7 @@ class GameObjectStructure
         return var
     }
 
-    ; Creates a gameobject at key, updates its offsets, and updates all children's offsets. 
+    ; Creates a gameobject at key, updates its offsets, copies the other values in the object to key object, propegates changes down chain of objects under key. 
     UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
     {
         this[key] := this.StableClone()
@@ -199,7 +194,7 @@ class GameObjectStructure
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
                 ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-                v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
+                ;v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
         }
     }
