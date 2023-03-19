@@ -648,13 +648,41 @@ class IC_MemoryFunctions_Class
         return val
     }
 
-    ; ; TODO: FIX
-    ; GetHeroOrderedUpgrade(champID := 1, upgradeID := 0)
-    ; {
-    ;     orderedUpgradeEntry := 0
-    ;     orderedUpgrade := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID]
-    ;     return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID]
-    ; }
+    ;=========================
+    ; Champion Specializations
+    ;=========================
+    ; upgradeID default is 7 for memory read testing. Tests Bruenor's Battle/Shield Master spec.
+
+    ReadHeroUpgradeRequiredLevel(champID := 1, upgradeID := 7)
+    {
+        orderedUpgradeEntry := 0
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID].RequiredLevel)
+    }
+
+    ; Checks for specialization graphic. No graphic means no spec.
+    ReadHeroUpgradeIsSpec(champID := 1, upgradeID := 7)
+    {
+        orderedUpgradeEntry := 0
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID].defaultSpecGraphic) > 0
+    }
+
+    ReadHeroUpgradeRequiredUpgradeID(champID := 1, upgradeID := 7)
+    {
+        orderedUpgradeEntry := 0
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID].RequiredUpgradeID)
+    }
+
+    ReadHeroUpgradID(champID := 1, upgradeID := 7)
+    {
+        orderedUpgradeEntry := 0
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID].ID)
+    }
+
+    ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 7)
+    {
+        orderedUpgradeEntry := 0
+        return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered[orderedUpgradeEntry].List[upgradeID].SpecializationName)
+    }
 
     ; Returns the formation array of the formation used in the currently active modron.
     GetActiveModronFormation()
@@ -715,7 +743,6 @@ class IC_MemoryFunctions_Class
         }
         return formationSaveSlot
         ; value := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
-        ; return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID])
     }
 
 ;     ; Finds the Modron Reset area for the current instance's core.
