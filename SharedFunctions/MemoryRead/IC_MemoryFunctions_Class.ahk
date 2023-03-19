@@ -58,7 +58,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.8, 2023-2-27, IC v0.463+"
+        return "v2.0.0, 2023-3-18, IC v0.463+"
     }
 
     GetPointersVersion()
@@ -771,39 +771,34 @@ class IC_MemoryFunctions_Class
         }
     }
 
-;     ;======================
-;     ; Inventory...
-;     ;======================
-;     GetInventoryBuffAmountByID(buffID)
-;     {
-;         size := this.ReadInventoryItemsCount()
-;         if(!size)
-;             return ""
-;         ; After adding gameInstances list value, remove gameInstances ListIndex and increment ListIndexes values following it
-;         testObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.ID
-;         testObject := this.AdjustObjectListIndexes(testObject)
-;         ; Find the buff
-;         index := this.BinarySearchList(testObject, 1, size, buffID)
-;         if (index >= 0)
-;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.InventoryAmount.GetGameObjectFromListValues(this.GameInstance, index - 1))
-;         else
-;             return ""
-;     }
+    ;======================
+    ; Inventory...
+    ;======================
+    GetInventoryBuffAmountByID(buffID)
+    {
+        size := this.ReadInventoryItemsCount()
+        if(!size)
+            return ""
+        ; Find the buff
+        index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs, ["ID"], 1, size, buffID)
+        if (index >= 0)
+            return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs[index].InventoryAmount)
+        else
+            return ""
+    }
 
-;     GetInventoryBuffNameByID(buffID)
-;     {
-;         size := this.ReadInventoryItemsCount()
-;         if(!size)
-;             return ""
-;         testObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.ID
-;         testObject := this.AdjustObjectListIndexes(testObject)
-;         ; Find the buff
-;         index := this.BinarySearchList(testObject, 1, size, buffID)
-;         if (index >= 0)
-;             return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs.Name)
-;         else
-;             return ""
-;     }
+    GetInventoryBuffNameByID(buffID)
+    {
+        size := this.ReadInventoryItemsCount()
+        if(!size)
+            return ""
+        ; Find the buff
+        index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs, ["ID"], 1, size, buffID)
+        if (index >= 0)
+            return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs[index].Name)
+        else
+            return ""
+    }
 
     ReadInventoryBuffIDBySlot(index)
     {
