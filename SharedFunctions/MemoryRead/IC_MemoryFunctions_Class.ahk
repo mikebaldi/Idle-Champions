@@ -474,27 +474,20 @@ class IC_MemoryFunctions_Class
         return this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.TransitionOverrides.ActionListSize)
     }
 
-    ; TODO: FIX
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
-    GetCoreSpecializationForHero(heroID)
+    GetCoreSpecializationForHero(heroID, specNum := 1)
     {
+        specNum--
         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
         dictCount := g_SF.Memory.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.size)
         i := 0
         loop, % dictCount
         {
-            tempObject := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations
-            currKeyOffset := tempObject.CalculateDictOffset(["key", i])
-            currValOffset := tempObject.CalculateDictOffset(["value", i])
-            tempObject.ValueType := "Int"
-            currentHeroID := this.GenericGetValue(tempObject)
+            currentHeroID := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations["key", A_Index - 1])
             if (currentHeroID == heroID)
             {
-                specObject := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations.List[specNum]
-                insertLoc := specObject.FullOffsets.Length() - 1
-                specObject.FullOffsets.InsertAt(insertLoc, currValOffset + 0)
-                specVal := this.GenericGetValue(specObject)
-                return this.GenericGetValue(specObject)
+                specVal := this.GenericGetValue(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[A_Index - 1].List[specNum])
+                return specVal
             }
             ++i
         }
