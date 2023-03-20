@@ -15,12 +15,17 @@ AddonManagement.FirstRunCheck()
 ;                    Add Button to the GUI
 ; ############################################################
 
-AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
+AddonLinkToPicture := ""
+if(GUIFunctions.isDarkMode)
+	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBarDark.png"
+else
+	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
 GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUIClickedButton")
 
 AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()
 	AddonManagement.NeedSave := 0
 	Gui, AddonManagement:Show
+	GUIFunctions.UseThemeTitleBar("AddonManagement")
 }
 

@@ -29,11 +29,11 @@ class IC_GameSettings_Class
         this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
         if(!this.Main.isTarget64bit)
         {
-            #include %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
         }
         else
         {
-            #include %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
         }
     }
 }

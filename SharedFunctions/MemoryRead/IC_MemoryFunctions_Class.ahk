@@ -33,6 +33,7 @@ class IC_MemoryFunctions_Class
     ;   		return this.gameInstances[0];
     ;   	}
     GameInstance := 0
+    PointerVersionString := ""
 
     __new(fileLoc := "CurrentPointers.json")
     {
@@ -45,6 +46,7 @@ class IC_MemoryFunctions_Class
             ExitApp
         }
         currentPointers := JSON.parse( oData )
+        this.PointerVersionString := currentPointers.Version . (currentPointers.Platform ? (" (" currentPointers.Platform  . ") ") : "")
         this.GameManager := new IC_IdleGameManager_Class(currentPointers.IdleGameManager.moduleAddress, currentPointers.IdleGameManager.moduleOffset)
         this.GameSettings := new IC_GameSettings_Class(currentPointers.GameSettings.moduleAddress, currentPointers.GameSettings.staticOffset, currentPointers.GameSettings.moduleOffset)
         this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
@@ -56,7 +58,12 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v1.10.6, 2022-08-30, IC v0.463+"
+        return "v1.10.8, 2023-2-27, IC v0.463+"
+    }
+
+    GetPointersVersion()
+    {
+        return this.PointerVersionString
     }
 
     ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -237,38 +244,37 @@ class IC_MemoryFunctions_Class
 
     ReadChampHealthByID(ChampID := 0 )
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.health.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampSlotByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampBenchedByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
-    ; TODO: Depricate older unused versions
     ReadChampLvlByID(ChampID:= 0)
     {
-        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.level.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.Level_k__BackingField.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         if !val
-            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+            val := this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes._level.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
         return val
     }
 
     ReadChampSeatByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.SeatID.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ReadChampNameByID(ChampID := 0)
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(this.GameInstance, ChampID - 1))
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.def.name.GetGameObjectFromListValues(this.GameInstance, this.GetHeroHandlerIndexByChampID(ChampID)))
     }
 
     ;=============================
@@ -543,12 +549,15 @@ class IC_MemoryFunctions_Class
     ;=================
     ReadOfflineTime()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.inGameNumSecondsToProcess.GetGameObjectFromListValues(this.GameInstance))
+        ; OfflineTimeRequested is populated right during initialization of the handler. OfflineTimeSimulated is not populated until the simulation is complete.
+        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.OfflineTimeRequested_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ReadOfflineDone()
     {
-        return this.GenericGetValue(this.GameManager.game.gameInstances.OfflineProgressHandler.finishedOfflineProgressType.GetGameObjectFromListValues(this.GameInstance))
+        handlerState := this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentState_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        stopReason := this.GenericGetValue(this.GameManager.game.gameInstances.OfflineHandler.CurrentStopReason_k__BackingField.GetGameObjectFromListValues(this.GameInstance))
+        return handlerState == 0 AND stopReason != "" ; handlerstate is "inactive" and stopReason is not null
     }
 
     ReadResetsCount()
@@ -574,6 +583,11 @@ class IC_MemoryFunctions_Class
     ReadUltimateButtonListSize()
     {
         return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.ultimatesBar.ultimateItems.size.GetGameObjectFromListValues(this.GameInstance))
+    }
+
+    ReadWelcomeBackActive()
+    {
+        return this.GenericGetValue(this.GameManager.game.gameInstances.Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active.GetGameObjectFromListValues(this.GameInstance))
     }
 
     ;======================
@@ -991,6 +1005,14 @@ class IC_MemoryFunctions_Class
             i++
         }
         return gameObject
+    }
+
+    ; Returns the index of HeroHandler the champion is expected to be at. As of v472 hero defines became missing in the defines so champID can no longer be used as an index.
+    GetHeroHandlerIndexByChampID(champID)
+    {
+        if(champID < 107)
+            return champID - 1
+        return champID - 2
     }
 
     #include *i IC_MemoryFunctions_Extended.ahk

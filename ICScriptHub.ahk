@@ -39,8 +39,6 @@ global g_TabControlWidth := 430
 global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 global g_InputsSent := 0
 global g_TabList := ""
-global g_CustomColor := 0x333333
-global g_isDarkMode := false
 global g_PlayButton := A_LineFile . "\..\Images\play-100x100.png"
 global g_StopButton := A_LineFile . "\..\Images\stop-100x100.png"
 global g_ConnectButton := A_LineFile . "\..\Images\connect-100x100.png"
@@ -49,10 +47,10 @@ global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
-;TODO: convert g_isDarkMode to use gui functions
-if (g_isDarkMode)
-    GUIfunctions.isDarkMode := true
-if (g_isDarkMode)
+
+;Load themes
+GUIFunctions.LoadTheme()
+if (GUIfunctions.isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
 ;Load user settings
@@ -82,25 +80,26 @@ if(g_UserSettings[ "WriteSettings" ] := true)
     g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
 }
 
+
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
-Gui, ICScriptHub:+Resize -MaximizeBox
+Gui, ICScriptHub:+Resize -MaximizeBox 
+Gui, ICScriptHub: +HwndGUIICScriptHub
 ;Gui, ICScriptHub:Add, Button, x4 y5 w50 gReload_Clicked, `Reload
 ;Gui, ICScriptHub:Add, Button, x+20 gLaunch_Clicked, Launch IC
 global g_MenuBarXPos:=4
 GUIFunctions.AddButton(g_GameButton,"Launch_Clicked","LaunchClickButton")
 GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton")
 
-if(g_isDarkMode)
-    Gui, ICScriptHub:Font, cSilver ;
+GUIFunctions.UseThemeTextColor()
 ; Needed to add tabs
 Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, %g_TabList%
 ; Set specific tab ordering for prioritized scripts.
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-if(g_isDarkMode)
-    Gui, ICScriptHub:Color, % g_CustomColor
+GUIFunctions.UseThemeBackgroundColor()
 Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
+GUIFunctions.UseThemeTitleBar("ICScriptHub")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
 
 Reload_Clicked()

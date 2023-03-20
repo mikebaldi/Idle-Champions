@@ -1,10 +1,14 @@
+#include %A_LineFile%\..\json.ahk
+
 class GUIFunctions
 {
     isDarkMode := false
+    CurrentTheme := ""
+    FileOverride := ""
+
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
-        ; TODO: contain tablist
         g_TabList .= addedTabs
         ; Increase UI width to accommodate new tab.
         StrReplace(g_TabList,"|",,tabCount)
@@ -31,19 +35,96 @@ class GUIFunctions
     AddToolTip(controlVariableName, tipMessage)
     {
         global
-        WinGet ICScriptHub_ID, ID, A
-        GuiControl ICScriptHub:Focus, %controlVariableName%
-        ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
+        toolTipTarget := this.GetToolTipTarget(controlVariableName)
         g_MouseToolTips[toolTipTarget] := tipMessage
     }
 
-    SetThemeTextColor()
-    {  
-        if(this.isDarkMode)
-            Gui, ICScriptHub:Font, cSilver w400
-        else
-            Gui, ICScriptHub:Font, cDefault w400
+    GetToolTipTarget(controlVariableName)
+    {
+        global
+        WinGet ICScriptHub_ID, ID, A
+        GuiControl ICScriptHub:Focus, %controlVariableName%
+        ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
+        return toolTipTarget
     }
+
+    LoadTheme(guiName := "ICScriptHub", fileOverride := "")
+    {
+        this.GUIName := guiName
+        objData := ""
+        if(this.CurrentTheme != "" AND fileOverride == "" AND this.FileOverride == "")
+            return
+        FileName := ""
+        if (fileOverride != "")
+        {
+            FileName := fileOverride
+            this.FileOverride := fileOverride
+        }
+        if (FileName == "" )
+        {
+            FileName := A_LineFile . "\..\..\Themes\CurrentTheme.json"
+            this.FileOverride := ""
+        }
+        if(FileExist(FileName))
+        {
+            FileRead, objData, %FileName%
+        }
+        else
+        {
+            FileName := A_LineFile . "\..\..\Themes\DefaultTheme.json"
+            FileRead, objData, %FileName%
+        }
+        
+        this.CurrentTheme := JSON.parse( objData )
+        this.isDarkMode := this.currentTheme["UseDarkThemeGraphics"]
+    }
+
+    UseThemeTextColor(textType := "default", weight := 400)
+    {  
+        guiName := this.GUIName
+        if(textType == "default")
+            textType := "DefaultTextColor"
+        textColor := this.CurrentTheme[textType]
+        Gui, %guiName%:Font, c%textColor% w%weight%
+    }
+
+    UseThemeBackgroundColor()
+    {
+        guiName := this.GUIName
+        windowColor := this.CurrentTheme[ "WindowColor" ]
+        Gui, %guiName%:Color, % windowColor
+    }
+
+    UseThemeListViewBackgroundColor(controlID := "")
+    {
+        guiName := this.GUIName
+        bgColor := this.CurrentTheme[ "TableBackgroundColor" ]
+        GuiControl, %guiName%: +Background%bgColor%, %controlID%
+    }
+
+    ; Sets the window title bar to dark if theme is a dark theme. GUI must be shown before calling.
+    UseThemeTitleBar(guiName, refresh := true)
+    {
+        if(this.isDarkMode AND guiName != "")
+        {
+            if (A_OSVersion >= "10.0.17763" && SubStr(A_OSVersion, 1, 3) = "10.") 
+            {
+                attr := 19
+                if (A_OSVersion >= "10.0.18985") {
+                    attr := 20
+                }
+                Gui, %guiName%: +hwndGuiID
+                DllCall("dwmapi\DwmSetWindowAttribute", "ptr", GuiID, "int", attr, "int*", true, "int", 4)
+                ; refresh window
+                if(refresh)
+                {
+                    Gui, %guiName%:Hide
+                    Gui, %guiName%:Show
+                }
+            }
+        }
+    }
+
     ;------------------------------
     ;
     ; Function: LVM_CalculateSize

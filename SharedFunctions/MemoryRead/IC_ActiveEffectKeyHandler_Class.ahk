@@ -15,7 +15,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.2.0, 2022-07-02, IC v0.440+"  
+        return "v2.3.0, 2022-09-30, IC v0.440+"
     }
 
     Refresh()
@@ -35,22 +35,22 @@ class IC_ActiveEffectKeyHandler_Class
 
     Refresh32()
     {
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler32_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler32_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler32_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler32_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler32_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler32_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler32_Import.ahk
     }
 
     Refresh64()
     {
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler64_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler64_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler64_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler64_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler64_Import.ahk
-        #include %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler64_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler64_Import.ahk
     }
 
     GetEffectHandler(handlerName)
@@ -58,13 +58,15 @@ class IC_ActiveEffectKeyHandler_Class
         baseAddress := this.GetBaseAddress(handlerName)
         gameObject := New GameObjectStructure([])
         gameObject.BaseAddress := baseAddress
+        gameObject.Is64Bit := g_SF.Memory.GameManager.Is64Bit()
         return gameObject
     }
 
     GetBaseAddress(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, champID - 1, 0 )
+        ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers.size.GetGameObjectFromListValues( 0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID), 0 )
         ; add dictionary value from effectkeysbyname
         currOffset := tempobject.CalculateDictOffset(["value", this.GetDictIndex(handlerName)]) + 0 
         tempObject.FullOffsets.InsertAt(tempObject.FullOffsets.Count() - 4, currOffset)
@@ -83,12 +85,14 @@ class IC_ActiveEffectKeyHandler_Class
     {
         champID := this.HeroHandlerIDs[handlerName]
         effectName := this.HeroEffectNames[handlerName]
-        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, ChampID - 1)
+        tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.size.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
         dictCount := g_SF.Memory.GenericGetValue(tempObject)
+        if(dictCount > 100 OR dictCount < 0) ; skip the loop if the value is clearly unreasonable to prevent freezes.
+            return -1 
         i := 0
         loop, % dictCount
         {
-            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, ChampID - 1)
+            tempObject := g_SF.Memory.GameManager.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.GetGameObjectFromListValues(0, g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID))
             currOffset := tempObject.CalculateDictOffset(["key", i])
             tempObject.FullOffsets.Push(currOffset)
             tempObject.ValueType := "UTF-16"
@@ -174,13 +178,16 @@ class ActiveEffectKeySharedFunctions
         {
             ReadNumContractsFulfilled()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+                contractsFulfilled := g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+                if(contractsFulfilled != "" AND contractsFulfilled <= 100)
+                    return contractsFulfilled
+                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.obligationsFufilled)
             }
 
-            ReadSecondsOnGoldFind()
-            {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
-            }
+            ; ReadSecondsOnGoldFind()
+            ; {
+            ;     return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
+            ; }
         }
     }
 

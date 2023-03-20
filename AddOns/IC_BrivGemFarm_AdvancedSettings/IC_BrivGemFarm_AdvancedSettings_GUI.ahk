@@ -13,6 +13,8 @@ Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, , BrivGemFarm Advanced Settings
 Gui, ICScriptHub:Font, w400
 
+;g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
+;g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
 ;g_BrivUserSettings[ "BrivJumpBuffer" ]
 ;g_BrivUserSettings[ "DashWaitBuffer" ]
 ;g_BrivUserSettings[ "DoChestsContinuous" ]
@@ -26,21 +28,24 @@ Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, 
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RestoreLastWindowOnGameOpen x15 y+5, RestoreLastWindowOnGameOpen
 
-if(g_isDarkMode)
-    Gui, ICScriptHub:Font, g_CustomColor
-Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_BrivJumpBuffer x15 y+5 w50, % g_BrivUserSettings[ "BrivJumpBuffer" ]
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ForceOfflineGemThreshold x15 y+5 w50, % g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ForceOfflineRunThreshold x15 y+10 w50, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_BrivJumpBuffer x15 y+10 w50, % g_BrivUserSettings[ "BrivJumpBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_DashWaitBuffer x15 y+10 w50, % g_BrivUserSettings[ "DashWaitBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ResetZoneBuffer x15 y+10 w50, % g_BrivUserSettings[ "ResetZoneBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowXPositon x15 y+10 w50, % g_BrivUserSettings[ "WindowXPositon" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowYPositon x15 y+10 w50, % g_BrivUserSettings[ "WindowYPositon" ]
 
-if(g_isDarkMode)
-    Gui, ICScriptHub:Font, cSilver
+GUIFunctions.UseThemeTextColor()
 
-GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_BrivJumpBuffer
+GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_ForceOfflineGemThreshold
 xyValX += 55
 xyValY += 5
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10 vOptionSettingText_BrivJumpBuffer, BrivJumpBuffer
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10 vOptionSettingText_ForceOfflineGemThreshold, ForceOfflineGemThreshold
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ForceOfflineRunThreshold, ForceOfflineRunThreshold
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_BrivJumpBuffer, BrivJumpBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_DashWaitBuffer, DashWaitBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ResetZoneBuffer, ResetZoneBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPositon, WindowXPositon

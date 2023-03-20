@@ -10,14 +10,10 @@ Gui, ICScriptHub:Add, Text, x15 yp+5, `All Memory Functions:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Checkbox,x145 yp+0 vMemoryFunctionsFullRead_LoadHandlers, Champions
 
-if(g_isDarkMode)
-    Gui, Font, g_CustomColor
+GUIFunctions.UseThemeTextColor("TableTextColor")
 Gui, ICScriptHub:Add, ListView, x15 y+8 w525 h650 vMemoryFunctionsViewID, Function|x|Value
-if(g_isDarkMode)
-{
-    GuiControl,ICScriptHub: +Background888888, MemoryFunctionsViewID
-    Gui, ICScriptHub:Font, cSilver
-}
+
+GUIFunctions.UseThemeListViewBackgroundColor("MemoryFunctionsViewID")
 
 class IC_MemoryFunctionsFullRead_Component
 {

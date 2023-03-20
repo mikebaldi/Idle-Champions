@@ -477,10 +477,11 @@ Class AddonManagement
         GuiControl, AddonInfo: , AddonInfoInfoID, % Addon.Info
         DependenciesText := ""
         for k,v in Addon.Dependencies {
-            DependenciesText .= "- " . k . ": " . v "`n"
+            DependenciesText .= "- " . v.Name . ": " . v.Version "`n"
         }
         GuiControl, AddonInfo: , AddonInfoDependenciesID, % DependenciesText
         Gui, AddonInfo:Show
+        GUIFunctions.UseThemeTitleBar("AddonInfo")
     }
 
     WriteAddonManagementSettings(){

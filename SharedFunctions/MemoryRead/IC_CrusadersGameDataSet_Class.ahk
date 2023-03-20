@@ -30,11 +30,11 @@ class IC_CrusadersGameDataSet_Class
         this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := this.Main.isTarget64bit
         if(!this.Main.isTarget64bit)
         {
-            #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
         }
         else
         {
-            #include %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
         }
     }
 }

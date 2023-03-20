@@ -18,7 +18,11 @@ class IC_About_Component
         gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
         if(isFunc(g_SF.Memory.ReadGameVersion))
             string .= "Idle Champions Game Version: " . gameVersion . "`n"
+        if(isFunc(g_SF.Memory.GetPointersVersion))
+            string .= "Current Pointers: " . (g_SF.Memory.GetPointersVersion() ? g_SF.Memory.GetPointersVersion() : " ---- ") . "`n"
         string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)`n`n"
+        if(isFunc(g_SF.Memory.GetVersion))
+            string .= "MemoryFunctions Version: " . g_SF.Memory.GetVersion() . "`n"
         if(isFunc(IC_IdleGameManager_Class.GetVersion))
             string .= "IdleGameManager Memory: " . IC_IdleGameManager_Class.GetVersion() . "`n"
         if(isFunc(IC_GameSettings_Class.GetVersion))

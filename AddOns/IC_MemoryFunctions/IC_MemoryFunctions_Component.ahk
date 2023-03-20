@@ -13,17 +13,6 @@ Check_Clicked()
     return
 }
 
-IC_MemoryFunctions_ReadMemory()
-{
-    if(g_SF.Memory.ReadCurrentZone() != "" AND g_SF.Memory.ReadGems() != "")
-    {
-        if(IsFunc(Func("ReadMemoryFunctionsExtended.CheckReads")))
-            ReadMemoryFunctionsExtended.CheckReads()
-        else if (IsFunc(Func("ReadMemoryFunctions.CheckReads")))
-            ReadMemoryFunctions.CheckReads()
-    }
-}
-
 ; Can combine up to 1 primary and up to 1 secondary 
 ; Primary contains ReadMemoryFunctions class. Secondary contains ReadMemoryFunctionsExtended class.
 

@@ -1,19 +1,23 @@
 GUIFunctions.AddTab("Chests")
 
 Gui, ICScriptHub:Tab, Chests
-Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to read chests into lists."
+Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data and read chests into lists."
 Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only buy or open chests while game is closed. (Yes, this is a hassle.)"
 Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchaseID, Buy Chests: 
 Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestPurchaseComboBoxID
 Gui, ICScriptHub:Add, Picture, x+35 h18 w18 vButtonRefreshChestPurchaser, %g_ReloadButton%
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, x30 y+15 w75 vChestPurchaseCountID, % "99"
+GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserBuyChests, Buy
 
 GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestPurchaseID
 xyValY += 150
 Gui, ICScriptHub:Add, GroupBox, x15 y%xyValY% w425 h150 vGroupBoxChestOpenID, Open Chests: 
 Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestOpenComboBoxID
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, y+15 w75 vChestOpenCountID, % "99"
+GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserOpenChests, Open
 
 buyChestsFunc := Func("IC_ChestPurchaser_Component.BuyChests")
@@ -38,6 +42,7 @@ class IC_ChestPurchaser_Component
             g_SF.Memory.OpenProcessReader()
         else
             return
+        g_SF.ResetServerCall()
         size := g_SF.Memory.ReadChestDefinesSize()
         comboBoxOptions := "|"
         if(!size OR size > 3000 OR size < 0)
@@ -53,7 +58,6 @@ class IC_ChestPurchaser_Component
             chestName := g_SF.Memory.GetChestNameBySlot(A_Index)
             comboBoxOptions .= chestID . " " . chestName . "|"
         }
-        g_SF.ResetServerCall()
         GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
         GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
     }
@@ -62,6 +66,11 @@ class IC_ChestPurchaser_Component
     {
         global
         Gui,ICScriptHub:Submit, NoHide
+        if(g_ServerCall == "")
+        {
+            MsgBox % "No user data available. Open the game and refresh chest list before continuing."
+            return
+        }
         splitArray := StrSplit(ChestPurchaseComboBoxID, " ",,2)
         chestID := splitArray[1]
         chestName := splitArray[2]
@@ -94,12 +103,17 @@ class IC_ChestPurchaser_Component
     {
         global
         Gui,ICScriptHub:Submit, NoHide
+        if(g_ServerCall == "")
+        {
+            MsgBox % "No user data available. Open the game and refresh chest list before continuing."
+            return
+        }
         splitArray := StrSplit(ChestOpenComboBoxID, " ",,2)
         chestID := splitArray[1]
         chestName := splitArray[2]
         MsgBox % "Opening " . ChestOpenCountID . " of " . chestName . " (ID: " . chestID . ") Make sure the game is closed before continuing."
         openCount := ChestOpenCountID
-        shinyMessage := ""
+        shinyCount := 0
         while(openCount > 0)
         {
             GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " openCount " chests..."
@@ -114,10 +128,41 @@ class IC_ChestPurchaser_Component
                 MsgBox % "Failed because " . response.failure_reason . response.fail_message
                 return 
             }
-            shinyMessage .= g_ServerCall.ParseChestResults(response)
+            shinyCount += g_SF.ParseChestResults(response)
             openCount -= 99
         }
         GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " Max(openCount,0) " chests..."
-        MsgBox % "Done`n" . (shinyMessage != "" ? shinyMessage : "No shiny gear found.")
+        shinyString := "No shiny gear found."
+        test := IC_ChestPurchaser_Component.GetShinyCountString()
+        if(shinyCount > 0)
+        {
+            shinyString := "Shinies found: " . shinyCount . "`n"
+            shinyString .= IC_ChestPurchaser_Component.GetShinyCountString()
+        }
+        MsgBox % "Done`n" . shinyString
+    }
+
+    ; Returns a string listing shinies found by champion.
+    GetShinyCountString()
+    {
+        shnieisByChampString := ""
+        shiniesByChamp := g_SharedData.ShiniesByChamp
+        for champID, slots in shiniesByChamp
+        {
+            champName := g_SF.Memory.ReadChampNameByID(champID)
+            champName := champName ? champName : champID
+            shnieisByChampString .= champName . ": Slots ["
+            for k,v in slots
+            {
+                shnieisByChampString .= k . ","
+            }
+            if(slots != "")
+            {
+                shnieisByChampString := SubStr(shnieisByChampString,1,StrLen(shnieisByChampString)-1)
+            }                
+            shnieisByChampString .= "]`n"
+        }
+        shnieisByChampString := SubStr(shnieisByChampString, 1, StrLen(shnieisByChampString)-1)
+        return shnieisByChampString
     }
 }

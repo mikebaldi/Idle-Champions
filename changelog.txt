@@ -1,3 +1,132 @@
+March 12, 2023
+    Updated the Example Addon with more sample code and documentation (more coming).
+    Fixed theme not applying to GameLocationSettings.
+    Added title bar color swapping between dark/light themes.
+    Updated LoadTheme to allow a filename of a theme to be passed and used instead of the default.
+
+March 12, 2023
+    Added available pointers for Steam v500 (Fixes DialogManager).
+    Added memory read for the Welcome Back notification being active.
+    Added a safety check to prevent stacking while modron is resetting.
+    Fixed double JSON parsing bug.
+    Added simple color themes.
+        Themes\CurrentTheme.json is the theme currently in use.
+        Themes\ includes sample Default and Dark theme settings. Copy contents CurrentTheme.json to update theme.
+    Updated Addon Management, Version Picker, and Briv Gem Farm's running window to use the new Themes.
+    Fixed dependencies not displaying in Addon info window.
+    Updated the .gitignore to ignore settings files.
+    Fixed MemoryRead addon to be decoupled from Stats addon. (No longer requires stats addon to update MemoryRead tab automatically when farming gems).
+    Added new error message to Chest Purchaser addon when no user details have been loaded.
+    Added counting shiny gear per hero back into results from opening chests in the Chest Purchaser addon.
+
+March 7, 2023
+    Removed Briv's stack conversion safety call from modron reset since it is unlikely to be helpful anymore.
+    Updated some function documentation.
+    Updated some functions with nested if statements to be more simplified.
+    Updated Gold Chest server call to estimate 6 seconds for 99 chests instead of 7 seconds.
+    Updated memory view stats to show skip chance up to 16 decimals instead of just 2. 
+    Fixed a bug that was mistakenly showing failed stack conversions.
+    Added diagnostic info when in the error when Script Hub fails to parse a settings file.
+    Updated 64 bit Imports for v500.
+
+March 5, 2023
+    Merged huan's updates to allow for hybrid stacking via new options in BrivGF Advanced tab. See the SETTINGS.md file in the BrivGemFarm addon's folder for descriptions of the new settings.
+    Fixed script saying chests were purchased/opened when they werent. (credit: huan)
+    Updated offline message to indicate how many chests were bought/opened while offline stacking. (credit: huan)
+    Updated 64 bit Imports for v499.1. 
+    Moved ParseChestResults from servercalls to shared functions.
+    Updated function to save shinies found by hero/slot instead of returning a string.
+    Created new function GetToolTipTarget in GUIFunctions for finding the ClassNN value of a control.
+    Updated chest purchaser addon to use the new parse function. (This loses functionality to show what champ/slot found a shiny. Will return in the future.)
+    Updated the stats tab to show found shinies by champ/slot as a mouseover tooltip on the shiny count.
+    Updated some code to better match Scritp Hub's code styling.
+    Updated DoChests to share purchased/opened chest counts in SharedData.
+    Fixed a bug that broke failed stacking recovery when Auto detect for stacks is enabled but the value in Target Haste stacks is less than the calculated value. 
+
+February 27, 2023
+    Added current pointer version to "About" addon.
+    Added MemoryFunctions version to "About" addon.
+    Updated VersionPicker to include platform and version in CurrentPointers.json (required for display on about tab). 
+    Updated version numbers for updated scripts.
+    Added available pointers for Steam v498. (Updated pointer for DialogManager which handles looking up blessings/favor.)
+
+February 24, 2023
+    Added available pointers for CNE v497.
+
+February 21, 2023
+    Updated 64 bit Imports for v497.
+    Added available pointers for EGS v497.
+    
+February 18, 2023
+    Updated shared functions version of ResetServerCall to fix the ps6 bug for any addons that might be using it.
+    Updated ServerCalls to use currently working servers as defaults since play servers 1-16 were recently dropped and are currently non-functional. Possibly a temporary change. The default is now ps23.
+    Updated timeout values in the ServerCalls class to try and allow for some extra leniency on slow server calls.
+    Updated 64 bit Imports for v496.
+    Added available pointers for Steam v496. (Fix for chest names not loading after 496 update.)
+
+January 28, 2023
+    Updated 64 bit Imports for v490.
+    Updated VersionPicker to sort versions numerically.
+    Fixed bug where the correct play server was not being read from memory resulting in a using a default of ps6.
+    Added potential fix for losing Patron when doing a reset and the patron can not be read from memory.
+
+January 9, 2023
+    Updated 64 bit Imports for v485.1
+
+December 23, 2022
+    Updated 64 bit Imports for v484
+
+December 8, 2022
+    Updated Steam/EGS pointers for v480 so the chest names will load in the chest purchaser addon.
+    Updated offsets for v480.
+    Fixed a bug that prevented purchasing chests by ID # when the chest purchasing addon was not able to load the chest data from the game.
+    Updated Kartridge/CNE pointers for v478.
+
+December 4, 2022
+    Merged OfflineBeta branch into main.
+    Fixed stacks stats display. Now current run's total starting stacks (Last Reset).
+    Updated chest purchasing times be based linearly on number of chests opened, where 0-99 gold chests takes 0-7s and 0-99 silver chests takes 0-3s.
+    Updated Imports for v479.
+
+November 12, 2022
+    Updated Imports for v476.4
+    Updated ShouldDashWait to skip dash wait if Briv is out of stacks of Haste.
+
+November 6, 2022
+    Fixed script counting multiple runs when doing a stack restart.
+
+November 5, 2022
+    Updated includes for imports to be optional. This allows the script to be loaded with only 64 or 32 bit offsets when only one is needed/available.
+    Removed 32 bit imports.
+    Updated Imports for v476.
+    Updated Offline progress functions to use new offline handler in the recent game update.
+    Updated StackRestart to turn autoprogress back on before closing IC.
+
+October 22, 2022
+    Updated Imports for v474.1.
+    Added bounds check for AffectKeyHandler so bad memory reads do not cause a freeze.
+    Updated pointer database (Beta / Steam / EGS).
+    Removed an unused/depricated function for Omin.
+
+October 6, 2022
+    Updated Imports for v472.1
+
+September 30, 2022
+    Updated Imports for v472.
+    Fixed reads that would be broken for champions with IDs larger than 106. (e.g. Egbert)
+    Added Group Box to version picker to show it's selecting pointers.
+    Fixed pointer selection being incorrect for some pointers in VersionPicker.
+    Updated pointer database.
+
+September 24, 2022
+    Updated Imports for v471.
+
+September 22, 2022
+    Fixed Omin's Contractual Obligations function to work with game update.
+
+September 12, 2022
+    Updated addon and README docs.
+
 September 9, 2022
     Added IsVersionNewer to IC_VersionHelper_Class.
     Updated Imports for v469.

@@ -1,9 +1,15 @@
+Gui, AddonManagement:New
+
 Gui, AddonManagement:New , ,Addon Management
+GUIFunctions.LoadTheme("AddonManagement")
 Gui, AddonManagement:+Resize -MaximizeBox
+GUIFunctions.UseThemeBackgroundColor()
+GUIFunctions.UseThemeTextColor()
 
 AddonManagementWindowWidth := 450
 
 Gui, AddonManagement:Add, ListView ,w%AddonManagementWindowWidth% vAddonsAvailableID hWndhLV ,  Active|Name|Version|Folder
+GUIFunctions.UseThemeListViewBackgroundColor("AddonsAvailableID")
 AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 GUIFunctions.LVM_CalculateSize(hLV,-1,AddonLVWidth,AddonLVHeight)
 AddonLVWidth+=4

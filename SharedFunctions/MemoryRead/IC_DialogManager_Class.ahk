@@ -33,11 +33,11 @@ class IC_DialogManager_Class
         this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
         if(!this.Main.isTarget64bit)
         {
-            #include %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk
         }
         else
         {
-            #include %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
+            #include *i %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
         }
     }
 
