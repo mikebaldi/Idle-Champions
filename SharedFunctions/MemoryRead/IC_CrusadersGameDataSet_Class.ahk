@@ -16,9 +16,9 @@ class IC_CrusadersGameDataSet_Class
 
     GetVersion()
     {
-        return "v2.0.3, 2022-08-28, IC v0.463+"
+        return "v2.1.0, 2023-03-18"
     }
-
+    
     Refresh()
     {
         this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
