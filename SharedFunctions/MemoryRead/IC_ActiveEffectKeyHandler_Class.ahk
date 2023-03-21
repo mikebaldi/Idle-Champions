@@ -35,24 +35,12 @@ class IC_ActiveEffectKeyHandler_Class
 
     Refresh32()
     {
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler32_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_SpurtWaspirationHandlerV232_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HeroHandlerIncludes32_Import.ahk
     }
 
     Refresh64()
     {
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_BrivUnnaturalHasteHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HavilarImpHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_NerdWagonHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_OminContractualObligationsHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_TimeScaleWhenNotAttackedHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HewMaanTeamworkHandler64_Import.ahk
-        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_SpurtWaspirationHandlerV264_Import.ahk
+        #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HeroHandlerIncludes64_Import.ahk
     }
 
     GetEffectHandler(handlerName)
