@@ -21,13 +21,8 @@ class IC_ActiveEffectKeyHandler_Class
     {
         this.GameInstance := 0
         _MemoryManager.Refresh()
-        this.BrivUnnaturalHasteHandler := this.GetEffectHandler("BrivUnnaturalHasteHandler")
-        this.HavilarImpHandler := this.GetEffectHandler("HavilarImpHandler")
-        this.NerdWagonHandler := this.GetEffectHandler("NerdWagonHandler")
-        this.OminContractualObligationsHandler := this.GetEffectHandler("OminContractualObligationsHandler")
-        this.TimeScaleWhenNotAttackedHandler := this.GetEffectHandler("TimeScaleWhenNotAttackedHandler")
-        this.HewMaanTeamworkHandler := this.GetEffectHandler("HewMaanTeamworkHandler")
-        this.SpurtWaspirationHandlerV2 := this.GetEffectHandler("SpurtWaspirationHandlerV2")
+        for k,v in this.HeroEffectNames
+            this[k] := this.GetEffectHandler(k)
         if _MemoryManager.is64Bit
             this.Refresh64()
         else
