@@ -436,7 +436,8 @@ class IC_BrivGemFarm_Stats_Component
         try ; avoid thrown errors when comobject is not available.
         {
             SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
-            GUIFunctions.UseThemeTextColor("HeaderTextColor", 700)
+            textColor := GUIFunctions.CurrentTheme["HeaderTextColor"]
+            GuiControl, ICScriptHub: +c%textColor%, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
@@ -446,7 +447,8 @@ class IC_BrivGemFarm_Stats_Component
         }
         catch
         {
-            GuiControl, ICScriptHub: +cRed, LoopID, 
+            textColor := GUIFunctions.CurrentTheme["ErrorTextColor"]
+            GuiControl, ICScriptHub: +c%textColor%, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script [Closed Script?]."
         }
     }
