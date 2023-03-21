@@ -3,6 +3,7 @@
 class IC_ActiveEffectKeyHandler_Class
 {
     ; chance_multiply_monster_quest_rewards (Hew Maan effect)
+    ; NOTE: Update these dictionaries before adding new functions to the ActiveEffectKeySharedFunctions class.
     HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87, "HewMaanTeamworkHandler":75, "SpurtWaspirationHandlerV2":43}
     HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon", "HewMaanTeamworkHandler":"hewmaan_teamwork", "SpurtWaspirationHandlerV2":"spurt_waspiration_v2"}
     
@@ -65,7 +66,7 @@ class IC_ActiveEffectKeyHandler_Class
     }
 }
 
-
+; When imports are built for a champion, they can be added to this class along with corresponding read functions.
 class ActiveEffectKeySharedFunctions
 {
     class Havilar
