@@ -2,7 +2,6 @@
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 class IC_ActiveEffectKeyHandler_Class
 {
-    ;NerdType := {0:"None", 1:"Fighter_Orange", 2:"Ranger_Red", 3:"Bard_Green", 4:"Cleric_Yellow", 5:"Rogue_Pink", 6:"Wizard_Purple"}
     ; chance_multiply_monster_quest_rewards (Hew Maan effect)
     HeroHandlerIDs := {"HavilarImpHandler":56, "BrivUnnaturalHasteHandler":58,"TimeScaleWhenNotAttackedHandler":47, "OminContractualObligationsHandler":65, "NerdWagonHandler":87, "HewMaanTeamworkHandler":75, "SpurtWaspirationHandlerV2":43}
     HeroEffectNames := {"HavilarImpHandler":"havilar_imps", "BrivUnnaturalHasteHandler":"briv_unnatural_haste", "TimeScaleWhenNotAttackedHandler":"time_scale_when_not_attacked", "OminContractualObligationsHandler": "contractual_obligations", "NerdWagonHandler":"nerd_wagon", "HewMaanTeamworkHandler":"hewmaan_teamwork", "SpurtWaspirationHandlerV2":"spurt_waspiration_v2"}
@@ -204,17 +203,17 @@ class ActiveEffectKeySharedFunctions
 
             ReadNerd0Type()
             {
-                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd0()]
+                return this.NerdType[this.ReadNerd0()]
             }
 
             ReadNerd1Type()
             {
-                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd1()]
+                return this.NerdType[this.ReadNerd1()]
             }
 
             ReadNerd2Type()
             {
-                return ActiveEffectKeySharedFunctions.Nerds.NerdWagonHandler.NerdType[this.ReadNerd2()]
+                return this.NerdType[this.ReadNerd2()]
             }
         }
     }
