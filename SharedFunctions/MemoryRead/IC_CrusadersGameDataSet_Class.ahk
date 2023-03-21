@@ -21,8 +21,7 @@ class IC_CrusadersGameDataSet_Class
     
     Refresh()
     {
-        this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.moduleOffset
         if(baseAddress != this.BaseAddress)
         {
             this.BaseAddress := baseAddress
@@ -30,8 +29,8 @@ class IC_CrusadersGameDataSet_Class
             this.CrusadersGame.Defs := {}
             this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.structureOffsets )
             this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
-            this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := this.Main.isTarget64bit
-            if(!this.Main.isTarget64bit)
+            this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
+            if(!_MemoryManager.is64bit)
             {
                 #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
             }

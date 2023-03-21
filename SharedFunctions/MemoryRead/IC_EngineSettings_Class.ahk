@@ -9,8 +9,7 @@ class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
 
     Refresh()
     {
-        this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        baseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.moduleOffset
         if(baseAddress != this.BaseAddress)
         {
             this.BaseAddress := baseAddress
@@ -18,8 +17,8 @@ class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
             this.UnityGameEngine.Core := {}
             this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.structureOffsets)
             this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
-            this.UnityGameEngine.Core.EngineSettings.Is64Bit := this.Main.isTarget64bit
-            if(!this.Main.isTarget64bit)
+            this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
+            if(!_MemoryManager.is64Bit)
             {
                 #include *i %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
             }

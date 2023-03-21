@@ -20,7 +20,7 @@ class IC_ActiveEffectKeyHandler_Class
     Refresh()
     {
         this.GameInstance := 0
-        this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
+        _MemoryManager.Refresh()
         this.BrivUnnaturalHasteHandler := this.GetEffectHandler("BrivUnnaturalHasteHandler")
         this.HavilarImpHandler := this.GetEffectHandler("HavilarImpHandler")
         this.NerdWagonHandler := this.GetEffectHandler("NerdWagonHandler")
@@ -28,7 +28,7 @@ class IC_ActiveEffectKeyHandler_Class
         this.TimeScaleWhenNotAttackedHandler := this.GetEffectHandler("TimeScaleWhenNotAttackedHandler")
         this.HewMaanTeamworkHandler := this.GetEffectHandler("HewMaanTeamworkHandler")
         this.SpurtWaspirationHandlerV2 := this.GetEffectHandler("SpurtWaspirationHandlerV2")
-        if g_SF.Memory.GameManager.Is64Bit()
+        if _MemoryManager.is64Bit
             this.Refresh64()
         else
             this.Refresh32()
@@ -60,7 +60,7 @@ class IC_ActiveEffectKeyHandler_Class
     {
         baseAddress := this.GetBaseAddress(handlerName)
         gameObject := New GameObjectStructure([])
-        gameObject.Is64Bit := g_SF.Memory.GameManager.Is64Bit()
+        gameObject.Is64Bit := _MemoryManager.is64Bit
         gameObject.BaseAddress := baseAddress
         return gameObject
     }
@@ -68,32 +68,13 @@ class IC_ActiveEffectKeyHandler_Class
     GetBaseAddress(handlerName)
     {
         champID := this.HeroHandlerIDs[handlerName]
-        ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
-        ; need _items value to use offsets later
-        tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[this.GetDictIndex(handlerName)].List[0].parentEffectKeyHandler.activeEffectHandlers._items
-        ; use first item in the _items list as base address so offsets work later
-        address := g_SF.Memory.GenericGetValue(tempObject) + tempObject.CalculateOffset(0) 
-        return address
-    }
-
-    ; Finds the index of the item in the effectKeysByKeyName dictionary by iterating the items looking for a key matching handlerName
-    GetDictIndex(handlerName)
-    {
-        champID := this.HeroHandlerIDs[handlerName]
-        heroIndex := g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)
         effectName := this.HeroEffectNames[handlerName]
-        dictCount := g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[heroIndex].effects.effectKeysByKeyName.size)
-        if(dictCount > 100 OR dictCount < 0) ; skip the loop if the value is clearly unreasonable to prevent freezes.
-            return -1 
-        loop, % dictCount
-        {
-            tempObject := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[heroIndex].effects.effectKeysByKeyName["key", A_Index - 1].Clone()
-            tempObject.ValueType := "UTF-16"
-            keyName := g_SF.Memory.GenericGetValue(tempObject)
-            if (keyName == effectName)
-                return A_Index - 1
-        }
-        return -1
+        ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
+        ; need _items value to use offsets later      
+        handlerAddressObj := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[effectName].List[0].parentEffectKeyHandler.activeEffectHandlers._items
+        ; use first item in the _items list as base address so offsets work later
+        address := handlerAddressObj.Read() + handlerAddressObj.CalculateOffset(0) 
+        return address
     }
 }
 
@@ -106,22 +87,22 @@ class ActiveEffectKeySharedFunctions
         {
             GetCurrentOtherImpIndex()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps)
+                return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps.Read()
             }
             
             GetActiveImpsSize()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.currentOtherImpIndex)
+                return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.currentOtherImpIndex.Read()
             }
 
             GetSummonImpCoolDownTimer()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.summonImpUltimate.CoolDownTimer)
+                return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.summonImpUltimate.CoolDownTimer.Read()
             }
 
             GetSacrificeImpCoolDownTimer()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.sacrificeImpUltimate.CoolDownTimer)
+                return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.sacrificeImpUltimate.CoolDownTimer.Read()
             }
         } 
     }
@@ -132,22 +113,22 @@ class ActiveEffectKeySharedFunctions
         {
             ReadSkipChance()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance)
+                return g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipChance.Read()
             }
 
             ReadHasteStacks()
             {
-                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.sprintStacks.stackCount)
+                 return g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.sprintStacks.stackCount.Read()
             }
 
             ReadSkipAmount()
             {
-                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipAmount)
+                 return g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areaSkipAmount.Read()
             }
 
             ReadAreasSkipped()
             {
-                 return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areasSkipped)
+                 return g_SF.Memory.ActiveEffectKeyHandler.BrivUnnaturalHasteHandler.areasSkipped.Read()
             }
 
         }
@@ -159,7 +140,7 @@ class ActiveEffectKeySharedFunctions
         {
             ReadDashActive()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive)
+                return g_SF.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.scaleActive.Read()
             }
         }
     }
@@ -170,15 +151,15 @@ class ActiveEffectKeySharedFunctions
         {
             ReadNumContractsFulfilled()
             {
-                contractsFulfilled := g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled)
+                contractsFulfilled := g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.numContractsFufilled.Read()
                 if(contractsFulfilled != "" AND contractsFulfilled <= 100)
                     return contractsFulfilled
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.obligationsFufilled)
+                return g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.obligationsFufilled.Read()
             }
 
             ; ReadSecondsOnGoldFind()
             ; {
-            ;     return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
+            ;     return g_SF.Memory.ActiveEffectKeyHandler.OminContractualObligationsHandler.secondsOnGoldFind)
             ; }
         }
     }
@@ -189,12 +170,12 @@ class ActiveEffectKeySharedFunctions
         {
             ReadUltimateCooldownTimeLeft()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.CooldownTimer)
+                return g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.CooldownTimer.Read()
             }
 
             ReadUltimateID()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.ID)
+                return g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.ID.Read()
             }
         }
     }
@@ -207,18 +188,18 @@ class ActiveEffectKeySharedFunctions
 
             ReadNerd0()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0.type)
+                return g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd0.type.Read()
             }
 
             ReadNerd1()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1.type)
+                return g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd1.type.Read()
             }
 
 
             ReadNerd2()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2.type)
+                return g_SF.Memory.ActiveEffectKeyHandler.NerdWagonHandler.nerd2.type.Read()
             }
 
             ReadNerd0Type()
@@ -243,14 +224,14 @@ class ActiveEffectKeySharedFunctions
         class WaspirationHandler
         {
 
-            ReadSpurtStacksLeft()
-            {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.remainingStacksNeededForNextEffect)
-            }
+            ; ReadSpurtStacksLeft()
+            ; {
+            ;     return g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.remainingStacksNeededForNextEffect.Read()
+            ; }
 
             ReadSpurtWasps()
             {
-                return g_SF.Memory.GenericGetValue(g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.activeWasps.size)
+                return g_SF.Memory.ActiveEffectKeyHandler.SpurtWaspirationHandlerV2.activeWasps.size.Read()
             }
         }
     }

@@ -53,6 +53,6 @@ class ReadMemoryFunctionsExtended
 
     Keep()
     {
-        GuiControl, ICScriptHub:, ReadSecondsSinceLastSaveID, % g_SF.Memory.GenericGetValue(g_SF.Memory.GameManager.game.gameInstances[0].instanceLoadTimeSinceLastSave)
+        GuiControl, ICScriptHub:, ReadSecondsSinceLastSaveID, % g_SF.Memory.GameManager.game.gameInstances[0].instanceLoadTimeSinceLastSave.Read()
     }
 }

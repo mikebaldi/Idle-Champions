@@ -1,4 +1,5 @@
 #include %A_LineFile%\..\..\IC_ArrayFunctions_Class.ahk
+#include %A_LineFile%\..\IC_MemoryManager_Class.ahk
 ; Class used to describe a memory locations. 
 ; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 
@@ -15,6 +16,8 @@ class GameObjectStructure
     Is64Bit := 0                    ; Boolean indicating the system is 64 bit and not 32.
     Offset := 0x0                   ; The offset from last object to this object.
     IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
+    Memory := _MemoryManager
+    GSOName := ""
 
     ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
@@ -40,7 +43,8 @@ class GameObjectStructure
     ; When a key is not found for objects which have collections, use this function. 
     __Get(key, index := 0)
     {
-        ; Properties are not found using HasKey(). size is a property so ignore it.
+        ; Properties are not found using HasKey().
+        ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
         if(key == "size")
         {
             if(this.ValueType == "List")
@@ -69,7 +73,7 @@ class GameObjectStructure
                 return ""
             }
         } 
-        ; Special case for collections in a gameobject.
+        ; Special case for List collections in a gameobject.
         else if(this.ValueType == "List")
         {
             if key is number
@@ -98,6 +102,7 @@ class GameObjectStructure
             collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
+        ; Special case for Dictionary collections in a gameobject.
         else if(this.ValueType == "Dict")
         {
             if (key == "key")
@@ -105,19 +110,23 @@ class GameObjectStructure
                 offset := this.CalculateDictOffset(["key",index]) + 0
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
                 tempObj := this.Clone()
+                offsetInsertLoc := tempObj.FullOffsets.Count() + 1,
                 tempObj.FullOffsets.Push(collectionEntriesOffset, offset)
-                tempObj.UpdateChildrenWithFullOffsets(tempObj, tempObj.FullOffsets.Count() + 1, [collectionEntriesOffset, offset])
+                tempObj.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset])
                 return tempObj
             }
             else if (key == "value")
             {
                 offset := this.CalculateDictOffset(["value",index]) + 0
+                keyoffset := this.CalculateDictOffset(["key",index]) + 0
+                key := this.QuickClone().FullOffsets.Push(keyOffset).Read()
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
             else
             {
-                offset := this.CalculateDictOffset(["value",key]) + 0
+                index := this.GetDictIndexOfKey(key)
+                offset := this.CalculateDictOffset(["value",index]) + 0
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
@@ -144,7 +153,7 @@ class GameObjectStructure
         var.ValueType := this.ValueType
         var.Is64Bit := this.Is64Bit
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        ; var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         var.Offset := this.Offset
         return var
     }
@@ -164,8 +173,8 @@ class GameObjectStructure
         return var
     }
 
-    ; For cloning without copying dynamically added items to the clone.
-    StableClone()
+    ; For cloning without copying dynamically added items to the clone. Ignores objects with IsAddedIndex = true
+    StableClone(key := "")
     {
         var := new GameObjectStructure
         ; Iterate all the elements of the game object structure and clone time
@@ -196,7 +205,8 @@ class GameObjectStructure
         location := this.FullOffsets.Count() + 1
         this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
+        this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
+        this[key].GSOName := key
         this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
     }
 
@@ -210,10 +220,47 @@ class GameObjectStructure
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
                 ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-                ; v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
+                v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
         }
     }
+
+    Read(valueType := "")
+    {
+        if(!valueType)
+            valueType := this.ValueType
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
+        val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
+        {
+            offsets := this.FullOffsets.Clone()
+            offsets.Push(this.Is64Bit ? 0x14 : 0xC)
+            var := _MemoryManager.instance.readstring(this.baseAddress, bytes := 0, valueType, offsets*)
+        }
+        else if (valueType == "List" or valueType == "Dict" or valueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
+        {
+            var := _MemoryManager.instance.read(this.baseAddress, "Int", (this.GetOffsets())*)
+        }
+        else if (valueType == "Quad") ; custom ValueTypes not in classMemory.ahk
+        {
+            offsets := this.GetOffsets()
+            first8 := _MemoryManager.instance.read(this.baseAddress, "Int64", (offsets)*)
+            lastIndex := offsets.Count()
+            offsets[lastIndex] := offsets[lastIndex] + 0x8
+            second8 := _MemoryManager.instance.read(this.baseAddress, "Int64", (offsets)*)
+            var := this.ConvQuadToString3( first8, second8 )
+        }
+        else
+        {
+            var := _MemoryManager.instance.read(this.baseAddress, valueType, (this.GetOffsets())*)
+        }
+        return var
+    }
+    
+    ;==============
+    ;Helper Methods
+    ;==============
+
 
     ; Used to calculate offsets the offsets of an item in a list by its index value.
     ; Note: Some EGS lists will still use 4 byte offsets. In these cases, pass (index/2) as the index of the list. 
@@ -256,5 +303,59 @@ class GameObjectStructure
         if (array.1 == "value")
             offset += valueOffset
         return offset
+    }
+
+    ; TODO: Convert to proper dictionary lookup.  Current method is O(n) instead of O(log(n))
+    ; Iterates a dictionary collection looking for the matching key value
+    GetDictIndexOfKey(key)
+    {
+        dictCount := this.size.Read()
+        ; skip attempts on unreasonable dictionary sizes.
+        if (dictCount < 0 OR dictCount > 32000)
+            return ""
+        ; test if key is int or string or other?
+        valueType := "" ; Read() will use default if no value set
+        if key is not integer
+            valueType := "UTF-16"
+        loop, % dictCount
+        {
+            currKey := this["key", A_Index - 1].Read(valueType)
+            if (currKey == key)
+            {
+                return A_Index - 1
+            }
+        }
+        return -1
+    } 
+
+    ; Converts 16 byte Quad value into a string representation.
+    ConvQuadToString3( FirstEight, SecondEight )
+    {
+        f := log( FirstEight + ( 2.0 ** 63 ) )
+        decimated := ( log( 2 ) * SecondEight / log( 10 ) ) + f
+
+        significand := round( 10 ** ( decimated - floor( decimated ) ), 2 )
+        exponent := floor( decimated )
+        if(exponent < 4)
+            return Round((FirstEight + (2.0**63)) * (2.0**SecondEight), 0) . ""
+        return significand . "e" . exponent
+    }
+
+    ; Iterate all the elements of the game object structure recursively and name them
+    SetNames()
+    {
+        
+        for k,v in this
+        {
+            if(!IsObject(v))
+            {
+                continue
+            }
+            if(ObjGetBase(v).__Class == "GameObjectStructure" AND !v.IsAddedIndex)
+            {   
+                this[k].GSOName := k
+                this[k].SetNames()
+            }
+        }
     }
 }

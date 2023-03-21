@@ -35,12 +35,12 @@ class IC_MemoryPointer_Class
 
     is64Bit()
     {
-        return this.Main.isTarget64bit
+        return _MemoryManager.is64bit
     }
 
     Refresh()
     {
-        this.Main := new _ClassMemory("ahk_exe " . g_userSettings[ "ExeName"], "", hProcessCopy)
-        this.BaseAddress := this.Main.getModuleBaseAddress("mono-2.0-bdwgc.dll")+this.moduleOffset
+        _MemoryManager.Refresh()
+        this.BaseAddress := _MemoryManager.baseAddress+this.moduleOffset
     }
 }
