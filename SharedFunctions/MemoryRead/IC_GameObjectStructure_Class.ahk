@@ -126,6 +126,8 @@ class GameObjectStructure
             else
             {
                 index := this.GetDictIndexOfKey(key)
+                if(index < 0) ; Failed to find index, do not create an entry.
+                    return
                 offset := this.CalculateDictOffset(["value",index]) + 0
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
