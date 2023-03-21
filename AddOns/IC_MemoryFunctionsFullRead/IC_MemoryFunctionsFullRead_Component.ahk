@@ -75,7 +75,7 @@ class IC_MemoryFunctionsFullRead_Component
                 {
                     if( isFunc(v2) ) ; Handler Fields/Functions
                     {
-                        parameterString := k1 . "..." . k2 . (v2.MaxParams > 4 ? "(...)" : (v2.MaxParams > 3 ? "(x,y,z)" : (v2.MaxParams > 2 ? "(x,y)" : (v2.MaxParams > 1 ? "(x)" : ""))))
+                        parameterString := k . "..." . k2 . (v2.MaxParams > 4 ? "(...)" : (v2.MaxParams > 3 ? "(x,y,z)" : (v2.MaxParams > 2 ? "(x,y)" : (v2.MaxParams > 1 ? "(x)" : ""))))
                         currentObject := ActiveEffectKeySharedFunctions[k][k1]
                         fncToCall := ObjBindMethod(currentObject, k2)
                         value := v2.Maxparams >= 2 ? fncToCall.Call(valueToPass) : fncToCall.Call()
