@@ -6,7 +6,7 @@ class <INSERT HERO NAME HERE>
     static HeroID := <INSERT HERO ID HERE, NO QUOTES BUT MAYBE OKAY>
     class <INSERT HANDLER NAME HERE>
     {
-        EffectKeyString := <INSERT EFFECT KEY STRING HERE, WITH QUOTES>
+        static EffectKeyString := <INSERT EFFECT KEY STRING HERE, WITH QUOTES>
         <INSERT FUNCTION NAME HERE (e.g ReadAbilityValue1)>()
         {
             return g_SF.ActiveEffectKeyHandler.<INSERT HANDLER NAME HERE>.<INSERT NAME OF VALUE TO BE READ HERE>.Read()
