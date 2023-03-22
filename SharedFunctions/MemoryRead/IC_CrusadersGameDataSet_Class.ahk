@@ -2,18 +2,9 @@
 ; Note static loc is == its instance loc
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_CrusadersGameDataSet_Class
+class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
 {
-    moduleOffset := 0
-    structureOffsets := 0
-
-    __new(moduleOffset := 0, structureOffsets := 0)
-    {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
-        this.Refresh()
-    }
-
+    BaseAddress := ""
     GetVersion()
     {
         return "v2.1.0, 2023-03-18"
