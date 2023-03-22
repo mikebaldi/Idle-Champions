@@ -12,6 +12,8 @@ class <INSERT HERO NAME HERE>
             return g_SF.ActiveEffectKeyHandler.<INSERT HANDLER NAME HERE>.<INSERT NAME OF VALUE TO BE READ HERE>.Read()
         }
     }
+
+    ; Each handler in game needs its own class here. There should only be one file/class per hero.
 }
 
 
