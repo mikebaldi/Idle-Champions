@@ -303,7 +303,7 @@ class IC_JimothySharedFunctions_Class extends IC_SharedFunctions_Class
 
     SummonDembo(force := false)
     {
-        if (ActiveEffectKeySharedFunctions.Havilar.ImpHandler.GetCurrentOtherImpIndex()!= 1 OR ActiveEffectKeySharedFunctions.Havilar.ImpHandler.GetActiveImpsSize() != 2)
+        if (ActiveEffectKeySharedFunctions.Havilar.HavilarImpHandler.GetCurrentOtherImpIndex()!= 1 OR ActiveEffectKeySharedFunctions.Havilar.HavilarImpHandler.GetActiveImpsSize() != 2)
         {
             ultKey := this.GetUltimateButtonByChampID(56)
             this.DirectedInput(,, ultKey)
