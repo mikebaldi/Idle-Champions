@@ -360,4 +360,24 @@ class GameObjectStructure
             }
         }
     }
+
+    ; Iterate all the elements of the game object structure recursively and deletes the ones that have been dynamically added by GameObjectStructure.
+    DeleteDynamicEntries()
+    {
+        for k,v in this
+        {
+            if(!IsObject(v) OR !ObjGetBase(v).__Class == "GameObjectStructure")
+            {
+                continue
+            }
+            if(v.IsAddedIndex)
+            {   
+                this.Delete(k)
+            }
+            else
+            {
+                this[k].DeleteDynamicEntries()
+            }
+        }
+    }
 }

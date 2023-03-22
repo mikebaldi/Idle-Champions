@@ -52,5 +52,9 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
             ; DEBUG: Enable this line to be able to view the names of the variables in GameObjects.
             this.game.SetNames()
         }
+        else
+        {
+            this.game.DeleteDynamicEntries()
+        }
     }
 }
