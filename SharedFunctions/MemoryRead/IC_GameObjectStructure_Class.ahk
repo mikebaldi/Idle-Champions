@@ -107,30 +107,30 @@ class GameObjectStructure
         {
             if (key == "key")
             {
-                offset := this.CalculateDictOffset(["key",index]) + 0
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
-                tempObj := this.Clone()
-                offsetInsertLoc := tempObj.FullOffsets.Count() + 1,
-                tempObj.FullOffsets.Push(collectionEntriesOffset, offset)
-                tempObj.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset])
-                return tempObj
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
+                offset := this.CalculateDictOffset(["key",index]) + 0       ; Expected offset to the key for the <index>th entry.
+                tempObj := this.Clone()                                     ; Deep copy of this object.
+                offsetInsertLoc := tempObj.FullOffsets.Count() + 1,         ; Current offsets count
+                tempObj.FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the key
+                tempObj.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
+                return tempObj                                              ; return temporary key object
             }
             else if (key == "value")
             {
-                offset := this.CalculateDictOffset(["value",index]) + 0
-                keyoffset := this.CalculateDictOffset(["key",index]) + 0
-                key := this.QuickClone().FullOffsets.Push(keyOffset).Read()
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
-                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
+                offset := this.CalculateDictOffset(["value",index]) + 0     ; Expected offset to the key for the <index>th entry.
+                keyoffset := this.CalculateDictOffset(["key",index]) + 0    ; Expected offset to the value for the <index>th entry.
+                key := this.QuickClone().FullOffsets.Push(keyOffset).Read() ; Retrieve the value of the key
+                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset) ; Add the key entry to the dictionary and add the offsets for entries/value location to all sub-objects.
             }
             else
             {
-                index := this.GetDictIndexOfKey(key)
-                if(index < 0) ; Failed to find index, do not create an entry.
+                index := this.GetDictIndexOfKey(key)                        ; Look up what index has the key entry equal to the key passed in.
+                if(index < 0)                                               ; Failed to find index, do not create an entry.
                     return
-                offset := this.CalculateDictOffset(["value",index]) + 0
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC
-                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
+                offset := this.CalculateDictOffset(["value",index]) + 0     ; Expected offset to the value corresponding to the key.
+                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset) ; Add the key entry to the dictionary and add the offsets for entries/value location to all sub-objects.
             }
         }
         else
