@@ -468,8 +468,8 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
-        timeout := 60000 ; 60s seconds ( previously / timescale (6s at 10x) )
-        estimate := (60000 / timeScale) ; no buffer: 60s / timescale to show in LoopString
+        timeout := 30000 ; 60s seconds ( previously / timescale (6s at 10x) )
+        estimate := (timeout / timeScale) ; no buffer: 60s / timescale to show in LoopString
         ; Loop escape conditions:
         ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
