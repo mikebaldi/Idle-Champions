@@ -4,28 +4,15 @@
 
 class IC_MemoryPointer_Class
 {
-    moduleOffset := 0
-    structureOffsets := 0
+    ModuleOffset := 0
+    StructureOffsets := 0
+    BaseAddress := ""
 
     __new(moduleOffset := 0, structureOffsets := 0)
     {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
+        this.ModuleOffset := moduleOffset
+        this.StructureOffsets := structureOffsets
         this.Refresh()
-    }
-
-    __Get(key)
-    {
-        if(this.HasKey(key))
-        {
-            if(IsObject(this[key])) ; This will only get triggered if __Get is called explicitly since __Get does not get called if the key already exists (not as a property/function)
-            {
-                this[key].FullOffsets.Push(this.structureOffsets*)
-                this[key].FullOffsets.Push(this[key].Offset*)
-            }
-            ;return ; Not returning a value allows AHK to use standard behavior for gets.
-            return this[key] 
-        }
     }
 
     GetVersion()
@@ -41,6 +28,6 @@ class IC_MemoryPointer_Class
     Refresh()
     {
         _MemoryManager.Refresh()
-        this.BaseAddress := _MemoryManager.baseAddress+this.moduleOffset
+        this.BaseAddress := _MemoryManager.baseAddress+this.ModuleOffset
     }
 }

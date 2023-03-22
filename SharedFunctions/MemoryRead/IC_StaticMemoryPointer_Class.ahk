@@ -8,8 +8,8 @@ class IC_StaticMemoryPointer_Class extends IC_MemoryPointer_Class
 
     __new(moduleOffset := 0, staticOffset := 0, structureOffsets := 0)
     {
-        this.moduleOffset := moduleOffset
-        this.structureOffsets := structureOffsets
+        this.ModuleOffset := moduleOffset
+        this.StructureOffsets := structureOffsets
         this.StaticOffset := staticOffset
         this.Refresh()
     }

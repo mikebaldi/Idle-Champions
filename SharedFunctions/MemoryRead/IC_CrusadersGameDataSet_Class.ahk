@@ -4,7 +4,6 @@
 
 class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
 {
-    BaseAddress := ""
     GetVersion()
     {
         return "v2.1.0, 2023-03-18"
@@ -12,13 +11,13 @@ class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
     
     Refresh()
     {
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.moduleOffset
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
         if(baseAddress != this.BaseAddress)
         {
             this.BaseAddress := baseAddress
             this.CrusadersGame := {}
             this.CrusadersGame.Defs := {}
-            this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.structureOffsets )
+            this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.StructureOffsets )
             this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
             this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
             if(!_MemoryManager.is64bit)

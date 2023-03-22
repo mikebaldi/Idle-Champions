@@ -9,13 +9,13 @@ class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
 
     Refresh()
     {
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.moduleOffset
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
         if(baseAddress != this.BaseAddress)
         {
             this.BaseAddress := baseAddress
             this.UnityGameEngine := {}
             this.UnityGameEngine.Core := {}
-            this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.structureOffsets)
+            this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
             this.UnityGameEngine.Core.EngineSettings.BaseAddress := this.BaseAddress
             this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
             if(!_MemoryManager.is64Bit)
