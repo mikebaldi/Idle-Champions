@@ -102,7 +102,7 @@ class GameObjectStructure
             collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
-        ; Special case for Dictionary collections in a gameobject.
+        ; Special case for Dictionary collections in a gameobject. Look up dictionary offsets with every lookup. Do not store dictionary key/value object locations.
         else if(this.ValueType == "Dict")
         {
             if (key == "key")
@@ -121,7 +121,11 @@ class GameObjectStructure
                 offset := this.CalculateDictOffset(["value",index]) + 0     ; Expected offset to the key for the <index>th entry.
                 keyoffset := this.CalculateDictOffset(["key",index]) + 0    ; Expected offset to the value for the <index>th entry.
                 key := this.QuickClone().FullOffsets.Push(keyOffset).Read() ; Retrieve the value of the key
-                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset) ; Add the key entry to the dictionary and add the offsets for entries/value location to all sub-objects.
+                tempObj := this.Clone()                                     ; Deep copy of this object.
+                offsetInsertLoc := tempObj.FullOffsets.Count() + 1,         ; Current offsets count
+                tempObj.FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value
+                tempObj.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
+                return tempObj                                              ; return the temporary value object with access to all objects it has access to.
             }
             else
             {
@@ -130,7 +134,11 @@ class GameObjectStructure
                     return
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
                 offset := this.CalculateDictOffset(["value",index]) + 0     ; Expected offset to the value corresponding to the key.
-                this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset) ; Add the key entry to the dictionary and add the offsets for entries/value location to all sub-objects.
+                tempObj := this.Clone()                                     ; Deep copy of this object.
+                offsetInsertLoc := tempObj.FullOffsets.Count() + 1,         ; Current offsets count
+                tempObj.FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value
+                tempObj.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
+                return tempObj    
             }
         }
         else
