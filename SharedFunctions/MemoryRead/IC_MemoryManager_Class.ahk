@@ -1,7 +1,7 @@
 
 #include %A_LineFile%\..\classMemory.ahk
 ; A class to manage and make available instances of class Memory
-; TODO add error handling, allow for multiple isntances, allow for instances of different exe names, allow for instances of differe module base addresses
+; TODO add error handling
 
 class _MemoryManager
 {
