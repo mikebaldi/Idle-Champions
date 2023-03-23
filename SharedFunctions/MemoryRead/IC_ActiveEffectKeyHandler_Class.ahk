@@ -5,6 +5,7 @@ class IC_ActiveEffectKeyHandler_Class
 {
     HeroHandlerIDs := {} 
     HeroEffectNames := {}
+    GameInstance := 0
     
     __new()
     {
@@ -24,14 +25,21 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.4.0, 2023-03-19"
+        return "v2.4.1, 2023-03-23"
     }
 
     Refresh()
     {
-        this.GameInstance := 0
         for k,v in this.HeroEffectNames
-            this[k] := this.GetEffectHandler(k)
+        {
+            baseAddress := this.GetBaseAddress(k)
+            if(baseAddress != this[k].BaseAddress)
+            {
+                this[k] := New GameObjectStructure([])
+                this[k] := _MemoryManager.is64Bit
+                this[k] := baseAddress
+            }
+        }
         if _MemoryManager.is64Bit
             this.Refresh64()
         else
@@ -46,15 +54,6 @@ class IC_ActiveEffectKeyHandler_Class
     Refresh64()
     {
         #include *i %A_LineFile%\..\Imports\ActiveEffectHandlers\IC_HeroHandlerIncludes64_Import.ahk
-    }
-
-    GetEffectHandler(handlerName)
-    {
-        baseAddress := this.GetBaseAddress(handlerName)
-        gameObject := New GameObjectStructure([])
-        gameObject.Is64Bit := _MemoryManager.is64Bit
-        gameObject.BaseAddress := baseAddress
-        return gameObject
     }
 
     GetBaseAddress(handlerName)
