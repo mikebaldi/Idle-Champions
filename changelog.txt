@@ -1,3 +1,19 @@
+March 22, 2023
+    Updated Version Picker's failed write message.
+    Updated 64 bit Imports for v503.
+    Fixed bug where loop text was not setting colors correctly.
+    Added _Memorymanager class.
+        Added Read function to GameObjectStructure to allow Reads to be done from object.Read instead of the MemoryFunction GenericGetValue.
+        Moved GetDictIndexOfKey, ConvQuadToString3 functions to GameObjectStructure.
+        Added SetNames to GameObjectStructure which will add the key names as a value to each object for debugging purposes.
+        Fixed GetDictIndexOfKey to allow keys to be strings.
+        Added functionality where looking up a dictionary values can be done with the key value. Uses above function.
+        Converted GenericGetValue calls to use Read function.
+    Updated FullMemoryFunctions to show champion instead of handler in the list display.
+    Updated how Hero Handlers are loaded.
+    Added documentation on how to update hero handlers.
+    Updated DashWait to use a default of 30s instead of 60s.
+
 March 20, 2023
     Completely refactored memory read structures.
         Instances of GameObjectStructure can now re-build their structures around list and dictionary indices at run-time.
