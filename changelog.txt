@@ -13,6 +13,7 @@ March 22, 2023
     Updated how Hero Handlers are loaded.
     Added documentation on how to update hero handlers.
     Updated DashWait to use a default of 30s instead of 60s.
+    Added buy/sell chest counts to offline stack loop string.
 
 March 20, 2023
     Completely refactored memory read structures.
