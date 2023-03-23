@@ -17,7 +17,6 @@ class GameObjectStructure
     Is64Bit := 0                    ; Boolean indicating the system is 64 bit and not 32.
     Offset := 0x0                   ; The offset from last object to this object.
     IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
-    Memory := _MemoryManager
     GSOName := ""
     DictionaryObject := {}
     LastDictIndex := {}
@@ -120,38 +119,27 @@ class GameObjectStructure
             }
             else if (key == "value")
             {
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",index]) + 0                        ; Expected offset to the key for the <index>th entry.
                 keyoffset := this.CalculateDictOffset(["key",index]) + 0                       ; Expected offset to the value for the <index>th entry.
                 key := this.QuickClone().FullOffsets.Push(keyOffset).Read()                    ; Retrieve the value of the key
                 if(index == this.LastDictIndex[key])                                           ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
-                else
-                    this.LastDictIndex[key] := keyIndex[key]
-                this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object.
-                offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count
-                this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value
-                this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
+                this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset)         ; Build a dictonary entry for this key.
                 return this.DictionaryObject[key]                                              ; return the temporary value object with access to all objects it has access to.
             }
             else
             {
                 ; TODO: Look into feasibility of using same dictionary hash function to look up keys.
-                keyIndex := {}
-                keyIndex[key] := this.GetDictIndexOfKey(key)                                      ; Look up what index has the key entry equal to the key passed in.
-                if(keyIndex[key] < 0)                                                             ; Failed to find index, do not create an entry.
+                keyIndex := this.GetDictIndexOfKey(key)                                         ; Look up what index has the key entry equal to the key passed in.
+                if(keyIndex < 0)                                                                ; Failed to find index, do not create an entry.
                     return
-                if(keyIndex[key] == this.LastDictIndex[key])                                      ; Use previously created object if it is still being used.
+                if(keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
-                else
-                    this.LastDictIndex[key] := keyIndex[key]
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection
-                offset := this.CalculateDictOffset(["value",keyIndex[key]]) + 0                   ; Expected offset to the value corresponding to the key.
-                this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object. Save in this object.
-                offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count
-                this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value
-                this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
-                return this.DictionaryObject[key]    
+                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                            ; Offset for the entries (key/value location) of the collection.
+                offset := this.CalculateDictOffset(["value",keyIndex]) + 0                      ; Expected offset to the value corresponding to the key.
+                this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset)                   ; Build a dictonary entry for this key.
+                return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
             }
         }
         else
@@ -218,6 +206,20 @@ class GameObjectStructure
             }
         }
         return var
+    }
+
+    ; Build a dictonary entry for the key.
+    BuildDictionaryEntry(key, keyindex, collectionEntriesOffset, offset)
+    {
+        this.DictionaryObject.Delete(key)                                              ; Delete key object before building new ones.
+        this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object.
+        this.LastDictIndex[key] := keyIndex                                            ; Creating new index for key; remember this index.
+        this.DictionaryObject[key].IsAddedIndex := true                                ; Stable clones won't copy this object
+        offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count.
+        this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value.
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        this.DictionaryObject[key].GSOName := key                                       
+        this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
     }
 
     ; Creates a gameobject at key, updates its offsets, copies the other values in the object to key object, propegates changes down chain of objects under key. 
