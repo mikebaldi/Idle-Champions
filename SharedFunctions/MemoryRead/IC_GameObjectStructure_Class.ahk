@@ -126,6 +126,8 @@ class GameObjectStructure
                 key := this.QuickClone().FullOffsets.Push(keyOffset).Read()                    ; Retrieve the value of the key
                 if(index == this.LastDictIndex[key])                                           ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
+                else
+                    this.LastDictIndex[key] := keyIndex[key]
                 this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object.
                 offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count
                 this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value
@@ -140,7 +142,9 @@ class GameObjectStructure
                 if(keyIndex[key] < 0)                                                             ; Failed to find index, do not create an entry.
                     return
                 if(keyIndex[key] == this.LastDictIndex[key])                                      ; Use previously created object if it is still being used.
-                    return this.DictionaryObject
+                    return this.DictionaryObject[key]
+                else
+                    this.LastDictIndex[key] := keyIndex[key]
                 collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection
                 offset := this.CalculateDictOffset(["value",keyIndex[key]]) + 0                   ; Expected offset to the value corresponding to the key.
                 this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object. Save in this object.
