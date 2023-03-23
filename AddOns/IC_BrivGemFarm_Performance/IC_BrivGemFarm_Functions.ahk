@@ -497,18 +497,19 @@ class IC_BrivGemFarm_Class
     {
         StartTime := A_TickCount
         loopString := ""
-        if(!g_BrivUserSettings[ "DoChestsContinuous" ])
-        {
-            loopString := this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
-            OutputDebug, % loopString
-            return loopString
-        }
         startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
         startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
         startingOpenedGoldChests := g_SharedData.OpenedGoldChests
         startingOpenedSilverChests := g_SharedData.OpenedSilverChests
         currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
         ElapsedTime := 0
+        if(!g_BrivUserSettings[ "DoChestsContinuous" ])
+        {
+            this.BuyOrOpenChests(StartTime, Min(numSilverChests, 99), Min(numGoldChests, 99)) . " "
+            loopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
+            OutputDebug, % loopString
+            return loopString
+        }
         doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
         while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
         {
