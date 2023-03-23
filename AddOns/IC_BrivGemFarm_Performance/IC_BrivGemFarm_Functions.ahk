@@ -538,8 +538,8 @@ class IC_BrivGemFarm_Class
         boughtGold := g_SharedData.PurchasedGoldChests - lastPurchasedGoldChests
         openedSilver := g_SharedData.OpenedSilverChests - lastOpenedSilverChests
         openedGold := g_SharedData.OpenedGoldChests - lastOpenedGoldChests
-        buyString := (boughtSilver > 0 AND boughtGold > 0) ? "Buy: (" . boughtSilver . "s, " . boughtGold . "g)" : ""
-        openString := (openedSilver > 0 AND openedGold > 0) ? "Open: (" . openedSilver . "s, " . openedGold . "g)" : ""
+        buyString := (boughtSilver > 0 OR boughtGold > 0) ? "Buy: (" . boughtSilver . "s, " . boughtGold . "g)" : ""
+        openString := (openedSilver > 0 OR openedGold > 0) ? "Open: (" . openedSilver . "s, " . openedGold . "g)" : ""
         separator := ((boughtSilver > 0 OR boughtGold > 0) AND (openedSilver > 0 OR openedGold > 0)) ? ", " : ""
         returnString := buyString . separator . openString
         return ((returnString != "") ? "Chests - " . returnString : "")
