@@ -36,8 +36,8 @@ class IC_ActiveEffectKeyHandler_Class
             if(baseAddress != this[k].BaseAddress)
             {
                 this[k] := New GameObjectStructure([])
-                this[k] := _MemoryManager.is64Bit
-                this[k] := baseAddress
+                this[k].Is64Bit := _MemoryManager.is64Bit
+                this[k].BaseAddress := baseAddress
             }
         }
         if _MemoryManager.is64Bit
