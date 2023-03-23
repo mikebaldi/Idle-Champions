@@ -30,7 +30,6 @@ class IC_ActiveEffectKeyHandler_Class
     Refresh()
     {
         this.GameInstance := 0
-        _MemoryManager.Refresh()
         for k,v in this.HeroEffectNames
             this[k] := this.GetEffectHandler(k)
         if _MemoryManager.is64Bit
