@@ -66,7 +66,7 @@ class IC_MemoryFunctions_Class
     ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
     ;Also, if the target process is running as admin, then the script will also require admin rights!
     ;Automatically selects offsets used depending on if process is 64bit or not (epic or steam)
-    OpenProcessReader(LoadAEKH := True)
+    OpenProcessReader()
     {
         _MemoryManager.exeName := g_userSettings[ "ExeName" ]
         _MemoryManager.Refresh()
@@ -76,9 +76,7 @@ class IC_MemoryFunctions_Class
         this.EngineSettings.Refresh()
         this.CrusadersGameDataSet.Refresh()
         this.DialogManager.Refresh()
-        ; ActiveEffectKeyHandler has more overhead when being generated than others. Option to skip refresh when not neading.
-        if(LoadAEKH)
-            this.ActiveEffectKeyHandler.Refresh()
+        this.ActiveEffectKeyHandler.Refresh()
     }
 
     ;=====================
