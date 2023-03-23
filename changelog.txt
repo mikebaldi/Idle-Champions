@@ -1,3 +1,8 @@
+March 23, 2023
+    Fixed chest string when stacking to show when buying/opening only one type of chest.
+    Simplified ActiveEffectKeyHandler even more.
+    Fixed recursion bug.
+
 March 22, 2023
     Updated Version Picker's failed write message.
     Updated 64 bit Imports for v503.
