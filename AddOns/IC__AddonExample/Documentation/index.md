@@ -1,17 +1,16 @@
 # **CREATING ADDONS:**  
 * [**Script Hub API**](./API.md)
-* [**File Structure of an Addon**](./File_Structure.md)
+* [**File structure of an Addon**](./File_Structure.md)
 * [**Themes**](./Themes.md)
 
 ## **Extending Classes**
 Coming soon...
 
-## **Replacing Behavior Through Overwriting Function**
-* [**Injection**](./Injection.md)  
+## **Replacing Behavior Through Function Overwriting**
+* [**Injection**](./Injection.md)  Coming soon...   
 
-## **Addons that interact with BrivGemFarm**
+## **Addons that interact with BrivGemFarm**  
   * [**Timed functions that run at the start of a gem farm**](./TimerScript.md)  
 
-  * [**Connecting to Briv Gem Farm's Script**](./UsingCom.md)  
-    Coming soon...
+  * [**Connecting to Briv Gem Farm's Script**](./UsingCom.md) Coming soon...  
 
