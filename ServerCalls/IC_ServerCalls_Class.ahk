@@ -13,6 +13,8 @@
     1. Added current time and processing time as data to pull from user details
 */
 
+; json library must be included if this file is used outside of Script Hub
+
 class IC_ServerCalls_Class
 {
     userID := 0
@@ -84,6 +86,7 @@ class IC_ServerCalls_Class
         return response
     }
 
+    ; Pulls user details from the server and returns it in a json parsed object.
     CallUserDetails() 
     {
         getUserParams := this.dummyData . "&include_free_play_objectives=true&instance_key=1&user_id=" . this.userID . "&hash=" . this.userHash
@@ -91,6 +94,7 @@ class IC_ServerCalls_Class
         return userDetails
     }
 
+    ; Starts a new adventure and returns the response.
     CallLoadAdventure( adventureToLoad ) 
     {
         patronTier := this.activePatronID ? 1 : 0
@@ -99,7 +103,7 @@ class IC_ServerCalls_Class
         return this.ServerCall( "setcurrentobjective", advParams )
     }
 
-    ;calling this loses everything earned during the adventure, should only be used when stuck.
+    ; Calling this loses everything earned during the adventure, should only be used when stuck.
     CallEndAdventure() 
     {
         advParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID "&game_instance_id=" this.activeModronID
@@ -115,6 +119,7 @@ class IC_ServerCalls_Class
         return this.ServerCall( "convertresetcurrency", (advParams . extraParams))
     }
 
+    ; Buys <chests> number of <chestID> chests. Automatically uses Patron purchase call for patron chests.
     CallBuyChests( chestID, chests )
     {
         if ( chests > 100 )
@@ -150,6 +155,7 @@ class IC_ServerCalls_Class
         }
     }
 
+    ; Open <chests> number of <chestID> chest.
     CallOpenChests( chestID, chests )
     {
         if ( chests > 99 )
@@ -181,6 +187,7 @@ class IC_ServerCalls_Class
             return 0
     }
     
+    ; Special server call spcifically for use with saves. saveBody must be encoded before using this call.
     ServerCallSave( saveBody ) 
     {
         response := ""
