@@ -14,7 +14,10 @@ Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, , Example template
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x10 y+10 , This is a demo text
-Gui, ICScriptHub:Add, Button , x10 y+10 gExampleAddonGuiClicked, Test Button
+Gui, ICScriptHub:Add, Button , x10 y+10 vExampleVariableForMouseover gExampleAddonGuiClicked, Test Button
+
+; Example of adding a tooltip to Script Hub.
+GUIFunctions.AddToolTip( "ExampleVariableForMouseover", "Click to load example GUI.") 
 
 ; ############################################################
 ;               Add a new GUI Window that uses themes

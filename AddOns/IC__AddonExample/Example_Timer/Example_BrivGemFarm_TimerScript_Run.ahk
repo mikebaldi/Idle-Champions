@@ -5,14 +5,14 @@
 #Persistent ; Keeps the script running even if there is no GUI or hotkeys
 
 ; Include code required for script to script communication
-#include %A_LineFile%\..\..\..\SharedFunctions\ObjRegisterActive.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\ObjRegisterActive.ahk
 ; Include common script functions. 
-#include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
 
 ; Create instance of the class with functions needed for addon
 global g_TimerExample_Mini := new IC_TimerExample_Mini
-; Read main script's settings. Used in script to get exe name.
-global g_UserSettings := g_TimerExample_Mini.SF.LoadObjectFromJSON(A_LineFile . "\..\..\..\settings.json")
+; Read main script's settings. Used in script to get exe name. "\..\..\..\..\" backtracks "Addons\IC__AddonExample\Example_Timer\Example_BrivGemFarm_TimerScript_Run.ahk"
+global g_UserSettings := g_TimerExample_Mini.SF.LoadObjectFromJSON(A_LineFile . "\..\..\..\..\settings.json")
 ; Bind class functions into functions that can be called from a timer.
 g_TimerExample_Mini.CreateTimedFunctions()
 ; Start functions to be called on timer.

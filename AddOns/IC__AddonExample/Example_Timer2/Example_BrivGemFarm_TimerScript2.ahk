@@ -17,7 +17,7 @@ class IC_TimerExample2_Class
         ; Bind DoTimedExample function to a variable.
         fncToCallOnTimer :=  ObjBindMethod(this, "DoTimedExample")
         ; Set the timer for the function to be called.
-        this.TimerFunctions[fncToCallOnTimer] := 3000
+        this.TimerFunctions[fncToCallOnTimer] := 1500
     }
 
     ; Starts the saved timed functions (typically to be started when briv gem farm is started)
@@ -53,7 +53,7 @@ class IC_TimerExample2_Class
                 ; Saves the XY coordinates and Width/Height values into the the matching variables.
                 WinGetPos, X, Y, Width, Height, ahk_id %Hwnd%
                 ; Place the top left corner of the window the screen width's distance from the right and at the top of the screen.
-                WinMove, A_ScreenWidth - Width, 0 ;A_ScreenHeight = 0 and top of the screen. Some border pixels may be missed in width size.
+                WinMove, A_ScreenWidth - Width, 200 ;A_ScreenHeight = 0 and top of the screen. Some border pixels may be missed in width size.
         }
     }
 }
