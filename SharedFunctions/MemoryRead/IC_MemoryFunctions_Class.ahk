@@ -612,7 +612,7 @@ class IC_MemoryFunctions_Class
     {
         slot := this.GetSavedFormationSlotByFavorite(favorite)
         formation := this.GetFormationSaveBySlot(slot)
-        return Formation
+        return formation
     }
 
     ; Returns an array containing the current formation. Note: Slots with no hero are converted from 0 to -1 to match other formation saves.
