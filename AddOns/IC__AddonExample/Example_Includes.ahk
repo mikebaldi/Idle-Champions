@@ -21,9 +21,9 @@
 ; -- Extends Example --
 ; Adds/Overwrites functions in a class. Gives flexibility to the script.
 ; Uncomment the following lines to enable the an Extends sample that adds or overwrites some functions.
-; #include *i %A_LineFile%\..\Example_Extends\Example_BrivGemFarm_Extends.ahk
+; #include *i %A_LineFile%\..\Example_Extends\Example_BrivGemFarm_Extends_Component.ahk
 
 ; -- Server Calls Example --
-; Adds/Overwrites functions in a class. Gives maximum flexibility to the script.
+; Allows direct interaction with the back end API for the game.
 ; Uncomment the following lines to enable the a sample that contacts the server API to do a task.
-#include *i %A_LineFile%\..\Example_Extends\Example_BrivGemFarm_Extends_Component.ahk
+#include *i %A_LineFile%\..\Example_ServerCall\Example_ServerCall_Includes.ahk
