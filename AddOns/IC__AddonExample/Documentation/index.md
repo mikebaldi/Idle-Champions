@@ -5,6 +5,9 @@ This Addon is a collection of examples on how to build addons. This documentatio
 * [**Script Hub API**](./API.md)
 * [**File structure of an Addon**](./File_Structure.md)
 * [**Themes**](./Themes.md)
+* [**ServerCalls**](./ServerCalls.md)
+* [**Modifying GUI of other tabs/addons**](./AddonsModifyingAddons.md)
+
 
 ## **Replacing Behavior Through Function Overwriting**
 * [**Function Injection / Extending Classes**](./Injection.md)
