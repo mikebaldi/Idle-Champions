@@ -27,7 +27,7 @@ CNE will at times push out multiple patches during the week, changing classes an
 
 ## Prerequisites
 
-You need AutoHotKey installed to be able to use `IC Script Hub`. The version of AutoHotKey installed also needs to support the switch command. 
+You need AutoHotKey installed to be able to use `IC Script Hub`. The version of AutoHotKey installed also needs to be version 1.1 and support the switch command. 
 
 [Download AutoHotKey](https://www.autohotkey.com/)
 
