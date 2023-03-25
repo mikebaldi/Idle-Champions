@@ -15,5 +15,15 @@
 
 ; -- Injection Example --
 ; Adds/Overwrites functions in a class. Gives maximum flexibility to the script.
-; Uncomment the following line to enable the an injection sample that adds or overwrites some functions.
+; Uncomment the following lines to enable the an injection sample that adds or overwrites some functions.
 ; #include *i %A_LineFile%\..\Example_Timer2\Example_BrivGemFarm_Injection.ahk
+
+; -- Extends Example --
+; Adds/Overwrites functions in a class. Gives flexibility to the script.
+; Uncomment the following lines to enable the an Extends sample that adds or overwrites some functions.
+; #include *i %A_LineFile%\..\Example_Extends\Example_BrivGemFarm_Extends.ahk
+
+; -- Server Calls Example --
+; Adds/Overwrites functions in a class. Gives maximum flexibility to the script.
+; Uncomment the following lines to enable the a sample that contacts the server API to do a task.
+#include *i %A_LineFile%\..\Example_Extends\Example_BrivGemFarm_Extends_Component.ahk
