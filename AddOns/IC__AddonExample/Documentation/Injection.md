@@ -10,6 +10,8 @@ The basic steps to accomplish this are:
     > Examples found in [Example_BrivGemFarm_Extends_Addon.ahk](./../Example_Extends/Example_BrivGemFarm_Extends_Addon.ahk)
 3. ``[BrivGemFarm]`` Add your updates to the Briv Gem Farm mods. This is done by appending the #include to the file set in ``g_BrivFarmModLoc``. See [Inject() example.](./../Example_Extends/Example_BrivGemFarm_Extends_Component.ahk)
 
+> Note: It is important that the injecting addon is loaded **after** any code that it is injecting into. Be sure to include those addons as dependencies in the Addon.json file.
+
 
 
 See [full example](./../Example_Extends/) of how this is done with line by line explanations.
