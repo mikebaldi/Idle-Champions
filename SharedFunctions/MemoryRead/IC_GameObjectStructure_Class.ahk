@@ -4,8 +4,6 @@
 ; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 
 ;       Note: "List", "Dict", and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
-; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
-; Is64Bit identifies if the object is using 32-bit (e.g. Steam) or 64-bit addresses (e.g. EGS)
 
 class GameObjectStructure
 {
@@ -13,8 +11,7 @@ class GameObjectStructure
     FullOffsets := Array()          ; Full list of offsets required to get from base pointer to this object
     FullOffsetsHexString := ""      ; Same as above but in readable hex string format. (Enable commented lines assigning this value to use for debugging)
     ValueType := "Int"              ; What type of value should be expected for the memory read.
-    BaseAddress := 0x0              ; The address the base pointer points to. Must read memory from target exe first to set this.
-    Is64Bit := 0                    ; Boolean indicating the system is 64 bit and not 32.
+    BaseAddressPtr := ""            ; The name of the pointer class that created this object.
     Offset := 0x0                   ; The offset from last object to this object.
     IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
     GSOName := ""
@@ -27,8 +24,7 @@ class GameObjectStructure
         this.ValueType := ValueType
         if(appendedOffsets[1]) ; Copy base and add offset
         {
-            this.BaseAddress := baseStructureOrFullOffsets.BaseAddress
-            this.Is64Bit := baseStructureOrFullOffsets.Is64Bit
+            this.BasePtr := baseStructureOrFullOffsets.BasePtr
             this.Offset := appendedOffsets[1]
             this.FullOffsets := baseStructureOrFullOffsets.FullOffsets.Clone()
             this.FullOffsets.Push(this.Offset*)
@@ -53,21 +49,21 @@ class GameObjectStructure
             {
                 sizeObject := this.QuickClone()
                 sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x18 : 0xC)
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x18 : 0xC)
                 return sizeObject
             }
             else if(this.ValueType == "Dict")
             {
                 sizeObject := this.QuickClone()
                 sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x40 : 0x20)
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x40 : 0x20)
                 return sizeObject
             }
             else if(this.ValueType == "HashSet")
             {
                 sizeObject := this.QuickClone()
                 sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Push(this.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
                 return sizeObject
             }
             else
@@ -81,15 +77,15 @@ class GameObjectStructure
             if key is number
             {
                 offset := this.CalculateOffset(key)
-                collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
             else if (key == "_items")
             {
-                collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
                 _items := this.StableClone()
                 _items.FullOffsets.Push(collectionEntriesOffset)
-                _items.ValueType := this.Is64Bit ? "Int64" : "UInt"
+                _items.ValueType := this.BasePtr.Is64Bit ? "Int64" : "UInt"
                 return _items
             }
             else
@@ -101,7 +97,7 @@ class GameObjectStructure
         {
             ; TODO: Verify hashset has same offsets as lists
             offset := this.CalculateOffset(key)
-            collectionEntriesOffset := this.Is64Bit ? 0x10 : 0x8
+            collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
         ; Special case for Dictionary collections in a gameobject. Look up dictionary offsets with every lookup. Do not store dictionary key/value object locations.
@@ -109,7 +105,7 @@ class GameObjectStructure
         {
             if (key == "key")
             {
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC        ; Offset for the entries (key/value location) of the collection
                 offset := this.CalculateDictOffset(["key",index]) + 0       ; Expected offset to the key for the <index>th entry.
                 tempObj := this.Clone()                                     ; Deep copy of this object.
                 offsetInsertLoc := tempObj.FullOffsets.Count() + 1,         ; Current offsets count
@@ -119,7 +115,7 @@ class GameObjectStructure
             }
             else if (key == "value")
             {
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection.
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC                           ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",index]) + 0                        ; Expected offset to the key for the <index>th entry.
                 keyoffset := this.CalculateDictOffset(["key",index]) + 0                       ; Expected offset to the value for the <index>th entry.
                 key := this.QuickClone().FullOffsets.Push(keyOffset).Read()                    ; Retrieve the value of the key
@@ -136,7 +132,7 @@ class GameObjectStructure
                     return
                 if(keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
-                collectionEntriesOffset := this.Is64Bit ? 0x18 : 0xC                            ; Offset for the entries (key/value location) of the collection.
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC                            ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",keyIndex]) + 0                      ; Expected offset to the value corresponding to the key.
                 this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset)                   ; Build a dictonary entry for this key.
                 return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
@@ -160,9 +156,8 @@ class GameObjectStructure
     {
         var := new GameObjectStructure
         var.FullOffsets := this.FullOffsets.Clone()
-        var.BaseAddress := this.BaseAddress
+        var.BasePtr := this.BasePtr
         var.ValueType := this.ValueType
-        var.Is64Bit := this.Is64Bit
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         var.Offset := this.Offset
@@ -256,28 +251,29 @@ class GameObjectStructure
             valueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
         val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        baseAddress := this.BasePtr.BaseAddress
         if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
             offsets := this.FullOffsets.Clone()
-            offsets.Push(this.Is64Bit ? 0x14 : 0xC)
-            var := _MemoryManager.instance.readstring(this.baseAddress, bytes := 0, valueType, offsets*)
+            offsets.Push(this.BasePtr.Is64Bit ? 0x14 : 0xC)
+            var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, valueType, offsets*)
         }
         else if (valueType == "List" or valueType == "Dict" or valueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
         {
-            var := _MemoryManager.instance.read(this.baseAddress, "Int", (this.GetOffsets())*)
+            var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }
         else if (valueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
             offsets := this.GetOffsets()
-            first8 := _MemoryManager.instance.read(this.baseAddress, "Int64", (offsets)*)
+            first8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             lastIndex := offsets.Count()
             offsets[lastIndex] := offsets[lastIndex] + 0x8
-            second8 := _MemoryManager.instance.read(this.baseAddress, "Int64", (offsets)*)
+            second8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             var := this.ConvQuadToString3( first8, second8 )
         }
         else
         {
-            var := _MemoryManager.instance.read(this.baseAddress, valueType, (this.GetOffsets())*)
+            var := _MemoryManager.instance.read(baseAddress, valueType, (this.GetOffsets())*)
         }
         return var
     }
@@ -293,7 +289,7 @@ class GameObjectStructure
     {
         if(indexStart) ; If list is not 0 based indexing
             listItem--             ; AHK uses 0 based array indexing, switch to 0 based
-        if(this.Is64Bit)
+        if(this.BasePtr.Is64Bit)
             return 0x20 + ( listItem * 0x8 )
         else
             return 0x10 + ( listItem * 0x4 )
@@ -312,7 +308,7 @@ class GameObjectStructure
         ; Second Special case:
         ; 0x20 + (A_index - 1) * 0x10 | 0x10 + (A_Index - 1) * 0x10
 
-        if(this.Is64Bit)
+        if(this.BasePtr.Is64Bit)
         {
             baseOffset := 0x28
             offsetInterval := 0x18

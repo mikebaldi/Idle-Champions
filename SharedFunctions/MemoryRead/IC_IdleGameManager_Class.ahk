@@ -32,14 +32,14 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
         ;==================
         ;structure pointers
         ;==================
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if(baseAddress != this.BaseAddress)
+        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
-            this.BaseAddress := baseAddress
+            this.Is64Bit := _MemoryManager.is64bit
             ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
             this.IdleGameManager := New GameObjectStructure(this.StructureOffsets)
+            this.IdleGameManager.BasePtr := this
             this.IdleGameManager.Is64Bit := _MemoryManager.is64bit
-            this.IdleGameManager.BaseAddress := this.BaseAddress
             if(!_MemoryManager.is64bit)
             {
                 ; Build offsets for class using imported AHK files.

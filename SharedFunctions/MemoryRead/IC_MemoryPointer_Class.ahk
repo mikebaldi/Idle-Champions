@@ -1,5 +1,9 @@
 ; GameManager class contains the in game data structure layout
 
+; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
+; Is64Bit identifies if the object is using 32-bit or 64-bit addresses.
+
+#include %A_LineFile%\..\IC_MemoryManager_Class.ahk
 #include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
 class IC_MemoryPointer_Class
@@ -7,6 +11,7 @@ class IC_MemoryPointer_Class
     ModuleOffset := 0
     StructureOffsets := 0
     BaseAddress := ""
+    Is64Bit := ""
 
     __new(moduleOffset := 0, structureOffsets := 0)
     {
@@ -20,14 +25,11 @@ class IC_MemoryPointer_Class
         return "v0.0.1, 2023-03-18"
     }
 
-    is64Bit()
-    {
-        return _MemoryManager.is64bit
-    }
-
     Refresh()
     {
-        _MemoryManager.Refresh()
+        ; _MemoryManager should only be refreshed outside of MemoryPointer, but must be refreshed before refreshing a memory pointer.
+        _MemoryManager.Refresh()       
         this.BaseAddress := _MemoryManager.baseAddress+this.ModuleOffset
+        this.Is64Bit := _MemoryManager.is64Bit
     }
 }

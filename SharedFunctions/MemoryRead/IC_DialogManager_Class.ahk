@@ -11,18 +11,18 @@ class IC_DialogManager_Class extends IC_MemoryPointer_Class
 
     Refresh()
     {
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if(baseAddress != this.BaseAddress)
+        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
-            this.BaseAddress := baseAddress
+            this.Is64Bit := _MemoryManager.is64bit
             this.UnityGameEngine := {}
             this.UnityGameEngine.Dialogs := {}
             structureOffsetsOverlay := this.StructureOffsets.Clone()
             structureOffsetsOverlay[1] += 0x0 ;0x010
             offsets := (this.HasOverlay() AND _MemoryManager.is64Bit) ? structureOffsetsOverlay : this.StructureOffsets
             this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
+            this.UnityGameEngine.Dialogs.DialogManager.BasePtr := this
             this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := _MemoryManager.is64Bit
-            this.UnityGameEngine.Dialogs.DialogManager.BaseAddress := this.BaseAddress
             if(!_MemoryManager.is64Bit)
             {
                 #include *i %A_LineFile%\..\Imports\IC_DialogManager32_Import.ahk

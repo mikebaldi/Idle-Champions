@@ -86,30 +86,31 @@ class IC_MemoryFunctions_Class
     ; Not for general use.
     GenericGetValue(GameObject)
     {
+        baseAddress := GameObject.BasePtr == "" ? GameObject.BaseAddress : GameObject.BasePtr.BaseAddress
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
+        ; val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
         if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
             offsets := GameObject.FullOffsets.Clone()
             offsets.Push(this.Is64Bit ? 0x14 : 0xC)
-            var := _MemoryManager.instance.readstring(GameObject.baseAddress, bytes := 0, GameObject.ValueType, offsets*)
+            var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, GameObject.ValueType, offsets*)
         }
         else if (GameObject.ValueType == "List" or GameObject.ValueType == "Dict" or GameObject.ValueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
         {
-            var := _MemoryManager.instance.read(GameObject.baseAddress, "Int", (GameObject.GetOffsets())*)
+            var := _MemoryManager.instance.read(baseAddress, "Int", (GameObject.GetOffsets())*)
         }
         else if (GameObject.ValueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
             offsets := GameObject.GetOffsets()
-            first8 := _MemoryManager.instance.read(GameObject.baseAddress, "Int64", (offsets)*)
+            first8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             lastIndex := offsets.Count()
             offsets[lastIndex] := offsets[lastIndex] + 0x8
-            second8 := _MemoryManager.instance.read(GameObject.baseAddress, "Int64", (offsets)*)
+            second8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             var := GameObject.ConvQuadToString3( first8, second8 )
         }
         else
         {
-            var := _MemoryManager.instance.read(GameObject.baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
+            var := _MemoryManager.instance.read(baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
         return var
     }
@@ -579,7 +580,7 @@ class IC_MemoryFunctions_Class
         _size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size.Read()
         loop, %_size%
         {
-            heroLoc := this.GameManager.Is64Bit() ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
+            heroLoc := this.Is64Bit ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
             champID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation[heroLoc].Read()
             if (!ignoreEmptySlots or champID != -1)
             {

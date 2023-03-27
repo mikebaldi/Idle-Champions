@@ -38,9 +38,10 @@ class IC_ActiveEffectKeyHandler_Class
                 this[k] := New GameObjectStructure([])
                 this[k].Is64Bit := _MemoryManager.is64Bit
                 this[k].BaseAddress := baseAddress
+                this[k].BasePtr := this[k]
             }
         }
-        if _MemoryManager.is64Bit
+        if (_MemoryManager.is64Bit)
             this.Refresh64()
         else
             this.Refresh32()

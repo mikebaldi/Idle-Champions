@@ -11,14 +11,14 @@ class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
     
     Refresh()
     {
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if(baseAddress != this.BaseAddress)
+        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
-            this.BaseAddress := baseAddress
+            this.Is64Bit := _MemoryManager.is64bit
             this.CrusadersGame := {}
             this.CrusadersGame.Defs := {}
             this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.StructureOffsets )
-            this.CrusadersGame.Defs.CrusadersGameDataSet.BaseAddress := this.BaseAddress
+            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := this
             this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
             if(!_MemoryManager.is64bit)
             {

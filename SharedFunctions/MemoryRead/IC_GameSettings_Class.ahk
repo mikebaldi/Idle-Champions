@@ -9,14 +9,15 @@ class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
 
     Refresh()
     {
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if(baseAddress != this.BaseAddress)
+        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
+            this.Is64Bit := _MemoryManager.is64bit
             this.BaseAddress := baseAddress
             this.CrusadersGame := {}
             this.CrusadersGame.GameSettings := new GameObjectStructure(this.StructureOffsets)
+            this.CrusadersGame.GameSettings.BasePtr := this
             this.CrusadersGame.GameSettings.Is64Bit := _MemoryManager.is64Bit
-            this.CrusadersGame.GameSettings.BaseAddress := this.BaseAddress
             if(!_MemoryManager.is64Bit)
             {
                 #include *i %A_LineFile%\..\Imports\IC_GameSettings32_Import.ahk
