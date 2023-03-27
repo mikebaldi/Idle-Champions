@@ -379,4 +379,25 @@ class GameObjectStructure
             }
         }
     }
+
+    ResetCollections()
+    {
+        this.DictionaryObject := {}
+        this.LastDictIndex := {}
+        for k,v in this
+        {
+            if(!IsObject(v) OR !ObjGetBase(v).__Class == "GameObjectStructure" OR k == "BasePtr")
+            {
+                continue
+            }
+            if(v.IsAddedIndex)
+            {   
+                this.Delete(k)
+            }
+            else
+            {
+                this[k].ResetCollections()
+            }
+        }
+    }
 }

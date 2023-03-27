@@ -53,4 +53,9 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
             ; this.game.SetNames()
         }
     }
+
+    ResetCollections()
+    {
+        this.IdleGameManager.ResetCollections()
+    }
 }

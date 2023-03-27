@@ -72,6 +72,14 @@ class IC_ActiveEffectKeyHandler_Class
         address := handlerAddressObj.Read() + handlerAddressObj.CalculateOffset(0) 
         return address
     }
+
+    ResetCollections()
+    {
+        for k,v in this.HeroEffectNames
+        {
+            this[k].ResetCollections()
+        }
+    }
 }
 
 #include *i %A_LineFile%\..\HeroHandlers\IC_ActiveEffectKeySharedFunctions_Class.ahk

@@ -30,4 +30,9 @@ class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
             }
         }
     }
+
+    ResetCollections()
+    {
+        this.CrusadersGame.ResetCollections()
+    }
 }

@@ -42,4 +42,9 @@ class IC_DialogManager_Class extends IC_MemoryPointer_Class
         overlayDLL2 := this.Main.getModuleBaseAddress("EOSSDK-Win64-Shipping.dll")
         return (overlayDLL1 != -1 AND overlayDLL2 != -1)
     }
+
+    ResetCollections()
+    {
+        this.UnityGameEngine.ResetCollections()
+    }
 }
