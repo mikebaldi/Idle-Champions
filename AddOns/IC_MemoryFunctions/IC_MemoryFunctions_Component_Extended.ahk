@@ -55,7 +55,7 @@ class ReadMemoryFunctionsExtended
         GuiControl, ICScriptHub:, ReadFormationNameBySlotID, % "Slot: 0, Name: " . g_SF.Memory.ReadFormationNameBySlot(0)
         GuiControl, ICScriptHub:, ReadGameStartedID, % g_SF.Memory.ReadGameStarted()
         GuiControl, ICScriptHub:, ReadFinishedOfflineProgressWindowID, % g_SF.Memory.ReadOfflineDone()
-        GuiControl, ICScriptHub:, IsSteam, % !g_SF.Memory.GameManager.is64Bit()
+        GuiControl, ICScriptHub:, IsSteam, % !_MemoryManager.is64bit
         GuiControl, ICScriptHub:, ReadAutoProgressToggledID, % g_SF.Memory.ReadAutoProgressToggled()
         GuiControl, ICScriptHub:, ReadGoldStringID, % g_SF.Memory.ReadGoldString()
         GuiControl, ICScriptHub:, FormationInFavoriteOne, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( 1 ))

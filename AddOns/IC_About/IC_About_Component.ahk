@@ -14,7 +14,7 @@ class IC_About_Component
         g_SF.Memory.OpenProcessReader()
         string := ""
         string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
-        gameVersionaArch := g_SF.Memory.GameManager.is64Bit() ? " (64 bit)" : " (32 bit)"
+        gameVersionaArch := _MemoryManager.is64bit ? " (64 bit)" : " (32 bit)"
         gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
         if(isFunc(g_SF.Memory.ReadGameVersion))
             string .= "Idle Champions Game Version: " . gameVersion . "`n"

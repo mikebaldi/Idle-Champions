@@ -1043,7 +1043,7 @@ class IC_SharedFunctions_Class
         ; Test Favorite Exists
         txtCheck := "1. Check the correct memory file is being used. Current version: " . memoryVersion
         txtcheck .= "`n`n2. If IC is running with admin privileges, then the script will also require admin privileges."
-        if (this.Memory.GameManager.is64bit())
+        if (_MemoryManager.is64bit)
             txtcheck .= "`n`n3. Check AHK is 64bit."
         while ( formationSaveSlot == -1 )
         {
@@ -1111,7 +1111,7 @@ class IC_SharedFunctions_Class
             txtcheck .= "`n2. Make sure the game exe in Game Location settings is set to ""IdleDragons.exe"""
             txtCheck .= "`n3. Check the correct memory file is being used. `n    Current version: " . this.Memory.GameManager.GetVersion()
             txtcheck .= "`n4. If IC is running with admin privileges, then the script will also require admin privileges."
-            if (this.Memory.GameManager.is64bit())
+            if (_MemoryManager.is64bit)
                 txtcheck .= "`n5. Check AHK is 64bit."
             MsgBox, 5,, % txtCheck
 
