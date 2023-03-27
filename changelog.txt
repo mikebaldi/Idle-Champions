@@ -1,5 +1,12 @@
+March 27, 2023
+    Updated memory pointers to only build gameobjects once.
+    Updated GameObjectStructures to contain a reference to the memory pointer that built it instead of storing is64bit and baseAddress in each object.
+    Updated MemoryPointer to use a is64bit field instead of a function.
+    Updated this.Memory.GameManager.is64bit() checks to use _MemoryManager.is64bit.
+    Added the ability to reset collection offsets (lists/dictionaries).
+
 March 25, 2023
-    Updated Example Addon
+    Updated Example Addon.
         Added documentation and example code for how to build an addon for use with Script Hub. Topics include:
             Addon file structure.
             Script Hub's API.
