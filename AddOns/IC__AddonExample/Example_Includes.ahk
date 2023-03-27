@@ -13,11 +13,6 @@
 ; Uncomment the following line to enable the second style of sample timer script which will move the game window when BrivGemFarm starts.
 ;#include *i %A_LineFile%\..\Example_Timer2\Example_BrivGemFarm_TimerScript2.ahk
 
-; -- Injection Example --
-; Adds/Overwrites functions in a class. Gives maximum flexibility to the script.
-; Uncomment the following lines to enable the an injection sample that adds or overwrites some functions.
-; #include *i %A_LineFile%\..\Example_Timer2\Example_BrivGemFarm_Injection.ahk
-
 ; -- Extends Example --
 ; Adds/Overwrites functions in a class. Gives flexibility to the script.
 ; Uncomment the following lines to enable the an Extends sample that adds or overwrites some functions.
