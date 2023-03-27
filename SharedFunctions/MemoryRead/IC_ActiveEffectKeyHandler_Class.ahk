@@ -30,8 +30,10 @@ class IC_ActiveEffectKeyHandler_Class
 
     Refresh()
     {
+        build := 0
         for k,v in this.HeroEffectNames
         {
+            build := build OR this[this.HerroEffectNames[k]] == ""
             baseAddress := this.GetBaseAddress(k)
             if(baseAddress != this[k].BaseAddress)
             {
@@ -41,6 +43,8 @@ class IC_ActiveEffectKeyHandler_Class
                 this[k].BasePtr := this[k]
             }
         }
+        if (!build)
+            return
         if (_MemoryManager.is64Bit)
             this.Refresh64()
         else
