@@ -50,7 +50,7 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
                 #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
             }
             ; DEBUG: Enable this line to be able to view the variable name of the GameObject. (e.g. this.game would have a GSOName variable that says "game" )
-            this.game.SetNames()
+            ; this.game.SetNames()
         }
     }
 }

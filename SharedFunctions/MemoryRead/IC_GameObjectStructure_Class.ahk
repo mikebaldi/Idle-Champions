@@ -159,7 +159,7 @@ class GameObjectStructure
         var.BasePtr := this.BasePtr
         var.ValueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        ; var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         var.Offset := this.Offset
         return var
     }
@@ -213,7 +213,7 @@ class GameObjectStructure
         offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count.
         this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value.
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        this.DictionaryObject[key].GSOName := key                                       
+        ; this.DictionaryObject[key].GSOName := key                                       
         this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
     }
 
@@ -225,7 +225,7 @@ class GameObjectStructure
         location := this.FullOffsets.Count() + 1
         this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
+        ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
         this[key].GSOName := key
         this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
     }
@@ -240,7 +240,7 @@ class GameObjectStructure
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
                 ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-                v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
+                ; v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
         }
     }
@@ -250,7 +250,7 @@ class GameObjectStructure
         if(!valueType)
             valueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
-        val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        ; val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         baseAddress := this.BasePtr.BaseAddress
         if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
