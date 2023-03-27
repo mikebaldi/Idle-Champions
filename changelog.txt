@@ -1,3 +1,14 @@
+March 25, 2023
+    Updated Example Addon
+        Added documentation and example code for how to build an addon for use with Script Hub. Topics include:
+            Addon file structure.
+            Script Hub's API.
+            Server calls.
+            Themes.
+            Timers and running them automatically with BrivGemFarm.
+            Making functions work in BrivGemFarm (Injection).
+            Adding controls to existing addon tabs.
+
 March 23, 2023
     Fixed chest string when stacking to show when buying/opening only one type of chest.
     Simplified ActiveEffectKeyHandler even more.
