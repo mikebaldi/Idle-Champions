@@ -155,7 +155,7 @@ class IC_BrivGemFarm_Stats_Component
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor1", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
-        Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w50, % bossesPhr
+        Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w60, % bossesPhr
 
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
@@ -164,6 +164,10 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
         Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
         
+        GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
+        GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
+        posX += 70
+        Gui, ICScriptHub:Add, Text, vNodromWarningID x%posX% y%posY% w260,
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
         GUIFunctions.UseThemeTextColor()
@@ -376,6 +380,13 @@ class IC_BrivGemFarm_Stats_Component
 
             currentSilverChests := g_SF.Memory.GetChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.GetChestCountByID(2)
+
+            ; Check if Nordom is in formation
+            formation := g_SF.Memory.GetFormationByFavorite(1)
+            foundChamp := g_SF.IsChampInFormation(100, formation)
+            formation := g_SF.Memory.GetFormationByFavorite(3)
+            foundChamp := foundChamp OR g_SF.IsChampInFormation(100, formation)
+            GuiControl, ICScriptHub:, NodromWarningID, % (foundChamp ? "WARNING: Nodrom found. BPH stat inflated." : "")
             if (IsObject(this.SharedRunData))
             {
                 GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
@@ -514,6 +525,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, TotalBossesHitID, % IsObject(this.SharedRunData) ? SharedRunData.TotalBossesHit : 0
         GuiControl, ICScriptHub:, TotalRollBacksID, % IsObject(this.SharedRunData) ? SharedRunData.TotalRollBacks : 0
         GuiControl, ICScriptHub:, BadAutoProgressID, % IsObject(this.SharedRunData) ? SharedRunData.BadAutoProgress : 0
+        GuiControl, ICScriptHub:, NodromWarningID, % ""
     }
 
     ; Resets stats stored on the stats tab.
