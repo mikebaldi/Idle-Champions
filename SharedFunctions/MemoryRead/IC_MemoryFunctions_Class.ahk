@@ -564,6 +564,11 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems.size.Read()
     }
 
+    ReadUltimateCooldownByItem(item := 0)
+    {
+        return g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].ultimateAttack.CooldownTimer.Read()
+    }
+
     ReadWelcomeBackActive()
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.notificationManager.notificationDisplay.welcomeBackNotification.Active.Read()
