@@ -3,6 +3,7 @@ March 28, 2023
     Added a warning on BPH when Nodrom is in the party. 
     Added offsets and handler for Nodrom XP added.
     Added offsets for the cooldown timer on ultimates.
+    Added ReadUltimateCooldownByItem function to MemoryFunctions.
 
 March 27, 2023
     Updated memory pointers to only build gameobjects once.
