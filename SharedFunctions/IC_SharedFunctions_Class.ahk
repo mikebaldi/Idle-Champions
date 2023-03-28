@@ -541,12 +541,21 @@ class IC_SharedFunctions_Class
     }
 
     ;A test if stuck on current area. After 35s, toggles autoprogress every 5s. After 45s, attempts falling back up to 2 times. After 65s, restarts level.
-    CheckifStuck()
+    CheckifStuck(isStuck := false)
     {
         static lastCheck := 0
         static fallBackTries := 0
         ;TODO: add better code in case a modron reset happens without being detected. might mean updating other functions.
         dtCurrentZoneTime := Round((A_TickCount - g_PreviousZoneStartTime) / 1000, 2)
+        if (isStuck)
+        {
+            this.RestartAdventure( "Game is stuck" )
+            this.SafetyCheck()
+            g_PreviousZoneStartTime := A_TickCount
+            lastCheck := 0
+            fallBackTries := 0
+            return true
+        }
         if (dtCurrentZoneTime > 35 AND dtCurrentZoneTime <= 45 AND dtCurrentZoneTime - lastCheck > 5) ; first check - ensuring autoprogress enabled
         {
             this.ToggleAutoProgress(1, true)
