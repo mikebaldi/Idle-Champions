@@ -1,3 +1,9 @@
+March 28, 2023
+    Fixed bug in GameObjectRefactor that was not properly saving a reference to the pointer object when cloning.
+    Added a warning on BPH when Nodrom is in the party. 
+    Added offsets and handler for Nodrom XP added.
+    Added offsets for the cooldown timer on ultimates.
+
 March 27, 2023
     Updated memory pointers to only build gameobjects once.
     Updated GameObjectStructures to contain a reference to the memory pointer that built it instead of storing is64bit and baseAddress in each object.
