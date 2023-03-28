@@ -6,3 +6,4 @@
 #include %A_LineFile%\..\IC_NerdWagonHandler64_Import.ahk
 #include %A_LineFile%\..\IC_HewMaanTeamworkHandler64_Import.ahk
 #include %A_LineFile%\..\IC_SpurtWaspirationHandlerV264_Import.ahk
+#include %A_LineFile%\..\IC_NordomModronCoreToolboxHandler64_Import.ahk
