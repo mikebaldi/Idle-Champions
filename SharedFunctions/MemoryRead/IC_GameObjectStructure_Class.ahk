@@ -171,7 +171,7 @@ class GameObjectStructure
         ; Iterate all the elements of the game object structure and clone time
         for k,v in this
         {
-            if(IsObject(v))
+            if(IsObject(v) AND k != "BasePtr") ; Keep BasePtr as a reference
                 var[k] := v.Clone()
             else
                 var[k] := v
@@ -186,7 +186,7 @@ class GameObjectStructure
         ; Iterate all the elements of the game object structure and clone time
         for k,v in this
         {
-            if(!IsObject(v))
+            if(!IsObject(v) OR k == "BasePtr") ; Keep BasePtr as a reference
             {
                 var[k] := v
                 continue
