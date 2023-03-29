@@ -5,6 +5,7 @@ March 28, 2023
     Added offsets for the cooldown timer on ultimates.
     Added ReadUltimateCooldownByItem function to MemoryFunctions.
     Updated modron reset check to force a reset faster if it fails.
+    Updated/Added champion upgrade related functions to memory reads.
 
 March 27, 2023
     Updated memory pointers to only build gameobjects once.
