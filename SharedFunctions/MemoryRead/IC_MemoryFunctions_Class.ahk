@@ -246,6 +246,11 @@ class IC_MemoryFunctions_Class
     ;herohandler - champion related information accessed by ID
     ;=========================================================
 
+    ReadChampListSize()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+    }
+
     ReadChampHealthByID(ChampID := 0 )
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].health.Read()
@@ -653,34 +658,49 @@ class IC_MemoryFunctions_Class
 
     ReadHeroUpgradeRequiredLevel(champID := 1, upgradeID := 7)
     {
-        orderedUpgradeEntry := 0
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered["value", orderedUpgradeEntry].List[upgradeID].RequiredLevel.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].RequiredLevel.Read()
     }
 
     ; Checks for specialization graphic. No graphic means no spec.
     ReadHeroUpgradeIsSpec(champID := 1, upgradeID := 7)
     {
-        orderedUpgradeEntry := 0
-        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered.size.Read()
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered["value", orderedUpgradeEntry].List[upgradeID].defaultSpecGraphic.Read() > 0
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].defaultSpecGraphic.Read() > 0
     }
 
     ReadHeroUpgradeRequiredUpgradeID(champID := 1, upgradeID := 7)
     {
-        orderedUpgradeEntry := 0
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered["value", orderedUpgradeEntry].List[upgradeID].RequiredUpgradeID.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].RequiredUpgradeID.Read()
     }
 
     ReadHeroUpgradeID(champID := 1, upgradeID := 7)
     {
-        orderedUpgradeEntry := 0
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered["value", orderedUpgradeEntry].List[upgradeID].ID.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].ID.Read()
     }
 
     ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 7)
     {
-        orderedUpgradeEntry := 0
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgradesOrdered["value", orderedUpgradeEntry].List[upgradeID].SpecializationName.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].SpecializationName.Read()
+    }
+
+    ReadHeroUpgradeIsPurchased(champID := 1, upgradeID := 7)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades[upgradeID].IsPurchased.Read()
+    }
+
+    ReadHeroUpgradesSize(champID := 1)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].allUpgrades.size.Read()
+    }
+
+    ReadHeroIsOwned(champID := 1)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].Owned.Read()
+    }
+
+    GetHeroNextUpgradeIsPurchased(champID := 1)
+    {
+        seat := this.ReadChampSeatByID(champID) ;- 1 ; index starts at 0
+        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat].nextUpgrade.IsPurchased.Read()
     }
 
     ; Returns the formation array of the formation used in the currently active modron.
