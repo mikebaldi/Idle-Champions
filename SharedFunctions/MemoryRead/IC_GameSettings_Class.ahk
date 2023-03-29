@@ -13,7 +13,6 @@ class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
         if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
             this.Is64Bit := _MemoryManager.is64bit
-            this.BaseAddress := baseAddress
             this.CrusadersGame := {}
             this.CrusadersGame.GameSettings := new GameObjectStructure(this.StructureOffsets)
             this.CrusadersGame.GameSettings.BasePtr := this
