@@ -7,6 +7,7 @@ This Addon is a collection of examples on how to build addons. This documentatio
 * [**Themes**](./Themes.md)
 * [**ServerCalls**](./ServerCalls.md)
 * [**Modifying GUI of other tabs/addons**](./AddonsModifyingAddons.md)
+* [**Inter-Script Communications**](./UsingCom.md)
 
 
 ## **Replacing Behavior Through Function Overwriting**
@@ -14,5 +15,5 @@ This Addon is a collection of examples on how to build addons. This documentatio
 
 ## **Addons that interact with BrivGemFarm**  
   * [**Timed functions that run at the start of a gem farm**](./TimerScript.md)  
-  * [**Connecting to Briv Gem Farm's Script**](./UsingCom.md) Coming soon...  
+  * [**Connecting to Briv Gem Farm's Script**](./UsingCom.md#brivgemfarm-specifics)
 
