@@ -940,7 +940,7 @@ class IC_SharedFunctions_Class
         isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
-            g_SharedData.LoopString := "Under attack. Retreating to change formations..."
+        g_SharedData.LoopString := "Under attack. Retreating to change formations..."
         while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < (2 * timeout)))
         {
             ElapsedTime := A_TickCount - StartTime
@@ -949,7 +949,7 @@ class IC_SharedFunctions_Class
             this.ToggleAutoProgress(1, true)
             isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         }
-        this.ToggleAutoProgress(1)
+        g_SharedData.LoopString := "Loading game finished."
     }
 
     ;Returns true if the formation array passed is the same as the formation currently on the game field. Always false on empty formation reads. Requires full formation.

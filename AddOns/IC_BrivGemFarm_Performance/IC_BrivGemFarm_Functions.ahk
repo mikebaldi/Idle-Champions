@@ -104,10 +104,19 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     ; Returns true when conditions have been met for starting a wait for dash.
     ShouldDashWait()
     {
-        currentFormation := this.Memory.GetCurrentFormation()
-        isShandieInFormation := this.IsChampInFormation( 47, currentFormation )
+        if ( g_BrivUserSettings[ "DisableDashWait" ] )
+            return False
+        isInDashWaitBuffer := this.Memory.ReadCurrentZone() >= ( this.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ] )
+        if ( isInDashWaitBuffer )
+            return False
         hasHasteStacks := this.Memory.ReadHasteStacks() > 50
-        return (!g_BrivUserSettings[ "DisableDashWait" ] AND isShandieInFormation AND hasHasteStacks)
+        if ( !hasHasteStacks )
+            Return False
+        isShandieInFormation := this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )            
+        if ( !isShandieInFormation )
+            return False
+
+        return True
     }
 }
 
@@ -388,6 +397,7 @@ class IC_BrivGemFarm_Class
         g_SF.SetFormation(g_BrivUserSettings) 
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
+        g_SF.ToggleAutoProgress( 1 )
     }
 
     /*  StackRestart - Stack Briv's SteelBones by switching to his formation and restarting the game.
@@ -409,7 +419,6 @@ class IC_BrivGemFarm_Class
         {
             retryAttempt++
             this.StackFarmSetup()
-            g_SF.ToggleAutoProgress( 1 , false, true ) ; 
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             modronResetZone := g_SF.Memory.GetModronResetArea()
             if(modronResetZone != "" AND g_SF.CurrentZone > modronResetZone)
@@ -475,7 +484,6 @@ class IC_BrivGemFarm_Class
         }
         g_PreviousZoneStartTime := A_TickCount
         g_SF.FallBackFromZone()
-        g_SF.ToggleAutoProgress( 1 )
         return
     }
 

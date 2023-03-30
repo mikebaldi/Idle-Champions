@@ -5,6 +5,10 @@ March 30, 2023
     Added code to help prevent loss of patron.
     Added more documentation to Example addon:
         Inter-script communications.
+    Updated ShouldDashWait to respect DashWaitBuffer.
+    Added new loop string so Retreating to change formation does not get stuck as the last message before a modron reset.
+    Removed Autoprogress toggle when going offline. (No longer required).
+    Moved where Autoprogress is started after stacking.
 
 March 28, 2023
     Fixed bug in GameObjectRefactor that was not properly saving a reference to the pointer object when cloning.
