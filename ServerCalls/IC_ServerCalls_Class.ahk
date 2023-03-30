@@ -95,9 +95,10 @@ class IC_ServerCalls_Class
     }
 
     ; Starts a new adventure and returns the response.
-    CallLoadAdventure( adventureToLoad ) 
+    CallLoadAdventure( adventureToLoad, activePatron := 0 ) 
     {
-        patronTier := this.activePatronID ? 1 : 0
+        activePatron := activePatron ? activePatron : this.activePatronID
+        patronTier := activePatron ? 1 : 0
         advParams := this.dummyData . "&patron_tier=" . patronTier . "&user_id=" . this.userID . "&hash=" . this.userHash . "&instance_id=" . this.instanceID 
             . "&game_instance_id=" . this.activeModronID . "&adventure_id=" . adventureToLoad . "&patron_id=" . this.activePatronID
         return this.ServerCall( "setcurrentobjective", advParams )

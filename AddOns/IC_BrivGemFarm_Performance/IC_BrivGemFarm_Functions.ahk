@@ -156,6 +156,7 @@ class IC_BrivGemFarm_Class
         if(g_SF.VerifyAdventureLoaded() < 0)
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
+        g_SF.CurrentActivePatron := g_SF.Memory.ReadPatronID()
         g_ServerCall.UpdatePlayServer()
         g_SF.ResetServerCall()
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
