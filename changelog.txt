@@ -1,3 +1,11 @@
+March 30, 2023
+    Fixed bug where game version was not loading on about page.
+    Updated Imports for v504. (Kartridge/CNE still on 503).
+    Updated Pointers for Steam (v504), EGS (v504), CNE (v503), Kartridge (v503).
+    Added code to help prevent loss of patron.
+    Added more documentation to Example addon:
+        Inter-script communications.
+
 March 28, 2023
     Fixed bug in GameObjectRefactor that was not properly saving a reference to the pointer object when cloning.
     Added a warning on BPH when Nodrom is in the party. 
@@ -8,7 +16,7 @@ March 28, 2023
     Updated/Added champion upgrade related functions to memory reads.
 
 March 27, 2023
-    Updated memory pointers to only build gameobjects once.
+    Updated memory pointers to only build GameObjects once.
     Updated GameObjectStructures to contain a reference to the memory pointer that built it instead of storing is64bit and baseAddress in each object.
     Updated MemoryPointer to use a is64bit field instead of a function.
     Updated this.Memory.GameManager.is64bit() checks to use _MemoryManager.is64bit.
