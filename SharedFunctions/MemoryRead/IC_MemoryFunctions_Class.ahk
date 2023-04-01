@@ -955,8 +955,26 @@ class IC_MemoryFunctions_Class
 
     ReadPatronID()
     {
-        val := this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.Read()
-        return val ? val : 0
+        return this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.Read()
+    }
+
+    GetDialogSlotByName(dialogName := "LoadingTextBox")
+    {
+        if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
+            dialogName := "LoadingTextBox"
+        size := this.ReadDialogsListSize()
+        loop, %size%
+        {
+            name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
+            if (name == dialogName)
+                return (A_Index - 1)
+        }
+        return ""
+    }
+
+    ReadDialogActive(slot := 0)
+    {
+        return this.DialogManager.dialogs[slot].Active.Read()
     }
 
     ;==============

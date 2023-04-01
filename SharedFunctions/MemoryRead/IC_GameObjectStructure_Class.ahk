@@ -326,7 +326,7 @@ class GameObjectStructure
         return offset
     }
 
-    ; TODO: Convert to proper dictionary lookup.  Current method is O(n) instead of O(log(n))
+    ; TODO: Convert to proper dictionary lookup.  Current method is O(n) instead of O(1)
     ; Iterates a dictionary collection looking for the matching key value
     GetDictIndexOfKey(key)
     {

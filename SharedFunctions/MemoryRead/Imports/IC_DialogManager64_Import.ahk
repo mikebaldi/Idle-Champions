@@ -11,3 +11,4 @@ this.dialogs.convertWindow.convertPanel.convertingFrom := New GameObjectStructur
 this.dialogs.convertWindow.convertPanel.convertingFrom.ID := New GameObjectStructure(this.dialogs.convertWindow.convertPanel.convertingFrom,"Int", [0x10])
 this.dialogs.convertWindow.convertPanel.convertingTo := New GameObjectStructure(this.dialogs.convertWindow.convertPanel,"Int", [0x3c0])
 this.dialogs.convertWindow.convertPanel.convertingTo.ID := New GameObjectStructure(this.dialogs.convertWindow.convertPanel.convertingTo,"Int", [0x10])
+this.dialogs.Active := New GameObjectStructure(this.dialogs,"Char", [0x399])
