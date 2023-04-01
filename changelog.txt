@@ -2,6 +2,7 @@ April 1, 2023
     Added Theme Manager addon.
     Added Active flag memory read for Dialogs.
     Added memory read function to find a slot by Dialog name.
+    Fixed a bug with PatronID reads.
 
 March 30, 2023
     Fixed bug where game version was not loading on about page.
