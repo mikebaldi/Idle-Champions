@@ -21,6 +21,7 @@ if(GUIFunctions.isDarkMode)
 else
 	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
 GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUIClickedButton")
+GUIFunctions.UseThemeBackgroundColor()
 
 AddonOpenGuiClicked(){
 	;AddonManagement.OpenDefaultGui()
