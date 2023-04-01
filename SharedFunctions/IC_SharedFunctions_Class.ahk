@@ -81,7 +81,6 @@ class IC_SharedFunctions_Class
     UserHash := ""
     InstanceID := 0
     CurrentAdventure := 30 ; default cursed farmer
-    CurrentActivePatron := 0
     ErrorKeyDown := 0
     ErrorKeyUp := 0
     GameStartFormation := 1
@@ -594,7 +593,7 @@ class IC_SharedFunctions_Class
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
             g_ServerCall.CallEndAdventure()
-            g_ServerCall.CallLoadAdventure( this.CurrentAdventure, this.CurrentActivePatron )
+            g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
     }
 
     /*  WaitForModronReset - A function that monitors a modron resetting process.
