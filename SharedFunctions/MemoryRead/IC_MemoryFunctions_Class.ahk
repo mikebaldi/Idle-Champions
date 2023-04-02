@@ -1019,6 +1019,8 @@ class IC_MemoryFunctions_Class
     {
         if(champID < 107)
             return champID - 1
+        if(champID == 107)
+            return ""
         return champID - 2
     }
 
