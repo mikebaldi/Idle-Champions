@@ -955,10 +955,10 @@ class IC_MemoryFunctions_Class
 
     ReadPatronID()
     {
-        patronID := this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.Read()
+        patronID := this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID.Read()
         if(patronID < 0 OR patronID > 100) ; Ignore clearly bad memory reads.
             patronID := ""
-        return 
+        return patronID
     }
 
     GetDialogSlotByName(dialogName := "LoadingTextBox")
