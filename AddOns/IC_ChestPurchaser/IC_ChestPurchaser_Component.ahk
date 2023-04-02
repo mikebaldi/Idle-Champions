@@ -1,6 +1,7 @@
 GUIFunctions.AddTab("Chests")
 
 Gui, ICScriptHub:Tab, Chests
+GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data and read chests into lists."
 Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only open chests while game is closed. (Yes, this is a hassle.)"
 Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchaseID, Buy Chests: 

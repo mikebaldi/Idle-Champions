@@ -2,6 +2,7 @@
 GUIFunctions.AddTab("About")
 
 Gui, ICScriptHub:Tab, About
+GUIFunctions.UseThemeTextColor()
 aboutRows := 17
 aboutGroupBoxHeight := aboutRows * 15
 Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight%, Version Info: 

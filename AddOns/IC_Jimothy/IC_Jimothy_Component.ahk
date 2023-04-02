@@ -12,6 +12,7 @@ If !IsObject( g_JimothySettings )
 }
 
 Gui, ICScriptHub:Tab, Jimothy
+GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, x15 y+10 w120, What is happening:
 Gui, ICScriptHub:Font, w400
