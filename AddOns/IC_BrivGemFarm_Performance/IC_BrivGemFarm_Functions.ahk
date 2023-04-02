@@ -358,7 +358,8 @@ class IC_BrivGemFarm_Class
     ; Stops progress and switches to appropriate party to prepare for stacking Briv's SteelBones.
     StackFarmSetup()
     {
-        g_SF.KillCurrentBoss()
+        if (!g_SF.KillCurrentBoss()) ; Previously/Alternatively FallBackFromBossZone()
+            g_SF.FallBackFromBossZone()
         inputValues := "{w}" ; Stack farm formation hotkey
         g_SF.DirectedInput(,, inputValues )
         g_SF.WaitForTransition( inputValues )
@@ -475,7 +476,7 @@ class IC_BrivGemFarm_Class
         prevSB := g_SF.Memory.ReadSBStacks()
         while ( stacks < targetStacks AND ElapsedTime < 300000 AND g_SF.Memory.ReadCurrentZone() > g_BrivUserSettings[ "MinStackZone" ] )
         {
-            g_SF.KillCurrentBoss()
+            g_SF.FallBackFromBossZone()
             stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
             if ( g_SF.Memory.ReadSBStacks() > prevSB)
                 StartTime := A_TickCount
