@@ -1,3 +1,11 @@
+April 2, 2023
+    Added a version requirement to Script Hub to give a more informative error when running AHK without switch statements or running AHK 2.0.
+    Reverted how online stacking works from a boss zone.
+    Offline stacking will fall back a zone to stack if killing the boss fails.
+    Fixed GUI issues such as incorrect text color and poor text alignment with multiple tab rows.
+    Fixed ResetCollections function for pointer classes.
+    Fixed lookup of champID 107 returning ID 106.
+
 April 1, 2023
     Added Theme Manager addon.
     Added Active flag memory read for Dialogs.
