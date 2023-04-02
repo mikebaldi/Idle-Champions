@@ -27,9 +27,4 @@ class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
             }
         }
     }
-    
-    ResetCollections()
-    {
-        this.CrusadersGame.ResetCollections()
-    }
 }

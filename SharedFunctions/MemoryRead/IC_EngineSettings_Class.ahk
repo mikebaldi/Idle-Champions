@@ -28,9 +28,4 @@ class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
             }
         }
     }
-
-    ResetCollections()
-    {
-        this.UnityGameEngine.ResetCollections()
-    }
 }

@@ -32,4 +32,13 @@ class IC_MemoryPointer_Class
         this.BaseAddress := _MemoryManager.baseAddress+this.ModuleOffset
         this.Is64Bit := _MemoryManager.is64Bit
     }
+
+    ResetCollections()
+    {
+        for k,v in this
+        {
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
+                this[k].ResetCollections()
+        }
+    }
 }
