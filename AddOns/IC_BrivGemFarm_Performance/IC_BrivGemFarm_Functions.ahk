@@ -70,8 +70,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         ElapsedTime := 0
         g_SharedData.LoopString := "Modron Resetting..."
         this.SetUserCredentials()
-        ; if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
-        ;     response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
+        if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+            response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
