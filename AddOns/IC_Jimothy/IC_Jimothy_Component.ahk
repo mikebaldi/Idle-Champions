@@ -13,7 +13,7 @@ If !IsObject( g_JimothySettings )
 
 Gui, ICScriptHub:Tab, Jimothy
 Gui, ICScriptHub:Font, w700
-Gui, ICScriptHub:Add, Text, x15 y68 w120, What is happening:
+Gui, ICScriptHub:Add, Text, x15 y+10 w120, What is happening:
 Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Text, x15 y+10 w300 vJimothyStatus, This Addon is not running.
 Gui, ICScriptHub:Add, Text, x15 y+5 w300 vJimothyHew,
