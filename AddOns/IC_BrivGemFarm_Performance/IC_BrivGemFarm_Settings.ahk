@@ -16,8 +16,6 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "TargetStacks" ] := 4000
     if ( g_BrivUserSettings[ "RestartStackTime" ] == "" )
         g_BrivUserSettings[ "RestartStackTime" ] := 12000
-    if ( g_BrivUserSettings[ "DoChests" ] == "" )
-        g_BrivUserSettings[ "DoChests" ] := 1
     if ( g_BrivUserSettings[ "BuySilvers" ] == "" )
         g_BrivUserSettings[ "BuySilvers" ] := 1
     if ( g_BrivUserSettings[ "BuyGolds" ] == "" )
