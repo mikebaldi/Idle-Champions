@@ -610,6 +610,7 @@ class IC_BrivGemFarm_Class
     */
     DoPartySetup()
     {
+        g_SharedData.LoopString := "Leveling champions"
         formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
         isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
         g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv

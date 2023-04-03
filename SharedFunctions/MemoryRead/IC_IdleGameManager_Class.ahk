@@ -24,11 +24,7 @@ class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
 
     Refresh()
     {
-        ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
-        ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
-        ;Also, if the target process is running as admin, then the script will also require admin rights!
-        ;Note: The program identifier can be any AHK windowTitle i.e.ahk_exe, ahk_class, ahk_pid, or simply the window title.
-        ;hProcessCopy is an optional variable in which the opened handled is stored.
+
         ;==================
         ;structure pointers
         ;==================

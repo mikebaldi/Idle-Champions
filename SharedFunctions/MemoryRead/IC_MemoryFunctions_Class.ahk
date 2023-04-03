@@ -73,6 +73,8 @@ class IC_MemoryFunctions_Class
     {
         _MemoryManager.exeName := g_userSettings[ "ExeName" ]
         _MemoryManager.Refresh()
+        if(_MemoryManager.handle == "")
+            MsgBox, , , Could not read from exe. Try running as Admin. , 7
         this.Is64Bit := _MemoryManager.is64Bit
         this.GameManager.Refresh()
         this.GameSettings.Refresh()

@@ -108,7 +108,7 @@ VersionPickerSaveChoice()
     {
         errMsg := "There was a problem saving the settings."
         errMsg .= "`nMake sure you have write permissions to the Script Hub directory."
-        errMsg .= "`n  1) Make sure you have write permissions to Script Hub's Folder."
+        errMsg .= "`n  1) Make sure you have write permissions to Script Hub's Folder. (e.g. The script is not in Program Files)"
         errMsg .= "`n  2) Try running the script as Admin."
         errMsg .= "`nClosing script."
         MsgBox,0,, %errMsg%
