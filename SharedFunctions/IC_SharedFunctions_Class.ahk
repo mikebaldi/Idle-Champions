@@ -87,6 +87,9 @@ class IC_SharedFunctions_Class
     ModronResetZone := 0
     CurrentZone := ""
     Settings := ""
+    TotalGems := 0
+    TotalSilverChests := 0
+    TotalGoldChests := 0
 
     __new()
     {

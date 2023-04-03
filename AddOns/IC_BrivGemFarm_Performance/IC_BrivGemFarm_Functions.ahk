@@ -2,7 +2,6 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 {
     steelbones := ""
     sprint := ""
-    
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
@@ -34,8 +33,10 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
         this.TotalGems := this.Memory.ReadGems()
-        this.TotalSilverChests := this.Memory.GetChestCountByID(1)
-        this.TotalGoldChests := this.Memory.GetChestCountByID(2)
+        silverChests := this.Memory.GetChestCountByID(1)
+        goldChests := this.Memory.GetChestCountByID(2)
+        this.TotalSilverChests := (silverChests != "") ? silverChests : this.TotalSilverChests
+        this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
         this.sprint := this.Memory.ReadHasteStacks()
         this.steelbones := this.Memory.ReadSBStacks()
     }
@@ -669,7 +670,7 @@ class IC_BrivGemFarm_Class
         {
             if(numChests > 0)
             {
-                response := g_ServerCall.callBuyChests( chestID, numChests )
+                response := g_ServerCall.CallBuyChests( chestID, numChests )
                 if(response.okay AND response.success)
                 {
                     g_SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
@@ -704,7 +705,7 @@ class IC_BrivGemFarm_Class
         openChestTimeEst := chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
         if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openChestTimeEst) )
         {
-            chestResults := g_ServerCall.callOpenChests( chestID, numChests )
+            chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
             if(chestResults.success)
             {
                 g_SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
