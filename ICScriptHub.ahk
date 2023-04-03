@@ -37,7 +37,6 @@ global g_ServerCall
 global g_UserSettings := {}
 global g_TabControlHeight := 630
 global g_TabControlWidth := 430
-global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 global g_InputsSent := 0
 global g_TabList := ""
 global g_PlayButton := A_LineFile . "\..\Images\play-100x100.png"
@@ -55,8 +54,7 @@ if (GUIfunctions.isDarkMode)
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
 
 ;Load user settings
-g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
-
+g_UserSettings := IC_SharedFunctions_Class.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 ;check if first run
 If !IsObject( g_UserSettings )
 {
@@ -78,9 +76,11 @@ if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
 if(g_UserSettings[ "WriteSettings" ] := true)
 {
     g_UserSettings.Delete("WriteSettings")
-    g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+    IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
 }
 
+
+global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
@@ -99,7 +99,7 @@ Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 GUIFunctions.UseThemeBackgroundColor()
-Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
+Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)"
 GUIFunctions.UseThemeTitleBar("ICScriptHub")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
 
@@ -177,6 +177,7 @@ BuildToolTips()
 if(IsObject(AddonManagement))
     AddonManagement.BuildToolTips()
 
+Gui, ICScriptHub:Show,, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
 
 StopMiniscripts()
 {
