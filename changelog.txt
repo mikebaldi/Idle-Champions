@@ -1,3 +1,9 @@
+April 3, 2023
+    Removed single setting for enabling server calls.
+    Refactored chest buying/opening functions for BrivGemFarm. (Fixes some minor bugs with counts and purchasing).
+    Optimized chest name reading for use with Inventory and Chest Purchaser addons.
+    Updated SharedFunctions to be able to use g_UserSettings. (Required for memory read).
+
 April 2, 2023
     Added a version requirement to Script Hub to give a more informative error when running AHK without switch statements or running AHK 2.0.
     Reverted how online stacking works from a boss zone.
