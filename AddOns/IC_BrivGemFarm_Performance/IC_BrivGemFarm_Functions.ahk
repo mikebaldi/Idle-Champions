@@ -600,7 +600,7 @@ class IC_BrivGemFarm_Class
     ;===========================================================
     ;Helper functions for Briv Gem Farm
     ;===========================================================
-    /*  DoPartySetup - When gem farm is started or a zone is reloaded, this is called to set up the primary party.
+    /*  DoPartySetup - When gem farm is started or an adventure is reloaded, this is called to set up the primary party.
                        Levels Shandie and Briv, waits for Shandie Dash to start, completes the quests of the zone and then go time.
 
         Parameters:
@@ -646,22 +646,20 @@ class IC_BrivGemFarm_Class
     ;=====================================================
     ;Functions for direct server calls between runs
     ;=====================================================
-    /*  BuyOrOpenChests - A method to buy or open silver or gold chests based on parameters passed.
+    /*  BuyChests - A method to buy chests based on parameters passed.
 
         Parameters:
+        chestID   - The ID of the chest to be bought. Default is 1 (silver).
         startTime - The number of milliseconds that have elapsed since the system was started, up to 49.7 days.
-        numSilverChestsToOpen and numGoldChestsToOpen - expected number of chests to open in this iteration of calls.
             Used to estimate if there is enough time to perform those actions before attempting to do them.
-
+        numChests - expected number of chests to buy. Default is 100.
+            
         Return Values:
         None
 
         Side Effects:
-        On success opening or buying, will update g_SharedData.
-        On success and shinies found, will increment g_SharedData.ShinyCount by number of shinies found.
-
-        Notes:
-        First line is ignoring fact that once every 49 days this func can potentially be called w/ startTime at 0 ms.
+        On success, will update g_SharedData.PurchasedSilverChests and g_SharedData.PurchasedGoldChests.
+        On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
     */
     BuyChests( chestID := 1, startTime := 0, numChests := 100)
     {
@@ -684,6 +682,22 @@ class IC_BrivGemFarm_Class
         }
     }
 
+    /*  OpenChests - A method to open chests based on parameters passed.
+
+        Parameters:
+        chestID   - The ID of the chest to be bought. Default is 1 (silver).
+        startTime - The number of milliseconds that have elapsed since the system was started, up to 49.7 days.
+            Used to estimate if there is enough time to perform those actions before attempting to do them.
+        numChests - expected number of chests to open. Default is 100.
+
+
+        Return Values:
+        None
+
+        Side Effects:
+        On success, will update g_SharedData.OpenedSilverChests and g_SharedData.OpenedGoldChests.
+        On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
+    */
     OpenChests( chestID := 1, startTime := 0, numChests := 99 )
     {
         startTime := startTime ? startTime : A_TickCount
