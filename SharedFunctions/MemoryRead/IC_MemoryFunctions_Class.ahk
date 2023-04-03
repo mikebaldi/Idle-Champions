@@ -44,6 +44,8 @@ class IC_MemoryFunctions_Class
         }
         currentPointers := JSON.parse( oData )
         this.PointerVersionString := currentPointers.Version . (currentPointers.Platform ? (" (" currentPointers.Platform  . ") ") : "")
+        _MemoryManager.exeName := g_UserSettings[ "ExeName" ]
+        _MemoryManager.Refresh()
         this.GameManager := new IC_IdleGameManager_Class(currentPointers.IdleGameManager.moduleAddress, currentPointers.IdleGameManager.moduleOffset)
         this.GameSettings := new IC_GameSettings_Class(currentPointers.GameSettings.moduleAddress, currentPointers.GameSettings.staticOffset, currentPointers.GameSettings.moduleOffset)
         this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
@@ -1030,6 +1032,20 @@ class IC_MemoryFunctions_Class
         {
             chestID := this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()
             this.ChestIndexByID[chestID] := A_Index - 1
+        }
+    }
+
+    ; Creates GameObjectSTructure indexes of all chests in chest defines.
+    InitializeChestsIndices()
+    {
+        if(this.CrusadersGameDataSet.ChestTypeDefines.Count() > 500) ; chests already added.
+            return
+        size := this.ReadChestDefinesSize()
+        if(size <= 0 OR size > 10000) ; Sanity checks
+            return "" 
+        loop, %size%
+        {
+            this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1]
         }
     }
 
