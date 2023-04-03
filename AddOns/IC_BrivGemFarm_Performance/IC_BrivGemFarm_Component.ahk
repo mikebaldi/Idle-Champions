@@ -23,7 +23,7 @@ Gui, ICScriptHub:Add, Edit, vNewTargetStacks x15 y+10 w50, % g_BrivUserSettings[
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, Text, x15 y+20, Chest options during a game restart for stacking.
-Gui, ICScriptHub:Add, Text, x15 y+5, NOTE: Buy Silver enabled may leave too few gems to also Buy Gold.
+Gui, ICScriptHub:Add, Text, x15 y+5, NOTE: Buy Silver enabled may leave too few gems or too little time to also Buy Gold.
 Gui, ICScriptHub:Add, Checkbox, vBuySilversCheck Checked%BuySilvers% x15 y+5, Buy silver chests?
 Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck Checked%BuyGolds% x15 y+5, Buy gold chests? 
 Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck Checked%OpenSilvers% x15 y+5, Open silver chests?

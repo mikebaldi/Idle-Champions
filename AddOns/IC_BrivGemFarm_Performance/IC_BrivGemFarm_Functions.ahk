@@ -518,7 +518,6 @@ class IC_BrivGemFarm_Class
         doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
         while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
         {
-            ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
             effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
 
@@ -526,18 +525,18 @@ class IC_BrivGemFarm_Class
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
             amount := Min(Floor(gems / 50), 100 )
             if( g_BrivUserSettings[ "BuySilvers" ] AND amount > 0 )
-                this.BuyChests( chestID := 1, StartTime, amount )
+                this.BuyChests( chestID := 1, effectiveStartTime, amount )
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
             amount := Min(Floor(gems / 500) , 100 )
             if ( g_BrivUserSettings[ "BuyGolds" ] AND amount > 0 )
-                this.BuyChests( chestID := 2, StartTime, amount )
+                this.BuyChests( chestID := 2, effectiveStartTime, amount )
             ; OPENCHESTS
             amount := Min(g_SF.TotalSilverChests, 99)
             if ( g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0 )
-                this.OpenChests( chestID := 1, StartTime, amount)
+                this.OpenChests( chestID := 1, effectiveStartTime, amount)
             amount := Min(g_SF.TotalGoldChests, 99)
             if ( g_BrivUserSettings[ "OpenGolds" ] AND amount > 0 )
-                this.OpenChests( chestID := 2, StartTime, amount )
+                this.OpenChests( chestID := 2, effectiveStartTime, amount )
 
             updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
             currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
@@ -548,6 +547,7 @@ class IC_BrivGemFarm_Class
             if (updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
                 return loopString == "" ? "Chests ----" : loopString
             currentChestTallies := updatedTallies
+            ElapsedTime := A_TickCount - StartTime
         }
         return loopString
     }
@@ -675,8 +675,8 @@ class IC_BrivGemFarm_Class
                 {
                     g_SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
                     g_SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
-                    g_SF.TotalSilverChests := (chestID == 1) ? response.chests_count : g_SF.TotalSilverChests
-                    g_SF.TotalGoldChests := (chestID == 2) ? response.chests_count : g_SF.TotalGoldChests
+                    g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
+                    g_SF.TotalGoldChests := (chestID == 2) ? response.chest_count : g_SF.TotalGoldChests
                     g_SF.TotalGems := response.currency_remaining
                 }
             }
@@ -703,6 +703,7 @@ class IC_BrivGemFarm_Class
     {
         startTime := startTime ? startTime : A_TickCount
         openChestTimeEst := chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
+        timeCalc := A_TickCount - startTime + openChestTimeEst
         if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openChestTimeEst) )
         {
             chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
