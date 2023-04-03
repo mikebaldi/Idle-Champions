@@ -30,6 +30,7 @@ class IC_MemoryFunctions_Class
     ; Active GameInstance is 0 in the DLL so GameInstance should not need to change.
     GameInstance := 0
     PointerVersionString := ""
+    ChestIndexByID := {} ; Map of ID/Chests for faster lookups
 
     __new(fileLoc := "CurrentPointers.json")
     {
@@ -880,14 +881,12 @@ class IC_MemoryFunctions_Class
 
     GetChestNameByID(chestID)
     {
-        size := this.ReadChestDefinesSize()   
-        if(!size)
-            return "" 
-        index := this.BinarySearchList(this.CrusadersGameDataSet.ChestTypeDefines, ["ID"], 1, size, chestID)
-        if (index >= 0)
-            return this.CrusadersGameDataSet.ChestTypeDefines[index - 1].NamePlural.Read()
-        else
-            return ""
+        ; IndexList build because:
+        ; maxContiguousChestID := 283 ; (ordered and continuous)
+        ; maxOrderedChestID := 419 ; then 482 comes before 420
+        if(this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].ID.Read() != chestID)
+            this.BuildChestIndexList()
+        return this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].NamePlural.Read()
     }
 
     GetChestNameBySlot(index)
@@ -1002,14 +1001,11 @@ class IC_MemoryFunctions_Class
             ; failed memory read
             if(IDValue == "")
                 return -1
-            ; if value found, return index
-            else if (IDValue == searchValue)
+            else if (IDValue == searchValue) ; if value found, return index
                 return middle
-            ; else if value larger that middle value, check larger half
-            else if (IDValue > searchValue)
+            else if (IDValue > searchValue) ; else if value larger that middle value, check larger half
                 return this.BinarySearchList(gameListObject, lookupKeys, leftIndex, middle-1, searchValue)
-            ; else if value smaller than middle value, check smaller half
-            else
+            else  ; else if value smaller than middle value, check smaller half
                 return this.BinarySearchList(gameListObject, lookupKeys, middle+1, rightIndex, searchValue)
         }
     }
@@ -1022,6 +1018,19 @@ class IC_MemoryFunctions_Class
         if(champID == 107)
             return ""
         return champID - 2
+    }
+
+    ; Builds this.ChestIndexByID from memory values.
+    BuildChestIndexList()
+    {
+        size := this.ReadChestDefinesSize()
+        if(size <= 0 OR size > 10000) ; Sanity checks
+            return "" 
+        loop, %size%
+        {
+            chestID := this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()
+            this.ChestIndexByID[chestID] := A_Index - 1
+        }
     }
 
     #include *i IC_MemoryFunctions_Extended.ahk
