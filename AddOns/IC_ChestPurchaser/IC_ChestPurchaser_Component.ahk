@@ -32,6 +32,7 @@ GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpenID
 xyValY +=150
 Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount, % "---"
 
+g_SF.Memory.InitializeChestsIndices()
 IC_ChestPurchaser_Component.ReadChests()
 
 
