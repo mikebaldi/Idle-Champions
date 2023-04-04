@@ -35,158 +35,88 @@ Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount,
 g_SF.Memory.InitializeChestsIndices()
 IC_ChestPurchaser_Component.ReadChests()
 
-ChestPurchaserChestPurchaseCB(controlID, mode, key)
-{
-;     test := value
-;     IC_ChestPurchaser_Component.SearchList("ChestPurchaserChestPurchaseComboBox")
-}
-
 ControlGet, _List, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
 _List := "|" . StrReplace(_List, "`n" , "|")
-OnMessage( 0x111, Func("WM_COMMAND").Bind(_List) )
+g_KeyInputTimer := 0
+g_KeyInputTimerDelay := 600 ; milliseconds
 
-WM_COMMAND(list, wp, lp) 
+ChestPurchaserChestPurchaseCB(controlID, mode, key)
 {
-    global _List
-    static CB_GETCOMBOBOXINFO := 0x0164
-         , CB_SETMINVISIBLE   := 0x1701
-         , CB_SHOWDROPDOWN    := 0x014F
-         , WM_SETCURSOR       := 0x0020
-         , EM_SETSEL          := 0x00B1
-         , hEdit              := 0
-         , CBN_EDITCHANGE     := 5
-        
-    if (wp >> 16 != CBN_EDITCHANGE)
-        Return
+    global IC_ChestPurchaser_Component
+    global g_KeyInputTimerDelay
+    global g_KeyInputTimer
+    g_KeyInputTimer := A_TickCount
 
-    hCombo := lp
-    if !hEdit {
-        VarSetCapacity(COMBOBOXINFO, size := 40 + A_PtrSize*3)
-        NumPut(size, COMBOBOXINFO)
-        SendMessage, CB_GETCOMBOBOXINFO,, &COMBOBOXINFO,, ahk_id %hCombo%
-        hEdit := NumGet(COMBOBOXINFO, 40 + A_PtrSize)
-    }
-    items := StrSplit(_List, "|")
-    items.Delete(1) ; remove first entry (null)
-    newComboList := ""
-
-    
-    GuiControlGet, text,, %hCombo%
-
-    count := 0
-    Loop, % items.Count()
+    GuiControlGet, inputText,, %controlID%
+    if(inputText == "")
     {
-        
-        if(InStr(items[A_Index], text, False))
-        {
-            newComboList .= "|" . items[A_Index]
-            count++
-        }
+        IC_ChestPurchaser_Component.FilterList(controlID)
+        return
     }
-    GuiControl,, %hCombo%, % newComboList = "" ? "|" : newComboList
-    bool := !(newComboList = "" || StrLen(text) < 1)
-    ;GuiControl, Text, %hEdit%, % text
-    SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %hCombo%
-    SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 10 ? 10 : count,,, ahk_id %hCombo%
-    GuiControl, Text, %hEdit%, % text
-    SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
-    SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
+    fncToCallOnTimer :=  ObjBindMethod(IC_ChestPurchaser_Component, "FilterList", controlID)
+    timer := Abs(g_KeyInputTimerDelay) * -1
+    SetTimer, %fncToCallOnTimer%, %timer%
 }
 
-; OnMessage(0x100, "WM_KEYDOWN")
-
-; g_KeyDownControls := {}
-; g_KeyDownControls["ChestPurchaserChestPurchaseComboBox"] := True
-; g_KeyDownControls["ChestPurchaserChestOpenComboBox"] := True
-
-; WM_KEYDOWN(wParam, lParam, msg, hwnd)  
-; {
-;     global g_KeyDownControls
-;     if(!g_KeyDownControls[A_GuiControl])
-;         return
-;     ;0x0E = backspace
-;     scDec := (lParam >> 16) & 0x1FF
-;     ; alphanum - (2-11)
-;         ; numbers = 2-11
-;         ; letters = 16-25 + 30-38 + 44-50
-;     ; bs = 14, del = 83
-;     ; space = 57
-
-;     isAlphaNumeric := (scDec >= 2 AND scDec <= 11) OR (scDec >= 16 AND scDec <= 25) OR (scDec >= 30 AND scDec <= 38) OR (scDec >= 44 AND scDec <= 50)
-;     sc := Format("{:x}", scDec)
-;     keyname := GetKeyName("sc" . sc)
-;     guiControlVal := A_GuiControl
-;     ToolTip % A_GuiControl "`n" GetKeyName("sc" . sc)
-; }
-
-ChestPurchaserChestOpenCB()
+ChestPurchaserChestOpenCB(controlID, mode, key)
 {
-    ;IC_ChestPurchaser_Component.SearchList("ChestPurchaserChestOpenComboBox")
+    IC_ChestPurchaser_Component.FilterList(controlID)
 }
+
 class IC_ChestPurchaser_Component
-{
-    SearchTerm := ""
-    
-    SearchList(chestComboBox)
+{    
+
+    FilterList(controlID)
     {
-        global ChestPurchaserChestPurchaseComboBox
-        global ChestPurchaserChestPurchaseComboBoxID
-        global ChestPurchaserChestOpenComboBox
-        global ChestPurchaserChestOpenComboBoxID
-        
-        if(chestComboBox == "ChestPurchaserChestPurchaseComboBox")
+        global _List
+        global g_KeyInputTimer
+        global g_KeyInputTimerDelay
+
+        static CB_GETCOMBOBOXINFO := 0x0164
+            , CB_SETMINVISIBLE   := 0x1701
+            , CB_SHOWDROPDOWN    := 0x014F
+            , WM_SETCURSOR       := 0x0020
+            , EM_SETSEL          := 0x00B1
+            , hEdit              := 0
+            , CBN_EDITCHANGE     := 5
+            , LastID             := 0
+        timeSinceLast := A_TickCount - g_KeyInputTimer
+        if (timeSinceLast < g_KeyInputTimerDelay)
+            return
+        g_KeyInputTimer := A_TickCount
+        ; Location of edit box for this control
+        if (!hEdit OR LastID != controlID)
         {
-            hwndVar := ChestPurchaserChestPurchaseComboBoxID
-            itemsVar := ChestPurchaserChestPurchaseComboBox
+            VarSetCapacity(COMBOBOXINFO, size := 40 + A_PtrSize*3)
+            NumPut(size, COMBOBOXINFO)
+            SendMessage, CB_GETCOMBOBOXINFO,, &COMBOBOXINFO,, ahk_id %controlID%
+            hEdit := NumGet(COMBOBOXINFO, 40 + A_PtrSize)
         }
-        else if (chestComboBox == "ChestPurchaserChestOpenComboBox")
+        LastID := controlID
+
+        items := StrSplit(_List, "|")
+        items.Delete(1) ; remove first entry (null after split)     
+        GuiControlGet, inputText,, %controlID%
+
+        newComboList := ""
+        count := 0
+        StartTime := A_TickCount
+        Loop, % items.Count()
         {
-            hwndVar := ChestPurchaserChestOpenComboBoxID
-            itemsVar := ChestPurchaserChestOpenComboBox
-        }
-        
-    	ControlGetText, boxInput,, ahk_id %hwndVar%
-    	ControlGet, items, List, , , ahk_id %hwndVar%
-        itemsArray := StrSplit(items, "`n")
-        firstWord := StrSplit(boxInput, " ")[1]
-        if firstWord is integer
-        {
-            searchTerm := SubStr(boxInput, 1 + StrLen(firstWord)+StrLen(" "))
-            hasMatch := RegExMatch(items, "`nOmi)^(.*\Q" . searchTerm . "\E).*$", Match)
-        }
-        else
-        {
-            hasMatch := RegExMatch(items, "`nOmi)^(.*\Q" . boxInput . "\E).*$", Match)
-            searchTerm := boxInput
-        }
-        hasMatch := RegExMatch(Match[0], "i)" . searchTerm)
-        foundValue := Match[0]
-    	if ( !GetKeyState("Delete") && !GetKeyState("BackSpace") && hasMatch) 
-        {
-            ControlSetText, , %foundValue%, ahk_id %hwndVar%
-            matchParts := StrSplit(foundValue, " ")
             
-            ; ---- Selected text control -------
-            idVal := StrSplit(foundValue, " ")[1]
-            if firstWord is integer
+            if(InStr(items[A_Index], inputText, False))
             {
-                if(StrLen(firstWord) == StrLen(matchParts[1])) ; test if number has changed
-                    Selection := hasMatch+StrLen(searchTerm)-1 | 0xFFFF0000
-                else
-                    Selection := hasMatch+StrLen(searchTerm)-1 | 0xFFFF0000
+                newComboList .= "|" . items[A_Index]
+                count++
             }
-            else
-            {
-                Selection := hasMatch | 0xFFFF0000
-            }
-            SendMessage, CB_SETEDITSEL := 0x142, , Selection, , ahk_id %hwndVar%
-            ; ---- --------------------- -------
-    	} 
-        else 
-        {
-            CheckDelKey = 0
-            CheckBackspaceKey = 0
-    	}
+        }
+        GuiControl,, %controlID%, % newComboList = "" ? "|" : newComboList
+        bool := !(newComboList = "" || StrLen(inputText) < 1)
+        SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %controlID%
+        SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 10 ? 10 : count,,, ahk_id %controlID%
+        GuiControl, Text, %hEdit%, % inputText
+        SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
+        SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
         return
     }
 
