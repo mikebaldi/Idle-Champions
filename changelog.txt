@@ -1,6 +1,7 @@
 April 4, 2023
     Updated error messages for needing admin or running script from protected location like Program Files.
     Updated Chest Purchaser addon. (Try the filter in dropdown boxes).
+    Fixed Briv not respecting walk/jump settings after stacking.
 
 April 3, 2023
     Removed single setting for enabling server calls.
