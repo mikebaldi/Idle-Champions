@@ -35,8 +35,9 @@ Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount,
 g_SF.Memory.InitializeChestsIndices()
 IC_ChestPurchaser_Component.ReadChests()
 
-ControlGet, _List, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
-_List := "|" . StrReplace(_List, "`n" , "|")
+; Same list is used for both open/buy (Even though not all chests are available for purchase.)
+ControlGet, g_ChestPurchaserMasterList, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
+g_ChestPurchaserMasterList := "|" . StrReplace(g_ChestPurchaserMasterList, "`n" , "|") 
 g_KeyInputTimer := 0
 g_KeyInputTimerDelay := 600 ; milliseconds
 
@@ -45,81 +46,29 @@ ChestPurchaserChestPurchaseCB(controlID, mode, key)
     global IC_ChestPurchaser_Component
     global g_KeyInputTimerDelay
     global g_KeyInputTimer
+    global g_ChestPurchaserMasterList
     g_KeyInputTimer := A_TickCount
-
     GuiControlGet, inputText,, %controlID%
-    if(inputText == "")
-    {
-        IC_ChestPurchaser_Component.FilterList(controlID)
-        return
-    }
-    fncToCallOnTimer :=  ObjBindMethod(IC_ChestPurchaser_Component, "FilterList", controlID)
-    timer := Abs(g_KeyInputTimerDelay) * -1
+    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
+    timer := Abs(g_KeyInputTimerDelay) * -1 ; negative time means one time use timer
     SetTimer, %fncToCallOnTimer%, %timer%
 }
 
 ChestPurchaserChestOpenCB(controlID, mode, key)
 {
-    IC_ChestPurchaser_Component.FilterList(controlID)
+    global IC_ChestPurchaser_Component
+    global g_KeyInputTimerDelay
+    global g_KeyInputTimer
+    global g_ChestPurchaserMasterList
+    g_KeyInputTimer := A_TickCount
+    GuiControlGet, inputText,, %controlID%
+    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
+    timer := Abs(g_KeyInputTimerDelay) * -1
+    SetTimer, %fncToCallOnTimer%, %timer%
 }
 
 class IC_ChestPurchaser_Component
-{    
-
-    FilterList(controlID)
-    {
-        global _List
-        global g_KeyInputTimer
-        global g_KeyInputTimerDelay
-
-        static CB_GETCOMBOBOXINFO := 0x0164
-            , CB_SETMINVISIBLE   := 0x1701
-            , CB_SHOWDROPDOWN    := 0x014F
-            , WM_SETCURSOR       := 0x0020
-            , EM_SETSEL          := 0x00B1
-            , hEdit              := 0
-            , CBN_EDITCHANGE     := 5
-            , LastID             := 0
-        timeSinceLast := A_TickCount - g_KeyInputTimer
-        if (timeSinceLast < g_KeyInputTimerDelay)
-            return
-        g_KeyInputTimer := A_TickCount
-        ; Location of edit box for this control
-        if (!hEdit OR LastID != controlID)
-        {
-            VarSetCapacity(COMBOBOXINFO, size := 40 + A_PtrSize*3)
-            NumPut(size, COMBOBOXINFO)
-            SendMessage, CB_GETCOMBOBOXINFO,, &COMBOBOXINFO,, ahk_id %controlID%
-            hEdit := NumGet(COMBOBOXINFO, 40 + A_PtrSize)
-        }
-        LastID := controlID
-
-        items := StrSplit(_List, "|")
-        items.Delete(1) ; remove first entry (null after split)     
-        GuiControlGet, inputText,, %controlID%
-
-        newComboList := ""
-        count := 0
-        StartTime := A_TickCount
-        Loop, % items.Count()
-        {
-            
-            if(InStr(items[A_Index], inputText, False))
-            {
-                newComboList .= "|" . items[A_Index]
-                count++
-            }
-        }
-        GuiControl,, %controlID%, % newComboList = "" ? "|" : newComboList
-        bool := !(newComboList = "" || StrLen(inputText) < 1)
-        SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %controlID%
-        SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 10 ? 10 : count,,, ahk_id %controlID%
-        GuiControl, Text, %hEdit%, % inputText
-        SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
-        SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
-        return
-    }
-
+{   
     ReadChests()
     {
         if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open

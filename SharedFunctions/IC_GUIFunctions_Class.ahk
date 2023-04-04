@@ -6,6 +6,7 @@ class GUIFunctions
     CurrentTheme := ""
     FileOverride := ""
 
+    ; Adds a tab to Script Hub's tab control
     AddTab(Tabname){
         addedTabs := Tabname . "|"
         GuiControl,ICScriptHub:,ModronTabControl, % addedTabs
@@ -17,6 +18,7 @@ class GUIFunctions
         Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
     }
 
+    ; Updates the tab control's size based on global width/height settings
     RefreshTabControlSize()
     {
         GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
@@ -39,6 +41,7 @@ class GUIFunctions
         g_MouseToolTips[toolTipTarget] := tipMessage
     }
 
+    ; Finds a control ID based on its variable name.
     GetToolTipTarget(controlVariableName)
     {
         global
@@ -48,6 +51,66 @@ class GUIFunctions
         return toolTipTarget
     }
 
+     
+    ; Filters a combo box's list based on what is in the edit box. _List must be an unaltered original combobox list.
+    FilterList(controlID, _List)
+    {
+        global g_KeyInputTimer
+        global g_KeyInputTimerDelay
+
+        static CB_GETCOMBOBOXINFO := 0x0164
+            , CB_SETMINVISIBLE   := 0x1701
+            , CB_SHOWDROPDOWN    := 0x014F
+            , WM_SETCURSOR       := 0x0020
+            , EM_SETSEL          := 0x00B1
+            , hEdit              := 0
+            , CBN_EDITCHANGE     := 5
+            , LastID             := 0
+        timeSinceLast := A_TickCount - g_KeyInputTimer
+        if (timeSinceLast < g_KeyInputTimerDelay)
+            return
+        g_KeyInputTimer := A_TickCount
+        ; Location of edit box for this control
+        if (!hEdit OR LastID != controlID)
+        {
+            VarSetCapacity(COMBOBOXINFO, size := 40 + A_PtrSize*3)
+            NumPut(size, COMBOBOXINFO)
+            SendMessage, CB_GETCOMBOBOXINFO,, &COMBOBOXINFO,, ahk_id %controlID%
+            hEdit := NumGet(COMBOBOXINFO, 40 + A_PtrSize)
+        }
+        LastID := controlID
+
+        items := StrSplit(_List, "|")
+        items.Delete(1) ; remove first entry (null after split)     
+        GuiControlGet, inputText,, %controlID%
+
+        newComboList := ""
+        count := 0
+        StartTime := A_TickCount
+        Loop, % items.Count()
+        {
+            
+            if(items[A_Index] != "" AND InStr(items[A_Index], inputText, False))
+            {
+                newComboList .= "|" . items[A_Index]
+                count++
+            }
+        }
+        GuiControl,, %controlID%, % newComboList = "" ? "|" : newComboList
+        bool := !(newComboList = "" || StrLen(inputText) < 1)
+        SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %controlID%
+        SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 10 ? 10 : count,,, ahk_id %controlID%
+        GuiControl, Text, %hEdit%, % inputText
+        SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
+        SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
+        return
+    }
+
+    ;=================================
+    ; Script Theme Functions
+    ;=================================
+
+    ; Gets the current theme from a file and sets it for use when using other theme functions.
     LoadTheme(guiName := "ICScriptHub", fileOverride := "")
     {
         this.GUIName := guiName
@@ -79,6 +142,7 @@ class GUIFunctions
         this.isDarkMode := this.currentTheme["UseDarkThemeGraphics"]
     }
 
+    ; Sets the color/weight for subsequent text based on the theme.
     UseThemeTextColor(textType := "default", weight := 400)
     {  
         guiName := this.GUIName
@@ -88,6 +152,7 @@ class GUIFunctions
         Gui, %guiName%:Font, c%textColor% w%weight%
     }
 
+    ; Sets the script GUI background color based on the theme.
     UseThemeBackgroundColor()
     {
         guiName := this.GUIName
@@ -95,6 +160,7 @@ class GUIFunctions
         Gui, %guiName%:Color, % windowColor
     }
 
+    ; Sets a listview background color based on the theme.
     UseThemeListViewBackgroundColor(controlID := "")
     {
         guiName := this.GUIName
