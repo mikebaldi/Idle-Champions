@@ -640,18 +640,29 @@ class IC_SharedFunctions_Class
         {
             this.DirectedInput(,,["{e}"]*)
             g_SharedData.SwapsMadeThisRun++
+            return
         }
         ;check to unbench briv
-        else if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
+        if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
         {
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
+            return
         }
+        isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        isWalkZone := settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
         ; check to swap briv from favorite 2 to favorite 1 (W to Q)
-        else if (!brivBenched AND this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)))
+        if (!brivBenched AND isFormation2 AND isWalkZone)
+        {
+            this.DirectedInput(,,["{e}"]*)
+            g_SharedData.SwapsMadeThisRun++
+            return
+        }
+        if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
+            return
         }
     }
 
