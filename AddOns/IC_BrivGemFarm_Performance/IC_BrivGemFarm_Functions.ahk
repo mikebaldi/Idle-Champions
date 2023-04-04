@@ -138,6 +138,7 @@ class IC_BrivGemFarm_Class
     TimerFunctions := {}
     TargetStacks := 0
     GemFarmGUID := ""
+    NoStacking := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -177,6 +178,7 @@ class IC_BrivGemFarm_Class
             g_SF.SetFormation(g_BrivUserSettings)
             if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
+                this.NoStacking := 0
                 g_SharedData.BossesHitThisRun := 0
                 g_SF.ToggleAutoProgress( 0, false, true )
                 g_SharedData.StackFail := this.CheckForFailedConv()
@@ -198,7 +200,7 @@ class IC_BrivGemFarm_Class
                 g_SharedData.TriggerStart := false
                 g_SharedData.LoopString := "Main Loop"
             }
-            if (g_SharedData.StackFail != 2)
+            if (g_SharedData.StackFail != 2 AND this.NoStacking == 0)
                 g_SharedData.StackFail := Max(this.TestForSteelBonesStackFarming(), g_SharedData.StackFail)
             if (g_SharedData.StackFail == 2 OR g_SharedData.StackFail == 4 OR g_SharedData.StackFail == 6 ) ; OR g_SharedData.StackFail == 3
                 g_SharedData.TriggerStart := true
@@ -404,7 +406,8 @@ class IC_BrivGemFarm_Class
         numSilverChests := g_SF.Memory.GetChestCountByID(1)
         numGoldChests := g_SF.Memory.GetChestCountByID(2)
         retryAttempt := 0
-        while ( stacks < targetStacks AND retryAttempt < 10 )
+        maxRetries := 2
+        while ( stacks < targetStacks AND retryAttempt < maxRetries )
         {
             retryAttempt++
             this.StackFarmSetup()
@@ -416,7 +419,7 @@ class IC_BrivGemFarm_Class
                 g_SharedData.LoopString := "Attempted to offline stack after modron reset - verify settings"
                 break
             }
-            g_SF.CloseIC( "StackRestart" )
+            g_SF.CloseIC( "StackRestart #" . retryAttempt )
             g_SharedData.LoopString := "Stack Sleep: "
             chestsCompletedString := ""
             StartTime := A_TickCount
@@ -441,6 +444,10 @@ class IC_BrivGemFarm_Class
             }
             g_SharedData.PreviousStacksFromOffline := stacks - lastStacks
             lastStacks := stacks
+        }
+        if ( retryAttempt >= maxRetries )
+        {
+            this.NoStacking := 1
         }
         g_PreviousZoneStartTime := A_TickCount
         return
