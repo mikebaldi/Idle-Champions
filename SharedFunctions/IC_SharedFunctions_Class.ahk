@@ -651,13 +651,14 @@ class IC_SharedFunctions_Class
         }
         isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
         isWalkZone := settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
-        ; check to swap briv from favorite 2 to favorite 1 (W to Q)
+        ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
         {
             this.DirectedInput(,,["{e}"]*)
             g_SharedData.SwapsMadeThisRun++
             return
         }
+        ; check to swap briv from favorite 2 to favorite 1 (W to Q)
         if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
             this.DirectedInput(,,["{q}"]*)
