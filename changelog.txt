@@ -1,3 +1,7 @@
+April 4, 2023
+    Updated error messages for needing admin or running script from protected location like Program Files.
+    Updated Chest Purchaser addon. (Try the filter in dropdown boxes).
+
 April 3, 2023
     Removed single setting for enabling server calls.
     Refactored chest buying/opening functions for BrivGemFarm. (Fixes some minor bugs with counts and purchasing).
