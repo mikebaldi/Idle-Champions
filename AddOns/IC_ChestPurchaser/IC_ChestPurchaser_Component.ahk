@@ -4,20 +4,20 @@ Gui, ICScriptHub:Tab, Chests
 GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data and read chests into lists."
 Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only open chests while game is closed. (Yes, this is a hassle.)"
-Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchaseID, Buy Chests: 
-Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestPurchaseComboBoxID
+Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchase, Buy Chests: 
+Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 hwndChestPurchaserChestPurchaseComboBoxID vChestPurchaserChestPurchaseComboBox 
 Gui, ICScriptHub:Add, Picture, x+35 h18 w18 vButtonRefreshChestPurchaser, %g_ReloadButton%
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
-Gui, ICScriptHub:Add, Edit, x30 y+15 w75 vChestPurchaseCountID, % "99"
+Gui, ICScriptHub:Add, Edit, x30 y+15 w75 vChestPurchaserPurchaseCount, % "99"
 GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserBuyChests, Buy
 
-GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestPurchaseID
+GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestPurchase
 xyValY += 150
-Gui, ICScriptHub:Add, GroupBox, x15 y%xyValY% w425 h150 vGroupBoxChestOpenID, Open Chests: 
-Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 vChestOpenComboBoxID
+Gui, ICScriptHub:Add, GroupBox, x15 y%xyValY% w425 h150 vGroupBoxChestOpen, Open Chests: 
+Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 hwndChestPurchaserChestOpenComboBoxID vChestPurchaserChestOpenComboBox
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
-Gui, ICScriptHub:Add, Edit, y+15 w75 vChestOpenCountID, % "99"
+Gui, ICScriptHub:Add, Edit, y+15 w75 vChestPurchaserChestOpenCount, % "99"
 GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Button, x+15 w75 vButtonChestPurchaserOpenChests, Open
 
@@ -28,13 +28,12 @@ GuiControl, ICScriptHub: +g, ButtonChestPurchaserOpenChests, % openChestsFunc
 chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.ReadChests")
 GuiControl, ICScriptHub: +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
 
-GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpenID
+GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpen
 xyValY +=150
 Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount, % "---"
 
 g_SF.Memory.InitializeChestsIndices()
 IC_ChestPurchaser_Component.ReadChests()
-
 
 class IC_ChestPurchaser_Component
 {
@@ -50,8 +49,8 @@ class IC_ChestPurchaser_Component
         if(!size OR size > 3000 OR size < 0)
         {
             comboBoxOptions .= "-- Error Reading Chests --"
-            GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
-            GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
+            GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
+            GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
             return
         }
         loop, %size%
@@ -60,24 +59,27 @@ class IC_ChestPurchaser_Component
             chestName := g_SF.Memory.GetChestNameBySlot(A_Index)
             comboBoxOptions .= chestID . " " . chestName . "|"
         }
-        GuiControl,ICScriptHub:, ChestOpenComboBoxID, %comboBoxOptions%
-        GuiControl,ICScriptHub:, ChestPurchaseComboBoxID, %comboBoxOptions%
+        GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
+        GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
     }
 
     BuyChests()
     {
-        global
+        global g_ServerCall
+        global ChestPurchaserPurchaseCount
+        global ChestPurchaserCurrentChestCount
+        global ChestPurchaserChestPurchaseComboBox
         Gui,ICScriptHub:Submit, NoHide
         if(g_ServerCall == "")
         {
             MsgBox % "No user data available. Open the game and refresh chest list before continuing."
             return
         }
-        splitArray := StrSplit(ChestPurchaseComboBoxID, " ",,2)
+        splitArray := StrSplit(ChestPurchaserChestPurchaseComboBox, " ",,2)
         chestID := splitArray[1]
         chestName := splitArray[2]
-        MsgBox % "Buying " . ChestPurchaseCountID . " of " . chestName . " (ID: " . chestID . ")"
-        buyCount := ChestPurchaseCountID
+        MsgBox % "Buying " . ChestPurchaserPurchaseCount . " of " . chestName . " (ID: " . chestID . ")"
+        buyCount := ChestPurchaserPurchaseCount
         while(buyCount > 0)
         {
             GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " buyCount " chests..."
@@ -97,24 +99,27 @@ class IC_ChestPurchaser_Component
             else
                 buyCount -= 1
         }
-        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " Max(buyCount,0) " chests..."
+        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Done buying!"
         MsgBox % "Done"
     }
 
     OpenChests()
     {
-        global
+        global g_ServerCall
+        global ChestPurchaserChestOpenCount
+        global ChestPurchaserCurrentChestCount
+        global ChestPurchaserChestOpenComboBox
         Gui,ICScriptHub:Submit, NoHide
         if(g_ServerCall == "")
         {
             MsgBox % "No user data available. Open the game and refresh chest list before continuing."
             return
         }
-        splitArray := StrSplit(ChestOpenComboBoxID, " ",,2)
+        splitArray := StrSplit(ChestPurchaserChestOpenComboBox, " ",,2)
         chestID := splitArray[1]
         chestName := splitArray[2]
-        MsgBox % "Opening " . ChestOpenCountID . " of " . chestName . " (ID: " . chestID . ") Make sure the game is closed before continuing."
-        openCount := ChestOpenCountID
+        MsgBox % "Opening " . ChestPurchaserChestOpenCount . " of " . chestName . " (ID: " . chestID . ") Make sure the game is closed before continuing."
+        openCount := ChestPurchaserChestOpenCount
         shinyCount := 0
         while(openCount > 0)
         {
@@ -133,9 +138,8 @@ class IC_ChestPurchaser_Component
             shinyCount += g_SF.ParseChestResults(response)
             openCount -= 99
         }
-        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Opening " Max(openCount,0) " chests..."
+        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Done opening!"
         shinyString := "No shiny gear found."
-        test := IC_ChestPurchaser_Component.GetShinyCountString()
         if(shinyCount > 0)
         {
             shinyString := "Shinies found: " . shinyCount . "`n"
