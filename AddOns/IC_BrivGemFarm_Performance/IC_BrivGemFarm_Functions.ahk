@@ -148,6 +148,10 @@ class IC_BrivGemFarm_Class
     TimerFunctions := {}
     TargetStacks := 0
     GemFarmGUID := ""
+    StackFailAreasTally := {}
+    LastStackSuccessArea := 0
+    MaxStackRestartFails := 2
+    StackFailAreasThisRunTally := {}
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -157,8 +161,8 @@ class IC_BrivGemFarm_Class
     {
         static lastResetCount := 0
         g_SharedData.TriggerStart := true
-        g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
-        existingProcessID := g_userSettings[ "ExeName"]
+        g_SF.Hwnd := WinExist("ahk_exe " . g_UserSettings[ "ExeName"])
+        existingProcessID := g_UserSettings[ "ExeName"]
         Process, Exist, %existingProcessID%
         g_SF.PID := ErrorLevel
         Process, Priority, % g_SF.PID, High
@@ -168,6 +172,8 @@ class IC_BrivGemFarm_Class
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_ServerCall.UpdatePlayServer()
         g_SF.ResetServerCall()
+        this.LastStackSuccessArea := g_UserSettings [ "StackZone" ]
+        this.StackFailAreasThisRunTally := {}
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationModron := g_SF.Memory.GetActiveModronFormation()
@@ -202,6 +208,9 @@ class IC_BrivGemFarm_Class
                 worstCase := g_BrivUserSettings[ "AutoCalculateWorstCase" ]
                 g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone(worstCase) + 50 ; 50 stack safety net
                 this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1, worstCase)
+                ; Don't reset last stack success area if 3 or more runs have failed to stack.
+                this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
+                this.StackFailAreasThisRunTally := {}
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
                 g_SharedData.SwapsMadeThisRun := 0
@@ -270,16 +279,29 @@ class IC_BrivGemFarm_Class
         ; passed stack zone, start stack farm. Normal operation.
         if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
         {
-            this.StackFarm()
+            ; normal-success / adjusted-sucess behavior. Use settings zone or adjusted zone if good zone has been found. (Resets to StackZone for 3 runs before sticking)
+            if ( this.LastStackSuccessArea == CurrentZone ) 
+                this.StackFarm()
+            ; abnormal stacking - Normal zone failed, current zone is later and has 0 or "" failures on this zone. Try it.
+            else if ( !this.StackFailAreasTally[CurrentZone] ) 
+                this.StackFarm()
+            ; only stack farm if this zone hasn't been tried this run yet and still below max tries. 
+            else if ( this.LastStackSuccessArea == 0 AND !this.StackFailAreasThisRunTally[CurrentZone] AND this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails )
+                this.StackFarm()
             return 0
         }
         ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
         if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < targetStacks AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
         {
-            stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
-            g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            this.StackFarm()
-            return stackfail
+            ; only use current zone if there's been no/non-excess issues with it.
+            if ( !this.StackFailAreasThisRunTally[CurrentZone] AND (!this.StackFailAreasTally[CurrentZone] OR this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails) )
+            {
+                stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
+                g_SharedData.StackFailStats.TALLY[stackfail] += 1
+                this.StackFarm()
+                return stackfail
+            }
+            return 0
         }
         ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure. With protections from repeating too early or resetting within 5 zones of a reset.
         if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
@@ -416,7 +438,10 @@ class IC_BrivGemFarm_Class
         numSilverChests := g_SF.Memory.GetChestCountByID(1)
         numGoldChests := g_SF.Memory.GetChestCountByID(2)
         retryAttempt := 0
-        while ( stacks < targetStacks AND retryAttempt < 10 )
+        maxRetries := 3
+        if(this.LastStackSuccessArea == 0)
+            maxRetries := 1
+        while ( stacks < targetStacks AND retryAttempt <= maxRetries )
         {
             retryAttempt++
             this.StackFarmSetup()
@@ -427,7 +452,7 @@ class IC_BrivGemFarm_Class
                 g_SharedData.LoopString := "Attempted to offline stack after modron reset - verify settings"
                 break
             }
-            g_SF.CloseIC( "StackRestart" )
+            g_SF.CloseIC( "StackRestart" . (retryAttempt > 1 ? (" - Warning: Retry #" . retryAttempt - 1 . ". Check Stack Settings."): "") )
             g_SharedData.LoopString := "Stack Sleep: "
             chestsCompletedString := ""
             StartTime := A_TickCount
@@ -449,8 +474,26 @@ class IC_BrivGemFarm_Class
             g_SharedData.PreviousStacksFromOffline := stacks - lastStacks
             lastStacks := stacks
         }
+        if(retryAttempt >= maxRetries)
+        {
+            Loop, 4 ; add next 4 areas to failed stacks so next attempt would be CurrentZone + 4
+            {
+                this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] := this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] == "" ? 1 : this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] + 1
+                this.StackFailAreasThisRunTally[g_SF.CurrentZone + A_Index - 1] := 1
+                this.LastStackSuccessArea := 0
+            }
+        }
+        else if(retryAttempt == 1)
+        {
+            this.StackFailAreasTally[g_SF.CurrentZone] := 0
+            this.LastStackSuccessArea := g_SF.CurrentZone
+        }
+        else
+        {
+            this.LastStackSuccessArea := g_SF.CurrentZone
+        }
         g_PreviousZoneStartTime := A_TickCount
-        return
+        return 
     }
 
     /*  StackNormal - Stack Briv's SteelBones by switching to his formation and waiting for stacks to build.
