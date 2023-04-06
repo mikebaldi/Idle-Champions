@@ -17,7 +17,7 @@ GUIFunctions.UseThemeListViewBackgroundColor("MemoryFunctionsViewID")
 
 class IC_MemoryFunctionsFullRead_Component
 {
-    static exclusionList := [ "__Init", "__new",  "BinarySearchList", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "ReadUserHash", "ReadUserID" ]
+    static exclusionList := [ "__Init", "__new",  "BinarySearchList", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "BuildChestIndexList", "InitializeChestsIndices", "ReadUserHash", "ReadUserID" ]
     InExclusionsList(value)
     {
         static
