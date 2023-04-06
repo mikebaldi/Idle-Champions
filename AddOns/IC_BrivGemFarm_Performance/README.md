@@ -36,7 +36,6 @@ Notes:
 10. Be sure the launcher's settings script `Settings.json` is updated to include the correct game location, otherwise offline stacking will be unable to start the game.
 11. To **stop** BrivGemFarm, press the **stop button**. This will stop the continuous loading of memory reads as well. 
 > **Known Issue:** The updates (Memory read, inventory) will continue to run even after BrivGemFarm has been stopped. Current workaround is to reload the script if you want the updates to stop.
-12. Patrons are currently not supported.
 
 Known Issues:
 1. Cannot always interact with GUI while script is running.
@@ -68,10 +67,11 @@ After passing the zone set as part of 'Farm SB stacks AFTER this zone', the scri
 > **Note:** Offline Progress appears to trigger when 15 seconds have passed between the last save and the next getuserdetails request.  
 
 **Briv swap sleep time (ms):**  
-If you see Briv's landing animation then this value should be made larger. If Briv is not being put back in the formation until after monsters spawn then this value should be made smaller. 2000 to 3000 is the typical range. This value may need to be tweaked again if you use different combinations of potions.  
+If you see Briv's landing animation then this value should be made larger. If Briv is not being put back in the formation until after monsters spawn then this value should be made smaller. 2000 to 3000 is the typical range. This value may need to be tweaked again if you use different combinations of potions. 
 
-**Enable server clals to buy and open chests during stack restart:**  
-When the game closes for offline stacking, the script will make server calls to buy (100) and/or open (99) chests according to the following settings.
+---
+
+When the game closes for offline stacking, the script will make server calls to buy (100) and/or open (99) chests according to the following settings.  
 
 **Buy silver chests?:**  
 Purchases 100 silver chests if you have at least 5000 gems above maintain gem number.
