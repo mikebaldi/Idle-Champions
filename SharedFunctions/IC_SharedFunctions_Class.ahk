@@ -1048,6 +1048,58 @@ class IC_SharedFunctions_Class
     ;=========================================================
     ;Functions for testing if Automated script is ready to run
     ;=========================================================
+
+    ; Finds a specific champ in a favorite formation. Returns -1 on failure and the formation object otherwise.
+    FindChampIDinSavedFavorite( champID := 58, favorite := 1, includeChampion := True )
+    {
+        formationSaveSlot := this.Memory.GetSavedFormationSlotByFavorite( favorite )
+        if (formationSaveSlot < 0)
+            return -1
+        formation := this.Memory.GetFormationSaveBySlot( formationSaveSlot, 0 )
+        formationSize := formation.Count()
+        if (!formationSize OR formationSize > 50 OR formationSize < 0 )
+            return -1
+        foundChamp := this.IsChampInFormation(champID, formation)
+        if (!foundChamp AND includeChampion)
+            return -1
+        else if (foundChamp AND !includeChampion)
+            return -1
+        return formation
+        ; foundChampName := this.Memory.ReadChampNameByID(champID)
+    }
+
+    RetryTestOnError( errMsg := "Error", testFunction := "", expectedValue := "", shouldBeEqual := True, testSize := False)
+    {
+        if(testFunction == "" OR testFunction.Base.Call != "")
+        {
+            MsgBox,, RetryTstOnError, No function to retry!
+            return -1
+        }
+        foundValue := testFunction.Call() ; Some value that should never be read from game's memory. Do while loop at least once.
+        
+        ; Test if expected value matches OR test if should NOT find expected value
+        while ( (foundValue == expectedValue AND !shouldBeEqual) OR (foundValue != expectedValue AND shouldBeEqual) )
+        {
+            MsgBox, 5,, %errMsg%
+            IfMsgBox, Retry
+            {
+                this.Memory.OpenProcessReader()
+                foundValue := testFunction.Call()
+                if (testSize)
+                    foundValue := foundValue.Count()
+            }
+            IfMsgBox, Cancel
+            {
+                MsgBox, Canceling Run
+                return -1
+            }
+        }
+        return foundValue
+    }
+
+    ; -----------------------------------------------------------------
+    ;currentValue := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
+
     /* A function to search a saved formation for a particular champ.
 
         Parameters:
@@ -1060,67 +1112,27 @@ class IC_SharedFunctions_Class
             Array of champion IDs from the saved formation. -1 represents an empty slot.
             A value of "" means run needs to be canceled.
     */
-    FindChampIDinSavedFormation( FavoriteSlot := 1, team := "Speed", findChamp := 1, champID := 58 )
+    ; -----------------------------------------------------------------
+
+    FormationFamiliarCheckByFavorite(favorite := 1, shouldInclude := True)
     {
-        memoryVersion := this.Memory.GameManager.GetVersion()
-        formationSaveSlot := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
-        ; Test Favorite Exists
-        txtCheck := "1. Check the correct memory file is being used. Current version: " . memoryVersion
-        txtcheck .= "`n`n2. If IC is running with admin privileges, then the script will also require admin privileges."
-        if (_MemoryManager.is64bit)
-            txtcheck .= "`n`n3. Check AHK is 64bit."
-        while ( formationSaveSlot == -1 )
+        ErrorMsg := ""
+        if(favorite < 1 OR favorite > 3)
+            return -1 ; failed call. -1 is used because "" IS a valid read from this function.
+        FormationFavoriteHotkey := {1:"Q", 2:"W", 3:"E"}
+        ; Favorites 1 and 3 SHOULD have familirs.
+        ; Formation 2 should NOT have familiars.
+        if (favorite == 2 AND this.Memory.GetFormationFamiliarsByFavorite(favorite) != "")
         {
-            MsgBox, 5,, Please confirm a formation is saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
-            IfMsgBox, Retry
-            {
-                this.Memory.OpenProcessReader()
-                formationSaveSlot := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
-            }
-            IfMsgBox, Cancel
-            {
-                MsgBox, Canceling Run
-                return ""
-            }
+            ErrorMsg := "Familiars found in Favorite Formation " . favorite . " (" . FormationFavoriteHotkey[favorite] . "). Remove familiars before continuing."
+            return ErrorMsg
         }
-        formation := this.Memory.GetFormationSaveBySlot( formationSaveSlot, 0 )
-        var := formation.Count()
-        ; Test that the formation has champions
-        while !var
+        if (favorite != 2 AND this.Memory.GetFormationFamiliarsByFavorite(favorite) == "")
         {
-            MsgBox, 5,, Please confirm your %team% team is saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
-            IfMsgBox, Retry
-            {
-                this.Memory.OpenProcessReader()
-                formation := this.Memory.GetFormationSaveBySlot( formationSaveSlot, 1 )
-                var := formation.Count()
-            }
-            IfMsgBox, Cancel
-            {
-                MsgBox, Canceling Run
-                return ""
-            }
+            ErrorMsg := "Warning: No famliars found in Favorite Formation " . favorite . " (" . FormationFavoriteHotkey[favorite] . "). It is highly recommended to use familiars for click damage."
+            return ErrorMsg
         }
-        foundChamp := this.IsChampInFormation(champID, formation)
-        foundChampName := this.Memory.ReadChampNameByID(champID)
-        stateText := findChamp ? "is" : "isn't"
-        ; Test that the specific champions is in the formation
-        while ( foundChamp != findChamp )
-        {
-            MsgBox, 5,, Please confirm %foundChampName% %stateText% saved in formation favorite slot %FavoriteSlot%.`n`nOther potential solutions:`n`n%txtCheck%
-            IfMsgBox, Retry
-            {
-                this.Memory.OpenProcessReader()
-                formation := this.Memory.GetFormationByFavorite( FavoriteSlot )
-                foundChamp := this.IsChampInFormation(champID, formation)
-            }
-            IfMsgBox, Cancel
-            {
-                MsgBox, Canceling Run
-                return ""
-            }
-        }
-        return formation
+        return ErrorMsg
     }
 
     ; Tests if there is an adventure (objective) loaded. If not, asks the user to verify they are using the correct memory files and have an adventure loaded
@@ -1189,10 +1201,11 @@ class IC_SharedFunctions_Class
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetModronResetArea()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        if (worstCase)
-            jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
-        else
-            jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
+        ; average
+        jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
+        if (worstCase AND skipChance < 1) ; 25% more - guesstimate
+            jumps := Floor(jumps * 1.25)
+            ; Old - jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
         stacks := Ceil(49 / (1+consume)**jumps)
         return stacks
     }
@@ -1207,11 +1220,10 @@ class IC_SharedFunctions_Class
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        if (worstCase)
-            jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
-        else
-            jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
-
+        jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
+        if (worstCase AND skipChance < 1)
+            jumps := Floor(jumps * 1.25)
+            ; Old - jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
         return Floor(stacks*(1+consume)**jumps)
     }
 
@@ -1248,6 +1260,12 @@ class IC_SharedFunctions_Class
         if (specID == 3455)
             return true
         return false
+    }
+
+    IsChampInFavoriteFormation(champID := 1, favorite := 1)
+    {
+        formation := this.Memory.GetFormationByFavorite(favorite)
+        return this.IsChampInFormation(champID, formation)
     }
 
     /*  GetFormationFKeys - Gets a list of FKeys required to level all champions in the formation passed to it.

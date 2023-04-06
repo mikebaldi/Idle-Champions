@@ -1050,5 +1050,11 @@ class IC_MemoryFunctions_Class
         }
     }
 
+    GetImportsVersion()
+    {
+        version := !_MemoryManager.is64Bit ? ( (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " ) : ( (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)")
+        return version
+    }
+
     #include *i IC_MemoryFunctions_Extended.ahk
 }

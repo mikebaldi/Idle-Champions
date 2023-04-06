@@ -177,11 +177,8 @@ class IC_BrivGemFarm_Class
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         formationModron := g_SF.Memory.GetActiveModronFormation()
-        formationQ := g_SF.FindChampIDinSavedFormation( 1, "Speed", 1, 58 )
-        formationW := g_SF.FindChampIDinSavedFormation( 2, "Stack Farm", 1, 58 )
-        formationE := g_SF.FindChampIDinSavedFormation( 3, "Speed No Briv", 0, 58 )
-        if(!formationQ OR !formationW OR !formationE)
-            return
+        if (this.PreFlightCheck() == -1) ; Did not pass pre flight check.
+            return -1
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
         loop
@@ -542,74 +539,6 @@ class IC_BrivGemFarm_Class
         return 0
     }
 
-    ; Sends calls for buying or opening chests and tracks chest metrics.
-    DoChests(numSilverChests, numGoldChests)
-    {
-        ; no chests to do - Replaces g_BrivUserSettings[ "DoChests" ] setting.
-        if !(g_BrivUserSettings[ "BuySilvers" ] OR g_BrivUserSettings[ "BuyGolds" ] OR g_BrivUserSettings[ "OpenSilvers" ] OR g_BrivUserSettings[ "OpenGolds" ])
-            return
-
-        StartTime := A_TickCount
-        g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-        loopString := ""
-        startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
-        startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
-        startingOpenedGoldChests := g_SharedData.OpenedGoldChests
-        startingOpenedSilverChests := g_SharedData.OpenedSilverChests
-        currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
-        ElapsedTime := 0
-
-        doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-        while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
-        {
-            g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
-            effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
-
-            ;BUYCHESTS
-            gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-            amount := Min(Floor(gems / 50), 100 )
-            if( g_BrivUserSettings[ "BuySilvers" ] AND amount > 0 )
-                this.BuyChests( chestID := 1, effectiveStartTime, amount )
-            gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
-            amount := Min(Floor(gems / 500) , 100 )
-            if ( g_BrivUserSettings[ "BuyGolds" ] AND amount > 0 )
-                this.BuyChests( chestID := 2, effectiveStartTime, amount )
-            ; OPENCHESTS
-            amount := Min(g_SF.TotalSilverChests, 99)
-            if ( g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0 )
-                this.OpenChests( chestID := 1, effectiveStartTime, amount)
-            amount := Min(g_SF.TotalGoldChests, 99)
-            if ( g_BrivUserSettings[ "OpenGolds" ] AND amount > 0 )
-                this.OpenChests( chestID := 2, effectiveStartTime, amount )
-
-            updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
-            currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
-            loopString := currentLoopString == "" ? loopString : currentLoopString
-
-            if ( !g_BrivUserSettings[ "DoChestsContinuous" ] ) ; Do one time if not continuous
-                return loopString == "" ? "Chests ----" : loopString
-            if (updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
-                return loopString == "" ? "Chests ----" : loopString
-            currentChestTallies := updatedTallies
-            ElapsedTime := A_TickCount - StartTime
-        }
-        return loopString
-    }
-
-    ; Builds a string that shows how many chests have been opened/bought above the values passed into this function.
-    GetChestDifferenceString(lastPurchasedSilverChests, lastPurchasedGoldChests, lastOpenedGoldChests, lastOpenedSilverChests )
-    {
-        boughtSilver := g_SharedData.PurchasedSilverChests - lastPurchasedSilverChests 
-        boughtGold := g_SharedData.PurchasedGoldChests - lastPurchasedGoldChests
-        openedSilver := g_SharedData.OpenedSilverChests - lastOpenedSilverChests
-        openedGold := g_SharedData.OpenedGoldChests - lastOpenedGoldChests
-        buyString := (boughtSilver > 0 OR boughtGold > 0) ? "Buy: (" . boughtSilver . "s, " . boughtGold . "g)" : ""
-        openString := (openedSilver > 0 OR openedGold > 0) ? "Open: (" . openedSilver . "s, " . openedGold . "g)" : ""
-        separator := ((boughtSilver > 0 OR boughtGold > 0) AND (openedSilver > 0 OR openedGold > 0)) ? ", " : ""
-        returnString := buyString . separator . openString
-        return ((returnString != "") ? "Chests - " . returnString : "")
-    }
-
     /* ;A function that checks if farmed SB stacks from previous run failed to convert to haste.
        ;If so, the script will manually end the adventure to attempt to convert the stacks, close IC, use a servercall to restart the adventure, and restart IC.
     */
@@ -685,6 +614,110 @@ class IC_BrivGemFarm_Class
         g_PreviousZoneStartTime := A_TickCount
     }
 
+    ; Test that favorite exists
+    TestFormationSlotByFavorite(favorite := "", txtCheck := "")
+    {
+        if(!favorite)
+            return ""
+        testFunc := ObjBindMethod(g_SF.Memory, "GetSavedFormationSlotByFavorite", favorite)
+        errMsg := "Please confirm a formation is saved in formation favorite slot " . favorite . ". " . txtCheck
+        formationSlot := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := -1, shouldBeEqual := False)
+        if(formationSlot == -1)
+            return -1
+        return formationSlot
+    }
+
+    ; Test that formation has champions
+    TestFormationFavorite( formationSlot := "", favorite := "", txtCheck := "")
+    {
+        if(!formationSlot)
+            return ""
+        team := {1:"Speed", 2:"Stack Farm", 3:"Speed No Briv"}
+        testFunc := ObjBindMethod(g_SF.Memory, "GetFormationSaveBySlot", formationSlot, 0) ; don't ignore empty
+        errMsg := "Please confirm your " . team[favorite] . " team is saved in formation favorite slot " . favorite . ". " . txtCheck
+        formation := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := 0, shouldBeEqual := False, testSize := True)
+        if(formation == -1)
+            return -1
+        return formation
+    }
+
+    ; Test that formation has champions
+    TestChampInFormation( champID := "", formation := "", includeChampion := True, favorite := 1, txtCheck := "")
+    {
+        if(!champID)
+            return ""
+        team := {1:"Speed", 2:"Stack Farm", 3:"Speed No Briv"}
+        testFunc := ObjBindMethod(g_SF, "IsChampInFavoriteFormation", champID, favorite ) ; don't ignore empty
+        foundChampName := g_SF.Memory.ReadChampNameByID(champID)
+        
+        errMsg := "Please confirm " . foundChampName . stateText . (includeChampion ? " is" : " is NOT") .  " saved in formation favorite slot " . favorite . ". " . txtCheck
+        formation := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := True, shouldBeEqual := includeChampion)
+        if(formation == -1)
+            return -1
+        return formation
+    }
+
+    ; Run tests to check if favorite formations are saved, they have champions, and that the expected champion is/isn't included.
+    RunChampionInFormationTests(champion, favorite, includeChampion, txtCheck)
+    {
+        formationSlot := this.TestFormationSlotByFavorite( favorite , txtcheck)
+        if (formationSlot == -1)
+            return -1 
+        formation := this.TestFormationFavorite(formationSlot, favorite, txtcheck)
+        if (formation == -1)
+            return -1
+        isChampInFormation := this.TestChampInFormation(champion, formation, includeChampion, favorite, txtcheck)
+        if (isChampInFormation == -1)
+            return -1
+    }
+
+    ; Tests to make sure Gem Farm is properly set up before attempting to run.
+    PreFlightCheck()
+    {
+        memoryVersion := g_SF.Memory.GameManager.GetVersion()
+        ; Test Favorite Exists
+        txtCheck := "`n`nOther potential solutions:"
+        txtCheck .= "`n`n1. Be sure Imports are up to date. Current imports are for v: " . g_SF.Memory.GetImportsVersion()
+        txtCheck .= "`n`n2. Check the correct memory file is being used. Current version: " . memoryVersion
+        txtcheck .= "`n`n3. If IC is running with admin privileges, then the script will also require admin privileges."
+        if (_MemoryManager.is64bit)
+            txtcheck .= "`n`n3. Check AHK is 64bit."
+
+        champion := 58   ; briv
+        formationQ := g_SF.FindChampIDinSavedFavorite( champion, favorite := 1, includeChampion := True )
+        if(formationQ == -1 AND this.RunChampionInFormationTests(champion, favorite := 1, includeChampion := True, txtCheck) == -1)
+            return -1
+
+        formationW := g_SF.FindChampIDinSavedFavorite( champion, favorite := 2, includeChampion := True  )
+        if(formationW == -1 AND this.RunChampionInFormationTests(champion, favorite := 2, includeChampion := True, txtCheck) == -1)
+            return -1
+
+        formationE := g_SF.FindChampIDinSavedFavorite( champion, favorite := 3, includeChampion := False  )
+        if(formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
+            return -1
+
+        if((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1)))
+            MsgBox, %ErrorMsg%
+        while (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2))
+        {
+            MsgBox, 5,, %ErrorMsg%
+            IfMsgBox, Retry
+            {
+                g_SF.OpenProcessReader()
+                ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2)
+            }
+            IfMsgBox, Cancel
+            {
+                MsgBox, Canceling Run
+                return -1
+            }
+        }
+        if(ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3))
+            MsgBox, %ErrorMsg%
+
+        return 0
+    }
+
     ;===========================================================
     ;functions for speeding up progression through an adventure.
     ;===========================================================
@@ -692,6 +725,76 @@ class IC_BrivGemFarm_Class
     ;=====================================================
     ;Functions for direct server calls between runs
     ;=====================================================
+
+
+    ; Sends calls for buying or opening chests and tracks chest metrics.
+    DoChests(numSilverChests, numGoldChests)
+    {
+        ; no chests to do - Replaces g_BrivUserSettings[ "DoChests" ] setting.
+        if !(g_BrivUserSettings[ "BuySilvers" ] OR g_BrivUserSettings[ "BuyGolds" ] OR g_BrivUserSettings[ "OpenSilvers" ] OR g_BrivUserSettings[ "OpenGolds" ])
+            return
+
+        StartTime := A_TickCount
+        g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
+        loopString := ""
+        startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
+        startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
+        startingOpenedGoldChests := g_SharedData.OpenedGoldChests
+        startingOpenedSilverChests := g_SharedData.OpenedSilverChests
+        currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
+        ElapsedTime := 0
+
+        doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+        while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
+        {
+            g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
+            effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
+
+            ;BUYCHESTS
+            gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
+            amount := Min(Floor(gems / 50), 100 )
+            if( g_BrivUserSettings[ "BuySilvers" ] AND amount > 0 )
+                this.BuyChests( chestID := 1, effectiveStartTime, amount )
+            gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
+            amount := Min(Floor(gems / 500) , 100 )
+            if ( g_BrivUserSettings[ "BuyGolds" ] AND amount > 0 )
+                this.BuyChests( chestID := 2, effectiveStartTime, amount )
+            ; OPENCHESTS
+            amount := Min(g_SF.TotalSilverChests, 99)
+            if ( g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0 )
+                this.OpenChests( chestID := 1, effectiveStartTime, amount)
+            amount := Min(g_SF.TotalGoldChests, 99)
+            if ( g_BrivUserSettings[ "OpenGolds" ] AND amount > 0 )
+                this.OpenChests( chestID := 2, effectiveStartTime, amount )
+
+            updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
+            currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
+            loopString := currentLoopString == "" ? loopString : currentLoopString
+
+            if ( !g_BrivUserSettings[ "DoChestsContinuous" ] ) ; Do one time if not continuous
+                return loopString == "" ? "Chests ----" : loopString
+            if (updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
+                return loopString == "" ? "Chests ----" : loopString
+            currentChestTallies := updatedTallies
+            ElapsedTime := A_TickCount - StartTime
+        }
+        return loopString
+    }
+
+    ; Builds a string that shows how many chests have been opened/bought above the values passed into this function.
+    GetChestDifferenceString(lastPurchasedSilverChests, lastPurchasedGoldChests, lastOpenedGoldChests, lastOpenedSilverChests )
+    {
+        boughtSilver := g_SharedData.PurchasedSilverChests - lastPurchasedSilverChests 
+        boughtGold := g_SharedData.PurchasedGoldChests - lastPurchasedGoldChests
+        openedSilver := g_SharedData.OpenedSilverChests - lastOpenedSilverChests
+        openedGold := g_SharedData.OpenedGoldChests - lastOpenedGoldChests
+        buyString := (boughtSilver > 0 OR boughtGold > 0) ? "Buy: (" . boughtSilver . "s, " . boughtGold . "g)" : ""
+        openString := (openedSilver > 0 OR openedGold > 0) ? "Open: (" . openedSilver . "s, " . openedGold . "g)" : ""
+        separator := ((boughtSilver > 0 OR boughtGold > 0) AND (openedSilver > 0 OR openedGold > 0)) ? ", " : ""
+        returnString := buyString . separator . openString
+        return ((returnString != "") ? "Chests - " . returnString : "")
+    }
+
     /*  BuyChests - A method to buy chests based on parameters passed.
 
         Parameters:
