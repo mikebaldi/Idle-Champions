@@ -17,7 +17,26 @@ class GameObjectStructure
     GSOName := ""
     DictionaryObject := {}
     LastDictIndex := {}
-
+    _CollectionKeyType := ""
+    _CollectionValType := ""
+    static SystemTypes := { "System.Byte" : "Char"
+        ,"System.UByte" : "UChar"
+        ,"System.Short" : "Short"
+        ,"System.UShort" : "UShort"
+        ,"System.Int32" : "Int"
+        ,"System.UInt32" : "UInt"
+        ,"System.Int64" : "Int64"
+        ,"System.UInt64" : "Int64"
+        ,"System.Single" : "Float"
+        ,"System.USingle" : "UFloat"
+        ,"System.Double" : "Double"
+        ,"System.Boolean" : "Char" 
+        ,"System.String" : "UTF-16" }
+    static ValueTypeToBytes := { "Char": 0x4, "UChar": 0x4, "Short": 0x4
+                                , "UShort": 0x4, "Int": 0x4, "UInt": 0x4
+                                , "Int64": 0x8, "UInt64": 0x8, "Float": 0x4
+                                , "UFloat": 0x4, "Double": 0x8, "Char": 0x4, "Quad": 0x10 }
+   
     ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
@@ -161,6 +180,8 @@ class GameObjectStructure
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         ; var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         var.Offset := this.Offset
+        var._CollectionKeyType := this._CollectionKeyType
+        var._CollectionValType := this._CollectionValType
         return var
     }
 
@@ -188,6 +209,8 @@ class GameObjectStructure
         {
             if(!IsObject(v) OR k == "BasePtr") ; Keep BasePtr as a reference
             {
+                ; if(k == "_CollectionKeyType" OR k == "_CollectionValType")
+                ;     continue
                 var[k] := v
                 continue
             }
@@ -284,15 +307,22 @@ class GameObjectStructure
 
 
     ; Used to calculate offsets the offsets of an item in a list by its index value.
-    ; Note: Some EGS lists will still use 4 byte offsets. In these cases, pass (index/2) as the index of the list. 
     CalculateOffset( listItem, indexStart := 0 )
     {
         if(indexStart) ; If list is not 0 based indexing
             listItem--             ; AHK uses 0 based array indexing, switch to 0 based
-        if(this.BasePtr.Is64Bit)
-            return 0x20 + ( listItem * 0x8 )
-        else
-            return 0x10 + ( listItem * 0x4 )
+        
+         if(this.BasePtr.Is64Bit)
+         {
+            ; Note: Some 64-bit lists will still use 4 byte offsets instead of 8.
+            ; Handle lists of varying size items 
+            hasType1 := GameObjectStructure.SystemTypes[this._CollectionValType] != ""
+            type1Bytes := hasType1 ? GameObjectStructure.ValueTypeToBytes[GameObjectStructure.SystemTypes[this._CollectionValType]] : 0x8
+            itemSize := hasType1 ? type1Bytes : 0x8
+            offset := 0x20 + ( listItem * itemSize )
+            return offset
+         }
+        return 0x10 + ( listItem * 0x4 )
     }
 
     ; Used to calculate offsets of an item in a dict. requires an array with "key" or "value" as first entry and the dict index as second. indices start at 0.
@@ -310,9 +340,17 @@ class GameObjectStructure
 
         if(this.BasePtr.Is64Bit)
         {
+                    
+            ; --- handle dictionary types with different size offsets ---
+            hasType1 := GameObjectStructure.SystemTypes[this._CollectionKeyType] != ""
+            hasType2 := GameObjectStructure.SystemTypes[this._CollectionValType] != ""
+            type1Bytes := hasType1 ? GameObjectStructure.ValueTypeToBytes[GameObjectStructure.SystemTypes[this._CollectionKeyType]] : 0x8
+            type2Bytes := hasType2 ? GameObjectStructure.ValueTypeToBytes[GameObjectStructure.SystemTypes[this._CollectionValType]] : 0x8
+            itemSize := (hasType1 AND hasType2 AND type1Bytes == 0x4 and type2Bytes == 0x4) ? 0x4 : 0x8
+            ; --- 
             baseOffset := 0x28
-            offsetInterval := 0x18
-            valueOffset := 0x8
+            offsetInterval := itemSize == 0x4 ? 0x10 : 0x18
+            valueOffset := itemSize
         }
         else
         {

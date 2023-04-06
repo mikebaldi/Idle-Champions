@@ -165,16 +165,11 @@ class IC_MemoryFunctions_Class
         return this.GameManager.TimeScale.Read()
     }
 
-    ; TODO: Special Case Dictionary Solution. Find more automated method of dictionary lookups for non-standard dictionary types?
     ReadTimeScaleMultiplierByIndex(index := 0)
     {
         ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
         ; dictionary <IEffectSource, Float> / <System.Collections.Generic.Dictionary<CrusadersGame.Effects.IEffectSource, System.Single>
-        if (this.Is64Bit)
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0x18, 0x20 + 0x10 + (index * 0x18)]) ; 20 start, values at 50,68,3C..etc
-        else
-            timeScaleObject := New GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers, "Float", [0xC, 0x10 + 0xC + (index * 0x10)]) ; 10 start, values at 1C,2C,3C..etc
-        return Round(timeScaleObject.Read(), 2)
+        return Round(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers["value", index].read("Float"), 2)
     }
 
     ReadTimeScaleMultipliersCount()
@@ -400,19 +395,16 @@ class IC_MemoryFunctions_Class
     ;reads the first 8 bytes of the quad value of gold
     ReadGoldFirst8Bytes()
     {
-        newObject := this.GameManager.game.gameInstances[this.GameInstance].ActiveCampaignData.gold.QuickClone()
-        newObject.ValueType := "Int64"
-        return newObject.Read()
-    }
+        return this.GameManager.game.gameInstances[this.GameInstance].ActiveCampaignData.gold.Read("Int64")
+     }
 
     ;reads the last 8 bytes of the quad value of gold
     ReadGoldSecond8Bytes()
     {
         newObject := this.GameManager.game.gameInstances[this.GameInstance].ActiveCampaignData.gold.QuickClone()
-        newObject.ValueType := "Int64"
         goldOffsetIndex := newObject.FullOffsets.Count()
         newObject.FullOffsets[goldOffsetIndex] := newObject.FullOffsets[goldOffsetIndex] + 0x8
-        return newObject.Read()
+        return newObject.Read("Int64")
     }
 
     ReadGoldString()
@@ -445,6 +437,28 @@ class IC_MemoryFunctions_Class
     ReadFormationSaveIDBySlot(slot := 0)
     {
         return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].SaveID.Read()
+    }
+
+    GetFormationFieldFamiliarsBySlot( slot := 0)
+    {
+        size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Familiars["Clicks"].List.size.Read()
+        if(size <= 0 OR size > 10) ; sanity check, should be < 6 but set to 10 in case of game field familiar increase.
+            return ""
+        familiarList := {}
+        Loop, %size%
+        {
+            value := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Familiars["Clicks"].List[A_Index - 1].Read()
+            familiarList.Push(value)
+        }
+        return familiarList
+    }
+
+    GetFormationFamiliarsByFavorite(favorite := 1)
+    {
+        favorite := 1
+        slot := this.GetSavedFormationSlotByFavorite(favorite)
+        formation := this.GetFormationFieldFamiliarsBySlot(slot)
+        return formation
     }
 
     ; Reads the FormationCampaignID for the FormationSaves index passed in.
@@ -488,10 +502,8 @@ class IC_MemoryFunctions_Class
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
     GetCoreSpecializationForHero(heroID, specNum := 1)
     {
-        specNum--
         formationSaveSlot := this.GetActiveModronFormationSaveSlot()
-        dictIndex := this.DictIndexOfKey(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations,heroID)
-        return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[heroID].List[specNum].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[heroID].List[specNum - 1].Read()
     }
 
     ;==============================
@@ -587,7 +599,6 @@ class IC_MemoryFunctions_Class
     ;======================
     ; Retrieving Formations
     ;======================
-    ; TODO: Special Indexing for formation list
     ; Read the champions saved in a given formation save slot. returns an array of champ ID with -1 representing an empty formation slot. When parameter ignoreEmptySlots is set to 1 or greater, empty slots (memory read value == -1) will not be added to the array. 
     GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0 )
     {
@@ -595,8 +606,7 @@ class IC_MemoryFunctions_Class
         _size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size.Read()
         loop, %_size%
         {
-            heroLoc := this.Is64Bit ? ((A_Index - 1) / 2) : (A_Index - 1) ; -1 for 1->0 indexing conversion
-            champID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation[heroLoc].Read()
+            champID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation[A_Index - 1].Read()
             if (!ignoreEmptySlots or champID != -1)
             {
                 Formation.Push( champID )
@@ -651,6 +661,7 @@ class IC_MemoryFunctions_Class
         ; The nextUpgrade pointer could be null if no upgrades are found.
         if (this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade.Read())
         {
+            ;TODO Re-Verify this value
             val := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade.IsPurchased.Read()
         }
         return val
@@ -682,9 +693,14 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].ID.Read()
     }
 
-    ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 7)
+    ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 8) ;upgradeID is "slot" ; battle master 
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].SpecializationName.Read()
+    }
+
+    ReadHeroUpgradeSpecializationNameByID(champID := 1, upgradeID := 7) ; battle master 
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades[upgradeID].SpecializationName.Read()
     }
 
     ReadHeroUpgradeIsPurchased(champID := 1, upgradeID := 7)
@@ -840,42 +856,26 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.size.Read()
     }
 
-    ; Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
-    ; TODO: Specialized dictionary
+    ; Depricated - Use ReadChestCountByID.
     GetChestCountByID(chestID)
     {
-        size := this.ReadInventoryChestListSize()
-        if(!size)
-            return "" 
-        loop, %size%
-        {
-            currentChestID := this.GetInventoryChestIDBySlot(A_Index)
-            if(currentChestID == chestID)
-            {
-                return this.GetInventoryChestCountBySlot(A_Index)
-            }
-        }
-        return "" 
+        this.ReadchestCountByID(chestID)
     }
 
-    ; TODO: Specialized dictionary
-    GetInventoryChestIDBySlot(slot)
+    ; Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
+    ReadChestCountByID(chestID)
     {
-            ; Calculate chestID index offset and add it to object's offsets. Not using 64 bit but need +0x10 offset for where starts
-            dictIndex := this.Is64Bit ? 0x20 + ((slot-1) * 0x10) : 0x10 + ((slot-1) * 0x10)
-            dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
-            dictObject.FullOffsets.Push(0x18, dictIndex)
-            return dictObject.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts[chestID].Read()
     }
 
-    ; TODO: Specialized dictionary
-    GetInventoryChestCountBySlot(slot)
+    ReadInventoryChestIDBySlot(slot)
     {
-            ;  Calculate offset: Addresses are 64 bit but the dictionary entry offsets are 4 bytes instead of 8.
-            dictIndex := this.Is64Bit ? 0x2C + ((slot-1) * 0x10) : 0x1C + ((slot-1) * 0x10)
-            dictObject := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts.Clone()
-            dictObject.FullOffsets.Push(0x18, dictIndex)
-            return dictObject.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", slot].Read()
+    }
+
+    ReadInventoryChestCountBySlot(slot)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["value", slot].Read()
     }
 
     ReadInventoryChestListSize()
@@ -944,6 +944,20 @@ class IC_MemoryFunctions_Class
         return ""
     }
 
+    GetDialogSlotByName(dialogName := "LoadingTextBox")
+    {
+        if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
+            dialogName := "LoadingTextBox"
+        size := this.ReadDialogsListSize()
+        loop, %size%
+        {
+            name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
+            if (name == dialogName)
+                return (A_Index - 1)
+        }
+        return ""
+    }
+
     GetBlessingsCurrency()
     {
         return this.ReadConversionCurrencyBySlot(this.GetBlessingsDialogSlot())
@@ -962,20 +976,6 @@ class IC_MemoryFunctions_Class
         if(patronID < 0 OR patronID > 100) ; Ignore clearly bad memory reads.
             patronID := ""
         return patronID
-    }
-
-    GetDialogSlotByName(dialogName := "LoadingTextBox")
-    {
-        if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
-            dialogName := "LoadingTextBox"
-        size := this.ReadDialogsListSize()
-        loop, %size%
-        {
-            name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
-            if (name == dialogName)
-                return (A_Index - 1)
-        }
-        return ""
     }
 
     ReadDialogActive(slot := 0)
