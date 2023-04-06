@@ -455,7 +455,6 @@ class IC_MemoryFunctions_Class
 
     GetFormationFamiliarsByFavorite(favorite := 1)
     {
-        favorite := 1
         slot := this.GetSavedFormationSlotByFavorite(favorite)
         formation := this.GetFormationFieldFamiliarsBySlot(slot)
         return formation
