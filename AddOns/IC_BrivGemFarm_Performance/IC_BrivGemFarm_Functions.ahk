@@ -33,8 +33,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
         this.TotalGems := this.Memory.ReadGems()
-        silverChests := this.Memory.GetChestCountByID(1)
-        goldChests := this.Memory.GetChestCountByID(2)
+        silverChests := this.Memory.ReadChestCountByID(1)
+        goldChests := this.Memory.ReadChestCountByID(2)
         this.TotalSilverChests := (silverChests != "") ? silverChests : this.TotalSilverChests
         this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
         this.sprint := this.Memory.ReadHasteStacks()
@@ -233,6 +233,7 @@ class IC_BrivGemFarm_Class
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
                 }
+                ; TODO: Fix leveling for formation. !AreChampionsUpgraded ? FormationQ vs currentFormation?
                 if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationQ))
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
@@ -435,8 +436,8 @@ class IC_BrivGemFarm_Class
     {
         lastStacks := stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks - this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
-        numSilverChests := g_SF.Memory.GetChestCountByID(1)
-        numGoldChests := g_SF.Memory.GetChestCountByID(2)
+        numSilverChests := g_SF.Memory.ReadChestCountByID(1)
+        numGoldChests := g_SF.Memory.ReadChestCountByID(2)
         retryAttempt := 0
         maxRetries := 3
         if(this.LastStackSuccessArea == 0)

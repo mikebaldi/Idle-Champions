@@ -323,8 +323,8 @@ class IC_BrivGemFarm_Stats_Component
                 this.GemStart := g_SF.Memory.ReadGems()
                 this.GemSpentStart := g_SF.Memory.ReadGemsSpent()
                 this.LastResetCount := g_SF.Memory.ReadResetsCount()
-                silverChests := g_SF.Memory.GetChestCountByID(1)
-                goldChests := g_SF.Memory.GetChestCountByID(2)
+                silverChests := g_SF.Memory.ReadChestCountByID(1)
+                goldChests := g_SF.Memory.ReadChestCountByID(2)
                 this.SilverChestCountStart := (silverChests != "") ? silverChests : 0
                 this.GoldChestCountStart := (goldChests != "") ? goldChests : 0
                 
@@ -378,8 +378,8 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
             GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
 
-            currentSilverChests := g_SF.Memory.GetChestCountByID(1) ; Start + Purchased + Dropped - Opened
-            currentGoldChests := g_SF.Memory.GetChestCountByID(2)
+            currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
+            currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
 
             ; Check if Nordom is in formation
             formation := g_SF.Memory.GetFormationByFavorite(1)

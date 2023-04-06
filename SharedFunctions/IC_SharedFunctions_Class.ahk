@@ -992,8 +992,8 @@ class IC_SharedFunctions_Class
         this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
         this.TotalGems := this.Memory.ReadGems()
-        silverChests := this.Memory.GetChestCountByID(1)
-        goldChests := this.Memory.GetChestCountByID(2)
+        silverChests := this.Memory.ReadChestCountByID(1)
+        goldChests := this.Memory.ReadChestCountByID(2)
         this.TotalSilverChests := (silverChests != "") ? silverChests : 0
         this.TotalGoldChests := (goldChests != "") ? goldChests : 0
     }

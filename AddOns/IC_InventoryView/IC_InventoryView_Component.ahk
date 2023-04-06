@@ -118,8 +118,8 @@ class IC_InventoryView_Component
             return "" 
         loop, %size%
         {
-            chestID := g_SF.Memory.GetInventoryChestIDBySlot(A_Index)
-            itemAmount := g_SF.Memory.GetInventoryChestCountBySlot(A_Index)
+            chestID := g_SF.Memory.ReadInventoryChestIDBySlot(A_Index - 1)
+            itemAmount := g_SF.Memory.ReadInventoryChestCountBySlot(A_Index - 1)
             itemName := g_SF.Memory.GetChestNameByID(chestID)
             change := this.GetChange(chestID, itemAmount, "Chest")
             perRunVal := Round(change / runCount, 2)
