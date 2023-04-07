@@ -1203,8 +1203,9 @@ class IC_SharedFunctions_Class
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         ; average
         jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
-        if (worstCase AND skipChance < 1) ; 25% more - guesstimate
-            jumps := Floor(jumps * 1.15)
+        isEffectively100 := 1 - skipChance < .004
+        if (worstCase AND skipChance < 1 AND !isEffectively100) 
+            jumps := Floor(jumps * 1.15) ; 15% more - guesstimate
             ; Old - jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
         stacks := Ceil(49 / (1+consume)**jumps)
         return stacks
@@ -1221,7 +1222,8 @@ class IC_SharedFunctions_Class
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
-        if (worstCase AND skipChance < 1)
+        isEffectively100 := 1 - skipChance < .004
+        if (worstCase AND skipChance < 1 AND !isEffectively100)
             jumps := Floor(jumps * 1.15)
             ; Old - jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
         return Floor(stacks*(1+consume)**jumps)
