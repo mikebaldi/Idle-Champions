@@ -138,7 +138,10 @@ class IC_BrivGemFarm_Class
     TimerFunctions := {}
     TargetStacks := 0
     GemFarmGUID := ""
-    NoStacking := 0
+    NoStacking := 0  ; When set to 1, no Briv SB stacking will be done
+                     ; for the rest of the run. Gets reset to 0 at the
+                     ; start of the next run. Used to recover from
+                     ; continuously and repeatedly failing statcking.
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -178,7 +181,7 @@ class IC_BrivGemFarm_Class
             g_SF.SetFormation(g_BrivUserSettings)
             if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
-                this.NoStacking := 0
+                this.NoStacking := 0  ; (Re-)enable Briv SB stacking for this run
                 g_SharedData.BossesHitThisRun := 0
                 g_SF.ToggleAutoProgress( 0, false, true )
                 g_SharedData.StackFail := this.CheckForFailedConv()
@@ -406,7 +409,7 @@ class IC_BrivGemFarm_Class
         numSilverChests := g_SF.Memory.GetChestCountByID(1)
         numGoldChests := g_SF.Memory.GetChestCountByID(2)
         retryAttempt := 0
-        maxRetries := 2
+        maxRetries := 10  ; Do a maximum 10 of offline SB stacking attempts per run.
         while ( stacks < targetStacks AND retryAttempt < maxRetries )
         {
             retryAttempt++
@@ -447,7 +450,7 @@ class IC_BrivGemFarm_Class
         }
         if ( retryAttempt >= maxRetries )
         {
-            this.NoStacking := 1
+            this.NoStacking := 1  ; No further Briv SB stacking for the rest of tis run
         }
         g_PreviousZoneStartTime := A_TickCount
         return
