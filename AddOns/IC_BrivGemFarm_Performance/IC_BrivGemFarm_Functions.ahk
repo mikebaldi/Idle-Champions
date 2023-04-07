@@ -436,7 +436,7 @@ class IC_BrivGemFarm_Class
         numSilverChests := g_SF.Memory.ReadChestCountByID(1)
         numGoldChests := g_SF.Memory.ReadChestCountByID(2)
         retryAttempt := 0
-        maxRetries := 3
+        maxRetries := 2
         if(this.LastStackSuccessArea == 0)
             maxRetries := 1
         while ( stacks < targetStacks AND retryAttempt <= maxRetries )
@@ -476,8 +476,10 @@ class IC_BrivGemFarm_Class
         {
             Loop, 4 ; add next 4 areas to failed stacks so next attempt would be CurrentZone + 4
             {
-                this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] := this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] == "" ? 1 : this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] + 1
+                this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] := (this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] == "") ? 1 : (this.StackFailAreasTally[g_SF.CurrentZone + A_Index - 1] + 1)
+                ; debugStackFailAreasTallyString := ArrFnc.GetDecFormattedAssocArrayString(this.StackFailAreasTally)
                 this.StackFailAreasThisRunTally[g_SF.CurrentZone + A_Index - 1] := 1
+                ; debugStackStackFailAreasThisRunTallyString := ArrFnc.GetDecFormattedAssocArrayString(this.StackFailAreasThisRunTally)
                 this.LastStackSuccessArea := 0
             }
         }
@@ -677,7 +679,7 @@ class IC_BrivGemFarm_Class
         memoryVersion := g_SF.Memory.GameManager.GetVersion()
         ; Test Favorite Exists
         txtCheck := "`n`nOther potential solutions:"
-        txtCheck .= "`n`n1. Be sure Imports are up to date. Current imports are for v: " . g_SF.Memory.GetImportsVersion()
+        txtCheck .= "`n`n1. Be sure Imports are up to date. Current imports are for: v" . g_SF.Memory.GetImportsVersion()
         txtCheck .= "`n`n2. Check the correct memory file is being used. Current version: " . memoryVersion
         txtcheck .= "`n`n3. If IC is running with admin privileges, then the script will also require admin privileges."
         if (_MemoryManager.is64bit)
