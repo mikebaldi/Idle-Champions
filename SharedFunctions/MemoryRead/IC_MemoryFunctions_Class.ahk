@@ -943,6 +943,13 @@ class IC_MemoryFunctions_Class
         return ""
     }
 
+    ; Checks for noteable dialogs:
+    ; this.ReadDialogActiveBySlot(this.GetDialogSlotByName("OfflineProgressDialog"))    ; 
+    ; this.ReadDialogActiveBySlot(this.GetDialogSlotByName("DontShowAgainDialog"))      ; Warning message appearing upon game load indicating game was closed before previous offline progress could be completed.
+    ; this.ReadDialogActiveBySlot(this.GetDialogSlotByName("MainMenuDialog"))           ; Menu appearing when hitting escape. Good to check before sending escape to close other dialogs.
+    ; this.ReadDialogActiveBySlot(this.GetDialogSlotByName("SpecializationDialog"))     ; When a specialization choice dialog appears. Can have multiple occurances across multiple heroes.
+    ; this.ReadDialogActiveBySlot(this.GetDialogSlotByName("ModronResetWarningDialog")) ; 
+    
     GetDialogSlotByName(dialogName := "LoadingTextBox", occurance := 1)
     {
         if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
