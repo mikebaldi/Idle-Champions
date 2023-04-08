@@ -232,8 +232,7 @@ class IC_BrivGemFarm_Class
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
                 }
-                ; TODO: Fix leveling for formation. !AreChampionsUpgraded ? FormationQ vs currentFormation?
-                if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationQ))
+                if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron))
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
                     keyspam := ["{ClickDmg}"]
