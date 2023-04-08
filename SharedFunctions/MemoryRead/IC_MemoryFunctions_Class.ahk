@@ -755,7 +755,6 @@ class IC_MemoryFunctions_Class
         return formationSaveSlot
     }
 
-    ; TODO: Special Case Dictionary Solution
     ; Uses FormationCampaignID to search the modron for the SaveID of the formation the active modron is using.
     GetModronFormationsSaveIDByFormationCampaignID(formationCampaignID)
     {
@@ -764,24 +763,7 @@ class IC_MemoryFunctions_Class
         ; Find which modron core is being used
         modronSavesSlot := this.GetCurrentModronSaveSlot()
         ; Find SaveID for given formationCampaignID
-        modronFormationsSavesSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves.size.Read()
-        loop, %modronFormationsSavesSize%
-        {
-            ; 64 bit starts values at offset 0x20, 32 bit at 0x10
-            testIndex := this.Is64Bit ? (0x20 + (A_index - 1) * 0x10) : (0x10 + (A_Index - 1) * 0x10)
-            testValueObject := new GameObjectStructure(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves,,[0x18, testIndex])
-            testValue := testValueObject.Read()
-            if (testValue == formationCampaignID)
-            {
-                testIndex := testIndex + 0xC ; same for 64/32 bit
-                testValueObject.FullOffsets.Pop()
-                testValueObject.FullOffsets.Push(testIndex)
-                formationSaveSlot := testValueObject.Read()
-                break
-            }
-        }
-        return formationSaveSlot
-        ; value := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSavesSlot].FormationSaves[formationCampaignID].Read()
     }
 
     ; Finds the Modron Reset area for the current instance's core.
@@ -858,7 +840,7 @@ class IC_MemoryFunctions_Class
     ; Depricated - Use ReadChestCountByID.
     GetChestCountByID(chestID)
     {
-        this.ReadchestCountByID(chestID)
+        return this.ReadchestCountByID(chestID)
     }
 
     ; Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
