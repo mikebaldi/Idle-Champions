@@ -1,3 +1,7 @@
+April 8, 2023
+    Added Profiles for BrivGemFarm.
+    Fixed how the chest purchaser ComboBox functions.
+
 April 7, 2023
     Added incremental area increase for failed stacking to help prevent seasonal buffs or infinite stacking issues.
     Updated imports to include typing for collections. 
