@@ -7,11 +7,11 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     {
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
-            if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+            if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             {
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
             }
-            else if(this.sprint != "" AND this.steelbones != "")
+            else if (this.sprint != "" AND this.steelbones != "")
             {
                 response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
                 g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
@@ -47,7 +47,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.SetUserCredentials()
         g_ServerCall := new IC_BrivServerCall_Class( this.UserID, this.UserHash, this.InstanceID )
         version := this.Memory.ReadBaseGameVersion()
-        if(version != "")
+        if (version != "")
             g_ServerCall.clientVersion := version
         tempWebRoot := this.Memory.ReadWebRoot()
         httpString := StrSplit(tempWebRoot,":")[1]
@@ -71,7 +71,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         ElapsedTime := 0
         g_SharedData.LoopString := "Modron Resetting..."
         this.SetUserCredentials()
-        if(this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
+        if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
@@ -79,7 +79,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         }
         g_SharedData.LoopString := "Loading z1..."
         Sleep, 50
-        while(!this.Memory.ReadUserIsInited() AND ElapsedTime < timeout)
+        while ( !this.Memory.ReadUserIsInited() AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
         }
@@ -93,7 +93,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     ; Refocuses the window that was recorded as being active before the game window opened.
     ActivateLastWindow()
     {
-        if(!g_BrivUserSettings["RestoreLastWindowOnGameOpen"])
+        if (!g_BrivUserSettings["RestoreLastWindowOnGameOpen"])
             return
         Sleep, 100 ; extra wait for window to load
         hwnd := this.Hwnd
@@ -105,16 +105,16 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     ; Returns true when conditions have been met for starting a wait for dash.
     ShouldDashWait()
     {
-        if ( g_BrivUserSettings[ "DisableDashWait" ] )
+        if (g_BrivUserSettings[ "DisableDashWait" ])
             return False
         isInDashWaitBuffer := this.Memory.ReadCurrentZone() >= ( this.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ] )
-        if ( isInDashWaitBuffer )
+        if (isInDashWaitBuffer)
             return False
         hasHasteStacks := this.Memory.ReadHasteStacks() > 50
-        if ( !hasHasteStacks )
+        if (!hasHasteStacks)
             Return False
         isShandieInFormation := this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )            
-        if ( !isShandieInFormation )
+        if (!isShandieInFormation)
             return False
 
         return True
@@ -168,7 +168,7 @@ class IC_BrivGemFarm_Class
         g_SF.PID := ErrorLevel
         Process, Priority, % g_SF.PID, High
         g_SF.Memory.OpenProcessReader()
-        if(g_SF.VerifyAdventureLoaded() < 0)
+        if (g_SF.VerifyAdventureLoaded() < 0)
             return
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_ServerCall.UpdatePlayServer()
@@ -186,10 +186,10 @@ class IC_BrivGemFarm_Class
         {
             g_SharedData.LoopString := "Main Loop"
             CurrentZone := g_SF.Memory.ReadCurrentZone()
-            if(CurrentZone == "" AND !g_SF.SafetyCheck()) ; Check for game closed
+            if (CurrentZone == "" AND !g_SF.SafetyCheck() ) ; Check for game closed
                 g_SF.ToggleAutoProgress( 1, false, true ) ; Turn on autoprogress after a restart
             g_SF.SetFormation(g_BrivUserSettings)
-            if ( g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
+            if (g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
                 g_SharedData.BossesHitThisRun := 0
                 g_SF.ToggleAutoProgress( 0, false, true )
@@ -224,15 +224,15 @@ class IC_BrivGemFarm_Class
                 g_SF.ToggleAutoProgress( 1, true ) ; Toggle autoprogress to skip boss bag
             if (g_SF.Memory.ReadResetting())
                 this.ModronResetCheck()
-            if(CurrentZone > PreviousZone) ; needs to be greater than because offline could stacking getting stuck in descending zones.
+            if (CurrentZone > PreviousZone ) ; needs to be greater than because offline could stacking getting stuck in descending zones.
             {
                 PreviousZone := CurrentZone
-                if((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
+                if ((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
                 {
                     g_SharedData.TotalBossesHit++
                     g_SharedData.BossesHitThisRun++
                 }
-                if(doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron))
+                if (doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron))
                 {
                     g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
                     keyspam := ["{ClickDmg}"]
@@ -240,7 +240,7 @@ class IC_BrivGemFarm_Class
                 }
                 lastModronResetZone := g_SF.ModronResetZone
                 g_SF.InitZone( keyspam )
-                if g_SF.ModronResetZone != lastModronResetZone
+                if (g_SF.ModronResetZone != lastModronResetZone)
                 {
                     worstCase := g_BrivUserSettings[ "AutoCalculateWorstCase" ]
                     g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone(worstCase) + 50 ; 50 stack safety net
@@ -250,7 +250,7 @@ class IC_BrivGemFarm_Class
                 continue
             }
             g_SF.ToggleAutoProgress( 1 )
-            if(g_SF.CheckifStuck())
+            if (g_SF.CheckifStuck())
             {
                 g_SharedData.TriggerStart := true
                 g_SharedData.StackFail := StackFailStates.FAILED_TO_PROGRESS ; 3
@@ -268,7 +268,7 @@ class IC_BrivGemFarm_Class
     {
         CurrentZone := g_SF.Memory.ReadCurrentZone()
         ; Don't test while modron resetting.
-        if(CurrentZone < 0 OR CurrentZone >= g_SF.ModronResetZone)
+        if (CurrentZone < 0 OR CurrentZone >= g_SF.ModronResetZone)
             return
         stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks - this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
@@ -276,16 +276,16 @@ class IC_BrivGemFarm_Class
         stackfail := 0
         forcedResetReason := ""
         ; passed stack zone, start stack farm. Normal operation.
-        if ( stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] )
+        if (stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ])
         {
             ; normal-success / adjusted-sucess behavior. Use settings zone or adjusted zone if good zone has been found. (Resets to StackZone for 3 runs before sticking)
-            if ( this.LastStackSuccessArea == CurrentZone ) 
+            if (this.LastStackSuccessArea == CurrentZone ) 
                 this.StackFarm()
             ; abnormal stacking - Normal zone failed, current zone is later and has 0 or "" failures on this zone. Try it.
-            else if ( !this.StackFailAreasTally[CurrentZone] ) 
+            else if (!this.StackFailAreasTally[CurrentZone] ) 
                 this.StackFarm()
             ; only stack farm if this zone hasn't been tried this run yet and still below max tries. 
-            else if ( this.LastStackSuccessArea == 0 AND !this.StackFailAreasThisRunTally[CurrentZone] AND this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails )
+            else if (this.LastStackSuccessArea == 0 AND !this.StackFailAreasThisRunTally[CurrentZone] AND this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails)
                 this.StackFarm()
             return 0
         }
@@ -293,7 +293,7 @@ class IC_BrivGemFarm_Class
         if (g_SF.Memory.ReadHasteStacks() < 50 AND g_SF.Memory.ReadSBStacks() < targetStacks AND CurrentZone > g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
         {
             ; only use current zone if there's been no/non-excess issues with it.
-            if ( !this.StackFailAreasThisRunTally[CurrentZone] AND (!this.StackFailAreasTally[CurrentZone] OR this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails) )
+            if (!this.StackFailAreasThisRunTally[CurrentZone] AND (!this.StackFailAreasTally[CurrentZone] OR this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails))
             {
                 stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE ; 1
                 g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -303,7 +303,7 @@ class IC_BrivGemFarm_Class
             return 0
         }
         ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure. With protections from repeating too early or resetting within 5 zones of a reset.
-        if ( g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
+        if (g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
         {
             stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -312,7 +312,7 @@ class IC_BrivGemFarm_Class
         }
         ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
         ; (for restarting after stacking without going to modron reset level)
-        if ( stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+        if (stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
         {
             stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -333,12 +333,12 @@ class IC_BrivGemFarm_Class
             return ( g_BrivUserSettings [ "RestartStackTime" ] > 0 )
         }
         ; hybrid stacking by number of gems.
-        if ( gemsMax > 0 AND g_SF.Memory.ReadGems() > (gemsMax + g_BrivUserSettings[ "MinGemCount" ]) )
+        if (gemsMax > 0 AND g_SF.Memory.ReadGems() > (gemsMax + g_BrivUserSettings[ "MinGemCount" ]))
         {
             return 1
         }
         ; hybrid stacking by number of runs.
-        if ( runsMax > 1 )
+        if (runsMax > 1)
         {
             memRead := g_SF.Memory.ReadResetsCount()
             if (memRead > 0 AND Mod( memRead, runsMax ) = 0)
@@ -354,7 +354,7 @@ class IC_BrivGemFarm_Class
     ;Gets total of SteelBonesStacks + Haste Stacks
     GetNumStacksFarmed()
     {
-        if this.ShouldOfflineStack()
+        if (this.ShouldOfflineStack())
         {
             return g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
         }
@@ -380,7 +380,7 @@ class IC_BrivGemFarm_Class
     ; Stops progress and switches to appropriate party to prepare for stacking Briv's SteelBones.
     StackFarmSetup()
     {
-        if (!g_SF.KillCurrentBoss()) ; Previously/Alternatively FallBackFromBossZone()
+        if (!g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
             g_SF.FallBackFromBossZone()
         inputValues := "{w}" ; Stack farm formation hotkey
         g_SF.DirectedInput(,, inputValues )
@@ -394,7 +394,7 @@ class IC_BrivGemFarm_Class
         while ( !g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 2 )) AND ElapsedTime < 5000 )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
+            if (ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 g_SF.DirectedInput(,,inputValues)
                 counter++
@@ -411,7 +411,7 @@ class IC_BrivGemFarm_Class
 
         doOfflineStacking := this.ShouldOfflineStack()
 
-        if ( ( stacks < targetStacks ) AND doOfflineStacking )
+        if ((stacks < targetStacks) AND doOfflineStacking)
             this.StackRestart()
         else if (stacks < targetStacks)
             this.StackNormal()
@@ -438,7 +438,7 @@ class IC_BrivGemFarm_Class
         numGoldChests := g_SF.Memory.ReadChestCountByID(2)
         retryAttempt := 0
         maxRetries := 2
-        if(this.LastStackSuccessArea == 0)
+        if (this.LastStackSuccessArea == 0)
             maxRetries := 1
         while ( stacks < targetStacks AND retryAttempt <= maxRetries )
         {
@@ -447,7 +447,7 @@ class IC_BrivGemFarm_Class
             this.StackFarmSetup()
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             modronResetZone := g_SF.Memory.GetModronResetArea()
-            if(modronResetZone != "" AND g_SF.CurrentZone > modronResetZone)
+            if (modronResetZone != "" AND g_SF.CurrentZone > modronResetZone)
             {
                 g_SharedData.LoopString := "Attempted to offline stack after modron reset - verify settings"
                 break
@@ -466,7 +466,7 @@ class IC_BrivGemFarm_Class
             g_SF.SafetyCheck()
             stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
-            if ( g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ] )
+            if (g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ])
             {
                 g_SharedData.LoopString := "Stack Sleep: Failed (zone < min)"
                 Break  ; "Bad Save? Loaded below stack zone, see value."
@@ -474,7 +474,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.PreviousStacksFromOffline := stacks - lastStacks
             lastStacks := stacks
         }
-        if(retryAttempt >= maxRetries)
+        if (retryAttempt >= maxRetries)
         {
             Loop, 4 ; add next 4 areas to failed stacks so next attempt would be CurrentZone + 4
             {
@@ -485,7 +485,7 @@ class IC_BrivGemFarm_Class
                 this.LastStackSuccessArea := 0
             }
         }
-        else if(retryAttempt == 1)
+        else if (retryAttempt == 1)
         {
             this.StackFailAreasTally[g_SF.CurrentZone] := 0
             this.LastStackSuccessArea := g_SF.CurrentZone
@@ -520,7 +520,7 @@ class IC_BrivGemFarm_Class
         {
             g_SF.FallBackFromBossZone()
             stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
-            if ( g_SF.Memory.ReadSBStacks() > prevSB)
+            if (g_SF.Memory.ReadSBStacks() > prevSB)
                 StartTime := A_TickCount
             ElapsedTime := A_TickCount - StartTime
         }
@@ -532,13 +532,13 @@ class IC_BrivGemFarm_Class
     ; avoids attempts to stack again after stacking has been completed and level not reset yet.
     AvoidRestackTest()
     {
-        if(stacks >= g_BrivUserSettings[ "TargetStacks" ])
+        if (stacks >= g_BrivUserSettings[ "TargetStacks" ])
             return 1
-        if(g_SF.Memory.ReadCurrentZone() == 1)
+        if (g_SF.Memory.ReadCurrentZone() == 1)
             return 1
-        if(!g_BrivUserSettings["AutoCalculateBrivStacks"] AND g_SF.Memory.ReadHasteStacks() >= g_BrivUserSettings[ "TargetStacks" ])
+        if (!g_BrivUserSettings["AutoCalculateBrivStacks"] AND g_SF.Memory.ReadHasteStacks() >= g_BrivUserSettings[ "TargetStacks" ])
             return 1
-        if(g_BrivUserSettings["AutoCalculateBrivStacks"]  AND g_SF.Memory.ReadHasteStacks() >= g_SharedData.TargetStacks)
+        if (g_BrivUserSettings["AutoCalculateBrivStacks"]  AND g_SF.Memory.ReadHasteStacks() >= g_SharedData.TargetStacks)
             return 1
         return 0
     }
@@ -553,13 +553,13 @@ class IC_BrivGemFarm_Class
         variationLeeway := 10
         ; Zone 10 gives plenty leeway for fast starts that skip level 1 while being low enough to not have received briv stacks
         ; needed to ensure DoPartySetup
-        if ( !g_BrivUserSettings[ "StackFailRecovery" ] OR CurrentZone > 10)
+        if (!g_BrivUserSettings[ "StackFailRecovery" ] OR CurrentZone > 10)
         {
             return 0
         }
         stacks := g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks()
         ; stacks not converted to haste properly. Buffer allows for automatic calc variations and possible early jump before calculation done.
-        If ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND stacks >= targetStacks)
+        if ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND stacks >= targetStacks)
         {
             g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_CONVERT_STACKS] += 1
             g_SF.RestartAdventure( "Failed Conversion" )
@@ -567,7 +567,7 @@ class IC_BrivGemFarm_Class
             return StackFailStates.FAILED_TO_CONVERT_STACKS ; 2
         }
         ; all stacks were lost on reset. Stack leeway given for automatic calc variations. 
-        If ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND g_SF.Memory.ReadSBStacks() <= variationLeeway)
+        if ((g_SF.Memory.ReadHasteStacks() + variationLeeway) < targetStacks AND g_SF.Memory.ReadSBStacks() <= variationLeeway)
         {
             g_SharedData.StackFailStats.TALLY[StackFailStates.FAILED_TO_KEEP_STACKS] += 1
             return StackFailStates.FAILED_TO_KEEP_STACKS ; 5
@@ -591,12 +591,12 @@ class IC_BrivGemFarm_Class
         formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
         isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
         g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
-        if(isShandieInFormation)
+        if (isShandieInFormation)
             g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
-        if(isHavilarInFormation)
+        if (isHavilarInFormation)
             g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
-        if(g_BrivUserSettings[ "Fkeys" ])
+        if (g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
             keyspam.Push("{ClickDmg}")
@@ -612,7 +612,7 @@ class IC_BrivGemFarm_Class
     ModronResetCheck()
     {
         modronResetTimeout := 75000
-        if(!g_SF.WaitForModronReset(modronResetTimeout))
+        if (!g_SF.WaitForModronReset(modronResetTimeout))
             g_SF.CheckifStuck(True)
             ;g_SF.CloseIC( "ModronReset, resetting exceeded " . Floor(modronResetTimeout/1000) . "s" )
         g_PreviousZoneStartTime := A_TickCount
@@ -621,12 +621,12 @@ class IC_BrivGemFarm_Class
     ; Test that favorite exists
     TestFormationSlotByFavorite(favorite := "", txtCheck := "")
     {
-        if(!favorite)
+        if (!favorite)
             return ""
         testFunc := ObjBindMethod(g_SF.Memory, "GetSavedFormationSlotByFavorite", favorite)
         errMsg := "Please confirm a formation is saved in formation favorite slot " . favorite . ". " . txtCheck
         formationSlot := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := -1, shouldBeEqual := False)
-        if(formationSlot == -1)
+        if (formationSlot == -1)
             return -1
         return formationSlot
     }
@@ -634,13 +634,13 @@ class IC_BrivGemFarm_Class
     ; Test that formation has champions
     TestFormationFavorite( formationSlot := "", favorite := "", txtCheck := "")
     {
-        if(!formationSlot)
+        if (!formationSlot)
             return ""
         team := {1:"Speed", 2:"Stack Farm", 3:"Speed No Briv"}
         testFunc := ObjBindMethod(g_SF.Memory, "GetFormationSaveBySlot", formationSlot, 0) ; don't ignore empty
         errMsg := "Please confirm your " . team[favorite] . " team is saved in formation favorite slot " . favorite . ". " . txtCheck
         formation := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := 0, shouldBeEqual := False, testSize := True)
-        if(formation == -1)
+        if (formation == -1)
             return -1
         return formation
     }
@@ -648,7 +648,7 @@ class IC_BrivGemFarm_Class
     ; Test that formation has champions
     TestChampInFormation( champID := "", formation := "", includeChampion := True, favorite := 1, txtCheck := "")
     {
-        if(!champID)
+        if (!champID)
             return ""
         team := {1:"Speed", 2:"Stack Farm", 3:"Speed No Briv"}
         testFunc := ObjBindMethod(g_SF, "IsChampInFavoriteFormation", champID, favorite ) ; don't ignore empty
@@ -656,7 +656,7 @@ class IC_BrivGemFarm_Class
         
         errMsg := "Please confirm " . foundChampName . stateText . (includeChampion ? " is" : " is NOT") .  " saved in formation favorite slot " . favorite . ". " . txtCheck
         formation := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := True, shouldBeEqual := includeChampion)
-        if(formation == -1)
+        if (formation == -1)
             return -1
         return formation
     }
@@ -689,18 +689,18 @@ class IC_BrivGemFarm_Class
 
         champion := 58   ; briv
         formationQ := g_SF.FindChampIDinSavedFavorite( champion, favorite := 1, includeChampion := True )
-        if(formationQ == -1 AND this.RunChampionInFormationTests(champion, favorite := 1, includeChampion := True, txtCheck) == -1)
+        if (formationQ == -1 AND this.RunChampionInFormationTests(champion, favorite := 1, includeChampion := True, txtCheck) == -1)
             return -1
 
         formationW := g_SF.FindChampIDinSavedFavorite( champion, favorite := 2, includeChampion := True  )
-        if(formationW == -1 AND this.RunChampionInFormationTests(champion, favorite := 2, includeChampion := True, txtCheck) == -1)
+        if (formationW == -1 AND this.RunChampionInFormationTests(champion, favorite := 2, includeChampion := True, txtCheck) == -1)
             return -1
 
         formationE := g_SF.FindChampIDinSavedFavorite( champion, favorite := 3, includeChampion := False  )
-        if(formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
+        if (formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
             return -1
 
-        if((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1)))
+        if ((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1)))
             MsgBox, %ErrorMsg%
         while (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2))
         {
@@ -716,7 +716,7 @@ class IC_BrivGemFarm_Class
                 return -1
             }
         }
-        if(ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3))
+        if (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3))
             MsgBox, %ErrorMsg%
 
         return 0
@@ -757,25 +757,25 @@ class IC_BrivGemFarm_Class
             ;BUYCHESTS
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
             amount := Min(Floor(gems / 50), 100 )
-            if( g_BrivUserSettings[ "BuySilvers" ] AND amount > 0 )
+            if (g_BrivUserSettings[ "BuySilvers" ] AND amount > 0)
                 this.BuyChests( chestID := 1, effectiveStartTime, amount )
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
             amount := Min(Floor(gems / 500) , 100 )
-            if ( g_BrivUserSettings[ "BuyGolds" ] AND amount > 0 )
+            if (g_BrivUserSettings[ "BuyGolds" ] AND amount > 0)
                 this.BuyChests( chestID := 2, effectiveStartTime, amount )
             ; OPENCHESTS
             amount := Min(g_SF.TotalSilverChests, 99)
-            if ( g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0 )
+            if (g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0)
                 this.OpenChests( chestID := 1, effectiveStartTime, amount)
             amount := Min(g_SF.TotalGoldChests, 99)
-            if ( g_BrivUserSettings[ "OpenGolds" ] AND amount > 0 )
+            if (g_BrivUserSettings[ "OpenGolds" ] AND amount > 0)
                 this.OpenChests( chestID := 2, effectiveStartTime, amount )
 
             updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
             currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
             loopString := currentLoopString == "" ? loopString : currentLoopString
 
-            if ( !g_BrivUserSettings[ "DoChestsContinuous" ] ) ; Do one time if not continuous
+            if (!g_BrivUserSettings[ "DoChestsContinuous" ] ) ; Do one time if not continuous
                 return loopString == "" ? "Chests ----" : loopString
             if (updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
                 return loopString == "" ? "Chests ----" : loopString
@@ -818,12 +818,12 @@ class IC_BrivGemFarm_Class
     {
         startTime := startTime ? startTime : A_TickCount
         purchaseTime := 100 ; .1s
-        if ( g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime) )
+        if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime))
         {
-            if(numChests > 0)
+            if (numChests > 0)
             {
                 response := g_ServerCall.CallBuyChests( chestID, numChests )
-                if(response.okay AND response.success)
+                if (response.okay AND response.success)
                 {
                     g_SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
                     g_SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
@@ -858,7 +858,7 @@ class IC_BrivGemFarm_Class
         if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openChestTimeEst) )
         {
             chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
-            if(chestResults.success)
+            if (chestResults.success)
             {
                 g_SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
                 g_SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
