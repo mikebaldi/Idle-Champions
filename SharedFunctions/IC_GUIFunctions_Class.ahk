@@ -80,6 +80,8 @@ class GUIFunctions
         }
         LastID := controlID
 
+        ControlGet, currList, List, , , ahk_id %controlID%
+        currListItems := StrSplit(currList, "`n")
         items := StrSplit(_List, "|")
         items.Delete(1) ; remove first entry (null after split)     
         GuiControlGet, inputText,, %controlID%
@@ -96,13 +98,37 @@ class GUIFunctions
                 count++
             }
         }
-        GuiControl,, %controlID%, % newComboList = "" ? "|" : newComboList
-        bool := !(newComboList = "" || StrLen(inputText) < 1)
-        SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %controlID%
-        SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 10 ? 10 : count,,, ahk_id %controlID%
-        GuiControl, Text, %hEdit%, % inputText
-        SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
-        SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
+        if (count != 1)
+        {
+            GuiControl,, %controlID%, % newComboList = "" ? "|" : newComboList
+            bool := !(newComboList = "" || StrLen(inputText) < 1)
+            SendMessage, CB_SHOWDROPDOWN, bool,,, ahk_id %controlID%
+            SendMessage, CB_SETMINVISIBLE, count = 0 ? 1 : count > 30 ? 30 : count,,, ahk_id %controlID%
+            GuiControl, Text, %hEdit%, % inputText
+            SendMessage, EM_SETSEL, -2, -1,, ahk_id %hEdit%
+            SendMessage, WM_SETCURSOR,,,, ahk_id %hEdit%
+        }
+        else if (currListItems.Count() == items.Count())
+        {
+            singleItem := StrSplit(newComboList, "|")
+            bool := singleItem[2] != inputText
+            if(bool)
+            {
+                inputText := singleItem[2]
+                GuiControl, Text, %hEdit%, % singleItem[2]
+                Control, ChooseString, %inputText%,, ahk_id %controlID%
+            }
+        }
+        else
+        {
+            GuiControl,, %controlID%, % _List
+            singleItem := StrSplit(newComboList, "|")
+            bool := singleItem[2] != inputText
+            itemCount := items.Count()
+            SendMessage, CB_SETMINVISIBLE, itemCount > 30 ? 30 : itemCount ,,, ahk_id %controlID%
+            SendMessage, CB_SHOWDROPDOWN, False,,, ahk_id %controlID%
+            Control, ChooseString, %inputText%,, ahk_id %controlID%
+        }
         return
     }
 
