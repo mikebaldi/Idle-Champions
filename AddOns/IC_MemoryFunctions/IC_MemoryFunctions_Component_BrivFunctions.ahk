@@ -52,7 +52,6 @@ class ReadMemoryFunctionsExtended
     ReadContinuous()
     {
         GuiControl, ICScriptHub:, BrivReadCurrentZoneID, % g_SF.Memory.ReadCurrentZone()
-        test := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         if(test == "")
             g_SF.Memory.ActiveEffectKeyHandler.Refresh()
         GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.16f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
