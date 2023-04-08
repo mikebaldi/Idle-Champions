@@ -801,6 +801,13 @@ class IC_SharedFunctions_Class
         g_SharedData.LoopString := "Waiting for game started.."
         while( ElapsedTime < timeout AND !this.Memory.ReadGameStarted())
         {
+            ; If the popup warning message about failed offline progress, restart the game.
+            if(this.Memory.ReadDialogActiveBySlot(this.Memory.GetDialogSlotByName("DontShowAgainDialog")) == 1)
+            {
+                g_SharedData.LoopString := "Failed offline progress message. Restarting to clear popup."
+                this.CloseIC( "Failed offline progress warning." ) 
+                return false
+            }
             ElapsedTime := A_TickCount - timeoutTimerStart
         }
         ; check if game has offline progress to calculate

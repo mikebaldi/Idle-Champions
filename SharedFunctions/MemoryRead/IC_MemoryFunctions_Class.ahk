@@ -943,15 +943,19 @@ class IC_MemoryFunctions_Class
         return ""
     }
 
-    GetDialogSlotByName(dialogName := "LoadingTextBox")
+    GetDialogSlotByName(dialogName := "LoadingTextBox", occurance := 1)
     {
         if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
             dialogName := "LoadingTextBox"
         size := this.ReadDialogsListSize()
+        found := 0
         loop, %size%
         {
             name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
-            if (name == dialogName)
+            if (name != dialogName)
+                continue
+            found++
+            if (found == occurance)
                 return (A_Index - 1)
         }
         return ""
@@ -977,7 +981,7 @@ class IC_MemoryFunctions_Class
         return patronID
     }
 
-    ReadDialogActive(slot := 0)
+    ReadDialogActiveBySlot(slot := 0)
     {
         return this.DialogManager.dialogs[slot].Active.Read()
     }
