@@ -1,3 +1,18 @@
+April 7, 2023
+    Added incremental area increase for failed stacking to help prevent seasonal buffs or infinite stacking issues.
+    Updated imports to include typing for collections. 
+    Updated Dictionary and List lookups to use appropriate memory sizes.
+    Updated GameObjectStructure to handle differing memory based on collection types.
+    Updated MemoryFunctions to remove special case dictionary lookups and use new GameObjectStructure.
+    Added Familiar-related functions to MemoryFunctions.
+    Added field familiar checks on script startup. No more gem farm with familiars in W formation.
+    Renamed GetChestCountByID to ReadchestCountByID.
+    Refactored start up checks so it no longer continues to show all failed checks when one is canceled.
+    Added an Imports Version function in SharedFunctions.
+    Added IsChampInFavoriteFormation function to SharedFunctions.
+    Modified worst case stacking setting to be 1.15x average instead of actual worst case and uses best case for 99.6% or higher jumps.
+    Added check for the failed offline progress message that will instantly restart instead of waiting for timeout of 90s.
+
 April 4, 2023
     Updated error messages for needing admin or running script from protected location like Program Files.
     Updated Chest Purchaser addon. (Try the filter in dropdown boxes).
