@@ -152,6 +152,7 @@ class IC_BrivGemFarm_Class
     LastStackSuccessArea := 0
     MaxStackRestartFails := 2
     StackFailAreasThisRunTally := {}
+    StackFailRetryAttempt := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -208,6 +209,7 @@ class IC_BrivGemFarm_Class
                 ; Don't reset last stack success area if 3 or more runs have failed to stack.
                 this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
                 this.StackFailAreasThisRunTally := {}
+                this.StackFailRetryAttempt := 0
                 StartTime := g_PreviousZoneStartTime := A_TickCount
                 PreviousZone := 1
                 g_SharedData.SwapsMadeThisRun := 0
@@ -441,7 +443,8 @@ class IC_BrivGemFarm_Class
             maxRetries := 1
         while ( stacks < targetStacks AND retryAttempt <= maxRetries )
         {
-            retryAttempt++
+            this.StackFailRetryAttempt++ ; per run
+            retryAttempt++               ; pre stackfarm call
             this.StackFarmSetup()
             g_SF.CurrentZone := g_SF.Memory.ReadCurrentZone() ; record current zone before saving for bad progression checks
             modronResetZone := g_SF.Memory.GetModronResetArea()
@@ -450,7 +453,7 @@ class IC_BrivGemFarm_Class
                 g_SharedData.LoopString := "Attempted to offline stack after modron reset - verify settings"
                 break
             }
-            g_SF.CloseIC( "StackRestart" . (retryAttempt > 1 ? (" - Warning: Retry #" . retryAttempt - 1 . ". Check Stack Settings."): "") )
+            g_SF.CloseIC( "StackRestart" . (this.StackFailRetryAttempt > 1 ? (" - Warning: Retry #" . this.StackFailRetryAttempt - 1 . ". Check Stack Settings."): "") )
             g_SharedData.LoopString := "Stack Sleep: "
             chestsCompletedString := ""
             StartTime := A_TickCount

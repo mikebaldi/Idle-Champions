@@ -6,7 +6,7 @@ April 7, 2023
     Updated MemoryFunctions to remove special case dictionary lookups and use new GameObjectStructure.
     Added Familiar-related functions to MemoryFunctions.
     Added field familiar checks on script startup. No more gem farm with familiars in W formation.
-    Renamed GetChestCountByID to ReadchestCountByID.
+    Renamed GetChestCountByID to ReadChestCountByID.
     Refactored start up checks so it no longer continues to show all failed checks when one is canceled.
     Added an Imports Version function in SharedFunctions.
     Added IsChampInFavoriteFormation function to SharedFunctions.
