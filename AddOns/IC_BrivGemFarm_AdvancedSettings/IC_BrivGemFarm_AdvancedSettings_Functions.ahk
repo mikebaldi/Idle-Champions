@@ -30,7 +30,7 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
     }
     
     ; Saves the settings for briv preferred jumps based on the boxes checked
-    UpdateSettings()
+    UpdateJumpSettings()
     {
         g_BrivUserSettings[ "PreferredBrivJumpZones" ] := []
         Loop, 50

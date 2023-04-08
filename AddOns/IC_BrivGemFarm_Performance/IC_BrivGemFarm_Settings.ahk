@@ -1,6 +1,7 @@
-ReloadBrivGemFarmSettings()
+ReloadBrivGemFarmSettings(loadFromFile := True)
 {
-    g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
+    if(loadFromFile)
+        g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
     If !IsObject( g_BrivUserSettings )
     {
         g_BrivUserSettings := {}
@@ -56,6 +57,8 @@ ReloadBrivGemFarmSettings()
         g_BrivUserSettings[ "AutoCalculateWorstCase" ] := true
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
 	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
+    if (g_BrivUserSettings[ "LastSettingsUsed" ] == "" )
+        g_BrivUserSettings[ "LastSettingsUsed" ] := "Default"
     if(g_BrivUserSettings["WriteSettings"] := true)
     {
         g_BrivUserSettings.Delete("WriteSettings")

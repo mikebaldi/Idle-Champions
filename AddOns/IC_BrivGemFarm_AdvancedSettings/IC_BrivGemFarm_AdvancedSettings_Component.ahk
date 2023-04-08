@@ -14,13 +14,30 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "ResetZoneBuffer" ] := OptionSettingEdit_ResetZoneBuffer
         g_BrivUserSettings[ "WindowXPositon" ] := OptionSettingEdit_WindowXPositon
         g_BrivUserSettings[ "WindowYPositon" ] := OptionSettingEdit_WindowYPositon
-        IC_BrivGemFarm_AdvancedSettings_Functions.UpdateSettings()
+        IC_BrivGemFarm_AdvancedSettings_Functions.UpdateJumpSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
         {
             local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
+        return
+    }
+
+    LoadAdvancedSettings() {
+        global
+        GuiControl, ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
+        GuiControl, ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
+        GuiControl, ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineGemThreshold, % g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineRunThreshold, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_BrivJumpBuffer, % g_BrivUserSettings[ "BrivJumpBuffer" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_DashWaitBuffer, % g_BrivUserSettings[ "DashWaitBuffer" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_ResetZoneBuffer, % g_BrivUserSettings[ "ResetZoneBuffer" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPositon, % g_BrivUserSettings[ "WindowXPositon" ]
+        GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPositon, % g_BrivUserSettings[ "WindowYPositon" ]
+        IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
+        Gui, ICScriptHub:Submit, NoHide
         return
     }
 
@@ -35,11 +52,5 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GUIFunctions.AddToolTip( "OptionSettingText_ResetZoneBuffer", "Change this value to increase the number of zones the script will go waiting for modron reset after stacking before manually resetting")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowXPositon", "Where the gem farm script will appear horizontally across your screen")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowYPositon", "Where the gem farm script will appear vertically on your screen")            
-    }
-
-    Refresh() {
-        GuiControl,ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
-        GuiControl,ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
-        GuiControl,ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
     }
 }

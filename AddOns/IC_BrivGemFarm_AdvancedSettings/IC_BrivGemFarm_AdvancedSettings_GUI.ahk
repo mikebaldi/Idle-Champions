@@ -62,14 +62,13 @@ Gui, ICScriptHub:Add, Text, x10 y%xyValY% vOptionSettingText_TitlePreferredJump,
 Gui, ICScriptHub:Font, w400
 
 IC_BrivGemFarm_AdvancedSettings_Functions.BuildModTables(xyValX+20, xyValY)
-IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
+IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
 
 ; ############################################################
 
 Gui, ICScriptHub:Add, Button , x10 y+10 gBrivGemFarmAdvancedSettingsSave, Save
 
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()
-IC_BrivGemFarm_AdvancedSettings_Component.Refresh()
 
 ; ############################################################
 ;                          Buttons
