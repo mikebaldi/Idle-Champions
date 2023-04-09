@@ -44,7 +44,7 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
     LoadPreferredBrivJumpSettings()
     {
         modListLength := IC_BrivGemFarm_AdvancedSettings_Functions.ModList.Length()
-        Loop, %modListLength%
+        Loop, %modListLength% ; different check box sections [5,10,50]
         {
             modVal := IC_BrivGemFarm_AdvancedSettings_Functions.ModList[A_Index]
             modChecked := True
@@ -60,11 +60,8 @@ class IC_BrivGemFarm_AdvancedSettings_Functions
             modValCount := currentModCheckedArray.Length()
             loop, %modValCount%
             {
-                if(currentModCheckedArray[A_Index])
-                {
-                    PreferredBrivJumpSettingMod_%modVal%_%A_Index% := currentModCheckedArray[A_Index]
-                    GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_%modVal%_%A_Index%, % currentModCheckedArray[A_Index]
-                }
+                PreferredBrivJumpSettingMod_%modVal%_%A_Index% := currentModCheckedArray[A_Index]
+                GUiControl, ICScriptHub:, PreferredBrivJumpSettingMod_%modVal%_%A_Index%, % currentModCheckedArray[A_Index]
             }
         }
         Gui, ICScriptHub:Submit, NoHide
