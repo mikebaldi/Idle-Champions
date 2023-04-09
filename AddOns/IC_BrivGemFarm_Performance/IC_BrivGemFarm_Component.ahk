@@ -92,12 +92,14 @@ Briv_Save_Profile_Clicked()
 {
     Gui, Submit, NoHide
     InputBox, profileName, Choose a profile name, Profile Name:,, Width := 375, Height := 129, X := 0, Y := 0,
-    while (!GUIFunctions.TestInputForAlphaNumericDash(profileName))
+    isCanceled := ErrorLevel
+    while (!GUIFunctions.TestInputForAlphaNumericDash(profileName) AND !isCanceled)
     {
         errMsg := "Can only contain letters, numbers, and -."
         InputBox, profileName, Choose a profile name, %errMsg%`nProfile Name:,, Width := 375, Height := 144, X := 0, Y := 0,
+        isCanceled := ErrorLevel
     }
-    if(ErrorLevel != 1)
+    if(!isCanceled)
     {
         IC_BrivGemFarm_Component.Briv_Save_Clicked(profileName)
         IC_BrivGemFarm_Component.Briv_Load_Profiles_List()
