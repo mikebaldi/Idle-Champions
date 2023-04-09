@@ -66,14 +66,4 @@ IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
 
 ; ############################################################
 
-Gui, ICScriptHub:Add, Button , x10 y+10 gBrivGemFarmAdvancedSettingsSave, Save
-
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()
-
-; ############################################################
-;                          Buttons
-; ############################################################
-
-BrivGemFarmAdvancedSettingsSave(){
-    IC_BrivGemFarm_AdvancedSettings_Component.SaveAdvancedSettings()
-}

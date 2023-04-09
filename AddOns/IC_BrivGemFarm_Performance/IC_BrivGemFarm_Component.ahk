@@ -42,7 +42,7 @@ Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPl
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
-Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 vgBriv_Button_Status,
+Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
 
 ; Gui, ICScriptHub:Add, Button, x15 y+15 gBriv_Save_Clicked, Save Settings
 ; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Run_Clicked, `Run
@@ -160,7 +160,7 @@ class IC_BrivGemFarm_Component
         GUIFunctions.AddToolTip("BrivGemFarmPlayButton", "Start Gem Farm")
         GUIFunctions.AddToolTip("BrivGemFarmStopButton", "Stop Gem Farm")
         GUIFunctions.AddToolTip("BrivGemFarmConnectButton", "Reconnect to Gem Farm Script. [If the stats have stopped updating, click this to start updating them again]")
-        GUIFunctions.AddToolTip("BrivGemFarmSaveButton", "Save Gem Farm Settings")
+        GUIFunctions.AddToolTip("BrivGemFarmSaveButton", "Save settings for this session.")
     }
 
     UpdateGUICheckBoxes()
@@ -295,6 +295,10 @@ class IC_BrivGemFarm_Component
     Briv_Save_Clicked(profile := "")
     {
         global
+        local k
+        local v
+        local k1
+        local v1
         this.UpdateStatus("Saving Settings...")
         Gui, ICScriptHub:Submit, NoHide
         if(OptionSettingCheck_DoChestsContinuous != "")
@@ -315,17 +319,42 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "AutoCalculateWorstCase" ] := BrivAutoCalcStatsWorstCaseCheck
         g_BrivUserSettings[ "LastSettingsUsed" ] := profile? profile : BrivDropDownSettings
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
+        shouldIgnoreTimer := False
+        updateStatusMsg := "Save Complete."
         if(profile != "" AND profile != "Default")
         {
             this.ProfileLastSelected := profile
             g_SF.WriteObjectToJSON( A_LineFile . "\..\Profiles\" . profile . "_Settings.json" , g_BrivUserSettings )
+        }
+        else if (profile == "")
+        {
+            for k,v in this.BrivUserSettingsProfile
+            {
+                if(!IsObject(v) AND this.BrivUserSettingsProfile[k] != g_BrivUserSettings[k])
+                {
+                    updateStatusMsg := "Session contains changes not yet saved to profile."
+                    break
+                }
+                else if (IsObject(v))
+                {
+                    for k1, v1 in v
+                    {
+                        local v2 := g_BrivUserSettings[k][k1]
+                        if(v[k1] != g_BrivUserSettings[k][k1])
+                        {
+                            updateStatusMsg := "Session contains changes not yet saved to profile."
+                            break
+                        }
+                    }
+                }
+            }
         }
         try ; avoid thrown errors when comobject is not available.
         {
             local SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.ReloadSettings("RefreshSettingsView")
         }
-        this.UpdateStatus("Save complete.")
+        this.UpdateStatus(updateStatusMsg)
         return
     }
 
@@ -364,6 +393,7 @@ class IC_BrivGemFarm_Component
         if(OptionSettingCheck_DoChestsContinuous != "")
             IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
         g_BrivUserSettings[ "LastSettingsUsed" ] := settings
+        this.BrivUserSettingsProfile := g_BrivUserSettings.Clone()
         this.Briv_Save_Clicked(settings)
         this.UpdateStatus("Load complete.")
         return
