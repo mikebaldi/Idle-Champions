@@ -483,7 +483,7 @@ class IC_SharedFunctions_Class
             this.SetFormation()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
-            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate)/10), 15)
+            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10), 15)
             Sleep, %percentageReducedSleep%
         }
         g_PreviousZoneStartTime := A_TickCount
