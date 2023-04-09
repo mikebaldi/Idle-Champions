@@ -64,6 +64,8 @@ Gui, ICScriptHub:Font, w400
 IC_BrivGemFarm_AdvancedSettings_Functions.BuildModTables(xyValX+20, xyValY)
 IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
 
+Gui, ICScriptHub:Add, Text, x10 y+30, Save settings using main Briv Gem Farm tab.
+
 ; ############################################################
 
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()
