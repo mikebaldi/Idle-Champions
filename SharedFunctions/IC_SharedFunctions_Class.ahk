@@ -786,6 +786,7 @@ class IC_SharedFunctions_Class
                 loadingZone := this.WaitForGameReady()
                 this.ResetServerCall()
             }
+            Sleep, 62
         }
         if(ElapsedTime >= timeoutVal)
             return -1 ; took too long to open
