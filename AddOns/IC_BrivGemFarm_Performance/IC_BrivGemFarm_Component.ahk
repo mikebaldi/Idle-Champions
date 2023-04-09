@@ -91,7 +91,8 @@ Briv_Load_Profile_Clicked(controlID)
 Briv_Save_Profile_Clicked()
 {
     Gui, Submit, NoHide
-    InputBox, profileName, Choose a profile name, Profile Name:,, Width := 375, Height := 129, X := 0, Y := 0,
+    global BrivDropDownSettings
+    InputBox, profileName, Choose a profile name, Profile Name:,, Width := 375, Height := 129, X := 0, Y := 0,,, %BrivDropDownSettings%
     isCanceled := ErrorLevel
     while (!GUIFunctions.TestInputForAlphaNumericDash(profileName) AND !isCanceled)
     {
