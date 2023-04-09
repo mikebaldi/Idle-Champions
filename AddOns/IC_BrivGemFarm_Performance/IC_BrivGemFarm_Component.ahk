@@ -94,9 +94,12 @@ Briv_Save_Profile_Clicked()
     global BrivDropDownSettings
     InputBox, profileName, Choose a profile name, Profile Name:,, Width := 375, Height := 129, X := 0, Y := 0,,, %BrivDropDownSettings%
     isCanceled := ErrorLevel
-    while (!GUIFunctions.TestInputForAlphaNumericDash(profileName) AND !isCanceled)
+    while ((!GUIFunctions.TestInputForAlphaNumericDash(profileName) AND !isCanceled) OR profileName == "Default")
     {
-        errMsg := "Can only contain letters, numbers, and -."
+        if(profileName == "Default")
+            errMsg := "Can not use ""Default"" as a profile name."
+        else
+            errMsg := "Can only contain letters, numbers, and -."
         InputBox, profileName, Choose a profile name, %errMsg%`nProfile Name:,, Width := 375, Height := 144, X := 0, Y := 0,
         isCanceled := ErrorLevel
     }
