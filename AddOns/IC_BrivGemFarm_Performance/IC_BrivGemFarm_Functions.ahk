@@ -76,6 +76,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
+            Sleep, 20
         }
         g_SharedData.LoopString := "Loading z1..."
         Sleep, 50

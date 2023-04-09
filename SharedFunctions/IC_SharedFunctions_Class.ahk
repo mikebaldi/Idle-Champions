@@ -483,6 +483,8 @@ class IC_SharedFunctions_Class
             this.SetFormation()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
+            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate)/10), 15)
+            Sleep, %percentageReducedSleep%
         }
         g_PreviousZoneStartTime := A_TickCount
         return
@@ -765,6 +767,7 @@ class IC_SharedFunctions_Class
                     existingProcessID := g_userSettings[ "ExeName"]
                     Process, Exist, %existingProcessID%
                     this.PID := ErrorLevel
+                    Sleep, 62
                 }
             }
             ; Process exists, wait for the window:
@@ -773,6 +776,7 @@ class IC_SharedFunctions_Class
                 WinGetActiveTitle, savedActive
                 this.SavedActiveWindow := savedActive
                 ElapsedTime := A_TickCount - StartTime
+                Sleep, 62
             }
             if(ElapsedTime < timeoutVal)
             {
@@ -808,6 +812,7 @@ class IC_SharedFunctions_Class
                 this.CloseIC( "Failed offline progress warning." ) 
                 return false
             }
+            Sleep, 100
             ElapsedTime := A_TickCount - timeoutTimerStart
         }
         ; check if game has offline progress to calculate
@@ -822,6 +827,7 @@ class IC_SharedFunctions_Class
                 g_SharedData.LoopString := "Waiting for offline progress.."
                 while( ElapsedTime < timeout AND !this.Memory.ReadOfflineDone())
                 {
+                    Sleep, 250
                     ElapsedTime := A_TickCount - timeoutTimerStart
                 }
                 ; finished before timeout
@@ -835,7 +841,7 @@ class IC_SharedFunctions_Class
         }
         ; timed out
         secondsToTimeout := Floor(timeout/ 1000)
-        this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )       
+        this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )
         return false
     }
 
@@ -845,12 +851,16 @@ class IC_SharedFunctions_Class
         g_SharedData.LoopString := "Waiting for offline progress (Area Active)..."
         ; Starts as 1, turns to 0, back to 1 when active again.
         StartTime := ElapsedTime := A_TickCount
-        while(this.Memory.ReadAreaActive() AND ElapsedTime < 1700)
+        while(this.Memory.ReadAreaActive() AND ElapsedTime < 1736)
+        {
             ElapsedTime := A_TickCount - StartTime
-        while(!this.Memory.ReadAreaActive() AND ElapsedTime < 3000)
+            Sleep, 15
+        }
+        while(!this.Memory.ReadAreaActive() AND ElapsedTime < 3038)
+        {
             ElapsedTime := A_TickCount - StartTime
-        ; Briv stacks are finished updating shortly after ReadOfflineDone() completes. Give it a second.
-        ; Sleep, 1200
+            Sleep, 15
+        }
     }
 
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
@@ -944,6 +954,8 @@ class IC_SharedFunctions_Class
                 this.DirectedInput(,, spam* )
                 counter++
             }
+            else
+                Sleep, 20
         }
         g_SharedData.LoopString := "Waiting for formation swap..."
         formationFavorite := this.Memory.GetFormationByFavorite( formationFavoriteNum )
@@ -957,6 +969,8 @@ class IC_SharedFunctions_Class
                 this.DirectedInput(,, spam* )
                 counter++
             }
+            else
+                Sleep, 20
         }
         isCurrentFormation := this.IsCurrentFormation( formationFavorite )
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled

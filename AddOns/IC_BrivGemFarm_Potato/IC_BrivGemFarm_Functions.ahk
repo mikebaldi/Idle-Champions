@@ -49,7 +49,7 @@ class IC_BrivPotatoSharedFunctions_Class
         return false
     }
 
-    ; Waits until stats are finished updating from offline progress calculations. (Currently just Sleep, 1200)
+    ; Waits until stats are finished updating from offline progress calculations.
     WaitForFinalStatUpdates()
     {
         g_SharedData.LoopString := "Waiting for offline progress (Area Active)..."
