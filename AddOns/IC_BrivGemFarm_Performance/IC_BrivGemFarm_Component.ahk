@@ -11,13 +11,14 @@ GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 
 Gui, ICScriptHub:Add, Text, x15 y+15, Profile: 
-Gui, ICScriptHub:Add, DDL, gBriv_Load_Profile_Clicked x+6 vBrivDropDownSettings,
+Gui, ICScriptHub:Add, DDL, gBriv_Load_Profile_Clicked x+6 hwndBrivDropDownSettingsHWND vBrivDropDownSettings,
 Gui, ICScriptHub:Add, Button, x+10 gBriv_Save_Profile_Clicked, Save Profile
 Gui, ICScriptHub:Add, Button, x+10 gBriv_Delete_Profile_Clicked, Delete Profile
 
 Gui, ICScriptHub:Add, Text, x15 y+10 w120, User Settings:
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
-ReloadBrivGemFarmSettings()
+FileCreateDir, % A_LineFile . "\..\Profiles"
+ReloadBrivGemFarmSettings(True)
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
@@ -81,16 +82,21 @@ Briv_Connect_Clicked() {
 Briv_Save_Clicked() {
     IC_BrivGemFarm_Component.Briv_Save_Clicked()
 }
-Briv_Load_Profile_Clicked()
+Briv_Load_Profile_Clicked(controlID)
 {
     Gui, Submit, NoHide
     global BrivDropDownSettings
-    IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings)
+    IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings, controlID)
 }
 Briv_Save_Profile_Clicked()
 {
     Gui, Submit, NoHide
     InputBox, profileName, Choose a profile name, Profile Name:,, Width := 375, Height := 129, X := 0, Y := 0,
+    while (!GUIFunctions.TestInputForAlphaNumericDash(profileName))
+    {
+        errMsg := "Can only contain letters, numbers, and -."
+        InputBox, profileName, Choose a profile name, %errMsg%`nProfile Name:,, Width := 375, Height := 144, X := 0, Y := 0,
+    }
     if(ErrorLevel != 1)
     {
         IC_BrivGemFarm_Component.Briv_Save_Clicked(profileName)
@@ -330,7 +336,9 @@ class IC_BrivGemFarm_Component
         else
             g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Profiles\" . settings . "_Settings.json" )
         this.LastSelected := settings
-        GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %settings%
+        ; GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %settings%
+        Controlget, Row, FindString, %settings%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
+        GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
         GuiControl, ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
         GuiControl, ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
         GuiControl, ICScriptHub:, NewStackZone, % g_BrivUserSettings[ "StackZone" ]

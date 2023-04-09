@@ -132,6 +132,13 @@ class GUIFunctions
         return
     }
 
+    ; Returns true if string is alphanumeric (can include -) 
+    TestInputForAlphaNumericDash(textValue)
+    {
+        match := RegExMatch(textValue, "i)[^a-z^\-]")
+        return match == 0 ? True : False
+    }
+
     ;=================================
     ; Script Theme Functions
     ;=================================
