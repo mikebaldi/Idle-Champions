@@ -48,7 +48,6 @@ ChestPurchaserChestPurchaseCB(controlID, mode, key)
     global g_KeyInputTimer
     global g_ChestPurchaserMasterList
     g_KeyInputTimer := A_TickCount
-    GuiControlGet, inputText,, %controlID%
     fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
     timer := Abs(g_KeyInputTimerDelay) * -1 ; negative time means one time use timer
     SetTimer, %fncToCallOnTimer%, %timer%
@@ -61,7 +60,6 @@ ChestPurchaserChestOpenCB(controlID, mode, key)
     global g_KeyInputTimer
     global g_ChestPurchaserMasterList
     g_KeyInputTimer := A_TickCount
-    GuiControlGet, inputText,, %controlID%
     fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
     timer := Abs(g_KeyInputTimerDelay) * -1
     SetTimer, %fncToCallOnTimer%, %timer%
