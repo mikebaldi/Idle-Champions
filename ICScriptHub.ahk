@@ -65,10 +65,10 @@ if ( g_UserSettings[ "InstallPath" ] == "" )
     g_UserSettings[ "InstallPath" ] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\IdleDragons.exe"
 if (g_UserSettings[ "ExeName"] == "")
     g_UserSettings[ "ExeName"] := "IdleDragons.exe"
-if ( g_UserSettings[ "WindowXPositon" ] == "" )
-    g_UserSettings[ "WindowXPositon" ] := 0
-if ( g_UserSettings[ "WindowYPositon" ] == "" )
-    g_UserSettings[ "WindowYPositon" ] := 0
+if ( g_UserSettings[ "WindowXPosition" ] == "" )
+    g_UserSettings[ "WindowXPosition" ] := 0
+if ( g_UserSettings[ "WindowYPosition" ] == "" )
+    g_UserSettings[ "WindowYPosition" ] := 0
 if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
     g_UserSettings[ "NoCtrlKeypress" ] := 0
 if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
@@ -99,7 +99,7 @@ Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 GUIFunctions.UseThemeBackgroundColor()
-Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPositon" ] " y" . g_UserSettings[ "WindowYPositon" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)"
+Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPosition" ] " y" . g_UserSettings[ "WindowYPosition" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)"
 GUIFunctions.UseThemeTitleBar("ICScriptHub")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
 

@@ -21,8 +21,8 @@ Gui, ICScriptHub:Font, w400
 ;g_BrivUserSettings[ "HiddenFarmWindow" ]
 ;g_BrivUserSettings[ "ResetZoneBuffer" ]
 ;g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
-;g_BrivUserSettings[ "WindowXPositon" ]
-;g_BrivUserSettings[ "WindowYPositon" ]
+;g_BrivUserSettings[ "WindowXPosition" ]
+;g_BrivUserSettings[ "WindowYPosition" ]
 
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, DoChestsContinuous
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
@@ -35,8 +35,8 @@ Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ForceOfflineRunThreshold x15 y+10
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_BrivJumpBuffer x15 y+10 w50, % g_BrivUserSettings[ "BrivJumpBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_DashWaitBuffer x15 y+10 w50, % g_BrivUserSettings[ "DashWaitBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ResetZoneBuffer x15 y+10 w50, % g_BrivUserSettings[ "ResetZoneBuffer" ]
-Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowXPositon x15 y+10 w50, % g_BrivUserSettings[ "WindowXPositon" ]
-Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowYPositon x15 y+10 w50, % g_BrivUserSettings[ "WindowYPositon" ]
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowXPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowXPosition" ]
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowYPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowYPosition" ]
 
 GUIFunctions.UseThemeTextColor()
 
@@ -48,12 +48,12 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ForceOfflineRunThr
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_BrivJumpBuffer, BrivJumpBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_DashWaitBuffer, DashWaitBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ResetZoneBuffer, ResetZoneBuffer
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPositon, WindowXPositon
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowYPositon, WindowyPositon
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPosition, WindowXPosition
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowYPosition, WindowyPosition
 
 ; ############ Preferred Briv Jump Zones #####################
 
-GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_WindowYPositon
+GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_WindowYPosition
 xyValY += 35
 xyValX := 10
 
