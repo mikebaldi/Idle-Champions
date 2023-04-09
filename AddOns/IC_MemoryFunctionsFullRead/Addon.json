@@ -1,6 +1,6 @@
 {
 	"Name":"Memory Functions Full Read",
-	"Version": "v0.1.",
+	"Version": "v0.2.0",
     "Includes" : "IC_MemoryFunctionsFullRead_Component.ahk",
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_MemoryFunctionsFullRead",
