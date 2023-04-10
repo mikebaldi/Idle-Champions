@@ -507,23 +507,40 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, FastRunTimeID, % this.FastRunTime
         GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
         GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
-        GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(IsObject(this.SharedRunData) ? this.SharedRunData.StackFailStats.TALLY : "")
         GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
         GuiControl, ICScriptHub:, dtTotalTimeID, % 0
         GuiControl, ICScriptHub:, AvgRunTimeID, % 0
         GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
         GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
         GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
-        GuiControl, ICScriptHub:, SilversGainedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedSilverChests : 0
-        GuiControl, ICScriptHub:, GoldsGainedID, % IsObject(this.SharedRunData) ? this.SharedRunData.PurchasedGoldChests : 0
-        GuiControl, ICScriptHub:, SilversOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedSilverChests : 0
-        GuiControl, ICScriptHub:, GoldsOpenedID, % IsObject(this.SharedRunData) ? this.SharedRunData.OpenedGoldChests : 0
-        GuiControl, ICScriptHub:, ShiniesID, % IsObject(this.SharedRunData) ? this.SharedRunData.ShinyCount : 0
-        GuiControl, ICScriptHub:, SwapsMadeThisRunID, % IsObject(this.SharedRunData) ? SharedRunData.SwapsMadeThisRun : 0
-        GuiControl, ICScriptHub:, BossesHitThisRunID, % IsObject(this.SharedRunData) ? SharedRunData.BossesHitThisRun : 0
-        GuiControl, ICScriptHub:, TotalBossesHitID, % IsObject(this.SharedRunData) ? SharedRunData.TotalBossesHit : 0
-        GuiControl, ICScriptHub:, TotalRollBacksID, % IsObject(this.SharedRunData) ? SharedRunData.TotalRollBacks : 0
-        GuiControl, ICScriptHub:, BadAutoProgressID, % IsObject(this.SharedRunData) ? SharedRunData.BadAutoProgress : 0
+        if(IsObject(this.SharedRunData))
+        {
+            GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
+            GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.PurchasedSilverChests
+            GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.PurchasedGoldChests
+            GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
+            GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+            GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
+            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % this.SharedRunData.SwapsMadeThisRun
+            GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
+            GuiControl, ICScriptHub:, TotalBossesHitID, % this.SharedRunData.TotalBossesHit
+            GuiControl, ICScriptHub:, TotalRollBacksID, % this.SharedRunData.TotalRollBacks
+            GuiControl, ICScriptHub:, BadAutoProgressID, % this.SharedRunData.BadAutoProgress
+        }
+        else
+        {
+            GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString("")
+            GuiControl, ICScriptHub:, SilversGainedID, % 0
+            GuiControl, ICScriptHub:, GoldsGainedID, % 0
+            GuiControl, ICScriptHub:, SilversOpenedID, % 0
+            GuiControl, ICScriptHub:, GoldsOpenedID, % 0
+            GuiControl, ICScriptHub:, ShiniesID, % 0
+            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % 0
+            GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
+            GuiControl, ICScriptHub:, TotalBossesHitID, % 0
+            GuiControl, ICScriptHub:, TotalRollBacksID, % 0
+            GuiControl, ICScriptHub:, BadAutoProgressID, % 0
+        }
         GuiControl, ICScriptHub:, NodromWarningID, % ""
     }
 
