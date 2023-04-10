@@ -106,6 +106,7 @@ Briv_Save_Profile_Clicked()
     if(!isCanceled)
     {
         IC_BrivGemFarm_Component.Briv_Save_Clicked(profileName)
+        IC_BrivGemFarm_Component.BrivUserSettingsProfile := g_BrivUserSettings.Clone()
         IC_BrivGemFarm_Component.Briv_Load_Profiles_List()
     }
 }
@@ -324,6 +325,7 @@ class IC_BrivGemFarm_Component
         if(profile != "" AND profile != "Default")
         {
             this.ProfileLastSelected := profile
+            updateStatusMsg := "Profile Save Complete."
             g_SF.WriteObjectToJSON( A_LineFile . "\..\Profiles\" . profile . "_Settings.json" , g_BrivUserSettings )
         }
         else if (profile == "")
