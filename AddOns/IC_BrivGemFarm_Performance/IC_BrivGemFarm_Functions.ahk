@@ -2,6 +2,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 {
     steelbones := ""
     sprint := ""
+    PatronID := 0
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
@@ -55,7 +56,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_ServerCall.webroot := isWebRootValid ? tempWebRoot : g_ServerCall.webroot
         g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
-        g_ServerCall.activePatronID := this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
+        g_ServerCall.activePatronID := this.PatronID ;this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
         g_ServerCall.UpdateDummyData()
     }
 
@@ -174,6 +175,7 @@ class IC_BrivGemFarm_Class
         g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
         g_ServerCall.UpdatePlayServer()
         g_SF.ResetServerCall()
+        g_SF.PatronID := g_SF.Memory.ReadPatronID()
         this.LastStackSuccessArea := g_UserSettings [ "StackZone" ]
         this.StackFailAreasThisRunTally := {}
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
