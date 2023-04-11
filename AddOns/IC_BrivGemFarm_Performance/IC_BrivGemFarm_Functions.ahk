@@ -152,7 +152,7 @@ class IC_BrivGemFarm_Class
     GemFarmGUID := ""
     StackFailAreasTally := {}
     LastStackSuccessArea := 0
-    MaxStackRestartFails := 2
+    MaxStackRestartFails := 3
     StackFailAreasThisRunTally := {}
     StackFailRetryAttempt := 0
 
@@ -289,6 +289,9 @@ class IC_BrivGemFarm_Class
                 this.StackFarm()
             ; only stack farm if this zone hasn't been tried this run yet and still below max tries. 
             else if (this.LastStackSuccessArea == 0 AND !this.StackFailAreasThisRunTally[CurrentZone] AND this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails)
+                this.StackFarm()
+            ; Safety - One more jump will be over modron reset and stacking has not been done.
+            else if (CurrentZone > this.Memory.GetModronResetArea() - (ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount() + 1))
                 this.StackFarm()
             return 0
         }
