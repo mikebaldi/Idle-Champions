@@ -1,3 +1,8 @@
+April 11, 2023
+    Fixed bugs and added improvements for new features such as the gem farm profiles.
+    Added sleeps to many busy wait cycles to reduce CPU usage.
+    Removed Potato addon (above fixes implement potato into the default script).
+
 April 8, 2023
     Added Profiles for BrivGemFarm.
     Fixed how the chest purchaser ComboBox functions.
