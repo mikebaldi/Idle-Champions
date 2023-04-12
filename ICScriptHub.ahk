@@ -4,7 +4,7 @@
 #HotkeyInterval 1000  ; The default value is 2000 (milliseconds).
 #MaxHotkeysPerInterval 70 ; The default value is 70
 #NoEnv ; Avoids checking empty variables to see if they are environment variables (recommended for all new scripts). Default behavior for AutoHotkey v2.
-#Warn ALL, OutputDebug
+; #Warn ALL, OutputDebug
 ;=======================
 ;Script Optimization
 ;=======================
