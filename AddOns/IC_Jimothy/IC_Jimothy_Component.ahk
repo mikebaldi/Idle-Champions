@@ -35,14 +35,18 @@ Gui, ICScriptHub:Font, w400
 if ( g_JimothySettings.MaxZone == "" )
     g_JimothySettings.MaxZone := 2000
 Gui, ICScriptHub:Add, Text, x15 y+10, Max Zone:
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vJimothyMaxZone x+5 w50, % g_JimothySettings.MaxZone
+GUIFunctions.UseThemeTextColor()
 b == "Down" ? 0x100 : 0x101
 Gui, ICScriptHub:Add, Text, x+5 vJimothyMaxZoneSaved, % "Saved value: " . g_JimothySettings.MaxZone
 
 if ( g_JimothySettings.MaxMonsters == "" )
     g_JimothySettings.MaxMonsters := 75
 Gui, ICScriptHub:Add, Text, x15 y+15, Max Monsters:
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vJimothyMaxMonsters x+5 w50, % g_JimothySettings.MaxMonsters
+GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Text, x+5 vJimothyMaxMonstersSaved, % "Saved value: " . g_JimothySettings.MaxMonsters
 
 if ( g_JimothySettings.UseFkeys == "" )
