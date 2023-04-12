@@ -99,14 +99,14 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current Area Time (s):
-        Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, % dtCurrentLevelTime
+        Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, ; % dtCurrentLevelTime
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current `Run Time (min):
-        Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, % dtCurrentRunTime
+        Gui, ICScriptHub:Add, Text, vdtCurrentRunTimeID x+2 w50, ; % dtCurrentRunTime
 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, SB Stack `Count:
-        Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w200, % g_StackCountSB
+        Gui, ICScriptHub:Add, Text, vg_StackCountSBID x+2 w200, ; % g_StackCountSB
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
-        Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w200, % g_StackCountH
+        Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w200, ; % g_StackCountH
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Last Close Game Reason:
         Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300, 
         GUIFunctions.UseThemeTextColor()
@@ -156,14 +156,14 @@ class IC_BrivGemFarm_Stats_Component
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor1", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
-        Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w60, % bossesPhr
+        Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w60, ; % bossesPhr
 
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
-        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, % GemsTotal
+        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, ; % GemsTotal
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
-        Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, % GemsPhr
+        Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, ; % GemsPhr
         
         GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID

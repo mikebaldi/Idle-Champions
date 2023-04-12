@@ -19,9 +19,9 @@ Gui, ICScriptHub:Add, Text, x15 y+10 w120, User Settings:
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
 FileCreateDir, % A_LineFile . "\..\Profiles"
 ReloadBrivGemFarmSettings(True)
-Gui, ICScriptHub:Add, Checkbox, vFkeysCheck Checked%Fkeys% x15 y+5, Level Champions with Fkeys?
-Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck Checked%StackFailRecovery% x15 y+5, Enable manual resets to recover from failed Briv stacking?
-Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck Checked%DisableDashWait% x15 y+5, Disable Dash Wait?
+Gui, ICScriptHub:Add, Checkbox, vFkeysCheck x15 y+5, Level Champions with Fkeys?
+Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck x15 y+5, Enable manual resets to recover from failed Briv stacking?
+Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck x15 y+5, Disable Dash Wait?
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+5 w50, % g_BrivUserSettings[ "StackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[ "MinStackZone" ]
@@ -30,10 +30,10 @@ Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSetti
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, Text, x15 y+20, Chest options during a game restart for stacking.
 Gui, ICScriptHub:Add, Text, x15 y+5, NOTE: Buy Silver enabled may leave too few gems or too little time to also Buy Gold.
-Gui, ICScriptHub:Add, Checkbox, vBuySilversCheck Checked%BuySilvers% x15 y+5, Buy silver chests?
-Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck Checked%BuyGolds% x15 y+5, Buy gold chests? 
-Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck Checked%OpenSilvers% x15 y+5, Open silver chests?
-Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck Checked%OpenGolds% x15 y+5, Open gold chests?
+Gui, ICScriptHub:Add, Checkbox, vBuySilversCheck x15 y+5, Buy silver chests?
+Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck x15 y+5, Buy gold chests? 
+Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck x15 y+5, Open silver chests?
+Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck x15 y+5, Open gold chests?
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
@@ -55,8 +55,8 @@ xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck Checked%BrivAutoCalcStats% x+10 gBrivAutoDetectStacks_Click, Auto Detect
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck Hidden Checked%BrivAutoCalcStats% x+10, Worst Case
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck x+10 gBrivAutoDetectStacks_Click, Auto Detect
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck Hidden x+10, Worst Case
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105

@@ -8,7 +8,7 @@ class IC_ActiveEffectKeyHandler_Class
     HeroEffectNames := {}
     GameInstance := 0
     
-    __new()
+    __new(memory := "")
     {
         for hero, heroObj in ActiveEffectKeySharedFunctions
         {
@@ -21,6 +21,7 @@ class IC_ActiveEffectKeyHandler_Class
                 }
             }
         }
+        this.Memory := memory
         this.Refresh()
     }
  
@@ -68,7 +69,7 @@ class IC_ActiveEffectKeyHandler_Class
         effectName := this.HeroEffectNames[handlerName]
         ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
         ; need _items value to use offsets later      
-        handlerAddressObj := g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[g_SF.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[effectName].List[0].parentEffectKeyHandler.activeEffectHandlers._items
+        handlerAddressObj := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[effectName].List[0].parentEffectKeyHandler.activeEffectHandlers._items
         ; use first item in the _items list as base address so offsets work later
         address := handlerAddressObj.Read() + handlerAddressObj.CalculateOffset(0) 
         return address
