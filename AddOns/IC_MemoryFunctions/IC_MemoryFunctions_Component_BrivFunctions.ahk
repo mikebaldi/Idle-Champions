@@ -51,28 +51,32 @@ class ReadMemoryFunctionsExtended
 
     ReadContinuous()
     {
-        GuiControl, ICScriptHub:, BrivReadCurrentZoneID, % g_SF.Memory.ReadCurrentZone()
-        if(test == "")
-            g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-        GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.16f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
-        GuiControl, ICScriptHub:, BrivHasteStacksID, % Format("{:0.1f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks())
-        GuiControl, ICScriptHub:, BrivSkipAmountID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        GuiControl, ICScriptHub:, BrivAreasSkippedID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadAreasSkipped()
-        GuiControl, ICScriptHub:, CalculateBrivStacksToReachNextModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksToReachNextModronResetZone())
-        GuiControl, ICScriptHub:, CalculateBrivStacksConsumedToReachModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
-        GuiControl, ICScriptHub:, LeftoverStacksAtResetID, % Format("{:0.2f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks() - g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
-        GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone(1)) . " - " . Format("{:0.0f}", g_SF.CalculateMaxZone(2)) . " (" . Format("{:0.0f}", g_SF.CalculateMaxZone(0)) . ")"
-        GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
-        GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1)
-        Try 
+        static slowReadCount := 0
+        slowReadCount++
+        if(Mod(slowReadCount, 4) == 0)
         {
-            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
-            GuiControl, ICScriptHub:, PreviousStackingStacksID, % SharedRunData.PreviousStacksFromOffline
-            GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % SharedRunData.TargetStacks
-        }
-        catch
-        {
-            GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % "-- ERROR --"
+            slowReadCount := 0
+            GuiControl, ICScriptHub:, BrivReadCurrentZoneID, % g_SF.Memory.ReadCurrentZone()
+            GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.16f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
+            GuiControl, ICScriptHub:, BrivHasteStacksID, % Format("{:0.1f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks())
+            GuiControl, ICScriptHub:, BrivSkipAmountID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+            GuiControl, ICScriptHub:, BrivAreasSkippedID, % ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadAreasSkipped()
+            GuiControl, ICScriptHub:, CalculateBrivStacksToReachNextModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksToReachNextModronResetZone())
+            GuiControl, ICScriptHub:, CalculateBrivStacksConsumedToReachModronResetZoneID, % Format("{:0.2f}", g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
+            GuiControl, ICScriptHub:, LeftoverStacksAtResetID, % Format("{:0.2f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks() - g_SF.CalculateBrivStacksConsumedToReachModronResetZone())
+            GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone(1)) . " - " . Format("{:0.0f}", g_SF.CalculateMaxZone(2)) . " (" . Format("{:0.0f}", g_SF.CalculateMaxZone(0)) . ")"
+            GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
+            GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1)
+            Try 
+            {
+                SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
+                GuiControl, ICScriptHub:, PreviousStackingStacksID, % SharedRunData.PreviousStacksFromOffline
+                GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % SharedRunData.TargetStacks
+            }
+            catch
+            {
+                GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % "-- ERROR --"
+            }
         }
 
     }
