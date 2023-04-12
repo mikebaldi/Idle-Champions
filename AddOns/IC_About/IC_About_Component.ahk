@@ -12,11 +12,12 @@ class IC_About_Component
 {
     GetVersionString()
     {
+        global
         g_SF.Memory.OpenProcessReader()
-        string := ""
+        local string := ""
         string .= "Script Version: " . GetScriptHubVersion() . "`n`n"
-        gameVersionaArch := _MemoryManager.is64bit ? " (64 bit)" : " (32 bit)"
-        gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
+        local gameVersionaArch := _MemoryManager.is64bit ? " (64 bit)" : " (32 bit)"
+        local gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
         if(isFunc(g_SF.Memory.ReadGameVersion))
             string .= "Idle Champions Game Version: " . gameVersion . "`n"
         if(isFunc(g_SF.Memory.GetPointersVersion))

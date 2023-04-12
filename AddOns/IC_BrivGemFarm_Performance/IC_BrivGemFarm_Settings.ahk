@@ -1,5 +1,6 @@
 ReloadBrivGemFarmSettings(loadFromFile := True)
 {
+    writeSettings := false
     if(loadFromFile)
         g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
     If !IsObject( g_BrivUserSettings )
@@ -75,6 +76,6 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
     }
     if ( g_BrivUserSettings[ "LastSettingsUsed" ] == "" )
         g_BrivUserSettings[ "LastSettingsUsed" ] := "Default"
-    if( writeSettings := true )
+    if( writeSettings == true )
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
 }

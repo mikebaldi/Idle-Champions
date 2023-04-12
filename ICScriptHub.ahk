@@ -4,6 +4,7 @@
 #HotkeyInterval 1000  ; The default value is 2000 (milliseconds).
 #MaxHotkeysPerInterval 70 ; The default value is 70
 #NoEnv ; Avoids checking empty variables to see if they are environment variables (recommended for all new scripts). Default behavior for AutoHotkey v2.
+#Warn ALL, OutputDebug
 ;=======================
 ;Script Optimization
 ;=======================
@@ -94,7 +95,7 @@ GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton")
 
 GUIFunctions.UseThemeTextColor()
 ; Needed to add tabs
-Gui, ICScriptHub:Add, Tab3, x5 y32 w%TabControlWidth%+40 h%TabControlHeight%+40 vModronTabControl, %g_TabList%
+Gui, ICScriptHub:Add, Tab3, x5 y32 w%g_TabControlWidth%+40 h%g_TabControlHeight%+40 vModronTabControl, %g_TabList%
 ; Set specific tab ordering for prioritized scripts.
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
