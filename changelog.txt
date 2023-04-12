@@ -1,3 +1,6 @@
+April 12, 2023
+    Added BPH adjustment based on Nordom XP.
+
 April 11, 2023
     Fixed bugs and added improvements for new features such as the gem farm profiles.
     Added sleeps to many busy wait cycles to reduce CPU usage.

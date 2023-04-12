@@ -11,6 +11,7 @@ class IC_BrivGemFarm_Stats_Component
     FastRunTime := 0
     ScriptStartTime := 0
     CoreXPStart := 0
+    NordomXPStart := 0
     GemStart := 0
     GemSpentStart := 0
     BossesPerHour := 0
@@ -319,6 +320,7 @@ class IC_BrivGemFarm_Stats_Component
                     this.TotalRunCountRetry++
                 this.ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
                 this.CoreXPStart := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
+                this.NordomXPStart := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
                 this.GemStart := g_SF.Memory.ReadGems()
                 this.GemSpentStart := g_SF.Memory.ReadGemsSpent()
                 this.LastResetCount := g_SF.Memory.ReadResetsCount()
@@ -368,8 +370,19 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
             GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / this.TotalRunCount ) * 60, 2 )
 
+
+            ; Check if Nordom is in formation
+            formation := g_SF.Memory.GetFormationByFavorite(1)
+            foundNordom := g_SF.IsChampInFormation(100, formation)
+            formation := g_SF.Memory.GetFormationByFavorite(3)
+            foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
+            GuiControl, ICScriptHub:, NodromWarningID, % (foundNordom ? "WARNING: Nodrom found. Verify BPH." : "")
+
+            currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
             currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
-            if(currentCoreXP)
+            if(foundNordom AND currentCoreXP AND currentCoreXP)
+                this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart + ( this.NordomXPStart - currentNordomXP ) ) / 5 ) / dtTotalTime, 2 )
+            else if(currentCoreXP)
                 this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart ) / 5 ) / dtTotalTime, 2 )
             GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
 
@@ -380,12 +393,6 @@ class IC_BrivGemFarm_Stats_Component
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
 
-            ; Check if Nordom is in formation
-            formation := g_SF.Memory.GetFormationByFavorite(1)
-            foundChamp := g_SF.IsChampInFormation(100, formation)
-            formation := g_SF.Memory.GetFormationByFavorite(3)
-            foundChamp := foundChamp OR g_SF.IsChampInFormation(100, formation)
-            GuiControl, ICScriptHub:, NodromWarningID, % (foundChamp ? "WARNING: Nodrom found. BPH stat inflated." : "")
             if (IsObject(this.SharedRunData))
             {
                 GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
@@ -554,6 +561,7 @@ class IC_BrivGemFarm_Stats_Component
         this.FastRunTime := 0
         this.ScriptStartTime := 0
         this.CoreXPStart := 0
+        this.NordomXPStart := 0
         this.GemStart := 0
         this.GemSpentStart := 0
         this.BossesPerHour := 0

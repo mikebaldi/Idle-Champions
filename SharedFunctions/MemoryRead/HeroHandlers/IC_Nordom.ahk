@@ -10,6 +10,11 @@ class Nordom
             return g_SF.Memory.ActiveEffectKeyHandler.NordomModronCoreToolboxHandler.controller.GameInstance_k__BackingField.StatHandler.NordomAwardedEXP.Read()
         }
 
+        ReadAwardedXPStat()
+        {
+            return g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].StatHandler.NordomAwardedEXP.Read()
+        }
+
         ReadPendingXP()
         {
             return g_SF.Memory.ActiveEffectKeyHandler.NordomModronCoreToolboxHandler.controller.GameInstance_k__BackingField.StatHandler.NordomPendingEXP.Read()
