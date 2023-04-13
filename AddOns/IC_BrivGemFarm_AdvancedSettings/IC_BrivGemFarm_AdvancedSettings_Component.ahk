@@ -26,17 +26,20 @@ class IC_BrivGemFarm_AdvancedSettings_Component
 
     LoadAdvancedSettings() {
         global
-        GuiControl, ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
-        GuiControl, ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
-        GuiControl, ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineGemThreshold, % g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineRunThreshold, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_BrivJumpBuffer, % g_BrivUserSettings[ "BrivJumpBuffer" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_DashWaitBuffer, % g_BrivUserSettings[ "DashWaitBuffer" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_ResetZoneBuffer, % g_BrivUserSettings[ "ResetZoneBuffer" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPosition, % g_BrivUserSettings[ "WindowXPosition" ]
-        GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPosition, % g_BrivUserSettings[ "WindowYPosition" ]
-        IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
+        if(g_BrivUserSettings)
+        {
+            GuiControl, ICScriptHub:, OptionSettingCheck_DoChestsContinuous, % g_BrivUserSettings[ "DoChestsContinuous" ]
+            GuiControl, ICScriptHub:, OptionSettingCheck_HiddenFarmWindow, % g_BrivUserSettings[ "HiddenFarmWindow" ]
+            GuiControl, ICScriptHub:, OptionSettingCheck_RestoreLastWindowOnGameOpen, % g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineGemThreshold, % g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineRunThreshold, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_BrivJumpBuffer, % g_BrivUserSettings[ "BrivJumpBuffer" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_DashWaitBuffer, % g_BrivUserSettings[ "DashWaitBuffer" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_ResetZoneBuffer, % g_BrivUserSettings[ "ResetZoneBuffer" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPosition, % g_BrivUserSettings[ "WindowXPosition" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPosition, % g_BrivUserSettings[ "WindowYPosition" ]
+            IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
+        }
         Gui, ICScriptHub:Submit, NoHide
         return
     }

@@ -44,11 +44,6 @@ Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmCo
 Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
 Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
 
-; Gui, ICScriptHub:Add, Button, x15 y+15 gBriv_Save_Clicked, Save Settings
-; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Run_Clicked, `Run
-; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Connect_Clicked, Connect
-; Gui, ICScriptHub:Add, Button, x+25 w50 gBriv_Run_Stop_Clicked, Stop
-
 GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
 xyValX += 55
 xyValY += 5
@@ -82,12 +77,14 @@ Briv_Connect_Clicked() {
 Briv_Save_Clicked() {
     IC_BrivGemFarm_Component.Briv_Save_Clicked()
 }
+
 Briv_Load_Profile_Clicked(controlID)
 {
     Gui, Submit, NoHide
     global BrivDropDownSettings
-    IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings, controlID)
+    IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings)
 }
+
 Briv_Save_Profile_Clicked()
 {
     Gui, Submit, NoHide
@@ -110,6 +107,7 @@ Briv_Save_Profile_Clicked()
         IC_BrivGemFarm_Component.Briv_Load_Profiles_List()
     }
 }
+
 Briv_Delete_Profile_Clicked()
 {
     Gui, Submit, NoHide
