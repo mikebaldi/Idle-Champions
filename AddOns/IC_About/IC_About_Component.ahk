@@ -5,8 +5,13 @@ Gui, ICScriptHub:Tab, About
 GUIFunctions.UseThemeTextColor()
 aboutRows := 17
 aboutGroupBoxHeight := aboutRows * 15
-Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight%, Version Info: 
+Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
 Gui, ICScriptHub:Add, Text, vVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
+
+if(isFunc(g_SF.Memory.GetPointersVersion) AND isFunc(g_SF.Memory.ReadGameVersion))
+{
+    IC_About_Component.AddPointerLink()
+}
 
 class IC_About_Component
 {
@@ -44,5 +49,39 @@ class IC_About_Component
         if(isFunc(_classLog.GetVersion))
             string .= "Log Class Version: " . _classLog.GetVersion() . "`n"
         return string
+    }
+
+    AddPointerLink()
+    {
+        global AboutPointerChangeLink
+        global AboutPointerChangeLinkText1
+        global AboutPointerChangeLinkText2
+        string := "Current Pointers: " . (g_SF.Memory.GetPointersVersion() ? g_SF.Memory.GetPointersVersion() : " ---- ") . "`n"
+        GuiControlGet, pos, ICScriptHub:Pos, AboutVersionGroupBox
+        yLocation := posY + 63
+        Gui, ICScriptHub:Add, Text, vAboutPointerChangeLinkText1 Hidden, %string%
+        Gui, ICScriptHub:Add, Text, vAboutPointerChangeLinkText2 Hidden x+1, .
+        GuiControlGet, pos, ICScriptHub:Pos, AboutPointerChangeLinkText1
+        posXStart := posX
+        GuiControlGet, pos, ICScriptHub:Pos, AboutPointerChangeLinkText2
+        posXEnd := posX
+        xWidth := posXEnd - posXstart
+        xLocation := posXStart + 5 + xWidth
+
+        Gui, ICScriptHub:Font, underline 
+        GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
+        Gui, ICScriptHub:Add, Text, vAboutPointerChangeLink x%xLocation% y%yLocation% , Change
+        GUIFunctions.UseThemeTextColor()
+        Gui, ICScriptHub:Font, norm
+        runVersionPicker := ObjBindMethod(IC_About_Component, "AboutRunPointerVersionPicker")
+        GuiControl,ICScriptHub: +g, AboutPointerChangeLink, % runVersionPicker
+    }
+
+    AboutRunPointerVersionPicker()
+    {
+        MsgBox, Closing Script Hub and running the pointer version picker.
+        versionPickerLoc := A_LineFile . "\..\..\..\SharedFunctions\IC_VersionPicker.ahk"
+        Run, %versionPickerLoc%
+        ExitApp
     }
 }
