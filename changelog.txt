@@ -1,6 +1,7 @@
 April 13, 2023
     Fixed bugs with Gem Farm Window Position setting.
     Added a link to change pointers to the About tab.
+    Fixed MemoryFunctions height adjustment for the tab control.
 
 April 12, 2023
     Added BPH adjustment based on Nordom XP.

@@ -1,9 +1,6 @@
 /*
     Memory Reads Testing
 */
-
-g_TabControlHeight += Max(g_TabControlHeight - Max(g_TabControlHeight, 600) + 420, 0)
-
 Gui, ICScriptHub:Tab, Memory View
 Gui, ICScriptHub:Font, w700
 if(IsFunc(Func("ReadMemoryFunctions.MainReads")))
