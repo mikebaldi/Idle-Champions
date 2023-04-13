@@ -125,6 +125,7 @@ Briv_Delete_Profile_Clicked()
     {
         FileDelete, %FileName%
         IC_BrivGemFarm_Component.Briv_Load_Profiles_List()
+        IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked("Default")
     }
 }
 DisableBrivTargetStacksBox(g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
