@@ -47,11 +47,10 @@ class ReadMemoryFunctionsExtended
 
     ReadContinuous()
     {
-        static slowReadCount := 0
-        slowReadCount++
-        if(Mod(slowReadCount, 4) == 0)
+        static lastRead := 0
+        if(A_TickCount - lastRead > 1000)
         {
-            slowReadCount := 0
+            lastRead := A_TickCount
             GuiControl, ICScriptHub:, BrivReadCurrentZoneID, % g_SF.Memory.ReadCurrentZone()
             GuiControl, ICScriptHub:, BrivSkipChanceID, % Format("{:0.16f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() * 100)`%
             GuiControl, ICScriptHub:, BrivHasteStacksID, % Format("{:0.1f}", ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks())
