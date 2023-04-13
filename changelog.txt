@@ -1,3 +1,6 @@
+April 13, 2023
+    Fixed bugs with Gem Farm Window Position setting.
+
 April 12, 2023
     Added BPH adjustment based on Nordom XP.
     Fixed code warnings (non-functional changes).
