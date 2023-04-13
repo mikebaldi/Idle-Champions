@@ -61,7 +61,7 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when bu
 IC_BrivGemFarm_Component.ProfilesList := {}
 IC_BrivGemFarm_Component.ProfileLastSelected := "Default"
 IC_BrivGemFarm_Component.Briv_Load_Profiles_List()
-IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(g_BrivUserSettings["LastSettingsUsed"])
+IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(g_BrivUserSettings["LastSettingsUsed"], fullLoad := false)
 IC_BrivGemFarm_Component.UpdateGUICheckBoxes()
 IC_BrivGemFarm_Component.BuildToolTips()
 IC_BrivGemFarm_Component.ResetModFile()
@@ -360,9 +360,14 @@ class IC_BrivGemFarm_Component
     }
 
     ;Saves Settings associated with BrivGemFarm
-    Briv_Load_Profile_Clicked(settings := "Default")
+    Briv_Load_Profile_Clicked(settings := "Default", fullLoad := True)
     {
         global
+        ; GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %settings%
+        Controlget, Row, FindString, %settings%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
+        GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
+        if (!fullLoad)
+            return
         this.UpdateStatus("Loading Settings...")
         g_BrivUserSettings = {}
         if(settings == "")
@@ -372,9 +377,6 @@ class IC_BrivGemFarm_Component
         else
             g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Profiles\" . settings . "_Settings.json" )
         this.LastSelected := settings
-        ; GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %settings%
-        Controlget, Row, FindString, %settings%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
-        GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
         GuiControl, ICScriptHub:, FkeysCheck, % g_BrivUserSettings[ "Fkeys" ]
         GuiControl, ICScriptHub:, StackFailRecoveryCheck, % g_BrivUserSettings[ "StackFailRecovery" ]
         GuiControl, ICScriptHub:, NewStackZone, % g_BrivUserSettings[ "StackZone" ]

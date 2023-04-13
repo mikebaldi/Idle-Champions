@@ -36,8 +36,8 @@ By default, the script assumes you do not want to do early stacking with Briv an
 * **RestoreLastWindowOnGameOpen**: 0 / 1  
 You can enable or disable whether the script will try to switch focus back to the last active window immediately when the game opens.  
 
-* **WindowXPositon**:0
+* **WindowXPosition**:0
 This option allows you to set where the gem farm script will appear horizontally across your screen. 0 is default and is the far left of the screen. If you have HiddenFarmWindow set to 1 there is no reason to change this.
 
-* **WindowYPositon**:0
-This option allows you to set where the gem farm script will appear vertically on your screen. 0 is default and is the verey top of the screen. If you have HiddenFarmWindow set to 1 there is no reason to change this.
+* **WindowYPosition**:0
+This option allows you to set where the gem farm script will appear vertically on your screen. 0 is default and is the very top of the screen. If you have HiddenFarmWindow set to 1 there is no reason to change this.

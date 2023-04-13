@@ -36,13 +36,15 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings[ "WindowYPosition" ] := 0
     if ( g_BrivUserSettings[ "WindowXPositon" ] != "" ) ; Legacy settings name handling.
     {
-        g_BrivUserSettings[ "WindowXPosition" ] := g_BrivUserSettings[ "WindowXPosition" ]
+        g_BrivUserSettings[ "WindowXPosition" ] := g_BrivUserSettings[ "WindowXPositon" ]
         g_BrivUserSettings.Delete("WindowXPositon")
+        writeSettings := True
     }
     if ( g_BrivUserSettings[ "WindowYPositon" ] != "" )
     {
-        g_BrivUserSettings[ "WindowXPositon" ] := g_BrivUserSettings[ "WindowXPosition" ]
+        g_BrivUserSettings[ "WindowYPosition" ] := g_BrivUserSettings[ "WindowYPositon" ]
         g_BrivUserSettings.Delete("WindowYPositon")
+        writeSettings := True
     }
     if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
         g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
