@@ -15,3 +15,6 @@ This option allows you to set where Script Hub will appear horizontally across y
 
 * **WindowYPosition**: 0+ (Default: 0)
 This option allows you to set where Script Hub will appear vertically on your screen. 0 is default and is the very top of the screen.
+
+* **WindowTitle**: \<string\> (Default: "")  
+Adds a custom text to the window title. Useful when running multiple copies of IC Script Hub to differentiate them.
