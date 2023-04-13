@@ -12,6 +12,7 @@ Check_Clicked()
         ReadMemoryFunctions.CheckReads()
     return
 }
+GUIFunctions.UseThemeTextColor()
 
 ; Can combine up to 1 primary and up to 1 secondary 
 ; Primary contains ReadMemoryFunctions class. Secondary contains ReadMemoryFunctionsExtended class.
