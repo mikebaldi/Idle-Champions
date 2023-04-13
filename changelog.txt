@@ -1,5 +1,9 @@
 April 12, 2023
     Added BPH adjustment based on Nordom XP.
+    Fixed code warnings (non-functional changes).
+    Fixed input boxes on Jimothy tab not using InputBoxTextColor.
+    Fixed profile delete leaving profile selection blank.
+    Fixed bug that allowed addons to be moved below addons that depended on it.
 
 April 11, 2023
     Fixed bugs and added improvements for new features such as the gem farm profiles.
