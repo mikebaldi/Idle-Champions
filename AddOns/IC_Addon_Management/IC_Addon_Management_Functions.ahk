@@ -190,7 +190,7 @@ Class AddonManagement
             LoopCounter:=AddonNumber+1
             While(LoopCounter<=PositionWanted){
                 for k, v in this.Addons[LoopCounter]["Dependencies"]{
-                    if(this.Addons[AddonNumber]["Name"]=v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
+                    if(this.Addons[AddonNumber]["Name"]=v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], v.Version)){
                         return k
                     }
                 }
