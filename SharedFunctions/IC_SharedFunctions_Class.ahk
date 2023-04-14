@@ -743,55 +743,81 @@ class IC_SharedFunctions_Class
     ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
-        timeoutVal := 32000
+        timeoutVal := 32000 + 90000 ; 32s + waitforgameready timeout
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
-        waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
         WinGetActiveTitle, savedActive
         this.SavedActiveWindow := savedActive
+        StartTime := A_TickCount
         while ( !loadingZone AND ElapsedTime < timeoutVal )
         {
             this.Hwnd := 0
-            this.PID := 0
-            while (!this.PID AND ElapsedTime < timeoutVal )
-            {
-                StartTime := A_TickCount
-                ElapsedTime := 0
-                g_SharedData.LoopString := "Opening IC.."
-                programLoc := g_UserSettings[ "InstallPath" ]
-                Run, %programLoc%
-                Sleep, %waitForProcessTime%
-                while(ElapsedTime < 10000 AND !this.PID )
-                {
-                    ElapsedTime := A_TickCount - StartTime
-                    existingProcessID := g_userSettings[ "ExeName"]
-                    Process, Exist, %existingProcessID%
-                    this.PID := ErrorLevel
-                    Sleep, 62
-                }
-            }
-            ; Process exists, wait for the window:
-            while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < timeoutVal)
-            {
-                WinGetActiveTitle, savedActive
-                this.SavedActiveWindow := savedActive
-                ElapsedTime := A_TickCount - StartTime
-                Sleep, 62
-            }
+            ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime < timeoutVal)
-            {
-                this.ActivateLastWindow()
-                Process, Priority, % this.PID, High
-                this.Memory.OpenProcessReader()
+                this.OpenProcessAndSetPID(timeoutVal - ElapsedTime)
+            ElapsedTime := A_TickCount - StartTime
+            if(ElapsedTime < timeoutVal)
+                this.SetLastActiveWindow(timeoutVal - ElapsedTime)
+             Process, Priority, % this.PID, High
+            this.Memory.OpenProcessReader()
+            ElapsedTime := A_TickCount - StartTime
+            if(ElapsedTime < timeoutVal)
                 loadingZone := this.WaitForGameReady()
+            if(loadingZone)
                 this.ResetServerCall()
-            }
             Sleep, 62
+            ElapsedTime := A_TickCount - StartTime
         }
         if(ElapsedTime >= timeoutVal)
+        {
             return -1 ; took too long to open
+        }
         else
+        {
+            this.ActivateLastWindow()
             return 0
+        }
+    }
+
+    ; Runs the process and set this.PID once it is found running. 
+    OpenProcessAndSetPID(timeoutLeft := 32000)
+    {
+        this.PID := 0
+        processWaitingTimeout := 10000 ;10s
+        waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
+        ElapsedTime := 0
+        StartTime := A_TickCount
+        while (!this.PID AND ElapsedTime < timeoutLeft )
+        {
+            g_SharedData.LoopString := "Opening IC.."
+            programLoc := g_UserSettings[ "InstallPath" ]
+            Run, %programLoc%
+            Sleep, %waitForProcessTime%
+            while(!this.PID AND ElapsedTime < processWaitingTimeout AND ElapsedTime < timeoutLeft)
+            {
+                existingProcessID := g_userSettings[ "ExeName"]
+                Process, Exist, %existingProcessID%
+                this.PID := ErrorLevel
+                Sleep, 62
+                ElapsedTime := A_TickCount - StartTime
+            }
+            ElapsedTime := A_TickCount - StartTime
+            Sleep, 62
+        }
+    }
+
+    ; Saves this.SavedActiveWindow as the last window active before the game exe has loaded.
+    SetLastActiveWindow(timeoutLeft := 32000)
+    {
+        StartTime := A_TickCount
+        ; Process exists, wait for the window:
+        while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < timeoutLeft)
+        {
+            WinGetActiveTitle, savedActive
+            this.SavedActiveWindow := savedActive
+            ElapsedTime := A_TickCount - StartTime
+            Sleep, 62
+        }
     }
 
     ActivateLastWindow() { ; Just for prototyping purposes
@@ -804,8 +830,10 @@ class IC_SharedFunctions_Class
         ElapsedTime := 0
         ; wait for game to start
         g_SharedData.LoopString := "Waiting for game started.."
-        while( ElapsedTime < timeout AND !this.Memory.ReadGameStarted())
+        gameStarted := 0
+        while( ElapsedTime < timeout AND !gameStarted)
         {
+            gameStarted := this.Memory.ReadGameStarted()
             ; If the popup warning message about failed offline progress, restart the game.
             if(this.Memory.ReadDialogActiveBySlot(this.Memory.GetDialogSlotByName("DontShowAgainDialog")) == 1)
             {
@@ -818,31 +846,25 @@ class IC_SharedFunctions_Class
         }
         ; check if game has offline progress to calculate
         offlineTime := this.Memory.ReadOfflineTime()
-        if(this.Memory.ReadGameStarted())
+        if(gameStarted AND offlineTime <= 0 AND offlineTime != "")
+            return true ; No offline progress to caclculate, game started
+        ; wait for offline progress to finish
+        g_SharedData.LoopString := "Waiting for offline progress.."
+        offlineDone := 0
+        while( ElapsedTime < timeout AND !offlineDone)
         {
-            if(offlineTime <= 0 AND offlineTime != "")
-                return true ; No offline progress to caclculate, game started
-            else
-            {
-                ; wait for offline progress to finish
-                g_SharedData.LoopString := "Waiting for offline progress.."
-                while( ElapsedTime < timeout AND !this.Memory.ReadOfflineDone())
-                {
-                    Sleep, 250
-                    ElapsedTime := A_TickCount - timeoutTimerStart
-                }
-                ; finished before timeout
-                if(this.Memory.ReadOfflineDone())
-                {
-                    this.WaitForFinalStatUpdates()
-                    g_PreviousZoneStartTime := A_TickCount
-                    return true
-                }
-            }
+            offlineDone := this.Memory.ReadOfflineDone()
+            Sleep, 250
+            ElapsedTime := A_TickCount - timeoutTimerStart
         }
-        ; timed out
-        secondsToTimeout := Floor(timeout/ 1000)
-        this.CloseIC( "WaitForGameReady-Failed to finish in " . secondsToTimeout . "s." )
+        ; finished before timeout
+        if(offlineDone)
+        {
+            this.WaitForFinalStatUpdates()
+            g_PreviousZoneStartTime := A_TickCount
+            return true
+        }
+        this.CloseIC( "WaitForGameReady-Failed to finish in " . Floor(timeout/ 1000) . "s." )
         return false
     }
 
@@ -850,8 +872,9 @@ class IC_SharedFunctions_Class
     WaitForFinalStatUpdates()
     {
         g_SharedData.LoopString := "Waiting for offline progress (Area Active)..."
+        ElapsedTime := 0
         ; Starts as 1, turns to 0, back to 1 when active again.
-        StartTime := ElapsedTime := A_TickCount
+        StartTime := A_TickCount
         while(this.Memory.ReadAreaActive() AND ElapsedTime < 1736)
         {
             ElapsedTime := A_TickCount - StartTime
@@ -867,6 +890,7 @@ class IC_SharedFunctions_Class
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
     SafetyCheck()
     {
+        ; TODO: Base case check in case safety check never succeeds in opening the game.
         if (Not WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
         {
             if(this.OpenIC() == -1)
