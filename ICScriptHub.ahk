@@ -74,7 +74,7 @@ if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
     g_UserSettings[ "NoCtrlKeypress" ] := 0
 if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
     g_UserSettings[ "WaitForProcessTime" ] := 0
-if(g_UserSettings[ "WriteSettings" ] := true)
+if(g_UserSettings[ "WriteSettings" ] == true)
 {
     g_UserSettings.Delete("WriteSettings")
     IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
