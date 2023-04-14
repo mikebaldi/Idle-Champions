@@ -157,10 +157,6 @@ ComObjectRevoke()
     ExitApp
 }
 
-$SC045::
-Pause
-return 
-
 BrivPerformanceGemFarmGuiClose()
 {
     MsgBox, 35, Close, Really close the gem farm script? `n`nWarning: This script is required for gem farming. `n"Yes" will close the gem farm script. `n"No" will miniize the script to the tray.`n     You can open it again by pressing the play button in Script Hub.
