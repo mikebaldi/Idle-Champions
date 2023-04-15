@@ -937,6 +937,8 @@ class IC_MemoryFunctions_Class
         if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
             dialogName := "LoadingTextBox"
         size := this.ReadDialogsListSize()
+        if(size > 50 OR size < 0) ; bounds check in case of bad read.
+            return ""
         found := 0
         loop, %size%
         {
