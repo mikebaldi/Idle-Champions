@@ -1,3 +1,11 @@
+April 15, 2023
+    Fixed MemoryFunctions height adjustment for the tab control.
+    Updated json.ahk to use library with significantly faster parsing.
+    Updated Memory View to use theme default text color.
+    Refactored OpenIC and related functions.
+    Removed dialog check on game start until a solution is found for DialogManager pointers being off by 0x10 for some people.
+    Added a sanity check on list size reads for GetDialogSlotByName and GetBlessingsDialogSlot.
+
 April 13, 2023
     Fixed bugs with Gem Farm Window Position setting.
     Added a link to change pointers to the About tab.
