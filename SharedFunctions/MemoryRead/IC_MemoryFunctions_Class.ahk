@@ -916,6 +916,8 @@ class IC_MemoryFunctions_Class
     GetBlessingsDialogSlot()
     {
         size := this.ReadDialogsListSize()
+        if(size > 50 OR size < 0)
+            return ""
         loop, %size%
         {
             name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
