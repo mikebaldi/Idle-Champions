@@ -706,15 +706,15 @@ class IC_BrivGemFarm_Class
         if (formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
             return -1
 
-        if ((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1)))
+        if ((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1, True)))
             MsgBox, %ErrorMsg%
-        while (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2))
+        while (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2, False))
         {
             MsgBox, 5,, %ErrorMsg%
             IfMsgBox, Retry
             {
                 g_SF.OpenProcessReader()
-                ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2)
+                ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2, False)
             }
             IfMsgBox, Cancel
             {
@@ -722,7 +722,7 @@ class IC_BrivGemFarm_Class
                 return -1
             }
         }
-        if (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3))
+        if (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3, True))
             MsgBox, %ErrorMsg%
 
         return 0

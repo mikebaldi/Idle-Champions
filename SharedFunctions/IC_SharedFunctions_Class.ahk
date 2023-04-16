@@ -490,6 +490,7 @@ class IC_SharedFunctions_Class
         return
     }
 
+    ; Template function for whether determining if to Dash Wait. Default is Yes if shandie is in the formation.
     ShouldDashWait()
     {
         return this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )
@@ -816,7 +817,15 @@ class IC_SharedFunctions_Class
         }
     }
 
-    ActivateLastWindow() { ; Just for prototyping purposes
+    ; Template function for swapping windows after another has loaded.
+    ActivateLastWindow() 
+    { 
+        ; Just for prototyping purposes
+        Sleep, 100 ; extra wait for window to load
+        hwnd := this.Hwnd
+        WinActivate, ahk_id %hwnd% ; Idle Champions likes to be activated before it can be deactivated            
+        savedActive := this.SavedActiveWindow
+        WinActivate, %savedActive%
     }
 
     ; Waits for the game to be in a ready state
@@ -1091,6 +1100,17 @@ class IC_SharedFunctions_Class
     ;Functions for testing if Automated script is ready to run
     ;=========================================================
 
+    /* A function to search a saved formation for a particular champ.
+
+        Parameters:
+            FavoriteSlot - 1 == Q, 2 == W, 3 == E
+            includeChampion - 1 == success when champion is found, 0 == success when champion not found
+            champID - champion ID to be searched for
+
+        Return:
+            Array of champion IDs from the saved formation. -1 represents an empty slot.
+            A value of "" means run needs to be canceled.
+    */
     ; Finds a specific champ in a favorite formation. Returns -1 on failure and the formation object otherwise.
     FindChampIDinSavedFavorite( champID := 58, favorite := 1, includeChampion := True )
     {
@@ -1110,6 +1130,7 @@ class IC_SharedFunctions_Class
         ; foundChampName := this.Memory.ReadChampNameByID(champID)
     }
 
+    ; Displays a MsgBox with a prompt until the test function succeeds or prompt is canceled. Returns -1 on cancel.
     RetryTestOnError( errMsg := "Error", testFunction := "", expectedValue := "", shouldBeEqual := True, testSize := False)
     {
         if(testFunction == "" OR testFunction.Base.Call != "")
@@ -1140,22 +1161,20 @@ class IC_SharedFunctions_Class
     }
 
     ; -----------------------------------------------------------------
-    ;currentValue := this.Memory.GetSavedFormationSlotByFavorite( FavoriteSlot )
-
-    /* A function to search a saved formation for a particular champ.
+    /* A function to search a saved favorite for familiars on click damage.
 
         Parameters:
-            FavoriteSlot - 1 == Q, 2 == W, 3 == E
-            team - String, used for debugging to identify the formation you are searching though
-            findChamp - 1 == success when champion is found, 0 == success when champion not found
-            champID - champion ID to be searched for
+            favorite - 1 == Q, 2 == W, 3 == E
+            shouldInclude - Whether the formation should include familiars
 
         Return:
-            Array of champion IDs from the saved formation. -1 represents an empty slot.
-            A value of "" means run needs to be canceled.
+            -1 if invalid favorite.
+            ErrorMsg - a string containing an error message if needed.
+            "" if all checks passed okay.
     */
     ; -----------------------------------------------------------------
 
+    ;Searches a saved favorite for familiars on click damage.
     FormationFamiliarCheckByFavorite(favorite := 1, shouldInclude := True)
     {
         ErrorMsg := ""
@@ -1164,14 +1183,14 @@ class IC_SharedFunctions_Class
         FormationFavoriteHotkey := {1:"Q", 2:"W", 3:"E"}
         ; Favorites 1 and 3 SHOULD have familirs.
         ; Formation 2 should NOT have familiars.
-        if (favorite == 2 AND this.Memory.GetFormationFamiliarsByFavorite(favorite) != "")
-        {
-            ErrorMsg := "Familiars found in Favorite Formation " . favorite . " (" . FormationFavoriteHotkey[favorite] . "). Remove familiars before continuing."
-            return ErrorMsg
-        }
-        if (favorite != 2 AND this.Memory.GetFormationFamiliarsByFavorite(favorite) == "")
+        if (shouldInclude AND this.Memory.GetFormationFamiliarsByFavorite(favorite) == "")
         {
             ErrorMsg := "Warning: No famliars found in Favorite Formation " . favorite . " (" . FormationFavoriteHotkey[favorite] . "). It is highly recommended to use familiars for click damage."
+            return ErrorMsg
+        }
+        if (!shouldInclude AND this.Memory.GetFormationFamiliarsByFavorite(favorite) != "")
+        {
+            ErrorMsg := "Familiars found in Favorite Formation " . favorite . " (" . FormationFavoriteHotkey[favorite] . "). Remove familiars before continuing."
             return ErrorMsg
         }
         return ErrorMsg
