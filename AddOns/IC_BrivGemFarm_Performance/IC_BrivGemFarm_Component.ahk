@@ -371,6 +371,8 @@ class IC_BrivGemFarm_Component
     Briv_Load_Profile_Clicked(settings := "Default", fullLoad := True)
     {
         global
+        if(settings == "")
+            return
         ; GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %settings%
         Controlget, Row, FindString, %settings%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
         GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
@@ -381,8 +383,6 @@ class IC_BrivGemFarm_Component
         }
         this.UpdateStatus("Loading Settings...")
         g_BrivUserSettings = {}
-        if(settings == "")
-            return
         if(settings == "Default")
             ReloadBrivGemFarmSettings(False)
         else
@@ -415,6 +415,7 @@ class IC_BrivGemFarm_Component
 
     Briv_Load_Profiles_List()
     {
+        global BrivDropDownSettingsHWND
         this.ProfilesList := {}
         profileDDLString := "|Default|"
         this.ProfilesList["Default"] := A_LineFile . "..\BrivGemFarmSettings.json"
@@ -428,7 +429,8 @@ class IC_BrivGemFarm_Component
         }
         GuiControl, ICScriptHub:, BrivDropDownSettings, %profileDDLString%
         lastSelected := this.ProfileLastSelected
-        GuiControl, ICScriptHub:ChooseString, BrivDropDownSettings, %lastSelected%
+        Controlget, Row, FindString, %lastSelected%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
+        GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
         Gui, Submit, NoHide
     }
 
