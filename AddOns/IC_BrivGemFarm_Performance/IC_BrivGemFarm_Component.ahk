@@ -329,26 +329,7 @@ class IC_BrivGemFarm_Component
         }
         else if (profile == "")
         {
-            for k,v in this.BrivUserSettingsProfile
-            {
-                if(!IsObject(v) AND this.BrivUserSettingsProfile[k] != g_BrivUserSettings[k])
-                {
-                    updateStatusMsg := "Session contains changes not yet saved to profile."
-                    break
-                }
-                else if (IsObject(v))
-                {
-                    for k1, v1 in v
-                    {
-                        local v2 := g_BrivUserSettings[k][k1]
-                        if(v[k1] != g_BrivUserSettings[k][k1])
-                        {
-                            updateStatusMsg := "Session contains changes not yet saved to profile."
-                            break
-                        }
-                    }
-                }
-            }
+            updateStatusMsg := this.TestSettingsMatchProfile(updateStatusMsg)
         }
         try ; avoid thrown errors when comobject is not available.
         {
@@ -359,6 +340,33 @@ class IC_BrivGemFarm_Component
         return
     }
 
+    ; Checks that current user settings match the currently selected profile's settings.
+    TestSettingsMatchProfile(updateStatusMsg)
+    {
+        global g_BrivUserSettings
+        for k,v in this.BrivUserSettingsProfile
+        {
+            if(!IsObject(v) AND this.BrivUserSettingsProfile[k] != g_BrivUserSettings[k])
+            {
+                updateStatusMsg := "Session contains changes not yet saved to profile."
+                break
+            }
+            else if (IsObject(v))
+            {
+                for k1, v1 in v
+                {
+                    v2 := g_BrivUserSettings[k][k1]
+                    if(v[k1] != g_BrivUserSettings[k][k1])
+                    {
+                        updateStatusMsg := "Session contains changes not yet saved to profile."
+                        break
+                    }
+                }
+            }
+        }
+        return updateStatusMsg
+    }
+
     ;Saves Settings associated with BrivGemFarm
     Briv_Load_Profile_Clicked(settings := "Default", fullLoad := True)
     {
@@ -367,7 +375,10 @@ class IC_BrivGemFarm_Component
         Controlget, Row, FindString, %settings%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
         GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
         if (!fullLoad)
+        {
+            this.BrivUserSettingsProfile := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Profiles\" . settings . "_Settings.json" )
             return
+        }
         this.UpdateStatus("Loading Settings...")
         g_BrivUserSettings = {}
         if(settings == "")
