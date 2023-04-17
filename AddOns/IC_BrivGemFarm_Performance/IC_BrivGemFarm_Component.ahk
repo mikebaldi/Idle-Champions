@@ -381,6 +381,17 @@ class IC_BrivGemFarm_Component
             this.BrivUserSettingsProfile := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Profiles\" . settings . "_Settings.json" )
             return
         }
+        if(this.TestSettingsMatchProfile("") != "")
+        {
+            MsgBox 4,, There are unsaved changes to this profile. Are you sure you wish to load a new profile?
+            IfMsgBox No
+            {
+                lastSelected := g_BrivUserSettings[ "LastSettingsUsed" ] 
+                Controlget, Row, FindString, %lastSelected%, , ahk_id %BrivDropDownSettingsHWND% ; Docs: Sets OutputVar to the entry number of a ListBox or ComboBox that is an exact match for String.
+                GuiControl, ICScriptHub:Choose, BrivDropDownSettings, %Row%
+                return
+            }
+        }
         this.UpdateStatus("Loading Settings...")
         g_BrivUserSettings = {}
         if(settings == "Default")
