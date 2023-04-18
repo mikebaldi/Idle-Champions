@@ -181,7 +181,8 @@ class GUIFunctions
         guiName := this.GUIName
         if(textType == "default")
             textType := "DefaultTextColor"
-        textColor := this.CurrentTheme[textType]
+        ; if number, convert to hex
+        textColor := (this.CurrentTheme[textType] * 1 == "") ? this.CurrentTheme[textType] : Format("{:#x}", this.CurrentTheme[textType])
         Gui, %guiName%:Font, c%textColor% w%weight%
     }
 
@@ -189,7 +190,8 @@ class GUIFunctions
     UseThemeBackgroundColor()
     {
         guiName := this.GUIName
-        windowColor := this.CurrentTheme[ "WindowColor" ]
+        ; if number, convert to hex
+        windowColor := (this.CurrentTheme[ "WindowColor" ] * 1 == "") ? this.CurrentTheme[ "WindowColor" ] : Format("{:#x}", this.CurrentTheme[ "WindowColor" ])
         Gui, %guiName%:Color, % windowColor
     }
 
@@ -197,7 +199,8 @@ class GUIFunctions
     UseThemeListViewBackgroundColor(controlID := "")
     {
         guiName := this.GUIName
-        bgColor := this.CurrentTheme[ "TableBackgroundColor" ]
+        ; if number, convert to hex
+        bgColor := (this.CurrentTheme[ "TableBackgroundColor" ] * 1 == "") ? this.CurrentTheme[ "TableBackgroundColor" ] : Format("{:#x}", this.CurrentTheme[ "TableBackgroundColor" ])
         GuiControl, %guiName%: +Background%bgColor%, %controlID%
     }
 
