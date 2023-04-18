@@ -1,3 +1,11 @@
+April 18, 2023
+    Added new pointers for v508.
+    Updated Imports for v508.
+    Fixed RestoreLastWindowOnGameOpen bug.
+    Fixed bugs with not showing correct messages with unsaved profiles.
+    Added a warning when switching profiles without saving.
+    Fixed theme colors not working after switch to new JSON library.
+
 April 15, 2023
     Fixed MemoryFunctions height adjustment for the tab control.
     Updated json.ahk to use library with significantly faster parsing.
