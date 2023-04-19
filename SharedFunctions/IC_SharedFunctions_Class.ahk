@@ -1263,12 +1263,14 @@ class IC_SharedFunctions_Class
         distance := this.Memory.GetModronResetArea()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         ; average
-        jumps := skipAmount == 1 ? Floor(distance / ((skipAmount+1) * skipChance)) : Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
+        if(skipAmount == 1) ; true worst case =  worstCase ? Ceil(distance / 2) : normalcalc
+            jumps := worstCase ? Ceil(((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)) * 1.15) : Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1))
+        else
+            jumps := Ceil(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
         isEffectively100 := 1 - skipChance < .004
-        if (worstCase AND skipChance < 1 AND !isEffectively100) 
-            jumps := Floor(jumps * 1.15) ; 15% more - guesstimate
-            ; Old - jumps := skipAmount == 1 ? Floor(distance / (skipAmount+1)) : Floor(distance / (skipChance >= 1 ? skipAmount + 1 : skipAmount))
         stacks := Ceil(49 / (1+consume)**jumps)
+        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1) 
+            stacks := Floor(stacks * 1.15) ; 15% more - guesstimate
         return stacks
     }
 
@@ -1282,11 +1284,13 @@ class IC_SharedFunctions_Class
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        jumps := skipAmount == 1 ? Max(Floor(distance / ((skipAmount+1) * skipChance)), 0) : Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
+        if(skipAmount == 1)
+            jumps := worstCase ? Max(Ceil(distance / 2),0) : Max(Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)),0)
+        else
+            jumps :=  Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
         isEffectively100 := 1 - skipChance < .004
-        if (worstCase AND skipChance < 1 AND !isEffectively100)
-            jumps := Floor(jumps * 1.15)
-            ; Old - jumps := skipAmount == 1 ? Max(Floor(distance / (skipAmount+1)), 0) : Max(Floor(distance / skipAmount), 0)
+        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1)
+            jumps := Floor(jumps * 1.05)
         return Floor(stacks*(1+consume)**jumps)
     }
 
