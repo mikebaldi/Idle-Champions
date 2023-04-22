@@ -79,18 +79,27 @@ class IC_InventoryView_Component
     ; Loads settings from the addon's setting.json file.
     LoadSettings()
     {
+        writeSettings := False
         this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
-        if(this.Settings == "")
+        if(!IsObject(this.Settings))
         {
             this.Settings := {}
-            this.Settings["LoadChests"] := True
-            this.Settings["LoadBuffs"] := True
-            this.SaveSettings()
+            writeSettings := True
         }
-        if(this.Settings["LoadChests"] == "")
+        if(!(this.Settings["LoadChests"] is integer))
+        {
             this.Settings["LoadChests"] := True
-        if(this.Settings["LoadBuffs"] == "")
+            writeSettings := True
+        }
+        if(!(this.Settings["LoadBuffs"] is integer))
+        {
             this.Settings["LoadBuffs"] := True
+            writeSettings := True
+        }
+        if(writeSettings)
+        {
+            g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json", this.Settings )
+        }
         GuiControl,ICScriptHub:, g_InventoryViewChestsCheckbox, % this.Settings["LoadChests"]
         GuiControl,ICScriptHub:, g_InventoryViewBuffsCheckbox, % this.Settings["LoadBuffs"]
         Gui, Submit, NoHide
