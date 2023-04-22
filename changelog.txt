@@ -1,3 +1,9 @@
+April 22, 2023
+    Fixed bug with calculating stacks to reach zone where jumps were being multiplied by 1.15 instead of stacks being multiplied by 1.15.
+    Updated worst case calculations for AutoDetect, especially around 1j briv.
+    Fixed bug with Loop text not showing the correct theme color.
+    Fixed bug with InventoryView not properly using new JSON library.
+
 April 18, 2023
     Added new pointers for v508.
     Updated Imports for v508.
