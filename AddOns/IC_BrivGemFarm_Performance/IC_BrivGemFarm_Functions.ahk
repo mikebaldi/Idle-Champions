@@ -530,7 +530,6 @@ class IC_BrivGemFarm_Class
                 StartTime := A_TickCount
             ElapsedTime := A_TickCount - StartTime
         }
-        g_PreviousZoneStartTime := A_TickCount
         g_SF.FallBackFromZone()
         return
     }
