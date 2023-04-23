@@ -719,7 +719,7 @@ class IC_MemoryFunctions_Class
 
     GetHeroNextUpgradeIsPurchased(champID := 1)
     {
-        seat := this.ReadChampSeatByID(champID) ;- 1 ; index starts at 0
+        seat := this.ReadChampSeatByID(champID) - 1 ; index starts at 0
         return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat].nextUpgrade.IsPurchased.Read()
     }
 
