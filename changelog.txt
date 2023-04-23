@@ -1,3 +1,14 @@
+April 23, 2023
+    Updated the save profile window to open over the Script Hub windows instead of the top left of the screen.
+    Fixed bug with GetHeroNextUpgradeIsPurchased memory read not reading the correct seat.
+    Fixed edge case bug where script could fail when min stack zone is equal to the minimum area possible for the stack zone.
+    Removed the previousZoneStartTime reset in StackNormal so it can no longer get stuck in an infinite loop of trying to stack but skipping it.
+    Updated AvoidRestackTest to use simpler cases that are also more fitting to auto detect stack settings and be named ShouldAvoidRestacks.
+    Removed ElapsedTime reset in StackNormal to allow it to run out of time if needed.
+    Added sleep timers to busy waits in StackNormal and StackOffline.
+    Moved the stacks check to StackRestart from StackFarm. (It already exists in StackNormal).
+    Added memory read for the name of the object adding a timescale multiplier. (Does not work for all timescale types).
+
 April 22, 2023
     Fixed bug with calculating stacks to reach zone where jumps were being multiplied by 1.15 instead of stacks being multiplied by 1.15.
     Updated worst case calculations for AutoDetect, especially around 1j briv.
