@@ -412,14 +412,9 @@ class IC_BrivGemFarm_Class
     ;Starts stacking SteelBones based on settings (Restart or Normal).
     StackFarm()
     {
-        stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
-        targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks - this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
-
-        doOfflineStacking := this.ShouldOfflineStack()
-
-        if ((stacks < targetStacks) AND doOfflineStacking)
+        if (this.ShouldOfflineStack())
             this.StackRestart()
-        else if (stacks < targetStacks)
+        else
             this.StackNormal()
         ; SetFormation needs to occur before dashwait in case game erronously placed party on boss zone after stack restart
         g_SF.SetFormation(g_BrivUserSettings) 
@@ -440,6 +435,8 @@ class IC_BrivGemFarm_Class
     {
         lastStacks := stacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? g_SF.Memory.ReadSBStacks() : this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? (this.TargetStacks - this.LeftoverStacks) : g_BrivUserSettings[ "TargetStacks" ]
+        if (stacks >= targetStacks)
+            return
         numSilverChests := g_SF.Memory.ReadChestCountByID(1)
         numGoldChests := g_SF.Memory.ReadChestCountByID(2)
         retryAttempt := 0
