@@ -172,6 +172,14 @@ class IC_MemoryFunctions_Class
         return Round(this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers["value", index].read("Float"), 2)
     }
 
+    ReadTimeScaleMultiplierKeyNameByIndex(index := 0)
+    {
+        ; Note: collections with different object types can have different entry offsets. (e.g. list of ints would be offset 0x4, not 0x8 like a list of objects)
+        timeScaleIEffectName := this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers["key", index].QuickClone()
+        timeScaleIEffectName.FullOffsets.Push(0x20) ; Push .Name offset for BuffDef. Will not get a name for all IEffect types.
+        return timeScaleIEffectName.Read("UTF-16")
+    }
+
     ReadTimeScaleMultipliersCount()
     {
         return this.GameManager.game.gameInstances[this.GameInstance].timeScales[0].Multipliers.size.Read()
