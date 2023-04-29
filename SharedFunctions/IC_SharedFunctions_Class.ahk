@@ -790,7 +790,9 @@ class IC_SharedFunctions_Class
             programLoc := g_UserSettings[ "InstallPath" ]
             Run, %programLoc%
             Sleep, %waitForProcessTime%
-            while(!this.PID AND ElapsedTime < processWaitingTimeout AND ElapsedTime < timeoutLeft)
+            ; Add 10s (default) to ElapsedTime so each exe waiting loop will take at least 10s before trying to run a new instance of hte game
+            timeoutForPID := ElapsedTime + processWaitingTimeout 
+            while(!this.PID AND ElapsedTime < timeoutForPID AND ElapsedTime < timeoutLeft)
             {
                 existingProcessID := g_userSettings[ "ExeName"]
                 Process, Exist, %existingProcessID%
