@@ -1,3 +1,7 @@
+April 29, 2023
+    Fixed bug where taking longer than 10s for a process to start could continue launching copies of the game until the full timeout happens.
+    Updated 64 bit Imports for v511.
+
 April 23, 2023
     Updated the save profile window to open over the Script Hub windows instead of the top left of the screen.
     Fixed bug with GetHeroNextUpgradeIsPurchased memory read not reading the correct seat.
