@@ -854,7 +854,7 @@ class IC_BrivGemFarm_Class
     OpenChests( chestID := 1, startTime := 0, numChests := 99 )
     {
         startTime := startTime ? startTime : A_TickCount
-        openChestTimeEst := chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
+        openChestTimeEst := 1 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
         if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openChestTimeEst) )
         {
             chestResults := g_ServerCall.CallOpenChests( chestID, numChests )

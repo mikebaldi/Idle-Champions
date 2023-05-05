@@ -1,3 +1,6 @@
+May 5, 2023
+    Updated chest open call to use simple 1s estimate for chests now that chest opening speeds have been dramatically increased server side.
+
 April 29, 2023
     Fixed bug where taking longer than 10s for a process to start could continue launching copies of the game until the full timeout happens.
     Updated 64 bit Imports for v512.
