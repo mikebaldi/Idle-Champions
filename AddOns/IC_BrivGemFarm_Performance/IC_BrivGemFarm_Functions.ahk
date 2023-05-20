@@ -764,10 +764,10 @@ class IC_BrivGemFarm_Class
             if (g_BrivUserSettings[ "BuyGolds" ] AND amount > 0)
                 this.BuyChests( chestID := 2, effectiveStartTime, amount )
             ; OPENCHESTS
-            amount := Min(g_SF.TotalSilverChests, 99)
+            amount := Min(g_SF.TotalSilverChests, 1000)
             if (g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0)
                 this.OpenChests( chestID := 1, effectiveStartTime, amount)
-            amount := Min(g_SF.TotalGoldChests, 99)
+            amount := Min(g_SF.TotalGoldChests, 1000)
             if (g_BrivUserSettings[ "OpenGolds" ] AND amount > 0)
                 this.OpenChests( chestID := 2, effectiveStartTime, amount )
 
@@ -853,20 +853,23 @@ class IC_BrivGemFarm_Class
     */
     OpenChests( chestID := 1, startTime := 0, numChests := 99 )
     {
+        timePerGold := 4.5
+        timePerSilver := .75
+        timePerChest := chestID == 1 ? timePerSilver * numChests : timePerGold * numChests
         startTime := startTime ? startTime : A_TickCount
-        openChestTimeEst := 1000 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
-        if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + openChestTimeEst) )
-        {
-            chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
-            if (chestResults.success)
-            {
-                g_SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
-                g_SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
-                g_SF.TotalSilverChests := (chestID == 1) ? chestResults.chests_remaining : g_SF.TotalSilverChests
-                g_SF.TotalGoldChests := (chestID == 2) ? chestResults.chests_remaining : g_SF.TotalGoldChests
-                g_SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
-            }
-        }
+        ; openChestTimeEst := 1000 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
+        if (g_BrivUserSettings[ "RestartStackTime" ] - ( A_TickCount - startTime) < numChests * timePerChest)
+            numChests = ( A_TickCount - startTime) / timePerChest 
+        if (numChests < 1)
+            return
+        chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
+        if (!chestResults.success)
+            return
+        g_SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
+        g_SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
+        g_SF.TotalSilverChests := (chestID == 1) ? chestResults.chests_remaining : g_SF.TotalSilverChests
+        g_SF.TotalGoldChests := (chestID == 2) ? chestResults.chests_remaining : g_SF.TotalGoldChests
+        g_SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
     }
 }
 
