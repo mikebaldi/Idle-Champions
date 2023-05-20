@@ -1,3 +1,9 @@
+May 20, 2023
+    Updated BrivGemFarm to open up to 1000 chests at once on stack restart.
+    Updated BrivGemFarm to open how many chests there are time for instead of not opening any if the max can't be opened.
+    Updated ChestPurchaser addon to decrement count by 1000 instead of 99 when opening chests.
+    Updated ServerCalls to accept up to a maximum of 1000 chests per OpenChest call.
+
 May 5, 2023
     Updated chest open call to use simple 1s estimate for chests now that chest opening speeds have been dramatically increased server side.
 
