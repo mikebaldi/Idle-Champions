@@ -855,11 +855,11 @@ class IC_BrivGemFarm_Class
     {
         timePerGold := 4.5
         timePerSilver := .75
-        timePerChest := chestID == 1 ? timePerSilver * numChests : timePerGold * numChests
+        timePerChest := chestID == 1 ? timePerSilver : timePerGold
         startTime := startTime ? startTime : A_TickCount
         ; openChestTimeEst := 1000 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
         if (g_BrivUserSettings[ "RestartStackTime" ] - ( A_TickCount - startTime) < numChests * timePerChest)
-            numChests = ( A_TickCount - startTime) / timePerChest 
+            numChests := Floor(( A_TickCount - startTime) / timePerChest)
         if (numChests < 1)
             return
         chestResults := g_ServerCall.CallOpenChests( chestID, numChests )
