@@ -73,6 +73,8 @@ class IC_ServerCalls_Class
             WR.Send()
             WR.WaitForResponse( -1 )
             data := WR.ResponseText
+            ; dataLB := data . "`n"
+            ; FileAppend, %dataLB%, % A_LineFile . "\..\ServerLog.txt"
             Try
             {
                 response := JSON.parse(data)
@@ -83,6 +85,12 @@ class IC_ServerCalls_Class
             }
             ;catch "Failed to fetch valid JSON response from server."
         }
+        ; catch except
+        ; {
+        ;     exceptMessage := except.Message
+        ;     exceptMessage .= " Extra: " . except.Extra
+        ;     FileAppend, %exceptMessage%, % A_LineFile . "\..\ErrorLog.txt"
+        ; }
         return response
     }
 
@@ -158,8 +166,8 @@ class IC_ServerCalls_Class
     ; Open <chests> number of <chestID> chest.
     CallOpenChests( chestID, chests )
     {
-        if ( chests > 99 )
-            chests := 99
+        if ( chests > 1000 )
+            chests := 1000
         else if ( chests < 1 )
             return
         chestParams := "&gold_per_second=0&checksum=4c5f019b6fc6eefa4d47d21cfaf1bc68&user_id=" this.userID "&hash=" this.userHash 
