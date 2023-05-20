@@ -167,7 +167,7 @@ class IC_ChestPurchaser_Component
                 return 
             }
             shinyCount += g_SF.ParseChestResults(response)
-            openCount -= 99
+            openCount -= 1000
         }
         GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Done opening!"
         shinyString := "No shiny gear found."
