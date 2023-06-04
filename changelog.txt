@@ -1,3 +1,8 @@
+June 4, 2023
+    Updated default play server from ps23 to ps22 since ps23 was shut down.
+    Updated timeouts on save calls to help reduce script lag on modron reset.
+    Updated 64 bit Imports for v517.
+
 May 20, 2023
     Updated BrivGemFarm to open up to 1000 chests at once on stack restart.
     Updated BrivGemFarm to open how many chests there are time for instead of not opening any if the max can't be opened.
