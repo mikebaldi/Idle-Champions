@@ -55,7 +55,7 @@ this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKey
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List,"Int", [0x10])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler,"List", [0x130])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.effects.effectKeysByKeyName.List.parentEffectKeyHandler.activeEffectHandlers._CollectionValType := "CrusadersGame.Effects.ActiveEffectKeyHandler"
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Dict", [0x2b8])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Dict", [0x2c8])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades._CollectionKeyType := "System.Int32"
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades._CollectionValType := "CrusadersGame.Defs.UpgradeDef"
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades.ID := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades,"Int", [0x10])
@@ -64,7 +64,7 @@ this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades.Requi
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades.RequiredUpgradeID := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades,"Int", [0x8c])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades.defaultSpecGraphic := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades,"Int", [0x90])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades.IsPurchased := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgrades,"Char", [0xa8])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Dict", [0x2c0])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Dict", [0x2d0])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered._CollectionKeyType := "CrusadersGame.ChampionsGameInstance"
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered._CollectionValType := "System.Collections.Generic.List<CrusadersGame.Defs.UpgradeDef>"
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered,"List", [])
@@ -75,12 +75,12 @@ this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdere
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.RequiredUpgradeID := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Int", [0x8c])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.defaultSpecGraphic := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Int", [0x90])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List.IsPurchased := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.allUpgradesOrdered.List,"Char", [0xa8])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.health := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Double", [0x360])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Int", [0x310])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.Owned := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Char", [0x30c])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Char", [0x31c])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.level := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Int", [0x338])
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.purchasedUpgradeIDs := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"HashSet", [0x2c8])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.health := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Double", [0x370])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.slotId := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Int", [0x320])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.Owned := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Char", [0x31c])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.Benched := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Char", [0x32c])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.level := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"Int", [0x348])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.purchasedUpgradeIDs := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes,"HashSet", [0x2d8])
 this.game.gameInstances.ClickLevel := New GameObjectStructure(this.game.gameInstances,"Int", [0x108])
 this.game.gameStarted := New GameObjectStructure(this.game,"Char", [0x100])
 this.game.gameInstances.ResetsSinceLastManual := New GameObjectStructure(this.game.gameInstances,"Int", [0xf4])
