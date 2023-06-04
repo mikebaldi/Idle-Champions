@@ -15,7 +15,6 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [Move Game Window](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MoveGameWindow_Mini_Extra) by antilectual  
 [Memory Updater](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MemoryUpdater_Extra) by antilectual  
 [Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra) by mikebaldi  
-[No Modron Leveling](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NoModronLvling_Extra) by mikebaldi  
 [No Modron Adventuring](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by antilectual  
 [ProcessAffinity](https://github.com/imp444/IC_Addons/tree/main/IC_ProcessAffinity_Extra) by ImpEGamer  
 *[Shandie Dash Wait after Stacking](https://github.com/JonBallinger/IC_ShandieDashWait) by Jon Ballinger  
@@ -29,3 +28,4 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 ~~[Auto Progress](https://github.com/JuanchiBruzzone/IC_AutoProgress)~~ by Henkypenky  
 ~~[Briv Farm for TR](https://github.com/MSivonen/IC_Briv_Farm_for_TR)~~ by Thatman  
 ~~[Bush Buddy](https://github.com/MSivonen/IC_BushBuddy)~~ by Thatman  
+~~[No Modron Leveling](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NoModronLvling_Extra)~~ by mikebaldi  
