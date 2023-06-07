@@ -309,7 +309,7 @@ class IC_BrivGemFarm_Class
             return 0
         }
         ; Briv ran out of jumps but has enough stacks for a new adventure, restart adventure. With protections from repeating too early or resetting within 5 zones of a reset.
-        if (g_SF.Memory.ReadHasteStacks() < 50 AND stacks > targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
+        if (g_SF.Memory.ReadHasteStacks() < 50 AND stacks >= targetStacks AND g_SF.Memory.ReadHighestZone() > 10 AND (g_SF.Memory.GetModronResetArea() - g_SF.Memory.ReadHighestZone() > 5 ))
         {
             stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
@@ -318,7 +318,7 @@ class IC_BrivGemFarm_Class
         }
         ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
         ; (for restarting after stacking without going to modron reset level)
-        if (stacks > targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
+        if (stacks >= targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
         {
             stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
