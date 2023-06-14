@@ -26,7 +26,7 @@ class IC_ServerCalls_Class
     userDetails := ""
     activePatronID := 0
     dummyData := ""
-    webRoot := "https://ps22.idlechampions.com/~idledragons/"
+    webRoot := "http://ps22.idlechampions.com/~idledragons/"
     timeoutVal := 60000
     playServerExcludes := "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
 
@@ -249,7 +249,7 @@ class IC_ServerCalls_Class
         {
             if A_Index in % this.playServerExcludes
                 continue
-            this.webRoot := "https://ps" . A_Index . ".idlechampions.com/~idledragons/"
+            this.webRoot := "http://ps" . A_Index . ".idlechampions.com/~idledragons/"
             response := this.CallGetPlayServer()
             testCount := 1
             if (response != "" and response.processing_time != "")
@@ -294,7 +294,7 @@ class IC_ServerCalls_Class
         else
         {
             oldWebRoot := this.webRoot
-            this.webRoot := "https://ps23.idlechampions.com/~idledragons/" ; assume ps23 will always be available (avoiding using master)
+            this.webRoot := "http://ps23.idlechampions.com/~idledragons/" ; assume ps23 will always be available (avoiding using master)
             response := this.CallGetPlayServer()
             if (response != "" AND response.play_server != "")
                 this.webRoot := response.play_server
