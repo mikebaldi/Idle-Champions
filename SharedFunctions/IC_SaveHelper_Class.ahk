@@ -55,7 +55,7 @@ class IC_SaveHelper_Class
     GetSaveCheckSumFromBrivStacks(stackValue := 0)
     {
         jsonObj := "{""stats"":{""briv_steelbones_stacks"": 0,""briv_sprint_stacks"":" . stackValue . "}}"
-        checksum := g_saveHelper.Md5Save(jsonObj)
+        checksum := this.Md5Save(jsonObj)
         return checksum
     }
 
