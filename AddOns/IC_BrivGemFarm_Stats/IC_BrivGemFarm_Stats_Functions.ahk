@@ -168,7 +168,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
         posX += 70
-        Gui, ICScriptHub:Add, Text, vNodromWarningID x%posX% y%posY% w260,
+        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w260,
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
         GUIFunctions.UseThemeTextColor()
@@ -376,7 +376,7 @@ class IC_BrivGemFarm_Stats_Component
             foundNordom := g_SF.IsChampInFormation(100, formation)
             formation := g_SF.Memory.GetFormationByFavorite(3)
             foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
-            GuiControl, ICScriptHub:, NodromWarningID, % (foundNordom ? "WARNING: Nodrom found. Verify BPH." : "")
+            GuiControl, ICScriptHub:, NordomWarningID, % (foundNordom ? "WARNING: Nordom found. Verify BPH." : "")
 
             currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
             currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
@@ -548,7 +548,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, TotalRollBacksID, % 0
             GuiControl, ICScriptHub:, BadAutoProgressID, % 0
         }
-        GuiControl, ICScriptHub:, NodromWarningID, % ""
+        GuiControl, ICScriptHub:, NordomWarningID, % ""
     }
 
     ; Resets stats stored on the stats tab.
