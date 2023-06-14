@@ -73,7 +73,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         g_SharedData.LoopString := "Modron Resetting..."
         this.SetUserCredentials()
         if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
-            response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones)
+            response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones, true)
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
@@ -126,20 +126,29 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 class IC_BrivServerCall_Class extends IC_ServerCalls_Class
 {
     ; forces an attempt for the server to remember stacks
-    CallPreventStackFail(stacks)
+    CallPreventStackFail(stacks, launchScript := False)
     {
         response := ""
         stacks := g_SaveHelper.GetEstimatedStackValue(stacks)
         userData := g_SaveHelper.GetCompressedDataFromBrivStacks(stacks)
         checksum := g_SaveHelper.GetSaveCheckSumFromBrivStacks(stacks)
         save :=  g_SaveHelper.GetSave(userData, checksum, this.userID, this.userHash, this.networkID, this.clientVersion, this.instanceID)
-        try
+        if (launchScript) ; do server call from new script to prevent hanging script due to network issues.
         {
-            response := this.ServerCallSave(save)
+            webRoot := this.webRoot
+            scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_SaveStacks.ahk"
+            Run, %A_AhkPath% "%scriptLocation%" "%webRoot%" "%save%"
         }
-        catch, ErrMsg
+        else
         {
-            g_SharedData.LoopString := "Failed to save Briv stacks"
+            try
+            {
+                response := this.ServerCallSave(save)
+            }
+            catch, ErrMsg
+            {
+                g_SharedData.LoopString := "Failed to save Briv stacks"
+            }
         }
         return response
     }
