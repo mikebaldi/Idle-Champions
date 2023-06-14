@@ -1,3 +1,9 @@
+June 14, 2023
+    Fixed some edge case stack counts that could cause issues. (Thanks ekstergans)
+    Fixed Nodrom typos.
+    Updated how stack saves work on modron reset so the script doesn't hang before leveling champions on zone 1 if there's a network/server problem.
+    Reverted https usage to http due to some connection issues.
+
 June 4, 2023
     Updated default play server from ps23 to ps22 since ps23 was shut down.
     Updated timeouts on save calls to help reduce script lag on modron reset.
