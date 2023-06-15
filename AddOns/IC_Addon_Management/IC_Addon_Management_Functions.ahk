@@ -316,14 +316,10 @@ Class AddonManagement
         }
         ; here we will enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
-        for k,v in AddonSettings {
-            if (k = "Addon Order"){
-                this.AddonOrder := v
-            }
-            else {
-                if (v.Enabled){
-                    this.EnableAddon(k,v.Version)
-                }     
+        this.AddonOrder := AddonSettings["Addon Order"]
+        for k, v in this.AddonOrder {
+            if (AddonSettings[v.Name].Enabled){
+                this.EnableAddon(v.Name,v.Version)
             }
         }
 
