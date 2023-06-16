@@ -555,7 +555,7 @@ class IC_SharedFunctions_Class
         dtCurrentZoneTime := Round((A_TickCount - g_PreviousZoneStartTime) / 1000, 2)
         if (isStuck)
         {
-            this.RestartAdventure( "Game is stuck" )
+            this.RestartAdventure( "Game is stuck z[" . this.Memory.ReadCurrentZone() . "]")
             this.SafetyCheck()
             g_PreviousZoneStartTime := A_TickCount
             lastCheck := 0
@@ -583,7 +583,7 @@ class IC_SharedFunctions_Class
         }
         if (dtCurrentZoneTime > 65)
         {
-            this.RestartAdventure( "Game is stuck" )
+            this.RestartAdventure( "Game is stuck z[" . this.Memory.ReadCurrentZone() . "]" )
             this.SafetyCheck()
             g_PreviousZoneStartTime := A_TickCount
             lastCheck := 0
