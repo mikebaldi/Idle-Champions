@@ -1,4 +1,9 @@
 June 14, 2023
+    Fixed bug with addon ordering not loading correctly. (Thanks ImpEGamer)
+    Updated 64 bit Imports for v520.
+    Added current zone to game is stuck message restart message.
+
+June 14, 2023
     Fixed some edge case stack counts that could cause issues. (Thanks ekstergans)
     Fixed Nodrom typos.
     Updated how stack saves work on modron reset so the script doesn't hang before leveling champions on zone 1 if there's a network/server problem.
