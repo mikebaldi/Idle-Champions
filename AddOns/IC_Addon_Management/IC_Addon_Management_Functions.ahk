@@ -174,8 +174,8 @@ Class AddonManagement
     CheckDependencieOrder(AddonNumber,PositionWanted){
         if(AddonNumber > PositionWanted){
             ; moving Up
-            LoopCounter:=PositionWanted
             for k, v in this.Addons[AddonNumber]["Dependencies"]{
+                LoopCounter:=PositionWanted
                 while(LoopCounter<AddonNumber){
                     if(v.Name=this.Addons[Loopcounter]["Name"] AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
                         Return Loopcounter
