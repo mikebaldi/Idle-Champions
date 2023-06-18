@@ -2,8 +2,8 @@
 ;                    Defining & init
 ; ############################################################
 
-global AddonManagement := new AddonManagement		; Creation of the AddonManagement
-global g_AddonFolder := "Addons\" 					; Relative to A_ScriptDir
+global AddonManagement := new AddonManagement			; Creation of the AddonManagement
+global g_AddonFolder := A_LineFile . "\..\..\"			; Up from addon file and folder
 
 AddonManagement.NeedSave := 0
 AddonManagement.GetAvailableAddons()
