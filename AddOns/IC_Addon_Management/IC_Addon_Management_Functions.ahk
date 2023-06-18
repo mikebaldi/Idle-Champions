@@ -90,8 +90,8 @@ Class AddonManagement
                 MsgBox, 52, Warning, % "Addon " . currDependency.Name . " is required by " . currAddon.Name . " but is disabled!`nDo you want to Enable this addon?`nYes: Enable " . currDependency.Name . "`nNo: Disable " . Name
                 IfMsgBox Yes 
                 {
-                    this.EnableAddon(currDependency.Name,currDependency.Version)
-                    isModified := true
+                    isEnabled := this.EnableAddon(currDependency.Name,currDependency.Version)
+                    isModified := isEnabled OR isModified
                 }
                 else
                 {
@@ -146,7 +146,7 @@ Class AddonManagement
     }
     ; ------------------------------------------------------------
     ;
-    ;   Function: CheckDependencieOrder(AddonNumber,PositionWanted)
+    ;   Function: CheckDependencyOrder(AddonNumber,PositionWanted)
     ;               Checks if an addon can be moved to the wanted position.
     ;               As an addon that requires another addon needs to be loaded after the dependency
     ; Parameters:    AddonNumber: Key of the addon in object Addons
@@ -155,7 +155,7 @@ Class AddonManagement
     ;             0: No problem
     ;
     ; ------------------------------------------------------------
-    CheckDependencieOrder(AddonNumber,PositionWanted){
+    CheckDependencyOrder(AddonNumber,PositionWanted){
         if(AddonNumber > PositionWanted){
             ; moving Up
             for k, v in this.Addons[AddonNumber]["Dependencies"]{
@@ -191,19 +191,19 @@ Class AddonManagement
     ; Parameters: AddonBaseFolder: Base folder where the addons are stored
     ;                 AddonFolder: Folder where the addon is stored
     ;     Return: Object containing the settings from the addon.json file
-    ;             0: Folder not found
+    ;             0: Valid addon not found
     ;
     ; ------------------------------------------------------------
-    CheckIfAddon(AddonBaseFolder,AddonFolder){
-        if FileExist(AddonBaseFolder . AddonFolder . "\Addon.json"){
-            AddonSettings := g_SF.LoadObjectFromJSON(AddonBaseFolder . AddonFolder . "\Addon.json")
-            ; check if the needed settings are in the addon.json
-            if (AddonSettings["Name"] && AddonSettings ["Version"]) {
-                AddonSettings["Dir"] := AddonFolder
-                return AddonSettings
-            }
-        }
-        return 0
+    CheckIfAddon(AddonBaseFolder,AddonFolder)
+    {
+        if (!FileExist(AddonBaseFolder . AddonFolder . "\Addon.json"))
+            return 0
+        AddonSettings := g_SF.LoadObjectFromJSON(AddonBaseFolder . AddonFolder . "\Addon.json")
+        ; check if the needed settings are in the addon.json
+        if (!AddonSettings["Name"] OR !AddonSettings ["Version"])
+            return 0
+        AddonSettings["Dir"] := AddonFolder
+        return AddonSettings
     }
     ; ------------------------------------------------------------
     ;
@@ -214,35 +214,33 @@ Class AddonManagement
     ;     Return: Disables in the addon in the Addons object
     ;
     ; ------------------------------------------------------------
-    DisableAddon(Name, Version){
-        if(Name!="Addon Management"){
-            while(DependendAddon := this.CheckIsDependedOn(Name,Version)){
-                MsgBox, 52, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs " . Name . ".`nDo you want to disable this addon?`nYes: Disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . " enabled."
-                IfMsgBox Yes 
-                {
-                    this.DisableAddon(this.Addons[DependendAddon]["Name"],this.Addons[DependendAddon]["Version"])
-                }
-                Else
-                {
-                    return 
-                }               
-            }
-            ;if (DependendAddon := this.CheckIsDependedOn(Name,Version)){
-            ;    MsgBox, 48, Warning, % "Addon " . this.Addons[DependendAddon]["Name"] . " needs this addon, can't disable."
-            ;}
-            ;else{
-                    for k, v in this.Addons {
-                    if (v.Name=Name AND v.Version=Version){
-                        this.NeedSave:=1
-                        v.disable()
-                        break
-                    }
-                }
-            ;}
-
-        }
-        else{
+    DisableAddon(Name, Version)
+    {
+        if (Name=="Addon Management")
+        {
             MsgBox, 48, Warning, Can't disable the Addon Manager.
+            return
+        }
+        while(DependedAddon := this.CheckIsDependedOn(Name,Version))
+        {
+            MsgBox, 52, Warning, % "Addon " . this.Addons[DependedAddon]["Name"] . " needs " . Name . ".`nDo you want to disable this addon?`nYes: Disable " . this.Addons[DependendAddon]["Name"] . "`nNo: Keep " . Name . " enabled."
+            IfMsgBox Yes 
+            {
+                this.DisableAddon(this.Addons[DependedAddon]["Name"],this.Addons[DependedAddon]["Version"])
+            }
+            else
+            {
+                return 
+            }               
+        }
+        for k, v in this.Addons 
+        {
+            if (v.Name=Name AND v.Version=Version)
+            {
+                this.NeedSave:=1
+                v.disable()
+                break
+            }
         }
     }
     ; ------------------------------------------------------------
@@ -275,7 +273,7 @@ Class AddonManagement
             currAddon.enable()
         }
         if(isModified)
-            this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
+            this.NeedSave:=1
         return 0
     }
 
@@ -354,8 +352,8 @@ Class AddonManagement
     ;
     ; ------------------------------------------------------------
     SwitchOrderAddons(AddonNumber,Position){
-        if(!this.CheckDependencieOrder(AddonNumber,Position)){
-            NumberOfAddons:=this.Addons.Count()
+        if(!this.CheckDependencyOrder(AddonNumber,Position)){
+            NumberOfAddons := this.Addons.Count()
             temp:=this.Addons[AddonNumber]
             if(AddonNumber > Position){
                 Loopnumber := AddonNumber
@@ -386,10 +384,12 @@ Class AddonManagement
     ;     Return: object Addons
     ;
     ; ------------------------------------------------------------
-    GetAvailableAddons(){
+    GetAvailableAddons()
+    {
         Loop, Files, % g_AddonFolder . "*" , D 
         {
-            if(AddonSettings := this.CheckIfAddon(g_AddonFolder,A_LoopFileName)){
+            if(AddonSettings := this.CheckIfAddon(g_AddonFolder,A_LoopFileName))
+            {
                 this.Add(AddonSettings)
             }
         }
@@ -434,19 +434,23 @@ Class AddonManagement
     ;     Return: Generates the content of the listview
     ;
     ; ------------------------------------------------------------
-    GenerateListViewContent(GuiWindowName, ListViewName){
+    GenerateListViewContent(GuiWindowName, ListViewName)
+    {
         Gui, %GuiWindowName%:ListView, %ListViewName%
         LV_Delete()
-        for k,v in this.Addons {
+        for k,v in this.Addons 
+        {
             IsEnabled := v["Enabled"] ? "yes" : "no"
             LV_Add( , IsEnabled, v.Name, v.Version, v.Dir)
         }
-        loop, 4{
+        loop, 4
+        {
             LV_ModifyCol(A_Index, "AutoHdr")
         }
     }
 
-    ShowAddonInfo(AddonNumber){
+    ShowAddonInfo(AddonNumber)
+    {
         Addon := this.Addons[AddonNumber]
         GuiControl, AddonInfo: , AddonInfoNameID, % Addon.Name
         GuiControl, AddonInfo: , AddonInfoFoldernameID, % Addon.Dir
