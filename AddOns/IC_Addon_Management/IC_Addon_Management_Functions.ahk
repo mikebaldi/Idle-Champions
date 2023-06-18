@@ -26,13 +26,15 @@ Class AddonManagement
 
     ; ------------------------------------------------------------
     ;   
-    ;   Function: Add(AddonSettings)
+    ;     Function: Add(AddonSettings)
     ;               Adds an Addon to the Addons object
-    ; Parameters: Object containing Addon settings
-    ;     Return: Updates the Addons object
+    ;   Parameters: Object containing Addon settings
+    ; Side Effects: Updates the Addons object
+    ;       Return: None
     ;
     ; ------------------------------------------------------------
-    Add(AddonSettings){
+    Add(AddonSettings)
+    {
         Addon := new Addon(AddonSettings)
         this.Addons.Push(Addon)
     }
@@ -55,72 +57,54 @@ Class AddonManagement
     ;               Checks if the Dependencies of an addon are enabled
     ; Parameters:    Name: Name of the addon as defined in the Addon.json
     ;             Version: Version of the addon as defined in the Addon.json
-    ;     Return: 1: All dependencies are enabled
-    ;             0: One or more dependencies are not enabled
-    ;                The script will ask to enable them
+    ;     Return:  true: All dependencies are enabled
+    ;             false: One or more dependencies are not enabled
+    ;                
+    ;       Note: The function will ask to enable disabled dependencies
     ;
     ; ------------------------------------------------------------
-    CheckDependenciesEnabled(Name, Version){
-        for k,v in this.Addons {
-            if (v.Name=Name AND v.Version=Version){
-                ; Check the dependencies
-                for i, j in v.Dependencies{
-                    ;First check if the dependencies DepExists
-                    DependancieFound:=0
-                    for y,z in this.Addons {
-                        if(z.Name = j.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(z.Version, j.Version)){
-                            ; Check if the dependencie is enabled
-                            DependancieFound:=1
-                            if (!z.Enabled){
-                                MsgBox, 52, Warning, % "Addon " . j.Name . " is required by " . v.Name . " but is disabled!`ndo you want to Enable this addon?`nYes: enable " . j.Name . "`nNo: Disable " . v.Name
-                                IfMsgBox Yes 
-                                {
-                                    this.EnableAddon(j.Name,j.Version)
-                                }
-                                Else
-                                {
-                                    this.DisableAddon(v.Name,v.Version)
-                                    return 0
-                                }
-                            }
-                            else{
-                                break
-                            }
-                        }
-                    }
-                    if(DependancieFound){
-                        if(k<y){
-                            this.SwitchOrderAddons(k,y)
-                            this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
-                        }
-                    }
-                    else{
-                        MsgBox, 48, Warning, % "Can't find the addon " . j.Name . " required by " . v.Name . "`n" . v.Name . " will be disabled."
-                        this.DisableAddon(v.Name,v.Version)
-                        return 0
-                    }
+    CheckDependenciesEnabled(Name, Version, byref isModified := false)
+    {
+        currAddon := this.GetAddon(Name, Version, indexOfAddon)
+        subDependiciesEnabled := True
+        ; Check the dependencies
+        for k,v in currAddon.Dependencies
+        {
+            ; Check if dependency is installed
+            currDependency := this.GetAddon(v.Name, v.Version, indexODependency)
+            if (!IsObject(currDependency))
+            {
+                MsgBox, 48, Warning, % "Can't find the addon " . currDependency.Name . " required by " . Name . "`n" . Name . " will be disabled."
+                this.DisableAddon(Name,Version)
+                return false
+            }
+            ; Force correct dependency load order.
+            if(IsObject(currDependency) AND indexOfAddon < indexOfDependency)
+            {
+                this.SwitchOrderAddons(indexOfAddon,indexOfDependency)
+                isModified := true
+            }      
+            ; Check if current version or newer dependency is enabled
+            if (!currDependency.Enabled)
+            {
+                MsgBox, 52, Warning, % "Addon " . currDependency.Name . " is required by " . currAddon.Name . " but is disabled!`nDo you want to Enable this addon?`nYes: Enable " . currDependency.Name . "`nNo: Disable " . Name
+                IfMsgBox Yes 
+                {
+                    this.EnableAddon(currDependency.Name,currDependency.Version)
+                    isModified := true
+                }
+                else
+                {
+                    this.DisableAddon(Name,Version)
+                    return false
                 }
             }
+            ; Check sub-dependencies
+            subDependiciesEnabled := this.CheckDependenciesEnabled(currDependency.Name, currDependency.Version, isModified) AND subDependiciesEnabled
+            if (subDependiciesEnabled == false)
+                return false  
         }
-        return 1
-    }
-    ; ------------------------------------------------------------
-    ;
-    ;   Function: CheckIfEnabled(Name,Version)
-    ;               Returns if the addon is enabled or not
-    ; Parameters:    Name: Name of the addon as defined in the Addon.json
-    ;             Version: Version of the addon as defined in the Addon.json
-    ;     Return: 1: Addon is enabled
-    ;             0: Addon is disabled
-    ;
-    ; ------------------------------------------------------------
-    CheckIfEnabled(Name,Version){
-        for k,v in this.Addons{
-            if (v.Name = Name AND v.Version=Version) {
-                return v.Enabled
-            }
-        }
-        return 0
+        return true
     }
     ; ------------------------------------------------------------
     ;
@@ -158,7 +142,7 @@ Class AddonManagement
                 }
             }
         }
-        return 0
+        return false
     }
     ; ------------------------------------------------------------
     ;
@@ -279,7 +263,10 @@ Class AddonManagement
             }
         }
         versionFound := false
+        isModified := false
         if(this.CheckDependenciesEnabled(Name,Version)){
+            if(isModified)
+                this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
             for k, v in this.Addons {
                 if (v.Name=Name AND v.Version=Version){
                     versionFound := true
@@ -520,6 +507,31 @@ Class AddonManagement
     FirstRunCheck()
     {
 
+    }
+
+    ; Finds the matching addon or the first instance of an addon that matches the name and minimum version.
+    GetAddon(Name, Version, byref i := "")
+    {
+        ; try to find exact match
+        for k,v in this.Addons
+        {
+            if (v.Name == Name AND v.Version == Version)
+            {
+                i := k
+                return v
+            }
+        }
+        ; try to higher version match
+        for k,v in this.Addons
+        {
+            if (v.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(v.Version,Version))
+            {
+                i := k
+                return v
+            }
+        }
+        ; failed to match
+        return ""
     }
 
 }

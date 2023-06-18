@@ -1,9 +1,9 @@
 {
     "NameLess":"Addon Management",
-    "Version": "v1.0.1",
+    "Version": "v2.0.0",
     "Includes" : "IC_Addon_Management_Includes.ahk",
-    "Author" : "nyze",
+    "Author" : "nyze & andtilectual",
     "Url" : "https://github.com/nyze/Addon-Management",
-    "Info" : "This is an addon that provides addon management for addons in IC Scripthub",
+    "Info" : "This is an addon that provides addon management for addons in IC Script Hub",
     "Dependencies" : {}
 }
