@@ -257,41 +257,25 @@ Class AddonManagement
     ; Side Effects: Enables in the addon in the Addons object
     ;
     ; ------------------------------------------------------------
-    EnableAddon(Name, Version){
+    EnableAddon(Name, Version)
+    {
         ; Check if another version is allready enabled
-        for k,v in this.Addons {
-            if(v.Name = Name AND v.Version != Version AND v.Enabled){
+        for k,v in this.Addons 
+        {
+            if(v.Name = Name AND v.Version != Version AND v.Enabled)
+            {
                 MsgBox, 48, Warning, % "Another version of " . v.Name . " is already enabled, please disable that addon first!"
                 return
             }
         }
-        versionFound := false
-        isModified := false
-        if(this.CheckDependenciesEnabled(Name,Version)){
-            if(isModified)
-                this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
-            for k, v in this.Addons {
-                if (v.Name=Name AND v.Version=Version){
-                    versionFound := true
-                    this.NeedSave:=1
-                    v.enable()
-                    break
-                }
-            }
-            ; if didn't find exact match, find first fit
-            if(!versionFound)
-            {
-                for k, v in this.Addons {
-                    ; Enable if version > version being checked.
-                    if (v.Name=Name AND IC_VersionHelper_class.IsVersionSameOrNewer(v.Version, Version)){
-                        versionFound := true
-                        this.NeedSave:=1
-                        v.enable()
-                        break
-                    }
-                }
-            }
+        currAddon := this.GetAddon(Name, Version, indexOfAddon)
+        if(IsObject(currAddon) AND this.CheckDependenciesEnabled(currAddon.Name,currAddon.Version, isModified))
+        {
+            this.NeedSave:=1
+            currAddon.enable()
         }
+        if(isModified)
+            this.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
         return 0
     }
 
