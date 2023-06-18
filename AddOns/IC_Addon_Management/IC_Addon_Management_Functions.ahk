@@ -112,7 +112,7 @@ Class AddonManagement
     ;               Checks if an enabled Addon is depending on the given addon
     ; Parameters:    Name: Name of the addon as defined in the Addon.json
     ;             Version: Version of the addon as defined in the Addon.json
-    ;     Return: 1: Addon is required by another enabled addon
+    ;     Return: index of dependent if Addon is required by another enabled addon
     ;             0: Addon is not required by another enabled addon
     ;
     ; ------------------------------------------------------------
@@ -134,7 +134,7 @@ Class AddonManagement
         ; test for higher version 
         for addonIndex,addonObject in this.Addons{
             for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(dependencyObject.Version, Version)) {
+                if (dependencyObject.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(Version, dependencyObject.Version)) {
                     ;We have a addon who depends on the name, now check it it's enabled
                     if(this.Addons[addonIndex]["Enabled"]){
                         return addonIndex
@@ -251,7 +251,10 @@ Class AddonManagement
     ;               Enables the given addon
     ; Parameters:    Name: Name of the addon as defined in the Addon.json
     ;             Version: Version of the addon as defined in the Addon.json
-    ;     Return: Enables in the addon in the Addons object
+    ;     Return: 
+    ;              0: if enabled without issue
+    ;              1: if enabled addons needed to be modified
+    ; Side Effects: Enables in the addon in the Addons object
     ;
     ; ------------------------------------------------------------
     EnableAddon(Name, Version){
@@ -289,7 +292,7 @@ Class AddonManagement
                 }
             }
         }
-
+        return 0
     }
 
     ; Get the parameters of the addons to load
