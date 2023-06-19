@@ -9,13 +9,18 @@ Class AddonManagement
     ; Addons
     ;   Object containing all addons
     ; AddonOrder
-    ;   Object containing the oder in which de addons need to be loaded
+    ;   Object containing the order in which de addons need to be loaded
+    ; EnabledAddons
+    ;   Object containing a list of addons that should be enabled
+    ; NeedSave
+    ;   Boolean for whether the gui and settings file need to be updated
     ; AddonManagementConfigFile
-    ;   Link to the AddonManagement Configuration File
+    ;   Link to the AddonManagement configuration File
     ; GeneratedAddonIncludeFile
     ;   Link to the GeneratedAddonInclude File    
     Addons := []
     AddonOrder := []
+    EnabledAddons := []
     NeedSave := 0
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
@@ -155,34 +160,42 @@ Class AddonManagement
     ;             0: No problem
     ;
     ; ------------------------------------------------------------
-    CheckDependencyOrder(AddonNumber,PositionWanted){
-        if(AddonNumber > PositionWanted){
+    CheckDependencyOrder(AddonNumber,PositionWanted)
+    {
+
+        if (AddonNumber > PositionWanted)
+        {
             ; moving Up
-            for k, v in this.Addons[AddonNumber]["Dependencies"]{
-                LoopCounter:=PositionWanted
-                while(LoopCounter<AddonNumber){
-                    if(v.Name=this.Addons[Loopcounter]["Name"] AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version)){
-                        Return Loopcounter
+            for k, v in this.Addons[AddonNumber]["Dependencies"]
+            {
+                LoopCounter := PositionWanted
+                while (LoopCounter < AddonNumber)
+                {
+                    if (this.Addons[Loopcounter]["Name"] == v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[Loopcounter]["Version"], v.Version))
+                    {
+                        return Loopcounter
                     }
                     ++LoopCounter
                 }
             }
-            Return 0
         }
-        else if(AddonNumber<PositionWanted){
+        else if (AddonNumber < PositionWanted)
+        {
             ; moving down
-            LoopCounter:=AddonNumber+1
-            While(LoopCounter<=PositionWanted){
-                for k, v in this.Addons[LoopCounter]["Dependencies"]{
-                    if(this.Addons[AddonNumber]["Name"]=v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], v.Version)){
+            LoopCounter := AddonNumber+1
+            While (LoopCounter <= PositionWanted)
+            {
+                for k, v in this.Addons[LoopCounter]["Dependencies"]
+                {
+                    if (this.Addons[AddonNumber]["Name"] == v.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], v.Version))
+                    {
                         return k
                     }
                 }
                 ++LoopCounter
             }
-            return 0
         }
-
+        return 0
     }
     ; ------------------------------------------------------------
     ;
@@ -279,68 +292,59 @@ Class AddonManagement
 
     ; Get the parameters of the addons to load
     ; Parameters: none
-    GetAddonManagementSettings(){
+    GetAddonManagementSettings()
+    {
         ; If the file does not exist we should create it with the default settings
-        if(!FileExist(this.AddonManagementConfigFile)) {
+        if(!FileExist(this.AddonManagementConfigFile)) 
+        {
             ; Here we load the Addons that are required on first startup
-            EnabledAddons:=Object("Addon Management",Object("Version","v1.0.","Enabled",1),"Briv Gem Farm",Object("Version","v1.0.","Enabled",1),"Game Location Settings",Object("Version","v0.1.","Enabled",1))
+            this.EnabledAddons:=Object(Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1."))
             g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, EnabledAddons)
         }
-        ; here we will enable all addons that needed to be added
+        ; enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
         this.AddonOrder := AddonSettings["Addon Order"]
-        if (IsObject(this.AddonOrder)){
-            for k, v in this.AddonOrder {
-                if (AddonSettings[v.Name].Enabled){
-                    this.EnableAddon(v.Name,v.Version)
-                }
-            }
-        }
-        else{
-            for k,v in AddonSettings {
-                if (v.Enabled){
-                    this.EnableAddon(k,v.Version)
-                }
-            }
-        }
-
+        if(AddonSettings["Enabled Addons"] == "")
+            AddonSettings["Enabled Addons"] := this.UpdateFromOldSettings(AddonSettings)
+        this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
+        for k, v in this.EnabledAddons
+            this.EnableAddon(v.Name,v.Version)
         ; Check if all addons in Addon Order are still available
-        For k,v in this.AddonOrder{
-            FoundAddon:=0
-            for i, j in this.Addons{
-                if(j.Name=v.Name AND j.Version=v.Version){
-                    FoundAddon:=1
-                    break
-                }
-            }
-            if(!FoundAddon){
-                NumberOfAddons:=this.AddonOrder.Count()             
-                While(k<NumberOfAddons){
-                    this.AddonOrder[k]:=this.AddonOrder[k+1]
-                    ++k
-                }
-                this.AddonOrder.Delete(NumberOfAddons)
-            }
-        }
-
-        if(IsObject(this.AddonOrder)){
-            for k, v in this.AddonOrder {
-                ; Search for the correct Addon
-                for i, j in this.Addons{
-                    if(j.Name=v.Name AND j.Version=v.Version){
-                        ; put the addons in order
-                        if (k<>i){
-                            this.SwitchOrderAddons(i,k)
-                        }
-                    }
-                }
-            }
-        }
-        if(!FileExist(this.GeneratedAddonIncludeFile))
+        For k,v in this.AddonOrder
         {
+            FoundAddon := false
+            this.GetAddon(v.Name, v.Version, indexOfAddon)
+            if(!indexOfAddon)
+                this.AddonOrder.RemoveAt(k, 1)
+        }
+        ; Order addons
+        this.OrderAddons()
+
+        if(!FileExist(this.GeneratedAddonIncludeFile))
             this.GenerateIncludeFile() 
-        }       
     }
+
+    UpdateFromOldSettings(AddonSettings)
+    {
+        newSettings := []
+        for k,v in AddonSettings
+            if(k != "Addon Order")
+                newSettings.Push(Object("Name",k,"Version",v.Version))
+        return newSettings
+    }
+
+    OrderAddons()
+    {
+        for k, v in this.AddonOrder 
+        {
+            ; Search for the correct Addon
+            this.GetAddon(v.Name, v.Version, addonIndex) 
+            ; put the addons in order
+            if (k != addonIndex)
+                this.SwitchOrderAddons(addonIndex,k)
+        }
+    }
+
     ; ------------------------------------------------------------
     ;
     ;   Function: SwitchOrderAddons(AddonNumber,Position)
@@ -351,30 +355,35 @@ Class AddonManagement
     ;     Return: Moves the Addons to wanted position if possible
     ;
     ; ------------------------------------------------------------
-    SwitchOrderAddons(AddonNumber,Position){
-        if(!this.CheckDependencyOrder(AddonNumber,Position)){
-            NumberOfAddons := this.Addons.Count()
-            temp:=this.Addons[AddonNumber]
-            if(AddonNumber > Position){
-                Loopnumber := AddonNumber
-                While(Loopnumber > Position) {
-                    this.Addons[Loopnumber]:=this.Addons[Loopnumber-1]
-                    --Loopnumber
-                }
+    SwitchOrderAddons(AddonNumber,Position)
+    {
+        ; If can't rearrange due to dependencies, return false
+        if (this.CheckDependencyOrder(AddonNumber,Position))
+            return false
+        NumberOfAddons := this.Addons.Count()
+        temp := this.Addons[AddonNumber]
+        ; Move addon up in the order
+        if(AddonNumber > Position)
+        {
+            Loopnumber := AddonNumber
+            while(Loopnumber > Position) 
+            {
+                this.Addons[Loopnumber] := this.Addons[Loopnumber-1]
+                --Loopnumber
             }
-            else if(AddonNumber < Position){
-                Loopnumber := AddonNumber
-                While(Loopnumber < Position) {
-                    this.Addons[Loopnumber]:=this.Addons[Loopnumber+1]
-                    ++Loopnumber
-                }
+        }
+        ; Move addon down in the order
+        else if(AddonNumber < Position)
+        {
+            Loopnumber := AddonNumber
+            while(Loopnumber < Position) 
+            {
+                this.Addons[Loopnumber] := this.Addons[Loopnumber+1]
+                ++Loopnumber
             }
-            this.Addons[Position]:=temp
-            return 1
         }
-        else{
-            return 0
-        }
+        this.Addons[Position] := temp
+        return true
     }
     ; ------------------------------------------------------------
     ;
@@ -466,37 +475,30 @@ Class AddonManagement
         GUIFunctions.UseThemeTitleBar("AddonInfo")
     }
 
-    WriteAddonManagementSettings(){
+    WriteAddonManagementSettings()
+    {
         ; Get the order of the Addons
         Gui, AddonManagement:ListView, AddonsAvailableID
-        Order:=[]
+        Order := []
         Loop % LV_GetCount()
         {
             LV_GetText(AddonName, A_Index , 2)
 		    LV_GetText(AddonVersion, A_Index , 3)
             Order.Push(Object("Name",AddonName,"Version",AddonVersion))
         }
-        this.AddonOrder:=Order
-        EnabledAddons:=[]
-        for k,v in this.Addons{
-            if (v.Enabled){
-                EnabledAddons[v.Name]:=[]
-                EnabledAddons[v.Name]:=Object("Version",v.Version,"Enabled",1)
-            }
-        }
-
-        ThingsToWrite:=EnabledAddons
-        ThingsToWrite["Addon Order"]:=Order
+        this.AddonOrder := Order
+        EnabledAddons := []
+        for k,v in this.Addons
+            if (v.Enabled)
+                EnabledAddons.Push(Object("Name", v.Name, "Version",v.Version))
+        ThingsToWrite := {}
+        ThingsToWrite["Enabled Addons"] := EnabledAddons
+        ThingsToWrite["Addon Order"] := Order
         g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, ThingsToWrite)
         this.GenerateIncludeFile()
         MsgBox, 36, Restart, To activate changes to enabled/disabled addons you need to restart the script.`nDo you want to do this now?
         IfMsgBox, Yes
             Reload
-    }
-
-    FirstRunCheck()
-    {
-
     }
 
     ; Finds the matching addon or the first instance of an addon that matches the name and minimum version.
