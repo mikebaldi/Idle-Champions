@@ -1,3 +1,6 @@
+June 19, 2023
+    Refactored Addon Management to fix bugs and simplify logic.
+
 June 16, 2023
     Fixed bug with addon ordering not loading correctly. (Thanks ImpEGamer)
     Updated 64 bit Imports for v520.
