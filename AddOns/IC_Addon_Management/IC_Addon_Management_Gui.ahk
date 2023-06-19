@@ -1,5 +1,3 @@
-Gui, AddonManagement:New
-
 Gui, AddonManagement:New , ,Addon Management
 GUIFunctions.LoadTheme("AddonManagement")
 Gui, AddonManagement:+Resize -MaximizeBox
@@ -13,7 +11,7 @@ GUIFunctions.UseThemeListViewBackgroundColor("AddonsAvailableID")
 AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 GUIFunctions.LVM_CalculateSize(hLV,-1,AddonLVWidth,AddonLVHeight)
 AddonLVWidth+=4
-AddonLVHeight+=4
+AddonLVHeight+=30
 ControlMove,,,,,AddonLVHeight,ahk_id %hLV%
 
 
