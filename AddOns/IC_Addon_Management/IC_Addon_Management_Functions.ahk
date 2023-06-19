@@ -301,13 +301,13 @@ Class AddonManagement
         if(!FileExist(this.AddonManagementConfigFile)) 
         {
             ; Here we load the Addons that are required on first startup
-            this.EnabledAddons:=Object(Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1."))
-            g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, EnabledAddons)
+            this.EnabledAddons := Object("Enabled Addons",[Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")])
+            g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, this.EnabledAddons)
         }
         ; enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
         this.AddonOrder := AddonSettings["Addon Order"]
-        if(AddonSettings["Enabled Addons"] == "")
+        if(AddonSettings["Enabled Addons"] == "" AND this.EnabledAddons != [])
             AddonSettings["Enabled Addons"] := this.UpdateFromOldSettings(AddonSettings)
         this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
         for k, v in this.EnabledAddons
