@@ -455,8 +455,10 @@ Class AddonManagement
     ; ------------------------------------------------------------
     GenerateListViewContent(GuiWindowName, ListViewName)
     {
-        Gui, %GuiWindowName%:ListView, %ListViewName%
-        LV_Delete()
+        oldGUI := A_DefaultGui
+        Gui, %GuiWindowName%:Default
+        Gui, %GuiWindowName%:ListView, ahk_id %ListViewName%
+        test := LV_Delete()
         for k,v in this.Addons 
         {
             IsEnabled := v["Enabled"] ? "yes" : "no"
@@ -466,6 +468,7 @@ Class AddonManagement
         {
             LV_ModifyCol(A_Index, "AutoHdr")
         }
+        Gui, %oldGUI%:Default
     }
     ; ------------------------------------------------------------
     ;   

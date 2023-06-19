@@ -23,10 +23,9 @@ GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUICli
 GUIFunctions.UseThemeBackgroundColor()
 
 AddonOpenGuiClicked(){
-	;AddonManagement.OpenDefaultGui()
 	AddonManagement.NeedSave := 0
-    AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 	Gui, AddonManagement:Show
+    AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 	GUIFunctions.UseThemeTitleBar("AddonManagement")
 }
 
