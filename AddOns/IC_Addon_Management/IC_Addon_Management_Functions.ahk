@@ -307,8 +307,12 @@ Class AddonManagement
         ; enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
         this.AddonOrder := AddonSettings["Addon Order"]
+        ; Update old settings if needed.
         if(AddonSettings["Enabled Addons"] == "" AND this.EnabledAddons != [])
-            AddonSettings["Enabled Addons"] := this.UpdateFromOldSettings(AddonSettings)
+        {
+            this.UpdateFromOldSettings(AddonSettings)
+            forceWrite := true
+        }
         this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
         for k, v in this.EnabledAddons
             this.EnableAddon(v.Name,v.Version)
@@ -323,8 +327,14 @@ Class AddonManagement
         ; Order addons
         this.OrderAddons()
 
-        if(!FileExist(this.GeneratedAddonIncludeFile))
+        if (!FileExist(this.GeneratedAddonIncludeFile) or forceWrite)
             this.GenerateIncludeFile() 
+        if (forceWrite)
+        {
+            MsgBox, 36, Restart, Your settings file has been updated. `nIC Script Hub may need to reload. `nDo you wish to reload now?
+            IfMsgBox, Yes
+                Reload
+        }
     }
     ; ------------------------------------------------------------
     ;   
@@ -332,6 +342,8 @@ Class AddonManagement
     ;               Converts old settings file to new one.
     ;   Parameters: AddonSettings: Configuration from old settings file.
     ;       Return: newSettings: New configuration file.
+    ; Side Effects: this.EnabledAddons will be updated.
+    ;               Configuration file will be written.
     ;
     ; ------------------------------------------------------------
     UpdateFromOldSettings(AddonSettings)
@@ -340,6 +352,9 @@ Class AddonManagement
         for k,v in AddonSettings
             if(k != "Addon Order")
                 newSettings.Push(Object("Name",k,"Version",v.Version))
+        this.EnabledAddons := newSettings
+        fileSettings := Object("Addon Order", AddonSettings["Addon Order"], "Enabled Addons", newSettings)
+        g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, fileSettings)
         return newSettings
     }
     ; ------------------------------------------------------------
