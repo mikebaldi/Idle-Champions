@@ -43,7 +43,6 @@ Class AddonManagement
         Addon := new Addon(AddonSettings)
         this.Addons.Push(Addon)
     }
-
     ; ------------------------------------------------------------
     ;   
     ;   Function: BuildToolTips()
@@ -162,7 +161,6 @@ Class AddonManagement
     ; ------------------------------------------------------------
     CheckDependencyOrder(AddonNumber,PositionWanted)
     {
-
         if (AddonNumber > PositionWanted)
         {
             ; moving Up
@@ -289,9 +287,14 @@ Class AddonManagement
             this.NeedSave:=1
         return 0
     }
-
-    ; Get the parameters of the addons to load
-    ; Parameters: none
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: GetAddonManagementSettings()
+    ;               Reads settings from configuration file if available.
+    ;   Parameters: None
+    ;       Return: None
+    ;
+    ; ------------------------------------------------------------
     GetAddonManagementSettings()
     {
         ; If the file does not exist we should create it with the default settings
@@ -323,7 +326,14 @@ Class AddonManagement
         if(!FileExist(this.GeneratedAddonIncludeFile))
             this.GenerateIncludeFile() 
     }
-
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: UpdateFromOldSettings(AddonSettings)
+    ;               Converts old settings file to new one.
+    ;   Parameters: AddonSettings: Configuration from old settings file.
+    ;       Return: newSettings: New configuration file.
+    ;
+    ; ------------------------------------------------------------
     UpdateFromOldSettings(AddonSettings)
     {
         newSettings := []
@@ -332,7 +342,14 @@ Class AddonManagement
                 newSettings.Push(Object("Name",k,"Version",v.Version))
         return newSettings
     }
-
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: OrderAddons()
+    ;               Updates Addons class variable based on AddonOrder
+    ;   Parameters: None
+    ;       Return: None
+    ;
+    ; ------------------------------------------------------------
     OrderAddons()
     {
         for k, v in this.AddonOrder 
@@ -344,7 +361,6 @@ Class AddonManagement
                 this.SwitchOrderAddons(addonIndex,k)
         }
     }
-
     ; ------------------------------------------------------------
     ;
     ;   Function: SwitchOrderAddons(AddonNumber,Position)
@@ -403,7 +419,6 @@ Class AddonManagement
             }
         }
     }
-
     ; ------------------------------------------------------------
     ;
     ;   Function: GenerateIncludeFile()
@@ -432,7 +447,6 @@ Class AddonManagement
             FileAppend, %generatedText%, %IncludeFile%
         }
     }
-
     ; ------------------------------------------------------------
     ;
     ;   Function: GenerateListViewContent(GuiWindowName, ListViewName)
@@ -456,7 +470,14 @@ Class AddonManagement
             LV_ModifyCol(A_Index, "AutoHdr")
         }
     }
-
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: ShowAddonIfno(AddonNumber)
+    ;               Shows a GUI window with addon details listed
+    ;   Parameters: AddonNumber: The index of the addon in Addons class member
+    ;       Return: None
+    ;
+    ; ------------------------------------------------------------
     ShowAddonInfo(AddonNumber)
     {
         Addon := this.Addons[AddonNumber]
@@ -474,7 +495,14 @@ Class AddonManagement
         Gui, AddonInfo:Show
         GUIFunctions.UseThemeTitleBar("AddonInfo")
     }
-
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: WriteAddonManagementSettings()
+    ;               Outputs configuration settings to file.
+    ;   Parameters: None
+    ;       Return: None
+    ;
+    ; ------------------------------------------------------------
     WriteAddonManagementSettings()
     {
         ; Get the order of the Addons
@@ -500,8 +528,16 @@ Class AddonManagement
         IfMsgBox, Yes
             Reload
     }
-
-    ; Finds the matching addon or the first instance of an addon that matches the name and minimum version.
+    ; ------------------------------------------------------------
+    ;   
+    ;     Function: GetAddon(Name, Version, i)
+    ;               Finds the matching addon or the first instance of an addon that matches the name and minimum version.
+    ;   Parameters: Name: Target addon name
+    ;            Version: Target addon version
+    ;                  i: Output variable containing index of addon if found
+    ;       Return: None
+    ;
+    ; ------------------------------------------------------------
     GetAddon(Name, Version, byref i := "")
     {
         ; try to find exact match
