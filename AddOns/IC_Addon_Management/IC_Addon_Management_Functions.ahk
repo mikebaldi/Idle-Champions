@@ -524,9 +524,6 @@ Class AddonManagement
         ThingsToWrite["Addon Order"] := Order
         g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, ThingsToWrite)
         this.GenerateIncludeFile()
-        MsgBox, 36, Restart, To activate changes to enabled/disabled addons you need to restart the script.`nDo you want to do this now?
-        IfMsgBox, Yes
-            Reload
     }
     ; ------------------------------------------------------------
     ;   

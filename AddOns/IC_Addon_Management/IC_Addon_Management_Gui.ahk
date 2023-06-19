@@ -39,7 +39,6 @@ AddonManagementGuiClose(){
 			AddonManagement.GetAddonManagementSettings()
 			AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 		}
-
 	}
 }
 
@@ -106,4 +105,8 @@ AddonManagementInfoClicked(){
 
 AddonManagementSaveClicked(){
 	AddonManagement.WriteAddonManagementSettings()
+	AddonManagement.NeedSave := 0
+	MsgBox, 36, Restart, To activate changes to enabled/disabled addons you need to restart the script.`nDo you want to do this now?
+	IfMsgBox, Yes
+		Reload
 }
