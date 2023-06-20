@@ -1211,7 +1211,7 @@ class IC_SharedFunctions_Class
             txtCheck .= "`n3. Check the correct memory file is being used. `n    Current version: " . this.Memory.GameManager.GetVersion()
             txtcheck .= "`n4. If IC is running with admin privileges, then the script will also require admin privileges."
             if (_MemoryManager.is64bit)
-                txtcheck .= "`n5. Check AHK is 64bit."
+                txtcheck .= "`n5. Check AHK is 64-bit. (Currently " . (A_PtrSize = 4 ? 32 : 64) . "-bit)"
             MsgBox, 5,, % txtCheck
 
             IfMsgBox, Retry
