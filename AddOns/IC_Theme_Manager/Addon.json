@@ -5,5 +5,10 @@
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_Theme_Manager",
     "Info" : "Adds the Theme Manager accessible through a button on BrivGemFarm.",
-    "Dependencies" : []
+    "Dependencies" : [
+        {
+            "Name":"Briv Gem Farm",
+            "Version":"v1.3.0"
+        }
+    ]
 }
