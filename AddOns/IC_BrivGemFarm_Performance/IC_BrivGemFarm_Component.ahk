@@ -51,12 +51,19 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zo
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
 Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck x+10 gBrivAutoDetectStacks_Click, Auto Detect
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck Hidden x+10, Worst Case
+Gui, ICScriptHub:Font, underline 
+GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
+Gui, ICScriptHub:Add, Text, x+5 gBriv_Visit_Byteglow_Speed w150, % "Calculate (byteglow)"
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Font, norm
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
+GuiControlGet, xyVal, ICScriptHub:Pos, BrivAutoCalcStatsCheck
+xyValY += 12
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck x%xyValX% y%xyValY% Hidden, Worst Case
 
 IC_BrivGemFarm_Component.ProfilesList := {}
 IC_BrivGemFarm_Component.ProfileLastSelected := "Default"
@@ -83,6 +90,12 @@ Briv_Load_Profile_Clicked(controlID)
     Gui, Submit, NoHide
     global BrivDropDownSettings
     IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings)
+}
+
+Briv_Visit_Byteglow_Speed()
+{
+    bytelgowURL := "https://ic.byteglow.com/speed"
+    Run % bytelgowURL 
 }
 
 Briv_Save_Profile_Clicked()
