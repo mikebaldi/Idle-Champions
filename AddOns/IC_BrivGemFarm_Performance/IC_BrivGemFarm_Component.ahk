@@ -94,8 +94,24 @@ Briv_Load_Profile_Clicked(controlID)
 
 Briv_Visit_Byteglow_Speed()
 {
-    bytelgowURL := "https://ic.byteglow.com/speed"
-    Run % bytelgowURL 
+    BrivID := 58
+    BrivJumpSlot := 4
+    byteglow := new Byteglow_ServerCalls_Class 
+
+    gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
+    ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
+    enchant := g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot)
+    rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
+    isMetalBorn := g_SF.IsBrivMetalborn()
+    modronReset := g_SF.Memory.GetModronResetArea()
+
+    response := byteGlow.CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset)
+    if(response != "" AND response.error == "")
+        GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.avg
+    else
+         IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
+    ; byteglowURL := "http://ic.byteglow.com/speed"
+    ; Run % byteglowURL 
 }
 
 Briv_Save_Profile_Clicked()
