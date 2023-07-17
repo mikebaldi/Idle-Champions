@@ -536,6 +536,14 @@ class IC_BrivGemFarm_Class
             Sleep, 124
             ElapsedTime := A_TickCount - StartTime
         }
+        if ( ElapsedTime >= maxOnlineStackTime)
+        {
+            this.RestartAdventure( "Online stacking took too long (> " . (maxOnlineStackTime / 1000) . "s) - z[" . g_SF.Memory.ReadCurrentZone() . "].")
+            this.SafetyCheck()
+            g_PreviousZoneStartTime := A_TickCount
+            return
+        }
+        g_PreviousZoneStartTime := A_TickCount
         g_SF.FallBackFromZone()
         return
     }
