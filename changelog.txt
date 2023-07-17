@@ -1,5 +1,5 @@
 July 19, 2023
-    Added pointers for Steam v521. 
+    Updated 64 bit Imports for v525.
     Added an attempt to stop Briv Gem Farm in a stable state when pressing stop the stop button.
     Added a conflict check to UpdateClassFunctions.
     Fixed a bug where online stacking could trigger game stuck even when it completed successfully.
