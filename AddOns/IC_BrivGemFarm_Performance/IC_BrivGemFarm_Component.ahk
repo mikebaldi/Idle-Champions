@@ -108,7 +108,7 @@ Briv_Visit_Byteglow_Speed()
     ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
     if (gild == "" OR ilvls == "")
     {
-        IC_BrivGemFarm_Component.UpdateStatus("Error reading game memory.")
+        IC_BrivGemFarm_Component.UpdateStatus("Error reading Briv item data from game memory.")
         return
     }
     enchant := g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot)
