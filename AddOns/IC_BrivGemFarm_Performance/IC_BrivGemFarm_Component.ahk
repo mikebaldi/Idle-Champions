@@ -94,22 +94,46 @@ Briv_Load_Profile_Clicked(controlID)
 
 Briv_Visit_Byteglow_Speed()
 {
+    if (!WinExist("ahk_exe " . g_UserSettings[ "ExeName" ]))
+    {
+        IC_BrivGemFarm_Component.UpdateStatus("Game not running.")
+        return
+    }
     BrivID := 58
     BrivJumpSlot := 4
     byteglow := new Byteglow_ServerCalls_Class 
 
     gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
     ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
+    if (gild == "" OR ilvls == "")
+    {
+        IC_BrivGemFarm_Component.UpdateStatus("Error reading game memory.")
+        return
+    }
     enchant := g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot)
     rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
     isMetalBorn := g_SF.IsBrivMetalborn()
     modronReset := g_SF.Memory.GetModronResetArea()
+    if (modronReset == "")
+    {
+        IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron.")
+        return
+    }
 
     response := byteGlow.CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset)
-    if(response != "" AND response.error == "")
+    if(response != "" AND response.Message != "")
+    {
+        MsgBox, % "Error - " . response.Message
+        IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
+    }
+    else if(response != "" AND response.error == "")
+    {
         GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.avg
+    }
     else
+    {
          IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
+    }
     ; byteglowURL := "http://ic.byteglow.com/speed"
     ; Run % byteglowURL 
 }
