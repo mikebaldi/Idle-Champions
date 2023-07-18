@@ -9,7 +9,9 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [Auto Convert Favor](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_ConvertBlessings_Mini_Extra) by antilectual  
 *[Auto Progress](https://github.com/Pneumatus/IC-Addons/tree/main/IC_AutoProgress_Extra) by Ismo  
 [Azaka Farm](https://github.com/mikebaldi/IC_Addons/tree/main/IC_Azaka_Extra) by mikebaldi  
+*[AzakaQWE](https://github.com/Fedvee/IC-addons/tree/main/IC_AzakaQWE_Extra) by Fedv  
 [Better Azaka](https://github.com/Pneumatus/IC-Addons/tree/main/IC_BetterAzaka_Extra) by Ismo  
+*[BrivGemFarm BrivFeatSwap](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_BrivFeatSwap_Extra) by ImpEGamer  
 *[BrivGemFarm LevelUp](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_LevelUp_Extra) by ImpEGamer  
 [Close Welcome Back](https://github.com/Pneumatus/IC-Addons/tree/main/IC_BrivGemFarm_CloseWelcomeBack_Extra) by Ismo  
 [Move Game Window](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MoveGameWindow_Mini_Extra) by antilectual  
@@ -17,7 +19,7 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra) by mikebaldi  
 [No Modron Adventuring](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by antilectual  
 [ProcessAffinity](https://github.com/imp444/IC_Addons/tree/main/IC_ProcessAffinity_Extra) by ImpEGamer  
-*[Shandie Dash Wait after Stacking](https://github.com/JonBallinger/IC_ShandieDashWait) by Jon Ballinger  
+[Shandie Dash Wait after Stacking](https://github.com/JonBallinger/IC_ShandieDashWait) by Jon Ballinger  
 [Spurt Farmer](https://github.com/Pneumatus/IC-Addons/tree/main/IC_SpurtFarmer_Extra) by Ismo  
 
 *NEW
