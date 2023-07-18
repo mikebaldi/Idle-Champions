@@ -103,6 +103,7 @@ Briv_Visit_Byteglow_Speed()
     BrivJumpSlot := 4
     byteglow := new Byteglow_ServerCalls_Class 
 
+    g_SF.Memory.OpenProcessReader()
     gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
     ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
     if (gild == "" OR ilvls == "")
@@ -129,6 +130,7 @@ Briv_Visit_Byteglow_Speed()
     else if(response != "" AND response.error == "")
     {
         GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.avg
+         IC_BrivGemFarm_Component.UpdateStatus("Target haste stacks updated.")
     }
     else
     {
