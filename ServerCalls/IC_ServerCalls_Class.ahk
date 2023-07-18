@@ -312,3 +312,42 @@ class IC_ServerCalls_Class
     }
     #include  *i IC_ServerCalls_Class_Extra.ahk
 }
+
+class Byteglow_ServerCalls_Class
+{
+    webRoot := "https://ic.byteglow.com/api/"
+    timeoutVal := 60000
+    ServerCall( callName, parameters, timeout := "" ) 
+    {
+
+        response := ""
+        URLtoCall := this.webRoot . callName . "?" . parameters
+        timeout := timeout ? timeout : this.timeoutVal
+        WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
+        WR.SetTimeouts( 0, 45000, 30000, timeout )
+        Try {
+            WR.Open( "POST", URLtoCall, true )
+            WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
+            WR.Send()
+            WR.WaitForResponse( -1 )
+            data := WR.ResponseText
+            Try
+            {
+                response := JSON.parse(data)
+            }
+            ;catch "Failed to fetch valid JSON response from server."
+        }
+        catch exception {
+			return exception
+		}
+        return response
+    }
+
+    ; https://ic.byteglow.com/api/briv-stacks?gild=2&enchant=60009&rarity=4&metalborn=1&target=2000
+    ; https://ic.byteglow.com/api/briv-stacks?skips=11&metalborn=1&target=2000
+    CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset) 
+    {
+        params := "gild=" . gild . "&enchant=" . ilvls . "&rarity=" . rarity . "&metalborn=" . isMetalborn . "&target=" . modronReset
+        return this.ServerCall( "briv-stacks", params)
+    }    
+}
