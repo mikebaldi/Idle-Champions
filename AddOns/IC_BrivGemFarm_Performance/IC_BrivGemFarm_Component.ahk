@@ -106,13 +106,20 @@ Briv_Visit_Byteglow_Speed()
     g_SF.Memory.OpenProcessReader()
     gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
     ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
-    if (gild == "" OR ilvls == "")
-    {
-        IC_BrivGemFarm_Component.UpdateStatus("Error reading Briv item data from game memory.")
-        return
-    }
-    enchant := g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot)
     rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
+    if (ilvls == "" OR rarity == "" OR gild == "")
+    {
+        if(ilvls != "")
+        {
+            rarity := 1
+            gild := 0
+        }
+        else
+        {
+            IC_BrivGemFarm_Component.UpdateStatus("Error reading Briv item data from game memory.")
+            return
+        }
+    }
     isMetalBorn := g_SF.IsBrivMetalborn()
     modronReset := g_SF.Memory.GetModronResetArea()
     if (modronReset == "")
@@ -120,7 +127,12 @@ Briv_Visit_Byteglow_Speed()
         IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron.")
         return
     }
-
+    else if (modronReset == -1)
+    {
+        IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron. (-1)")
+        return
+    }
+    isMetalBorn := isMetalBorn == "" ? 0 : isMetalBorn
     response := byteGlow.CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset)
     if(response != "" AND response.Message != "")
     {
