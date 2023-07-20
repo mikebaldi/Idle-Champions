@@ -18,6 +18,7 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [Memory Updater](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MemoryUpdater_Extra) by antilectual  
 [Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra) by mikebaldi  
 [No Modron Adventuring](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by antilectual  
+*[No Modron Adventuring Fork](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by Emmote  
 [ProcessAffinity](https://github.com/imp444/IC_Addons/tree/main/IC_ProcessAffinity_Extra) by ImpEGamer  
 [Shandie Dash Wait after Stacking](https://github.com/JonBallinger/IC_ShandieDashWait) by Jon Ballinger  
 [Spurt Farmer](https://github.com/Pneumatus/IC-Addons/tree/main/IC_SpurtFarmer_Extra) by Ismo  
