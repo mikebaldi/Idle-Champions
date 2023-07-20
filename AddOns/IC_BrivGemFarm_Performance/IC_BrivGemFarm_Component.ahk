@@ -25,7 +25,9 @@ Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck x15 y+5, Disable Dash Wait
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+5 w50, % g_BrivUserSettings[ "StackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[ "MinStackZone" ]
-Gui, ICScriptHub:Add, Edit, vNewTargetStacks x15 y+10 w50, % g_BrivUserSettings[ "TargetStacks" ]
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, GroupBox, Section w400 h70, Target haste stacks for next run
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, Text, x15 y+20, Chest options during a game restart for stacking.
@@ -48,15 +50,31 @@ GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
 xyValX += 55
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
+GuiControlGet, xyVal, ICScriptHub:Pos, BrivAutoCalcStatsCheck
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Target Haste stacks for next run
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck x+10 gBrivAutoDetectStacks_Click, Auto Detect
-Gui, ICScriptHub:Font, underline 
+GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
+xyValX += 55
+xyValY += 5
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
+
+; ------- Haste Stacks Group --------------
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+Gui, ICScriptHub:Add, Edit, vNewTargetStacks xs+10 ys+20 w50, % g_BrivUserSettings[ "TargetStacks" ]
+;GUIFunctions.UseThemeTextColor("DefaultTextColor")
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, Button, x+5 gBriv_Visit_Byteglow_Speed_Avg_Stacks, % "Detect Average"
+Gui, ICScriptHub:Add, Button, x+3 gBriv_Visit_Byteglow_Speed_Max_Stacks, % "Detect Max"
+Gui, ICScriptHub:Add, Text, x+5 yp+2, % "(Provided by "
 GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
-Gui, ICScriptHub:Add, Text, x+5 gBriv_Visit_Byteglow_Speed w150, % "Calculate (byteglow)"
+Gui, ICScriptHub:Font, underline 
+Gui, ICScriptHub:Add, Text, x+2 gBriv_Visit_Byteglow_Speed_Link, % "byteglow"
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Font, norm
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
+Gui, ICScriptHub:Add, Text, x+1 gBriv_Visit_Byteglow_Speed_Link, % ")"
+;Gui, ICScriptHub:Add, Text, x+10 yp+5, Target Haste stacks for next run
+Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck xs+10 y+10 gBrivAutoDetectStacks_Click, Auto Detect (Ignores detected/byteglow)
+; ------- ------------------- --------------
+
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
@@ -92,64 +110,20 @@ Briv_Load_Profile_Clicked(controlID)
     IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(BrivDropDownSettings)
 }
 
-Briv_Visit_Byteglow_Speed()
+Briv_Visit_Byteglow_Speed_Avg_Stacks()
 {
-    if (!WinExist("ahk_exe " . g_UserSettings[ "ExeName" ]))
-    {
-        IC_BrivGemFarm_Component.UpdateStatus("Game not running.")
-        return
-    }
-    BrivID := 58
-    BrivJumpSlot := 4
-    byteglow := new Byteglow_ServerCalls_Class 
+    IC_BrivGemFarm_Component.Briv_Visit_Byteglow_Speed("avg")
+}
 
-    g_SF.Memory.OpenProcessReader()
-    gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
-    ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
-    rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
-    if (ilvls == "" OR rarity == "" OR gild == "")
-    {
-        if(ilvls != "")
-        {
-            rarity := 1
-            gild := 0
-        }
-        else
-        {
-            IC_BrivGemFarm_Component.UpdateStatus("Error reading Briv item data from game memory.")
-            return
-        }
-    }
-    isMetalBorn := g_SF.IsBrivMetalborn()
-    modronReset := g_SF.Memory.GetModronResetArea()
-    if (modronReset == "")
-    {
-        IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron.")
-        return
-    }
-    else if (modronReset == -1)
-    {
-        IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron. (-1)")
-        return
-    }
-    isMetalBorn := isMetalBorn == "" ? 0 : isMetalBorn
-    response := byteGlow.CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset)
-    if(response != "" AND response.Message != "")
-    {
-        MsgBox, % "Error - " . response.Message
-        IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
-    }
-    else if(response != "" AND response.error == "")
-    {
-        GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.avg
-         IC_BrivGemFarm_Component.UpdateStatus("Target haste stacks updated.")
-    }
-    else
-    {
-         IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
-    }
-    ; byteglowURL := "http://ic.byteglow.com/speed"
-    ; Run % byteglowURL 
+Briv_Visit_Byteglow_Speed_Max_Stacks()
+{
+    IC_BrivGemFarm_Component.Briv_Visit_Byteglow_Speed("max")
+}
+
+Briv_Visit_Byteglow_Speed_Link()
+{
+    byteglowURL := "http://ic.byteglow.com/speed"
+    Run % byteglowURL 
 }
 
 Briv_Save_Profile_Clicked()
@@ -524,6 +498,72 @@ class IC_BrivGemFarm_Component
     {
         GuiControl, ICScriptHub:, gBriv_Button_Status, % msg
         SetTimer, ClearBrivGemFarmStatusMessage,-3000
+    }
+
+    
+    Briv_Visit_Byteglow_Speed(speedType := "avg")
+    {
+        if (!WinExist("ahk_exe " . g_UserSettings[ "ExeName" ]))
+        {
+            IC_BrivGemFarm_Component.UpdateStatus("Game not running.")
+            return
+        }
+        BrivID := 58
+        BrivJumpSlot := 4
+        byteglow := new Byteglow_ServerCalls_Class 
+
+        g_SF.Memory.OpenProcessReader()
+        gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
+        ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
+        rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
+        if (ilvls == "" OR rarity == "" OR gild == "")
+        {
+            if(ilvls != "")
+            {
+                rarity := 1
+                gild := 0
+            }
+            else
+            {
+                IC_BrivGemFarm_Component.UpdateStatus("Error reading Briv item data from game memory.")
+                return
+            }
+        }
+        isMetalBorn := g_SF.IsBrivMetalborn()
+        modronReset := g_SF.Memory.GetModronResetArea()
+        if (modronReset == "")
+        {
+            IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron.")
+            return
+        }
+        else if (modronReset == -1)
+        {
+            IC_BrivGemFarm_Component.UpdateStatus("Error reading reset area from Modron. (-1)")
+            return
+        }
+        isMetalBorn := isMetalBorn == "" ? 0 : isMetalBorn
+        response := byteGlow.CallBrivStacks(gild, ilvls, rarity, isMetalborn, modronReset)
+        if(response != "" AND response.Message != "")
+        {
+            MsgBox, % "Error - " . response.Message
+            IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
+        }
+        else if(response != "" AND response.error == "")
+        {
+            if(speedType == "avg")
+            {
+                GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.avg
+            }
+            else if (speedType == "max")
+            {
+                GuiControl, ICScriptHub:, NewTargetStacks, % response.stats.stacks.max
+            }
+            IC_BrivGemFarm_Component.UpdateStatus("Target haste stacks updated.")
+        }
+        else
+        {
+            IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
+        }
     }
 }
 
