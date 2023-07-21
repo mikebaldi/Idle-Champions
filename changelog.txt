@@ -1,3 +1,12 @@
+
+July 21, 2023
+    Added memory functions for reading champion gear data.
+    Added buttons to BrivGemFarm to use the byteglow API to calculate Average and Maximum stacks.
+    Updated Addons.md.
+    Fixed a bug in conflict detection for the class updater where a base class did not know its name.
+    Changed default settings for AutoCalculateBrivStacks, TargetStacks, and RestoreLastWindowOnGameOpen.
+    Updated 64 bit Imports for v526.
+
 July 19, 2023
     Updated 64 bit Imports for v525.
     Added an attempt to stop Briv Gem Farm in a stable state when pressing stop the stop button.
