@@ -738,43 +738,31 @@ class IC_MemoryFunctions_Class
     
     ReadHeroLootID(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].ID.Read()
     }
 
     ReadHeroLootHeroID(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].HeroID.Read()
     }
 
     ReadHeroLootName(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Name.Read()
     }
 
     ReadHeroLootEnchant(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double")
     }
 
     ReadHeroLootRarityValue(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].rarityValue.Read()
     }
 
     ReadHeroLootGild(champID := 58, slot := 4)
     {
-        champID := 58
-        slot := 4
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].gild.Read()
     }
 
