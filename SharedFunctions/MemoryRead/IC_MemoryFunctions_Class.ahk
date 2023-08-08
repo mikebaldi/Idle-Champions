@@ -766,6 +766,12 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].gild.Read()
     }
 
+    ReadBrivSlot4ilvl()
+    {
+        champID := 58, slot := 4
+        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double"))
+    }
+
     ; Returns the formation array of the formation used in the currently active modron.
     GetActiveModronFormation()
     {
