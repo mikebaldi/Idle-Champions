@@ -34,6 +34,8 @@ Gui, ICScriptHub:Add, Text, x15 y+5, IsBrivMetalborn:
 Gui, ICScriptHub:Add, Text, vIsBrivMetalbornID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, Stacks from previous stacking: 
 Gui, ICScriptHub:Add, Text, vPreviousStackingStacksID x+2 w300,
+Gui, ICScriptHub:Add, Text, x15 y+5, Briv's Slot 4 Item Level: 
+Gui, ICScriptHub:Add, Text, vBrivSlot4IlvlID x+2 w300,
 
 class ReadMemoryFunctionsExtended
 {
@@ -62,6 +64,8 @@ class ReadMemoryFunctionsExtended
             GuiControl, ICScriptHub:, CalculateMaxZoneID, % Format("{:0.0f}", g_SF.CalculateMaxZone(1)) . " - " . Format("{:0.0f}", g_SF.CalculateMaxZone(2)) . " (" . Format("{:0.0f}", g_SF.CalculateMaxZone(0)) . ")"
             GuiControl, ICScriptHub:, IsBrivMetalbornID, % g_SF.IsBrivMetalborn()
             GuiControl, ICScriptHub:, BrivCalculatedTargetStacksID, % g_SF.CalculateBrivStacksToReachNextModronResetZone() - g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1)
+            GuiControl, ICScriptHub:, BrivSlot4IlvlID, % g_SF.Memory.ReadBrivSlot4ilvl()
+            
             Try 
             {
                 SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
