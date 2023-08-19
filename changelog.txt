@@ -1,3 +1,6 @@
+August 19, 2023
+   Updated 64 bit Imports for v530.
+
 August 8, 2023
     Updated 64 bit Imports for v527.
     Added function to show Briv's slot 4 item level.
