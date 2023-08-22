@@ -14,6 +14,7 @@
 */
 
 ; json library must be included if this file is used outside of Script Hub
+#include %A_LineFile%\..\..\SharedFunctions\json.ahk
 
 class IC_ServerCalls_Class
 {
@@ -58,7 +59,7 @@ class IC_ServerCalls_Class
     ;Various server call functions that should be pretty obvious.
     ;============================================================
     ;Except this one, it is used internally and shouldn't be called directly.
-    ServerCall( callName, parameters, timeout := "" ) 
+    ServerCall( callName, parameters, timeout := "", retryNum := 0) 
     {
         response := ""
         URLtoCall := this.webRoot . "post.php?call=" . callName . parameters
@@ -80,7 +81,10 @@ class IC_ServerCalls_Class
                 response := JSON.parse(data)
                 if(!(response.switch_play_server == ""))
                 {
-                    return this.ServerCall( callName, parameters, timeoutVal ) 
+                    retryNum += 1
+                    this.WebRoot := response.switch_play_server
+                    if(retryNum <= 3) 
+                        return this.ServerCall( callName, parameters, timeoutVal, retryNum )
                 }
             }
             ;catch "Failed to fetch valid JSON response from server."
@@ -196,7 +200,7 @@ class IC_ServerCalls_Class
     }
     
     ; Special server call spcifically for use with saves. saveBody must be encoded before using this call.
-    ServerCallSave( saveBody ) 
+    ServerCallSave( saveBody, retryNum := 0 ) 
     {
         response := ""
         URLtoCall := this.webroot . "post.php?call=saveuserdetails&"
@@ -221,7 +225,10 @@ class IC_ServerCalls_Class
                 response := JSON.parse(data)
                 if(!(response.switch_play_server == ""))
                 {
-                    return this.ServerCallSave( saveBody ) 
+                    retryNum += 1
+                    this.WebRoot := response.switch_play_server
+                    if(retryNum <= 3) 
+                        return this.ServerCallSave( saveBody, retryNum ) 
                 }
             }
             ;catch "Failed to fetch valid JSON response from server."
