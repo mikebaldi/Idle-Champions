@@ -42,7 +42,7 @@ class IC_ServerCalls_Class
 
     GetVersion()
     {
-        return "v2.4.1, 2023-06-14"
+        return "v2.4.2, 2023-08-22"
     }
 
     UpdateDummyData()
