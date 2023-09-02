@@ -11,7 +11,8 @@ Gui, InstallGUI:New
 GUIFunctions.LoadTheme("InstallGUI")
 GUIFunctions.UseThemeTextColor()
 GUIFunctions.UseThemeBackgroundColor()
-Gui, InstallGUI:Add, Text, x15 y+10 w250, Launch Command [Used to start the game]
+Gui, InstallGUI:Add, Text, x15 y+10 w240, Launch Command [Used to start the game]
+Gui, InstallGUI:Add, Checkbox, x+17 vICGameLocationPathIsEGS w50, EGS
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, InstallGUI:Add, Edit, vNewInstallPath x15 y+5 w300 r3, % g_UserSettings[ "InstallPath" ]
 GUIFunctions.UseThemeTextColor()
@@ -88,10 +89,19 @@ class IC_GameLocationSettings_Component
 
     CopyExePath_Clicked()
     {
-        hWnd := WinExist("ahk_exe IdleDragons.exe")
-        if(!hWnd)
-            hWnd := WinExist("ahk_exe " . NewInstallExe )
-        WinGet, pPath, ProcessPath, % "ahk_id " hWnd
+        global ICGameLocationPathIsEGS
+        Gui, InstallGUI:Submit, NoHide
+        if(ICGameLocationPathIsEGS)
+        {
+            pPath := "explorer.exe ""com.epicgames.launcher://apps/7e508f543b05465abe3a935960eb70ac%3A48353a502e72433298f25827e03dbff0%3A40cb42e38c0b4a14a1bb133eb3291572?action=launch&silent=true"""
+        }
+        else
+        {
+            hWnd := WinExist("ahk_exe IdleDragons.exe")
+            if(!hWnd)
+                hWnd := WinExist("ahk_exe " . NewInstallExe )
+            WinGet, pPath, ProcessPath, % "ahk_id " hWnd
+        } 
         GuiControl, InstallGUI:, NewInstallPath, % pPath
         Gui, InstallGUI:Submit, NoHide
         Return
