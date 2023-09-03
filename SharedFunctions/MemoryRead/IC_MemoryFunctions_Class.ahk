@@ -843,10 +843,10 @@ class IC_MemoryFunctions_Class
     {
         modronSavesSlot := ""
         activeGameInstance := this.ReadActiveGameInstance()
-        moronSavesSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size.Read()
-        if(moronSavesSize <= 0 OR moronSavesSize > 20) ; sanity check, should be < 5 as of 2023-09-03
+        modronSavesSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size.Read()
+        if(modronSavesSize <= 0 OR modronSavesSize > 20) ; sanity check, should be < 5 as of 2023-09-03
             return ""
-        loop, %moronSavesSize%
+        loop, %modronSavesSize%
         {
             if (this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID.Read() == activeGameInstance)
             {
