@@ -15,14 +15,27 @@ class IC_MemoryPointer_Class
 
     __new(moduleOffset := 0, structureOffsets := 0)
     {
-        this.ModuleOffset := moduleOffset
+        this.ModuleOffset := moduleOffset == "" ? "" : moduleOffset + 0
+        ; Do math on strings created by json to make sure they are values, otherwise memory leaks can occur in memory reads.
+        if(structureOffsets.Count() > 0)
+        {
+            size := structureOffsets.Count()
+            loop, %size%
+            {
+                structureOffsets[A_Index] := structureOffsets[A_Index] + 0
+            }
+        }
+        else
+        {
+            structureOffsets := structureOffsets + 0
+        }
         this.StructureOffsets := structureOffsets
         this.Refresh()
     }
 
     GetVersion()
     {
-        return "v0.0.1, 2023-03-18"
+        return "v0.0.2, 2023-09-03"
     }
 
     Refresh()

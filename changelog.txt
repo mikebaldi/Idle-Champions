@@ -1,3 +1,8 @@
+September 3, 2023
+    Added sanity checks to memory functions that perform loops based on memory reads.
+    Updated Steam/EGS pointers for v533. (Sorry Kartridge/CNE users)
+    Fixed a bug that was causing a memory leak. (Thank you ImpEGamer for helping track it down)
+
 September 2, 2023
     Added an option to copy EGS launch code instead of game exe location in game location settings.
     Updated ServerCalls version number.

@@ -71,7 +71,8 @@ class IC_MemoryFunctions_Class
     ;Automatically selects offsets used depending on if process is 64bit or not (epic or steam)
     OpenProcessReader()
     {
-        _MemoryManager.exeName := g_userSettings[ "ExeName" ]
+        global g_UserSettings
+        _MemoryManager.exeName := g_UserSettings[ "ExeName" ]
         _MemoryManager.Refresh()
         if(_MemoryManager.handle == "")
             MsgBox, , , Could not read from exe. Try running as Admin. , 7

@@ -95,7 +95,7 @@ class GameObjectStructure
         {
             if key is number
             {
-                offset := this.CalculateOffset(key)
+                offset := this.CalculateOffset(key) + 0
                 collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
                 this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
             }
