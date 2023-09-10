@@ -115,7 +115,7 @@ class GameObjectStructure
         else if(this.ValueType == "HashSet")
         {
             ; TODO: Verify hashset has same offsets as lists
-            offset := this.CalculateOffset(key)
+            offset := this.CalculateOffset(key) + 0
             collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
@@ -274,7 +274,7 @@ class GameObjectStructure
             valueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
         ; val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
-        baseAddress := this.BasePtr.BaseAddress
+        baseAddress := this.BasePtr.BaseAddress ? this.BasePtr.BaseAddress + 0 : this.BasePtr.BaseAddress ; do math on non-null non-zero value to ensure number instead of string. Prevents memory leaks.
         if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
             offsets := this.FullOffsets.Clone()
