@@ -258,7 +258,7 @@ class GameObjectStructure
     {
         for k,v in currentObj
         {
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" and v.FullOffsets != "")
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "" AND k != "BasePtr")
             {
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
@@ -281,7 +281,7 @@ class GameObjectStructure
             offsets.Push(this.BasePtr.Is64Bit ? 0x14 : 0xC)
             var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, valueType, offsets*)
         }
-        else if (valueType == "List" or valueType == "Dict" or valueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
+        else if (valueType == "List" OR valueType == "Dict" OR valueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
         {
             var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }
