@@ -96,8 +96,9 @@ class ReadMemoryFunctionsExtended
     {
         size := g_SF.Memory.ReadDialogsListSize()
         i := 0
-        if size is integer
-            currencyString := "["
+        if(size > 50 OR size < 0) ; sanity check
+            return ""
+        currencyString := "["
         loop, %size%
         {
             value := g_SF.Memory.ReadConversionCurrencyBySlot(i)
@@ -114,8 +115,9 @@ class ReadMemoryFunctionsExtended
     {
         size := g_SF.Memory.ReadDialogsListSize()
         i := 0
-        if size is integer
-            dialogString := "["
+        if(size > 50 OR size < 0) ; sanity check
+            return ""
+        dialogString := "["
         loop, %size%
         {
             value := g_SF.Memory.ReadDialogNameBySlot(i)
@@ -132,8 +134,8 @@ class ReadMemoryFunctionsExtended
     {
         size := g_SF.Memory.ReadDialogsListSize()
         i := 0
-        if size is not integer
-            return
+        if(size > 50 OR size < 0) ; sanity check
+            return ""
         loop, %size%
         {
             value := g_SF.Memory.ReadForceConvertFavorBySlot(i)
