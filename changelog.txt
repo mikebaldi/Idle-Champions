@@ -1,3 +1,8 @@
+September 13, 2023
+    Fixed a memory leak/ui freeze bug. (Thanks Ismo/Arno for helping track it down)
+    Added more sanity tests for certain functions to prevent leaks or recursion crashes.
+    Added ActiveEffectKey for JimMagicalMysteryTourHandler to allow reading stacks.
+
 September 3, 2023
     Added sanity checks to memory functions that perform loops based on memory reads.
     Updated Steam/EGS pointers for v533. (Sorry Kartridge/CNE users)
