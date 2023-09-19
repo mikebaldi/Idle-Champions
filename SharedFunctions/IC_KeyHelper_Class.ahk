@@ -1,4 +1,6 @@
 ; Build a map of key inputs used by the script
+; KeyMap keys contains all basic keys built (e.g. "a", "b") as well as dictionaries of those keys (e.g. "{a}", "{b}")
+; GetKeyVK() built in function to get the virtual key. Value is formatted to hex for use in SendMessage calls
 class KeyHelper
 {
     BuildVirtualKeysMap()

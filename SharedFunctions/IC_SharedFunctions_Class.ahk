@@ -382,6 +382,33 @@ class IC_SharedFunctions_Class
         s - The keyboard inputs to be sent to Idle Champions. Single Character string, or array of characters.
         Returns: Nothing
     */
+    /*
+    Resources:
+    https://www.autohotkey.com/docs/v1/lib/PostMessage.htm
+    https://www.autohotkey.com/docs/v1/misc/SendMessageList.htm
+    https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendmessage
+    https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setfocus (ControlFocus == SetFocus)
+    
+    Expected:
+        SendMessage, MsgNumber , wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText, Timeout
+    Example:
+        SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
+    Breakdown:
+        SendMessage,
+                MsgNumber - (WM_KEYDOWN := 0x0100, WM_KEYUP := 0x0101),
+                wParam - ("`" = "0xC0", "a" = Format("0x{:X}", GetKeyVK("a")),
+                lParam - (0)
+                Control - ("") No specific control specified
+                WinTitle - (ahk_id 0x1234) where 0x1234 is the window handle of the window being sent keypress
+                WinText - ("") No Specific window text specified
+                ExcludeTitle - ("") No Exclusion title specified 
+                ExcludeText - ("") No Exclusion text specified
+                Timeout - (33) Value in ms to wait before "FAIL" thrown to ErrorLevel. Otherwise ErrorLevel 0 on success, 1 on failure from SendMessage.
+
+    Expected Input for Win32 API:                
+        LRESULT SendMessage(in] HWND   hWnd, [in] UINT   Msg, [in] WPARAM wParam, [in] LPARAM lParam);
+        HWND SetFocus([in, optional] HWND hWnd);
+    */
     DirectedInput(hold := 1, release := 1, s* )
     {
         Critical, On
@@ -409,7 +436,7 @@ class IC_SharedFunctions_Class
                     ;     TestVar[v] := 0
                     ; TestVar[v] += 1
                     key := g_KeyMap[v]
-                    SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
+                    SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyDown++
                     ;     PostMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,
@@ -420,7 +447,7 @@ class IC_SharedFunctions_Class
                 for k, v in values
                 {
                     key := g_KeyMap[v]
-                    SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,%timeout%
+                    SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyUp++
                     ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
@@ -436,12 +463,12 @@ class IC_SharedFunctions_Class
                 ; if TestVar[v] == ""
                 ;     TestVar[v] := 0
                 ; TestVar[v] += 1
-                SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,%timeout%
+                SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
                 if ErrorLevel
                     this.ErrorKeyDown++
             }
             if(release)
-                SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,%timeout%
+                SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,,,%timeout%
             if ErrorLevel
                 this.ErrorKeyUp++
             ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
