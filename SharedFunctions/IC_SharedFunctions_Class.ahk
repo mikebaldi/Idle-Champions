@@ -403,7 +403,7 @@ class IC_SharedFunctions_Class
                 WinText - ("") No Specific window text specified
                 ExcludeTitle - ("") No Exclusion title specified 
                 ExcludeText - ("") No Exclusion text specified
-                Timeout - (33) Value in ms to wait before "FAIL" thrown to ErrorLevel. Otherwise ErrorLevel 0 on success, 1 on failure from SendMessage.
+                Timeout - (5000) Value in ms to wait before "FAIL" thrown to ErrorLevel. Otherwise ErrorLevel 0 on success, 1 on failure from SendMessage.
 
     Expected Input for Win32 API:                
         LRESULT SendMessage(in] HWND   hWnd, [in] UINT   Msg, [in] WPARAM wParam, [in] LPARAM lParam);
