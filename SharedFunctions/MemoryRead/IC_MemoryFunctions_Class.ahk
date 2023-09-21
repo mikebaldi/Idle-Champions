@@ -1085,7 +1085,11 @@ class IC_MemoryFunctions_Class
             return champID - 1
         if(champID == 107)
             return ""
-        return champID - 2
+        if(champID < 135)
+            return champID - 2
+        if(champID == 135)
+            return ""            
+        return champID - 3
     }
 
     ; Builds this.ChestIndexByID from memory values.
