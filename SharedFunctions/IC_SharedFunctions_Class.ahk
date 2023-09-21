@@ -417,7 +417,7 @@ class IC_SharedFunctions_Class
         ; {
         ;     TestVar[k] := v
         ; }
-        timeout := 33
+        timeout := 5000
         directedInputStart := A_TickCount
         hwnd := this.Hwnd
         ControlFocus,, ahk_id %hwnd%
