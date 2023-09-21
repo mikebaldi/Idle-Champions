@@ -1,3 +1,8 @@
+September 21, 2023
+    Fixed champion list not being correct after ID 134.
+    Fixed bug that would exclude game windows with "33" in the title when sending key inputs.
+    Updated Imports to v535.
+
 September 13, 2023
     Fixed a memory leak/ui freeze bug. (Thanks Ismo/Arno for helping track it down)
     Added more sanity tests for certain functions to prevent leaks or recursion crashes.
