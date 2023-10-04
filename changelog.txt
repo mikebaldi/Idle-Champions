@@ -1,3 +1,6 @@
+October 4, 2023
+    Added AHK version info to the about addon.
+
 September 21, 2023
     Fixed champion list not being correct after ID 134.
     Fixed bug that would exclude game windows with "33" in the title when sending key inputs.

@@ -3,7 +3,7 @@ GUIFunctions.AddTab("About")
 
 Gui, ICScriptHub:Tab, About
 GUIFunctions.UseThemeTextColor()
-aboutRows := 17
+aboutRows := 19
 aboutGroupBoxHeight := aboutRows * 15
 Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
 Gui, ICScriptHub:Add, Text, vVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
@@ -48,6 +48,7 @@ class IC_About_Component
             string .= "ServerCalls Version: " . IC_ServerCalls_Class.GetVersion() . "`n"
         if(isFunc(_classLog.GetVersion))
             string .= "Log Class Version: " . _classLog.GetVersion() . "`n"
+        string .= "`nAHK Version: " . A_AhkVersion "`n"
         return string
     }
 
