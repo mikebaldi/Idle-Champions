@@ -267,6 +267,11 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].health.Read()
     }
 
+    ReadChampIDByIndex(ChampListIndex := 0)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[ChampListIndex].def.ID.Read()
+    }
+
     ReadChampSlotByID(ChampID := 0)
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].slotId.Read()
@@ -1083,13 +1088,20 @@ class IC_MemoryFunctions_Class
     {
         if(champID < 107)
             return champID - 1
+        ; No define exists for ID 107
         if(champID == 107)
             return ""
         if(champID < 135)
             return champID - 2
+        ; No define exists for ID 135            
         if(champID == 135)
-            return ""            
-        return champID - 3
+            return ""
+        if(champID < 137)
+            return champID - 3
+        ; No define exists for ID 137
+        if(champID == 137)
+            return ""
+        return champID - 4
     }
 
     ; Builds this.ChestIndexByID from memory values.
