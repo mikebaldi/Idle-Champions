@@ -1,6 +1,6 @@
 {
 	"Name":"Inventory View",
-	"Version": "v0.2.0",
+	"Version": "v0.2.1",
     "Includes" : "IC_InventoryView_Component.ahk",
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_InventoryView",

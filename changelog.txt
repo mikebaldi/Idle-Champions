@@ -1,3 +1,9 @@
+October 5, 2023
+    Added champion ID Memory Reads.
+    Updated 64 bit imports for v540.
+    Added code in InventoryView that can be enabled for debugging champion definitions.
+    Updated GetHeroHandlerIndexByChampID to handle missing ID 137. (Thanks Emmote)
+
 October 4, 2023
     Added AHK version info to the about addon.
 
