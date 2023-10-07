@@ -751,6 +751,8 @@ class IC_BrivGemFarm_Class
     ; Sends calls for buying or opening chests and tracks chest metrics.
     DoChests(numSilverChests, numGoldChests)
     {
+        serverRateBuy := 250
+        serverRateOpen := 1000
         ; no chests to do - Replaces g_BrivUserSettings[ "DoChests" ] setting.
         if !(g_BrivUserSettings[ "BuySilvers" ] OR g_BrivUserSettings[ "BuyGolds" ] OR g_BrivUserSettings[ "OpenSilvers" ] OR g_BrivUserSettings[ "OpenGolds" ])
             return
@@ -773,18 +775,18 @@ class IC_BrivGemFarm_Class
 
             ;BUYCHESTS
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-            amount := Min(Floor(gems / 50), 100 )
+            amount := Min(Floor(gems / 50), serverRateBuy )
             if (g_BrivUserSettings[ "BuySilvers" ] AND amount > 0)
                 this.BuyChests( chestID := 1, effectiveStartTime, amount )
             gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
-            amount := Min(Floor(gems / 500) , 100 )
+            amount := Min(Floor(gems / 500) , serverRateBuy )
             if (g_BrivUserSettings[ "BuyGolds" ] AND amount > 0)
                 this.BuyChests( chestID := 2, effectiveStartTime, amount )
             ; OPENCHESTS
-            amount := Min(g_SF.TotalSilverChests, 1000)
+            amount := Min(g_SF.TotalSilverChests, serverRateOpen)
             if (g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0)
                 this.OpenChests( chestID := 1, effectiveStartTime, amount)
-            amount := Min(g_SF.TotalGoldChests, 1000)
+            amount := Min(g_SF.TotalGoldChests, serverRateOpen)
             if (g_BrivUserSettings[ "OpenGolds" ] AND amount > 0)
                 this.OpenChests( chestID := 2, effectiveStartTime, amount )
 
