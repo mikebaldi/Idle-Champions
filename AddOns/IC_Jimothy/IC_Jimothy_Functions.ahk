@@ -160,7 +160,7 @@ class Jimothy
         {
             for k, v in this.Mod5
             {
-                if (v == mod5 AND formation == this.ModFormation)
+                if (mod(v, 5) == mod5 AND formation == this.ModFormation)
                     return true
             }
         }
@@ -168,7 +168,7 @@ class Jimothy
         {
             for k, v in this.Mod10
             {
-                if (v == mod10 AND formation == this.ModFormation)
+                if (mod(v, 10) == mod10 AND formation == this.ModFormation)
                     return true
             }
         }
@@ -176,7 +176,7 @@ class Jimothy
         {
             for k, v in this.Mod50
             {
-                if (v == mod50 AND formation == this.ModFormation)
+                if (mod(v, 50) == mod50 AND formation == this.ModFormation)
                     return true
             }
         }
