@@ -24,6 +24,12 @@ This can be enabled or disabled. When Enabled IC Script Hub will hide the window
 
 This setting will tell the script to try and switch back from the game window to whatever window was open before the game window opened after a stack restart. 
 
+## "ForceOfflineGemThreshold" (Not shown)
+The gem farm script is designed to restart the game each run to build stacks for Briv and to keep game performance optimal. This setting allows the the briv stack restart to be postponed until the number of gems reaches what is set here.
+
+## "ForceOfflineRunThreshold" (Not shown)
+Same as the above but will do the stack restart once the number of modron resets (runs) reaches the set value. 
+
 ## "BrivJumpBuffer"
 
 Occasionally, depending on game build, there can be issues with how the game handles Modron Resets if Briv jumps over the reset zone. This setting is how far before the modron's reset zone Briv will no longer be allowed in the party.

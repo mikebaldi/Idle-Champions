@@ -12,7 +12,8 @@ The old ModronGui script did one thing: It automated gem farms within Idle Champ
 ## Gem farm? Jimothy? What the hell?
 
 This is as good a moment as any to briefly explain what these are:
-
+&nbsp;  
+&nbsp;  
 ### Gem farm
 
 A Gem Farm in `Idle Champions` involves using abilities belonging to certain champions in order to massively speed up (and automate) the aquisition of many, many gems in order to improve your champions. 
@@ -29,7 +30,13 @@ The primary aim of the gem farm script is to automate farming gems that you use 
 
 You can set the script to buy either silver or gold chests as you stack Briv for the next run.
 
-### Jimothy
+### Continue to more information
+
+[I want to set up a Gem Farm and become rich](setting-up-a-gem-farm.md)
+
+&nbsp;  
+&nbsp;    
+### ~~Jimothy~~ (No longer possible. Info saved for posterity.)
 
 Jimothy is a way to push your party to very high levels (up to the max of 2001) in order to obtain favour needed to increase your party's gold find levels. A higher favour/gold find level allows you to script Gem Farms that run for longer.
 
@@ -46,11 +53,5 @@ I recommend filling up the remaining slots in the party with multihitters or oth
 The primary aim of the Jimothy script is to automated getting up to a level where you can farm meaningful favour.
 
 It's usually followed by an Azaka farm on the highest melee boss in the adventure.
-
-## What's your poison?
-
-It's time to decide now you know what the two main scripts in `IC Script Hub` do.
-
-[I want to set up a Gem Farm and become rich](setting-up-a-gem-farm.md)
 
 [I want to Jimothy my way to the deepest levels](setting-up-jimothy.md)

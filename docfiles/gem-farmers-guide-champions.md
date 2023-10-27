@@ -1,20 +1,29 @@
 [< Return to an Setting Up a Gem Farm](setting-up-a-gem-farm.md)
 
 # A Gem Farmer's Guide to Champions
+> 
 ## Important champions
-In alphabetical order
+In order by seat.
+
+### `Thellora` (Slot 1)
+
+`Thellora` will jump zones based on favor at the start of a run.
+
+Always beneficial.
+
+Recommendation: **Highly recommended**
 
 ### `Deekin` (Slot 1)
 
-`Deekin` will increase the spawn speed through the "Boss wants speed" specialisation. 
+`Deekin` will increase the spawn speed through the "Boss wants speed" specialization. 
 
 Performs the same task as Widdle.
 
-Use the better geared champion you have between Deekin and Widdle.
+Use the better geared champion you have between Deekin and Widdle if you don't have Thellora.
 
 Pick the right-hand spec.
 
-Recommendation: **Highly recommended**
+Recommendation: **Situational**
 
 ### `Widdle` (Slot 2)
 
@@ -22,9 +31,13 @@ Recommendation: **Highly recommended**
 
 Use the better geared champion you have between Widdle and Deekin.
 
-Pick the middle spec.
-
 Recommendations: **Highly recommended**
+
+### `BBEG` (Slot 3)
+
+`BBEG` has an ability that lowers the requirements of the next zone when a zone is cleared in under 5s.
+
+Recommendation: **Useful when party is not 1-kill zone completion**
 
 ### `Sentry` (Slot 4)
 
@@ -32,13 +45,11 @@ Recommendations: **Highly recommended**
 
 Pick the middle spec.
 
-Recommendation: **Useful when Hew is not 1-kill zone completion**
+Recommendation: **Useful when party is not 1-kill zone completion**
 
 ### `Shandie` (Slot 6)
 
-`Shandie` is really useful for the Gem Farm as she acts like a free speed pot once Dash is up and running, which takes 60 seconds. 
-
-Pick the left-hand spec.
+`Shandie` is really useful for the Gem Farm as she acts like a free speed pot once Dash is up and running, which takes 30 seconds (10 with feat). Potions reduced the time to activation accordingly.
 
 Recommendation: **Strongly recommended**
 
@@ -48,13 +59,11 @@ Recommendation: **Strongly recommended**
 
 If you're serious about your gem farming, you'll want to get Hew to as close to zone completion with 1 kill as you can. Sentry can help out here.
 
-Pick the right-hand spec.
-
 Recommendation: **Strongly recommended**
 
 ### `Havilar` (Slot 10)
 
-`Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill Hew, such as "Cursed Farmer".
+`Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill for your party, such as "Cursed Farmer".
 
 Recommendation: **Situational**
 
@@ -89,6 +98,7 @@ A health-share tank or two is usually okay though.
 * `Selise` - Slot 12
 * `Tyril` - Slot 10
 * `Wulfgar` - Slot 10
+* ...
 
 I have not included `Sgt. Knox` due to being in Slot 6. If you're Gem Farming, slot 6 will be guaranteed for Shandie (and if you don't yet have Shandie, timegate her ASAP).
 
