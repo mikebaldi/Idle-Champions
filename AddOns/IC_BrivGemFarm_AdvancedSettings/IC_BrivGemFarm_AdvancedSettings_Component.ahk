@@ -59,7 +59,7 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GUIFunctions.AddToolTip( "OptionSettingText_ResetZoneBuffer", "Change this value to increase the number of zones the script will go waiting for modron reset after stacking before manually resetting")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowXPosition", "Where the gem farm script will appear horizontally across your screen")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowYPosition", "Where the gem farm script will appear vertically on your screen")            
-            GUIFunctions.AddToolTip( "vOptionSettingText_ManualBrivJumpValue", "Set Briv's jump level for stack calculations. Useful for feat swapping setups. 0 is the default value which will ignore this setting.")
+            GUIFunctions.AddToolTip( "OptionSettingText_ManualBrivJumpValue", "Set Briv's jump level for stack calculations. Useful for feat swapping setups. 0 is the default value which will ignore this setting.")
             GUIFunctions.AddToolTip( "OptionSettingEdit_IgnoreBrivHaste", "Ignore haste stacks when deciding to stack. Will force stacking one time each run.")
     }
 }
