@@ -217,7 +217,7 @@ class IC_BrivGemFarm_Class
                 g_SF.Memory.ActiveEffectKeyHandler.Refresh()
                 worstCase := g_BrivUserSettings[ "AutoCalculateWorstCase" ]
                 g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone(worstCase) + 50 ; 50 stack safety net
-                this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1, worstCase)
+                this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1  - g_SF.ThelloraRushTest(), worstCase)
                 ; Don't reset last stack success area if 3 or more runs have failed to stack.
                 this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
                 this.StackFailAreasThisRunTally := {}

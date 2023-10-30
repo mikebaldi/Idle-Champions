@@ -103,7 +103,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.7.3, 2023-10-30"
+        return "v2.7.4, 2023-10-30"
     }
 
     ;Gets data from JSON file
@@ -520,7 +520,7 @@ class IC_SharedFunctions_Class
     ; Template function for whether determining if to Dash Wait. Default is Yes if shandie is in the formation.
     ShouldDashWait()
     {
-        return this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )
+        return this.IsChampInFormation( ActiveEffectKeySharedFunctions.Shandie.HeroID, this.Memory.GetCurrentFormation() )
     }
 
     ; Returns count for how many TimeScale values equal the value passed to the function
@@ -1299,7 +1299,7 @@ class IC_SharedFunctions_Class
         else
             ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        distance := this.Memory.GetModronResetArea()
+        distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         ; average
         if(skipAmount == 1) ; true worst case =  worstCase ? Ceil(distance / 2) : normalcalc
@@ -1362,6 +1362,18 @@ class IC_SharedFunctions_Class
         ;zones := jumps * avgJumpDistance
         zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
         return currentZone + zones
+    }
+
+    ; Returns how many Rush stacks are available if Thellora is in the party. 
+    ThelloraRushTest()
+    {
+        isInParty := this.IsChampInFormation( ActiveEffectKeySharedFunctions.Thellora.HeroID, this.Memory.GetCurrentFormation() )
+        if (isInParty)
+        {
+            rushStacks := ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
+            return rushStacks
+        }
+        return 0
     }
 
     ; Returns whether Briv's spec in the modron core is set to Metalborn.
