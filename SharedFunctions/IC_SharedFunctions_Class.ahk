@@ -1297,7 +1297,7 @@ class IC_SharedFunctions_Class
         if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
             skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         else
-            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
@@ -1322,7 +1322,7 @@ class IC_SharedFunctions_Class
         if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
             skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         else
-            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
@@ -1353,7 +1353,7 @@ class IC_SharedFunctions_Class
         if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
             skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         else
-            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
         avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
