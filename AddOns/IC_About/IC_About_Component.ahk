@@ -3,7 +3,7 @@ GUIFunctions.AddTab("About")
 
 Gui, ICScriptHub:Tab, About
 GUIFunctions.UseThemeTextColor()
-aboutRows := 19
+aboutRows := 21
 aboutGroupBoxHeight := aboutRows * 15
 Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
 Gui, ICScriptHub:Add, Text, vVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
@@ -39,7 +39,11 @@ class IC_About_Component
         if(isFunc(IC_CrusadersGameDataSet_Class.GetVersion))
             string .= "CrusadersGameDataSet Memory: " . IC_CrusadersGameDataSet_Class.GetVersion() . "`n"
         if(isFunc(IC_DialogManager_Class.GetVersion))
-            string .= "DialogManager Memory: " . IC_DialogManager_Class.GetVersion() . "`n`n"
+            string .= "DialogManager Memory: " . IC_DialogManager_Class.GetVersion() . "`n"
+        if(isFunc(IC_UserStatHandler_Class.GetVersion))
+            string .= "UserStatHandler Memory: " . IC_UserStatHandler_Class.GetVersion() . "`n"    
+        if(isFunc(IC_UserData_Class.GetVersion))
+            string .= "UserStatHandler Memory: " . IC_UserData_Class.GetVersion() . "`n"           
         if(isFunc(IC_ActiveEffectKeyHandler_Class.GetVersion))
             string .= "EffectKeyHandler Memory: " . IC_ActiveEffectKeyHandler_Class.GetVersion() . "`n`n"
         if(isFunc(IC_SharedFunctions_Class.GetVersion))
