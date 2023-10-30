@@ -15,6 +15,7 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "WindowXPosition" ] := OptionSettingEdit_WindowXPosition
         g_BrivUserSettings[ "WindowYPosition" ] := OptionSettingEdit_WindowYPosition
         g_BrivUserSettings[ "ManualBrivJumpValue" ] := OptionSettingEdit_ManualBrivJumpValue
+        g_BrivUserSettings[ "IgnoreBrivHaste" ] := OptionSettingEdit_IgnoreBrivHaste
         IC_BrivGemFarm_AdvancedSettings_Functions.UpdateJumpSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
         try ; avoid thrown errors when comobject is not available.
@@ -40,6 +41,7 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPosition, % g_BrivUserSettings[ "WindowXPosition" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPosition, % g_BrivUserSettings[ "WindowYPosition" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_ManualBrivJumpValue, % g_BrivUserSettings[ "ManualBrivJumpValue" ]
+            GuiControl, ICScriptHub:, OptionSettingEdit_IgnoreBrivHaste, % g_BrivUserSettings[ "IgnoreBrivHaste" ]
             IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
         }
         Gui, ICScriptHub:Submit, NoHide
@@ -58,5 +60,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GUIFunctions.AddToolTip( "OptionSettingText_WindowXPosition", "Where the gem farm script will appear horizontally across your screen")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowYPosition", "Where the gem farm script will appear vertically on your screen")            
             GUIFunctions.AddToolTip( "vOptionSettingText_ManualBrivJumpValue", "Set Briv's jump level for stack calculations. Useful for feat swapping setups. 0 is the default value which will ignore this setting.")
+            GUIFunctions.AddToolTip( "OptionSettingEdit_IgnoreBrivHaste", "Ignore haste stacks when deciding to stack. Will force stacking one time each run.")
     }
 }

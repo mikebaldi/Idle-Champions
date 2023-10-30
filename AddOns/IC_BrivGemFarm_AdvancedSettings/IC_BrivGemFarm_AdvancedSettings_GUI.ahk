@@ -13,6 +13,7 @@ Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, , BrivGemFarm Advanced Settings
 Gui, ICScriptHub:Font, w400
 
+;g_BrivUserSettings[ "IgnoreBrivHaste" ]
 ;g_BrivUserSettings[ "ManualBrivJumpValue" ]
 ;g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
 ;g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
@@ -28,6 +29,7 @@ Gui, ICScriptHub:Font, w400
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, DoChestsContinuous
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RestoreLastWindowOnGameOpen x15 y+5, RestoreLastWindowOnGameOpen
+Gui, ICScriptHub:Add, Checkbox, vOptionSettingEdit_IgnoreBrivHaste x15 y+5, IgnoreBrivHaste
 
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 

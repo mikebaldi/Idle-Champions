@@ -52,6 +52,8 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings[ "DoChestsContinuous" ] := 0
     if ( g_BrivUserSettings[ "ResetZoneBuffer" ] == "" )
         g_BrivUserSettings[ "ResetZoneBuffer" ] := 41
+    if (g_BrivUserSettings[ "IgnoreBrivHaste" ] == "" )
+        g_BrivUserSettings[ "IgnoreBrivHaste" ] := 0
     if ( g_BrivUserSettings[ "MinStackZone" ] == "" )
         g_BrivUserSettings[ "MinStackZone" ] := 200
     if ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] == "" )
