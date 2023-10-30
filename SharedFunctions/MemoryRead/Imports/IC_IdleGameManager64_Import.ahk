@@ -128,6 +128,7 @@ this.game.gameInstances.Controller.userData.StatHandler := New GameObjectStructu
 this.game.gameInstances.Controller.userData.StatHandler.BlackViperTotalGems := New GameObjectStructure(this.game.gameInstances.Controller.userData.StatHandler,"Int", [0x2d0])
 this.game.gameInstances.Controller.userData.StatHandler.BrivSteelbonesStacks := New GameObjectStructure(this.game.gameInstances.Controller.userData.StatHandler,"Int", [0x338])
 this.game.gameInstances.Controller.userData.StatHandler.BrivSprintStacks := New GameObjectStructure(this.game.gameInstances.Controller.userData.StatHandler,"Int", [0x33c])
+this.game.gameInstances.Controller.userData.StatHandler.Resets := New GameObjectStructure(this.game.gameInstances.Controller.userData.StatHandler,"Int", [0xa0])
 this.game.gameInstances.StatHandler := New GameObjectStructure(this.game.gameInstances,"Int", [0x48])
 this.game.gameInstances.StatHandler.NordomAwardedEXP := New GameObjectStructure(this.game.gameInstances.StatHandler,"Int", [0x284])
 this.game.gameInstances.ActiveCampaignData := New GameObjectStructure(this.game.gameInstances,"Int", [0x28])
