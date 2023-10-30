@@ -103,7 +103,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.7.2, 2023-10-30"
+        return "v2.7.3, 2023-10-30"
     }
 
     ;Gets data from JSON file
@@ -1294,7 +1294,10 @@ class IC_SharedFunctions_Class
     {
         jumps := 0
         consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
-        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
+            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        else
+            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := this.Memory.GetModronResetArea()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
@@ -1316,7 +1319,10 @@ class IC_SharedFunctions_Class
         jumps := 0
         consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
+            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        else
+            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
@@ -1344,7 +1350,10 @@ class IC_SharedFunctions_Class
         consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
         stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
         currentZone := this.Memory.ReadCurrentZone()
-        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
+            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        else
+            ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
         jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
         avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance

@@ -13,6 +13,7 @@ Gui, ICScriptHub:Font, w700
 Gui, ICScriptHub:Add, Text, , BrivGemFarm Advanced Settings
 Gui, ICScriptHub:Font, w400
 
+;g_BrivUserSettings[ "ManualBrivJumpValue" ]
 ;g_BrivUserSettings[ "ForceOfflineGemThreshold" ]
 ;g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
 ;g_BrivUserSettings[ "BrivJumpBuffer" ]
@@ -37,6 +38,7 @@ Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_DashWaitBuffer x15 y+10 w50, % g_
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ResetZoneBuffer x15 y+10 w50, % g_BrivUserSettings[ "ResetZoneBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowXPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowXPosition" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowYPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowYPosition" ]
+Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ManualBrivJumpValue x15 y+10 w50, % g_BrivUserSettings[ "ManualBrivJumpValue" ]
 
 GUIFunctions.UseThemeTextColor()
 
@@ -50,10 +52,11 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_DashWaitBuffer, Da
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ResetZoneBuffer, ResetZoneBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPosition, WindowXPosition
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowYPosition, WindowyPosition
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ManualBrivJumpValue, ManualSetBrivJumpValue
 
 ; ############ Preferred Briv Jump Zones #####################
 
-GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingEdit_WindowYPosition
+GuiControlGet, xyVal, ICScriptHub:Pos, OptionSettingText_ManualBrivJumpValue
 xyValY += 35
 xyValX := 10
 
