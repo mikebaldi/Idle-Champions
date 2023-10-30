@@ -18,6 +18,7 @@ class ActiveEffectKeySharedFunctions
     #include *i %A_LineFile%\..\IC_Spurt.ahk
     #include *i %A_LineFile%\..\IC_Nordom.ahk
     #include *i %A_LineFile%\..\IC_Jim.ahk
+    #include *i %A_LineFile%\..\IC_Thellora.ahk
 
 }
 
