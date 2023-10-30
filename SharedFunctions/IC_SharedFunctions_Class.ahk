@@ -103,7 +103,7 @@ class IC_SharedFunctions_Class
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v2.7.1, 2023-09-21"
+        return "v2.7.2, 2023-10-30"
     }
 
     ;Gets data from JSON file
@@ -815,7 +815,14 @@ class IC_SharedFunctions_Class
         {
             g_SharedData.LoopString := "Opening IC.."
             programLoc := g_UserSettings[ "InstallPath" ]
-            Run, %programLoc%
+            try
+            {
+                Run, %programLoc%
+            }
+            catch
+            {
+                MsgBox, 48, `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
+            }
             Sleep, %waitForProcessTime%
             ; Add 10s (default) to ElapsedTime so each exe waiting loop will take at least 10s before trying to run a new instance of hte game
             timeoutForPID := ElapsedTime + processWaitingTimeout 

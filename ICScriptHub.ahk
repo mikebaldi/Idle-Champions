@@ -113,7 +113,14 @@ Reload_Clicked()
 Launch_Clicked()
 {
     programLoc := g_UserSettings[ "InstallPath" ]
-    Run, %programLoc%
+    try
+    {
+        Run, %programLoc%
+    }
+    catch
+    {
+        MsgBox, 48, `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
+    }
     Process, Exist, % g_UserSettings[ "ExeName"]
     g_SF.PID := ErrorLevel
 }

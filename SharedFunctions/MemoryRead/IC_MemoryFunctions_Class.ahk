@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.1.3, 2023-10-6, IC v0.463+"
+        return "v2.4.0, 2023-10-30"
     }
 
     GetPointersVersion()
