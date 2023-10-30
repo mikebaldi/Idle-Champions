@@ -371,7 +371,7 @@ class IC_BrivGemFarm_Class
     {
         if (this.ShouldOfflineStack())
         {
-            currentStacks := g_BrivUserSettings[ "IgnoreBrivHaste" ] ? g_SF.Memory.ReadHasteStacks() : ( g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks() )
+            currentStacks := g_BrivUserSettings[ "IgnoreBrivHaste" ] ? g_SF.Memory.ReadSBStacks() : ( g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks() )
             return currentStacks
         }
         else
