@@ -300,7 +300,7 @@ class GameObjectStructure
         }
         else if (valueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
-            offsets := this.GetOffsets()
+            offsets := this.GetOffsets().Clone()
             first8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             lastIndex := offsets.Count()
             offsets[lastIndex] := offsets[lastIndex] + 0x8
@@ -419,8 +419,8 @@ class GameObjectStructure
         decimated := ( log( 2 ) * SecondEight / log( 10 ) ) + f
         if(decimated <= 4)
             return Round((FirstEight + (2.0**63)) * (2.0**SecondEight), 2) . ""
-        significand := round( 10 ** ( decimated - floor( decimated ) ), 2 )
         exponent := floor( decimated )
+        significand := round( 10 ** ( decimated - exponent ), 2 )
         return significand . "e" . exponent
     }
 
