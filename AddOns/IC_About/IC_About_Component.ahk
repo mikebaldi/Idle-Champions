@@ -43,7 +43,7 @@ class IC_About_Component
         if(isFunc(IC_UserStatHandler_Class.GetVersion))
             string .= "UserStatHandler Memory: " . IC_UserStatHandler_Class.GetVersion() . "`n"    
         if(isFunc(IC_UserData_Class.GetVersion))
-            string .= "UserStatHandler Memory: " . IC_UserData_Class.GetVersion() . "`n"           
+            string .= "UserData Memory: " . IC_UserData_Class.GetVersion() . "`n"           
         if(isFunc(IC_ActiveEffectKeyHandler_Class.GetVersion))
             string .= "EffectKeyHandler Memory: " . IC_ActiveEffectKeyHandler_Class.GetVersion() . "`n`n"
         if(isFunc(IC_SharedFunctions_Class.GetVersion))
