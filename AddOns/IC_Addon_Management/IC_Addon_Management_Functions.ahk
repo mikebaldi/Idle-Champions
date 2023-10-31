@@ -295,7 +295,14 @@ Class AddonManagement
         if(!FileExist(this.AddonManagementConfigFile)) 
         {
             ; Here we load the Addons that are required on first startup
-            this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
+            startupAddons := []
+            startupAddons.Push(Object("Name","Addon Management","Version","v1.0."))
+            startupAddons.Push(Object("Name","Briv Gem Farm","Version","v1.0."))
+            startupAddons.Push(Object("Name","Game Location Settings","Version","v0.1."))
+            startupAddons.Push(Object("Name","About","Version","v1.0."))
+            startupAddons.Push(Object("Name","Briv Gem Farm Stats","Version","v1.0."))
+            this.EnabledAddons := startupAddons 
+            ; this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
             forceWrite := true
         }
         ; enable all addons that needed to be added
