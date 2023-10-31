@@ -1,6 +1,6 @@
 {
 	"Name":"About",
-	"Version": "v0.2.1",
+	"Version": "v0.2.2",
     "Includes" : "IC_About_Component.ahk",
     "Author" : "Antilectual & mikebaldi1980",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_About",
