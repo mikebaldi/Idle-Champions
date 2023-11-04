@@ -29,7 +29,7 @@ chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.Refresh")
 GuiControl, ICScriptHub: +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
 
 GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpen
-xyValY +=150
+xyValY +=155
 Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount, % "---"
 
 ; g_SF.Memory.InitializeChestsIndices()
@@ -37,6 +37,7 @@ Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount,
 IC_ChestPurchaser_Component.RefreshUserData()
 IC_ChestPurchaser_Component.LoadDefs()
 IC_ChestPurchaser_Component.ReadChests()
+IC_ChestPurchaser_Component.AddToolTips()
 
 ; Same list is used for both open/buy (Even though not all chests are available for purchase.)
 ControlGet, g_ChestPurchaserMasterListOpen, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
@@ -73,7 +74,7 @@ ChestPurchaserChestOpenCB(controlID, mode, key)
 class IC_ChestPurchaser_Component
 {   
 
-    static chestDefs := [{"id":1,"name":"Silver Chest","name_plural":"Silver Chests"}]
+    static chestDefs := [{"id":1,"name":"Silver Chest","name_plural":"Press refresh button to update list", "details":{"cost":"1"}}]
 
     LoadDefs()
     {
@@ -107,12 +108,15 @@ class IC_ChestPurchaser_Component
             g_SF.Memory.OpenProcessReader()
             g_SF.ResetServerCall()
         }
+        GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Retrieving chest definitions..."
         chestDefs := (g_ServerCall.ServerCall("getDefinitions", "&mobile_client_version=1234&filter=chest_type_defines")).chest_type_defines
         ; confirm valid defs
         if(chestDefs[1].id == 1 AND chestDefs[1].name == "Silver Chest")
         {
             IC_ChestPurchaser_Component.chestDefs := chestDefs
+            GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Saving chest definitions..."
             IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\CurrentChestDefs.json" , chestDefs )
+            GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Done!"
             return 0
         }
         return "-- Error Reading Chests --"
@@ -128,9 +132,14 @@ class IC_ChestPurchaser_Component
         return IC_ChestPurchaser_Component.chestDefs[chestIndex].name_plural
     }
 
-    GetChestIsPurchaseableBySlot(chestIndex)
+    IsChestPurchaseableBySlot(chestIndex)
     {
         return IC_ChestPurchaser_Component.chestDefs[chestIndex].details.cost != ""
+    }
+
+    IsChestReleasedBySlot(chestIndex)
+    {
+        return IC_ChestPurchaser_Component.chestDefs[chestIndex].graphic_id != "0"
     }
 
     ReadChests()
@@ -141,9 +150,12 @@ class IC_ChestPurchaser_Component
         {
             chestID := IC_ChestPurchaser_Component.GetChestIDBySlot(A_Index)
             chestName := IC_ChestPurchaser_Component.GetChestNameBySlot(A_Index)
-            comboBoxOptions .= chestID . " " . chestName . "|"
-            if (IC_ChestPurchaser_Component.GetChestIsPurchaseableBySlot(A_Index))
-                comboBoxOptionsBuy .= chestID . " " . chestName . "|"
+            if(IC_ChestPurchaser_Component.IsChestReleasedBySlot(A_Index))
+            {
+                comboBoxOptions .= chestID . " " . chestName . "|"
+                if (IC_ChestPurchaser_Component.IsChestPurchaseableBySlot(A_Index))
+                    comboBoxOptionsBuy .= chestID . " " . chestName . "|"
+            }
         }
         GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
         GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptionsBuy%
@@ -285,4 +297,9 @@ class IC_ChestPurchaser_Component
         shnieisByChampString := SubStr(shnieisByChampString, 1, StrLen(shnieisByChampString)-1)
         return shnieisByChampString
     }
+
+    AddToolTips()
+    {
+        GUIFunctions.AddToolTip( "ButtonRefreshChestPurchaser", "Refresh")
+    }  
 }
