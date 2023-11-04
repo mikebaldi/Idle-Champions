@@ -2,8 +2,8 @@ GUIFunctions.AddTab("Chests")
 
 Gui, ICScriptHub:Tab, Chests
 GUIFunctions.UseThemeTextColor()
-Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data and read chests into lists."
-Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Only open chests while game is closed. (Yes, this is a hassle.)"
+Gui, ICScriptHub:Add, Text, x15 y+15 w350, % "Note: Game needs to be open to load user data to refresh chest list."
+Gui, ICScriptHub:Add, Text, x15 y+5 w350, % "Warning: Only open chests while game is closed."
 Gui, ICScriptHub:Add, GroupBox, x15 y+15 w425 h150 vGroupBoxChestPurchase, Buy Chests: 
 Gui, ICScriptHub:Add, ComboBox, xp+15 yp+15 w300 hwndChestPurchaserChestPurchaseComboBoxID vChestPurchaserChestPurchaseComboBox gChestPurchaserChestPurchaseCB
 Gui, ICScriptHub:Add, Picture, x+35 h18 w18 vButtonRefreshChestPurchaser, %g_ReloadButton%
@@ -25,14 +25,17 @@ buyChestsFunc := Func("IC_ChestPurchaser_Component.BuyChests")
 GuiControl, ICScriptHub: +g, ButtonChestPurchaserBuyChests, % buyChestsFunc
 openChestsFunc := Func("IC_ChestPurchaser_Component.OpenChests")
 GuiControl, ICScriptHub: +g, ButtonChestPurchaserOpenChests, % openChestsFunc
-chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.ReadChests")
+chestPurchaserReadChests := Func("IC_ChestPurchaser_Component.Refresh")
 GuiControl, ICScriptHub: +g, ButtonRefreshChestPurchaser, % chestPurchaserReadChests
 
 GuiControlGet, xyVal, ICScriptHub:Pos, GroupBoxChestOpen
 xyValY +=150
 Gui, ICScriptHub:Add, Text, x15 y%xyValY% w350 vChestPurchaserCurrentChestCount, % "---"
 
-g_SF.Memory.InitializeChestsIndices()
+; g_SF.Memory.InitializeChestsIndices()
+; IC_ChestPurchaser_Component.ReadChests()
+IC_ChestPurchaser_Component.RefreshUserData()
+IC_ChestPurchaser_Component.LoadDefs()
 IC_ChestPurchaser_Component.ReadChests()
 
 ; Same list is used for both open/buy (Even though not all chests are available for purchase.)
@@ -67,32 +70,108 @@ ChestPurchaserChestOpenCB(controlID, mode, key)
 
 class IC_ChestPurchaser_Component
 {   
+
+    static chestDefs := [{"id":1,"name":"Silver Chest","name_plural":"Silver Chests"}]
+
+    LoadDefs()
+    {
+        chestDefs := g_SF.LoadObjectFromJSON( A_LineFile . "\..\ChestDefs.json" )
+        if (chestDefs[1].id == 1)
+            IC_ChestPurchaser_Component.chestDefs := chestDefs
+        else
+            OutputDebug, % "Failed to load chests from file, please update chest list"
+    }
+
+    Refresh()
+    {
+        IC_ChestPurchaser_Component.RefreshUserData()
+        IC_ChestPurchaser_Component.UpdateDefs()
+        IC_ChestPurchaser_Component.ReadChests()
+    }
+
+    RefreshUserData()
+    {
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update server when the game is open
+        {
+            g_SF.Memory.OpenProcessReader()
+            g_SF.ResetServerCall()
+        }
+    }
+
+    UpdateDefs()
+    {
+        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update server when the game is open
+        {
+            g_SF.Memory.OpenProcessReader()
+            g_SF.ResetServerCall()
+        }
+        chestDefs := (g_ServerCall.ServerCall("getDefinitions", "&mobile_client_version=1234&filter=chest_type_defines")).chest_type_defines
+        ; confirm valid defs
+        if(chestDefs[1].id == 1 AND chestDefs[1].name == "Silver Chest")
+        {
+            IC_ChestPurchaser_Component.chestDefs := chestDefs
+            IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\ChestDefs.json" , chestDefs )
+            return 0
+        }
+        return "-- Error Reading Chests --"
+    }
+
+    GetChestIDBySlot(chestIndex)
+    {
+        return IC_ChestPurchaser_Component.chestDefs[chestIndex].id
+    }
+
+    GetChestNameBySlot(chestIndex)
+    {
+        return IC_ChestPurchaser_Component.chestDefs[chestIndex].name_plural
+    }
+
+    GetChestIsPurchaseableBySlot(chestIndex)
+    {
+        return IC_ChestPurchaser_Component.chestDefs[chestIndex].details.cost != ""
+    }
+
     ReadChests()
     {
-        if(WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
-            g_SF.Memory.OpenProcessReader()
-        else
-            return
-        g_SF.ResetServerCall()
-        size := g_SF.Memory.ReadChestDefinesSize()
-        comboBoxOptions := "|"
-        if(!size OR size > 3000 OR size < 0)
-        {
-            comboBoxOptions .= "-- Error Reading Chests --"
-            GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
-            GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
-            return
-        }
+        size := IC_ChestPurchaser_Component.chestDefs.Length()
+        comboBoxOptionsBuy := comboBoxOptions := "|"
         loop, %size%
         {
-            chestID := g_SF.Memory.GetChestIDBySlot(A_Index)
-            chestName := g_SF.Memory.GetChestNameBySlot(A_Index)
+            chestID := IC_ChestPurchaser_Component.GetChestIDBySlot(A_Index)
+            chestName := IC_ChestPurchaser_Component.GetChestNameBySlot(A_Index)
             comboBoxOptions .= chestID . " " . chestName . "|"
-            this.comboBoxOptions := comboBoxOptions.Clone()
+            if (IC_ChestPurchaser_Component.GetChestIsPurchaseableBySlot(A_Index))
+                comboBoxOptionsBuy .= chestID . " " . chestName . "|"
         }
         GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
-        GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
+        GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptionsBuy%
     }
+
+    ; ReadChests()
+    ; {
+    ;     if(!WinExist("ahk_exe " . g_userSettings[ "ExeName"])) ; only update when the game is open
+    ;         return
+    ;     g_SF.Memory.OpenProcessReader()
+    ;     g_SF.ResetServerCall()
+    ;     size := g_SF.Memory.ReadChestDefinesSize()
+    ;     comboBoxOptions := "|"
+    ;     if(!size OR size > 3000 OR size < 0)
+    ;     {
+    ;         comboBoxOptions .= "-- Error Reading Chests --"
+    ;         GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
+    ;         GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
+    ;         return
+    ;     }
+    ;     loop, %size%
+    ;     {
+    ;         chestID := g_SF.Memory.GetChestIDBySlot(A_Index)
+    ;         chestName := g_SF.Memory.GetChestNameBySlot(A_Index)
+    ;         comboBoxOptions .= chestID . " " . chestName . "|"
+    ;         this.comboBoxOptions := comboBoxOptions.Clone()
+    ;     }
+    ;     GuiControl,ICScriptHub:, ChestPurchaserChestOpenComboBox, %comboBoxOptions%
+    ;     GuiControl,ICScriptHub:, ChestPurchaserChestPurchaseComboBox, %comboBoxOptions%
+    ; }
 
     BuyChests()
     {
@@ -101,6 +180,7 @@ class IC_ChestPurchaser_Component
         global ChestPurchaserCurrentChestCount
         global ChestPurchaserChestPurchaseComboBox
         Gui,ICScriptHub:Submit, NoHide
+        IC_ChestPurchaser_Component.RefreshUserData()
         if(g_ServerCall == "")
         {
             MsgBox % "No user data available. Open the game and refresh chest list before continuing."
@@ -141,6 +221,7 @@ class IC_ChestPurchaser_Component
         global ChestPurchaserCurrentChestCount
         global ChestPurchaserChestOpenComboBox
         Gui,ICScriptHub:Submit, NoHide
+        IC_ChestPurchaser_Component.RefreshUserData()
         if(g_ServerCall == "")
         {
             MsgBox % "No user data available. Open the game and refresh chest list before continuing."
