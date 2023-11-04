@@ -121,6 +121,42 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
 
         return True
     }
+
+    ; Wait for Thellora ?
+    ShouldRushWait()
+    {
+        isValidZone := this.Memory.ReadCurrentZone() >= 0 AND this.Memory.ReadCurrentZone() <= 3
+        rushStacks := ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
+        isValidStacks := rushStacks > 0 AND rushStacks < 10000
+        return isValidZone AND isValidStacks
+    }
+
+    DoRushWait()
+    {
+        this.ToggleAutoProgress( 0, false, true )
+        this.Memory.ActiveEffectKeyHandler.Refresh()
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        timeout := 8000 ; 7s seconds
+        estimate := (timeout / timeScale) ; no buffer: 60s / timescale to show in LoopString
+        
+        ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
+        ; Loop escape conditions:
+        ;   does full timeout duration
+        ;   past highest accepted dashwait triggering area
+        ;   dash is active, dash.GetScaleActive() toggles to true when dash is active and returns "" if fails to read.
+        while ( ElapsedTime < timeout AND this.ShouldRushWait() )
+        {
+            this.ToggleAutoProgress(0)
+            this.SetFormation()
+            ElapsedTime := A_TickCount - StartTime
+            g_SharedData.LoopString := "Rush Wait: " . ElapsedTime . " / " . estimate
+            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10), 15)
+            Sleep, %percentageReducedSleep%
+        }
+        g_PreviousZoneStartTime := A_TickCount
+        return
+    }
 }
 
 class IC_BrivServerCall_Class extends IC_ServerCalls_Class
@@ -621,6 +657,8 @@ class IC_BrivGemFarm_Class
             g_SF.DirectedInput(,release :=0, keyspam*) ;keysdown
         }
         g_SF.ModronResetZone := g_SF.Memory.GetModronResetArea() ; once per zone in case user changes it mid run.
+        if (g_SF.ShouldRushWait())
+            g_SF.DoRushWait()
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1, false, true )
