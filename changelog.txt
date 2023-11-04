@@ -1,3 +1,6 @@
+November 4, 2023
+    Updated Chest Purchaser addon to use defines from the server.
+
 November 3, 2023
     Updated 64 bit imports for v546.
     Updated Steam/EGS pointers for v546.
