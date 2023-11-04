@@ -1608,10 +1608,9 @@
 				"staticOffset":""
 			},
 			"EngineSettings":{
-				"moduleAddress":7609608,
+				"moduleAddress":4879992,
 				"moduleOffset":[
-					1784,
-					16
+					672
 				],
 				"staticOffset":3936
 			},
