@@ -39,8 +39,10 @@ IC_ChestPurchaser_Component.LoadDefs()
 IC_ChestPurchaser_Component.ReadChests()
 
 ; Same list is used for both open/buy (Even though not all chests are available for purchase.)
-ControlGet, g_ChestPurchaserMasterList, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
-g_ChestPurchaserMasterList := "|" . StrReplace(g_ChestPurchaserMasterList, "`n" , "|") 
+ControlGet, g_ChestPurchaserMasterListOpen, List, , , ahk_id %ChestPurchaserChestOpenComboBoxID%
+g_ChestPurchaserMasterListOpen := "|" . StrReplace(g_ChestPurchaserMasterListOpen, "`n" , "|") 
+ControlGet, g_ChestPurchaserMasterListBuy, List, , , ahk_id %ChestPurchaserChestPurchaseComboBoxID%
+g_ChestPurchaserMasterListBuy := "|" . StrReplace(g_ChestPurchaserMasterListBuy, "`n" , "|") 
 g_KeyInputTimer := 0
 g_KeyInputTimerDelay := 600 ; milliseconds
 
@@ -49,9 +51,9 @@ ChestPurchaserChestPurchaseCB(controlID, mode, key)
     global IC_ChestPurchaser_Component
     global g_KeyInputTimerDelay
     global g_KeyInputTimer
-    global g_ChestPurchaserMasterList
+    global g_ChestPurchaserMasterListBuy
     g_KeyInputTimer := A_TickCount
-    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
+    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterListBuy)
     timer := Abs(g_KeyInputTimerDelay) * -1 ; negative time means one time use timer
     SetTimer, %fncToCallOnTimer%, %timer%
 }
@@ -61,9 +63,9 @@ ChestPurchaserChestOpenCB(controlID, mode, key)
     global IC_ChestPurchaser_Component
     global g_KeyInputTimerDelay
     global g_KeyInputTimer
-    global g_ChestPurchaserMasterList
+    global g_ChestPurchaserMasterListOpen
     g_KeyInputTimer := A_TickCount
-    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterList)
+    fncToCallOnTimer :=  ObjBindMethod(GUIFunctions, "FilterList", controlID, g_ChestPurchaserMasterListOpen)
     timer := Abs(g_KeyInputTimerDelay) * -1
     SetTimer, %fncToCallOnTimer%, %timer%
 }
@@ -75,7 +77,7 @@ class IC_ChestPurchaser_Component
 
     LoadDefs()
     {
-        chestDefs := g_SF.LoadObjectFromJSON( A_LineFile . "\..\ChestDefs.json" )
+        chestDefs := g_SF.LoadObjectFromJSON( A_LineFile . "\..\CurrentChestDefs.json" )
         if (chestDefs[1].id == 1)
             IC_ChestPurchaser_Component.chestDefs := chestDefs
         else
@@ -110,7 +112,7 @@ class IC_ChestPurchaser_Component
         if(chestDefs[1].id == 1 AND chestDefs[1].name == "Silver Chest")
         {
             IC_ChestPurchaser_Component.chestDefs := chestDefs
-            IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\ChestDefs.json" , chestDefs )
+            IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\CurrentChestDefs.json" , chestDefs )
             return 0
         }
         return "-- Error Reading Chests --"
