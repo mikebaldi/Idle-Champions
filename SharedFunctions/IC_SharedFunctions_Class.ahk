@@ -1293,13 +1293,20 @@ class IC_SharedFunctions_Class
     ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
     CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
     {
+        g_SharedData.RedoStackCalc := False
         jumps := 0
         consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
         if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
             skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
         else
             skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() 
+        if (!skipChance)
+        {
+            skipChance := 1
+            g_SharedData.RedoStackCalc := True
+        }
+        skipChance := skipChance ? skipChance : 1
         distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         ; average
