@@ -399,7 +399,7 @@ class GameObjectStructure
         loop, % dictCount
         {
             ; Using quickLookup = true to avoid building full game objects for each dictionary entry.
-            currKey := this["key", A_Index - 1].Read(valueType)
+            currKey := this["key", A_Index - 1, true].Read(valueType)
             ; DEBUG: debug value for same item in dictionary
             ; currVal := this["value", A_Index - 1].Read()
 
