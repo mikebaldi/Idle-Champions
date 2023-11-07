@@ -1,3 +1,10 @@
+November 7, 2023
+    Added RushWait that will wait at start of run for Thellora's Rush to trigger.
+    Removed Jimothy addon.
+    Added a safety check for AutoDetect so when Briv's skip chance cannot be read it uses a default of 100% instead of setting 99 as the expected stacks.
+    Added sanity checks to list size memory reads, especially in inventory view.
+    Updated AddonManagement to notify users when it detects that addons have been updated and to use the updated addon version for saved enabled addons.
+
 November 4, 2023
     Updated Chest Purchaser addon to use defines from the server.
 
