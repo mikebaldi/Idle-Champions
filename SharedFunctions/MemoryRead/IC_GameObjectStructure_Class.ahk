@@ -175,6 +175,11 @@ class GameObjectStructure
         return this[key]
     }
 
+    GetVersion()
+    {
+        Return "v3.0.0, 2023-11-07"
+    }
+
     ; Returns the full offsets of this object after BaseAddress.
     GetOffsets()
     {
