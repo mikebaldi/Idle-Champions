@@ -876,7 +876,7 @@ class IC_MemoryFunctions_Class
     GetInventoryBuffAmountByID(buffID)
     {
         size := this.ReadInventoryItemsCount()
-        if(!size)
+        if (size < 0 OR size > 2000)
             return ""
         ; Find the buff
         index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs, ["ID"], 1, size, buffID)
@@ -889,7 +889,7 @@ class IC_MemoryFunctions_Class
     GetInventoryBuffNameByID(buffID)
     {
         size := this.ReadInventoryItemsCount()
-        if(!size)
+        if (size < 0 OR size > 2000)
             return ""
         ; Find the buff
         index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.inventoryBuffs, ["ID"], 1, size, buffID)

@@ -51,6 +51,8 @@ class IC_InventoryView_Component
             doAddToFirstRead := true
         }
         size := g_SF.Memory.ReadInventoryItemsCount()
+        if (size < 0 OR size > 5000)
+            return
         loop, %size%
         {
             change := ""
@@ -78,12 +80,13 @@ class IC_InventoryView_Component
         ;this.ReadChampionList()
     }
 
+    ; Populates listbox with the full list of champions, their IDs, the index in the list they are, and the index of the champ when the index is expected to be the same as their ID.
     ReadChampionList()
     {
         LV_Delete()
         Gui, Submit, NoHide
         size := g_SF.Memory.ReadChampListSize() + 2
-        if(!size)
+        if(size < 0 OR size > 5000)
             return "" 
         loop, %size%
         {
@@ -142,7 +145,7 @@ class IC_InventoryView_Component
             doAddToFirstRead := true
         }
         size := g_SF.Memory.ReadInventoryChestListSize()
-        if(!size)
+        if(size < 0 OR size > 5000)
             return "" 
         loop, %size%
         {

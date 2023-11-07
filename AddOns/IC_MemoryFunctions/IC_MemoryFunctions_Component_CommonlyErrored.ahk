@@ -77,8 +77,10 @@ class ReadMemoryFunctionsExtended
         multiplierTotal := 1
         size := g_SF.Memory.ReadTimeScaleMultipliersCount()
         i := 0
-        if size
+        if (size > 0 AND size < 150)
             multipliersString := "["
+        else
+            return ""
         loop, %size%
         {
             value := g_SF.Memory.ReadTimeScaleMultiplierByIndex(i)
