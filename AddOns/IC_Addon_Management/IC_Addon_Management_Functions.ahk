@@ -21,6 +21,7 @@ Class AddonManagement
     Addons := []
     AddonOrder := []
     EnabledAddons := []
+    NewerEnabledAddons := {}
     NeedSave := 0
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
@@ -251,8 +252,9 @@ Class AddonManagement
     ; Side Effects: Enables in the addon in the Addons object
     ;
     ; ------------------------------------------------------------
-    EnableAddon(Name, Version)
+    EnableAddon(Name, byref Version)
     {
+        isNewer := false
         ; Check if another version is allready enabled
         for k,v in this.Addons 
         {
@@ -263,6 +265,9 @@ Class AddonManagement
             }
         }
         currAddon := this.GetAddon(Name, Version, indexOfAddon)
+        isNewer := (IC_VersionHelper_class.IsVersionSameOrNewer(currAddon.Version, Version) == -1)
+        if(isNewer)
+            Version := currAddon.Version
         lastSwap := 0
         ; Force enable dependency before enabling this addon.
         while(IsObject(currAddon) AND indexOfSwap := this.CheckDependencyOrder(indexOfAddon,indexOfAddon))
@@ -271,7 +276,7 @@ Class AddonManagement
             lastSwap := indexOfSwap
         }
         if(lastSwap) ; If dependency was required, enable dependency
-            this.EnableAddon(this.Addons[lastSwap].Name, this.Addons[lastSwap].Version)
+            isNewer := (this.EnableAddon(this.Addons[lastSwap].Name, this.Addons[lastSwap].Version) == -1) OR isNewer
         if(IsObject(currAddon) AND this.CheckDependenciesEnabled(Name, Version, isModified))
         {
             this.NeedSave:=1
@@ -279,7 +284,7 @@ Class AddonManagement
         }
         if(isModified)
             this.NeedSave:=1
-        return !isSwapped
+        return isNewer
     }
     ; ------------------------------------------------------------
     ;   
@@ -291,6 +296,7 @@ Class AddonManagement
     ; ------------------------------------------------------------
     GetAddonManagementSettings()
     {
+        forceType := 0
         ; If the file does not exist we should create it with the default settings
         if(!FileExist(this.AddonManagementConfigFile)) 
         {
@@ -303,16 +309,16 @@ Class AddonManagement
             startupAddons.Push(Object("Name","Briv Gem Farm Stats","Version","v1.0."))
             this.EnabledAddons := startupAddons 
             ; this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
-            forceWrite := true
+            forceType := 2
         }
         ; enable all addons that needed to be added
         AddonSettings:= g_SF.LoadObjectFromJSON(this.AddonManagementConfigFile)
         this.AddonOrder := AddonSettings["Addon Order"]
         ; Update old settings if needed.
-        if(AddonSettings["Enabled Addons"] == "" AND !forceWrite)
+        if(AddonSettings["Enabled Addons"] == "" AND forceType != 2)
         {
             this.UpdateFromOldSettings(AddonSettings)
-            forceWrite := true
+            forceType := 2
         }
         ; Check if all addons in Addon Order are still available
         For k,v in this.AddonOrder
@@ -327,22 +333,51 @@ Class AddonManagement
         ; Enable addons
         this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
         for k, v in this.EnabledAddons
-            this.EnableAddon(v.Name,v.Version)
-
-        if (!FileExist(this.GeneratedAddonIncludeFile) or forceWrite)
-            this.GenerateIncludeFile() 
-        if (forceWrite)
         {
+            versionValue := v.Version
+            isNewer := this.EnableAddon(v.Name, versionValue)
+            v.version := versionValue
+            if(isNewer)
+            {
+                this.NewerEnabledAddons.Push(v.Clone())
+                forceType := 1
+            }
+        }
+        if (!FileExist(this.GeneratedAddonIncludeFile) or forceType == 2)
+            this.GenerateIncludeFile() 
+        this.ForceWrite(forceType)
+    }
+
+    ForceWrite(forceType)
+    {
+        if(forceType == 1 AND this.NewerEnabledAddons.Length() > 0)
+        {
+            this.ForceWriteSettings()
+            updatedAddonsString := "The following addons have been updated and the new version has been enabled:"
+            for k,v in this.NewerEnabledAddons
+            {
+                updatedAddonsString .= "`n" . v.Name . " " . v.Version 
+            }
+            MsgBox, % updatedAddonsString
+        }
+        if(forceType == 2)
+        {
+            this.ForceWriteSettings()
+            MsgBox, 36, Restart, Your settings file has been updated. `nIC Script Hub may need to reload. `nDo you wish to reload now?
+            IfMsgBox, Yes
+                Reload
+        }
+        
+    }
+
+    ForceWriteSettings()
+    {
             configuration := {}
             configuration["Enabled Addons"] := this.EnabledAddons
             configuration["Addon Order"] := {}
             for k,v in this.Addons
                 configuration["Addon Order"].Push(Object("Name", v.Name, "Version",v.Version))
             g_SF.WriteObjectToJSON(this.AddonManagementConfigFile, configuration)
-            MsgBox, 36, Restart, Your settings file has been updated. `nIC Script Hub may need to reload. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
     }
     ; ------------------------------------------------------------
     ;   

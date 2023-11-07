@@ -1,6 +1,6 @@
 {
     "NameLess":"Addon Management",
-    "Version": "v2.0.0",
+    "Version": "v2.0.1",
     "Includes" : "IC_Addon_Management_Includes.ahk",
     "Author" : "nyze & andtilectual",
     "Url" : "https://github.com/nyze/Addon-Management",
