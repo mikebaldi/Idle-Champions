@@ -323,7 +323,6 @@ Class AddonManagement
         ; Check if all addons in Addon Order are still available
         For k,v in this.AddonOrder
         {
-            FoundAddon := false
             this.GetAddon(v.Name, v.Version, indexOfAddon)
             if(!indexOfAddon)
                 this.AddonOrder.RemoveAt(k, 1)
@@ -598,6 +597,7 @@ Class AddonManagement
             }
         }
         ; failed to match
+        i := ""
         return ""
     }
 
