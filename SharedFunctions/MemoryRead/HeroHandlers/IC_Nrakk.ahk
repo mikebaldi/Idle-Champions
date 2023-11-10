@@ -26,5 +26,15 @@ class Nrakk
         {
             return g_SF.Memory.ActiveEffectKeyHandler.NrakkUltimateAttackHandler.overlay.lastSetTargetArcPercent.Read()
         }
+
+        ReadMaxAttacks()
+        {
+            return g_SF.Memory.ActiveEffectKeyHandler.NrakkUltimateAttackHandler.maxAttacks.Read()
+        }
+
+        ReadAttacksCounter()
+        {
+            return g_SF.Memory.ActiveEffectKeyHandler.NrakkUltimateAttackHandler.attacksCounter.Read()
+        }
     }
 }
