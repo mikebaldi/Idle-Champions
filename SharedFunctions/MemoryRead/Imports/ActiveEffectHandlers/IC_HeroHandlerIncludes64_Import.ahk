@@ -9,3 +9,4 @@
 #include %A_LineFile%\..\IC_NordomModronCoreToolboxHandler64_Import.ahk
 #include %A_LineFile%\..\IC_JimMagicalMysteryTourHandler64_Import.ahk
 #include %A_LineFile%\..\IC_ThelloraPlateausOfUnicornRunHandler64_Import.ahk
+#include %A_LineFile%\..\IC_NrakkUltimateAttackHandler64_Import.ahk
