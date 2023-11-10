@@ -1,3 +1,7 @@
+November 10, 2023
+    Added Nrakk hero handler.
+    Updated 64 bit imports for v547.
+
 November 7, 2023
     Added RushWait that will wait at start of run for Thellora's Rush to trigger.
     Removed Jimothy addon.
