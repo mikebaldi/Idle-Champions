@@ -1,3 +1,8 @@
+November 14, 2023
+    Updated 64 bit imports for v549.
+    Updated Addons.md.
+    Fixed tooltips showing up in windows they were not intended to.
+
 November 10, 2023
     Added Nrakk hero handler.
     Updated 64 bit imports for v547.
