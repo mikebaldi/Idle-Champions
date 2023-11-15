@@ -48,7 +48,7 @@ class GUIFunctions
         WinGet ICScriptHub_ID, ID, A
         GuiControl ICScriptHub:Focus, %controlVariableName%
         ControlGetFocus toolTipTarget, ahk_id %ICScriptHub_ID%
-        return toolTipTarget
+        return ICScriptHub_ID . toolTipTarget
     }
 
      

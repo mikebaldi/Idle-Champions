@@ -155,9 +155,10 @@ BuildToolTips()
 ; Shows a tooltip if the control with mouseover has a tooltip associated with it.
 CheckControlForTooltip()
 {
-        MouseGetPos,,,, VarControl
-        if(VarControl)
-            ToolTip % g_MouseToolTips[VarControl]
+        MouseGetPos,,,VarWin, VarControl
+        varTTLoc := VarWin . VarControl
+        if(varTTLoc)
+            ToolTip % g_MouseToolTips[varTTLoc]
         else
             ToolTip
         SetTimer, HideToolTip, -3000
