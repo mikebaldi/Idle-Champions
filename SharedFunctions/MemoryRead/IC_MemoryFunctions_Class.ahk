@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.0, 2023-10-30"
+        return "v2.4.1, 2023-11-16"
     }
 
     GetPointersVersion()
@@ -982,6 +982,8 @@ class IC_MemoryFunctions_Class
 
     ReadConversionCurrencyBySlot(slot := 0)
     {
+        if ( this.ReadDialogNameBySlot(slot) != "BlessingsStoreDialog")
+            return ""
         return this.DialogManager.dialogs[slot].currentCurrency.ID.Read()
     }
 
@@ -991,7 +993,9 @@ class IC_MemoryFunctions_Class
     }
 
     ReadForceConvertFavorBySlot(slot := 0)
-    {
+    {        
+        if (this.ReadDialogNameBySlot(slot) != "BlessingsStoreDialog")
+            return ""
         return this.DialogManager.dialogs[slot].forceConvertFavor.Read()
     }
 
