@@ -6,7 +6,7 @@ class HewMaan
         static EffectKeyString := "hewmaan_teamwork"
         ReadUltimateCooldownTimeLeft()
         {
-            return g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.CooldownTimer.Read()
+            return g_SF.Memory.ActiveEffectKeyHandler.HewMaanTeamworkHandler.hewmaan.ultimateAttack.internalCooldownTimer.Read()
         }
 
         ReadUltimateID()

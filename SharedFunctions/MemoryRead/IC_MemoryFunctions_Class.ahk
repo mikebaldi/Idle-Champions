@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.1, 2023-11-16"
+        return "v2.4.2, 2023-11-21"
     }
 
     GetPointersVersion()
@@ -618,7 +618,7 @@ class IC_MemoryFunctions_Class
 
     ReadUltimateCooldownByItem(item := 0)
     {
-        return g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].ultimateAttack.CooldownTimer.Read()
+        return g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].ultimateAttack.internalCooldownTimer.Read()
     }
 
     ReadWelcomeBackActive()
@@ -1150,5 +1150,5 @@ class IC_MemoryFunctions_Class
         return version
     }
 
-    #include *i IC_MemoryFunctions_Extended.ahk
+    #include *i %A_LineFile%\..\IC_MemoryFunctions_Extended.ahk
 }
