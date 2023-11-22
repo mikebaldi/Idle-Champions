@@ -1,3 +1,10 @@
+November 22, 2023
+    Updated 64 bit Imports for v550.
+    Updated ultimate cooldown timer reads to use the new variable.
+
+November 17, 2023
+    Added protections from reading bad values with Dialog Manager.
+
 November 14, 2023
     Updated 64 bit imports for v549.
     Updated Addons.md.
