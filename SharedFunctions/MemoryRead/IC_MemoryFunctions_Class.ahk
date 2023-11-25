@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.3, 2023-11-24"
+        return "v2.4.4, 2023-11-25"
     }
 
     GetPointersVersion()
@@ -798,7 +798,7 @@ class IC_MemoryFunctions_Class
     ReadBrivSlot4ilvl()
     {
         champID := 58, slot := 4
-        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double"))
+        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double") + 1)
     }
 
     ; Returns the formation array of the formation used in the currently active modron.
