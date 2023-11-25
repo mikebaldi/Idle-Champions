@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.2, 2023-11-21"
+        return "v2.4.3, 2023-11-24"
     }
 
     GetPointersVersion()
@@ -695,10 +695,10 @@ class IC_MemoryFunctions_Class
     {
         val := true
         ; The nextUpgrade pointer could be null if no upgrades are found.
-        if (this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade.Read())
+        if (this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat[seat].nextupgrade.Read())
         {
             ;TODO Re-Verify this value
-            val := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].nextupgrade.IsPurchased.Read()
+            val := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat[seat].nextupgrade.IsPurchased.Read()
         }
         return val
     }
