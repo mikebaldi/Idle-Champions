@@ -141,12 +141,12 @@ class GameObjectStructure
                 collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC                    ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",index]) + 0                         ; Expected offset to the key for the <index>th entry.
                 keyoffset := this.CalculateDictOffset(["key",index]) + 0                        ; Expected offset to the value for the <index>th entry.
-                tempClone := this.QuickClone()                                                  ; temp object for lookup
-                tempClone.FullOffsets.Push(collectionEntriesOffset, keyOffset)                  ; add offsets for key
-                tempClone.ValueType := GameObjectStructure.SystemTypes[this._CollectionValType] ; Update value type if it is known
-                if (tempClone.ValueType == "")
-                    tempClone.ValueType := this.BasePtr.Is64Bit ? "Int64" : "Int"               ; If there is no lookup value type then assume type is a pointer
-                key := tempClone.Read()                                                         ; Retrieve the value of the key
+                keyReadObject := this.QuickClone()                                                  ; temp object for lookup
+                keyReadObject.FullOffsets.Push(collectionEntriesOffset, keyOffset)                  ; add offsets for key
+                keyReadObject.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType] ; Update key's value type if it is known
+                if (keyReadObject.ValueType == "")
+                    keyReadObject.ValueType := this.BasePtr.Is64Bit ? "Int64" : "Int"               ; If there is no lookup value type then assume type is a pointer
+                key := keyReadObject.Read()                                                         ; Retrieve the value of the key
                 if(index == this.LastDictIndex[key])                                            ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
                 if (!quickLookup)
@@ -177,7 +177,7 @@ class GameObjectStructure
 
     GetVersion()
     {
-        Return "v3.0.0, 2023-11-07"
+        Return "v3.0.1, 2023-11-25"
     }
 
     ; Returns the full offsets of this object after BaseAddress.
