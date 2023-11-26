@@ -21,7 +21,7 @@ Gui, ICScriptHub:Add, Text, vReadConversionCurrencyBySlotLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadForceConvertFavorBySlot: 
 Gui, ICScriptHub:Add, Text, vReadForceConvertFavorBySlotLblID x+2 w170,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTimeScaleMultipliersByIndex: 
-Gui, ICScriptHub:Add, Text, vReadTimeScaleMultipliersByIndexLblID x+2 w170,
+Gui, ICScriptHub:Add, Text, vReadTimeScaleMultipliersByIndexLblID x+2 w220,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadDialogNameBySlot: 
 Gui, ICScriptHub:Add, Text, x20 y+5 vReadDialogNameBySlotLblID w200 h165,
 
