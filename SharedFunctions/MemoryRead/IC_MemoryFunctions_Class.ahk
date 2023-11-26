@@ -933,7 +933,7 @@ class IC_MemoryFunctions_Class
 
     ReadInventoryChestIDBySlot(slot)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", slot].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", slot, quickLookup := True].Read()
     }
 
     ReadInventoryChestCountBySlot(slot)
