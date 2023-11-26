@@ -133,7 +133,8 @@ class GameObjectStructure
                     tempObj.ValueType := this.BasePtr.Is64Bit ? "Int64" : "Int"                 ; If there is no lookup value type then assume type is a pointer
                 offsetInsertLoc := tempObj.FullOffsets.Count() + 1,                             ; Current offsets count
                 tempObj.FullOffsets.Push(collectionEntriesOffset, offset)                       ; Add the offsets to this object so the .Read() will give the value of the key
-                this.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset])  ; Update all sub-objects with their missing collection/item offsets.
+                if(!quickLookup)
+                    this.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset])  ; Update all sub-objects with their missing collection/item offsets.
                 return tempObj                                                                  ; return temporary key object
             }
             else if (key == "value")
@@ -145,12 +146,16 @@ class GameObjectStructure
                 keyReadObject.FullOffsets.Push(collectionEntriesOffset, keyOffset)                  ; add offsets for key
                 keyReadObject.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType] ; Update key's value type if it is known
                 if (keyReadObject.ValueType == "")
-                    keyReadObject.ValueType := this.BasePtr.Is64Bit ? "Int64" : "Int"               ; If there is no lookup value type then assume type is a pointer
-                key := keyReadObject.Read()                                                         ; Retrieve the value of the key
+                {
+                    key := keyReadObject.Read(this.BasePtr.Is64Bit ? "Int64" : "Int")               ; If there is no lookup value type then assume type is a pointer
+                }
+                else
+                {
+                    key := keyReadObject.Read()                                                     ; Retrieve the value of the key
+                }
                 if(index == this.LastDictIndex[key])                                            ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
-                if (!quickLookup)
-                    this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset)      ; Build a dictonary entry for this key.
+                this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset)          ; Build a dictonary entry for this key.
                 return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
             }
             else
@@ -164,7 +169,7 @@ class GameObjectStructure
                 collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC                    ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",keyIndex]) + 0                      ; Expected offset to the value corresponding to the key.
                 if (!quickLookup)
-                    this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset)       ; Build a dictonary entry for this key.
+                    this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset)   ; Build a dictonary entry for this key.
                 return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
             }
         }
@@ -251,9 +256,9 @@ class GameObjectStructure
         this.DictionaryObject[key].IsAddedIndex := true                                ; Stable clones won't copy this object
         offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count.
         this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value.
-        ; this.DictionaryObject[key]._CollectionValType := 
         this.DictionaryObject[key].ValueType := GameObjectStructure.SystemTypes[this._CollectionValType] ? GameObjectStructure.SystemTypes[this._CollectionValType] : this.DictionaryObject[key].ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        ; this.DictionaryObject[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.DictionaryObject[key].FullOffsets)
         ; this.DictionaryObject[key].GSOName := key                                       
         this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
     }
