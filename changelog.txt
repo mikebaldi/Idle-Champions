@@ -1,3 +1,9 @@
+November 26, 2023
+    Updated 64 bit Imports for v551.
+    Fixed bug where reading if a champion has all its upgrades would fail after using fkeys (Thanks ImpEGamer).
+    Fixed briv ilvl function not including base level of 1 (Thanks ImpEGamer).
+    Fixed a a number of issues with reading from certain dictionaries that would cause memory leaks.
+
 November 22, 2023
     Updated 64 bit Imports for v550.
     Updated ultimate cooldown timer reads to use the new variable.
