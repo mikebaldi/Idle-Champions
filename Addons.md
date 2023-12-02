@@ -15,6 +15,7 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [BrivGemFarm BrivFeatSwap](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_BrivFeatSwap_Extra) by ImpEGamer  
 [BrivGemFarm LevelUp](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_LevelUp_Extra) by ImpEGamer  
 [Close Welcome Back](https://github.com/Pneumatus/IC-Addons/tree/main/IC_BrivGemFarm_CloseWelcomeBack_Extra) by Ismo  
+*[Hybrid Turbo Stacking](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_HybridTurboStacking_Extra) by ImpEGamer  
 [Move Game Window](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MoveGameWindow_Mini_Extra) by antilectual  
 [Memory Updater](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MemoryUpdater_Extra) by antilectual  
 [Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra) by mikebaldi  

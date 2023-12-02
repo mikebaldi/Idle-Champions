@@ -1,3 +1,7 @@
+December 2, 2023
+    Updated 64 bit Imports for v552.
+    Updated Addons.md.
+
 November 26, 2023
     Updated 64 bit Imports for v551.
     Fixed bug where reading if a champion has all its upgrades would fail after using fkeys (Thanks ImpEGamer).
