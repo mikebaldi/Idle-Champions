@@ -195,8 +195,7 @@ this.game.gameInstances.Screen.uiController.topBar.objectiveProgressBox.areaBar.
 this.game.gameInstances.Screen.uiController.bottomBar := New GameObjectStructure(this.game.gameInstances.Screen.uiController,"Int", [0x20])
 this.game.gameInstances.Screen.uiController.bottomBar.levelUpAmount := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar,"Int", [0x438])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar,"Int", [0x380])
-this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel,"List", [0x3b0])
-this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes._CollectionValType := "CrusadersGame.GameScreen.UIComponents.BottomBar.HeroBox"
+this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel,"HashSet", [0x3b0])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextUpgrade := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes,"Int", [0x400])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextUpgrade.IsPurchased := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.nextUpgrade,"Char", [0xa8])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel,"Dict", [0x3b8])
