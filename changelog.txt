@@ -1,3 +1,7 @@
+December 6, 2023
+    Updated 64 bit Imports for v553.
+    Updated EGS pointers for v553.
+
 December 2, 2023
     Updated 64 bit Imports for v552.
     Updated Addons.md.
