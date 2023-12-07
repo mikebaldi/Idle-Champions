@@ -6,12 +6,12 @@ class Havilar
         static EffectKeyString := "havilar_imps"
         GetCurrentOtherImpIndex()
         {
-            return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps.Read()
+            return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.currentOtherImpIndex.Read()
         }
         
         GetActiveImpsSize()
         {
-            return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.currentOtherImpIndex.Read()
+            return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps.size.Read()
         }
 
         GetSummonImpCoolDownTimer()
@@ -23,5 +23,12 @@ class Havilar
         {
             return g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.sacrificeImpUltimate.internalCooldownTimer.Read()
         }
+
+        ; GetActiveImps1()
+        ; {
+        ;     fist := g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps[0].Read()
+        ;     sec := g_SF.Memory.ActiveEffectKeyHandler.HavilarImpHandler.activeImps[1].Read()
+        ;     return "[" . fist . ", " . sec . "]"
+        ; }
     } 
 }

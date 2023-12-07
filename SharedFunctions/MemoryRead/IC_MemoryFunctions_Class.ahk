@@ -64,7 +64,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.4, 2023-11-25"
+        return "v2.4.5, 2023-12-06"
     }
 
     GetPointersVersion()
@@ -756,8 +756,27 @@ class IC_MemoryFunctions_Class
 
     GetHeroNextUpgradeIsPurchased(champID := 1)
     {
-        seat := this.ReadChampSeatByID(champID) - 1 ; index starts at 0
-        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat].nextUpgrade.IsPurchased.Read()
+        currIndex := -1
+        size := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes.size.Read()
+        if size != 12
+            return ""
+        loop, %size%
+        {
+            currID := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[A_Index - 1].hero.def.ID.read()
+            if ( currID == champID)
+            {
+                currIndex := A_Index - 1
+                break
+            }
+        }
+        if (currIndex < 0)
+            return ""
+        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[currIndex].nextUpgrade.IsPurchased.Read()
+    }
+
+    ReadPurchasedUpgradeID(champID := 1, index := 0)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].purchasedUpgradeIDs[index].Read()
     }
 
     ;=========================
