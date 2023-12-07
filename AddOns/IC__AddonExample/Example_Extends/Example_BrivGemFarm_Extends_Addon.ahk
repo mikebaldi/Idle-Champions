@@ -18,5 +18,5 @@ global g_SF := new IC_Example_SharedFunctions_Class
 ; This method doesn't require keeping track of other extended classes from other addons, but can still conflict with addons that overwrite the same function.
 
 ; Uncomment the two lines below to use method #2
-;#include %A_LineFile%\..\..\..\..\SharedFunctions\IC_UpdateClass_Class.ahk
-;IC_UpdateClass_Class.UpdateClassFunctions(g_SF, IC_Example_SharedFunctions_Class)
+;#include %A_LineFile%\..\..\..\..\SharedFunctions\SH_UpdateClass.ahk
+;SH_UpdateClass.UpdateClassFunctions(g_SF, IC_Example_SharedFunctions_Class)

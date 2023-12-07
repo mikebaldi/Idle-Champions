@@ -1,7 +1,7 @@
 ; ActiveEffectKeyHandler finds base addresses for ActiveEffectKeyHandler classes such as BrivUnnaturalHasteHandler and imports the offsets used for them.
 ; See the HeroHandlers folder for information on how to add more champions.
 ; ActiveAffectKeyHandler structures for Individual champions are not created until the champion's handler exists! (Must purchase/level champion)
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
+
 class IC_ActiveEffectKeyHandler_Class
 {
     HeroHandlerIDs := {} 

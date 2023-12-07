@@ -2,7 +2,7 @@
 /* INSTRUCTIONS: First, using the autooffsets/import tool, add the champion's ability information using the instructions here: 
    https://github.com/antilectual/ScriptHub-AutomaticOffsets/blob/main/README_MODIFYING.md
    Copy the generated imports to the SharedFunctions\MemoryRead\Imports directory.
-   Create a file in the SharedFunctions\MemoryRead\HeroHandlers\ directory using the format IC_<CHAMPION NAME>.ahk
+   Create a file in the SharedFunctions\IC\MemoryRead\HeroHandlers\ directory using the format IC_<CHAMPION NAME>.ahk
    Follow the template outlined in __Template.ahk in this folder to create a custom class for the champion.
    Add the include to the new file at the bottom of the list of #includes below using the same format.
 */

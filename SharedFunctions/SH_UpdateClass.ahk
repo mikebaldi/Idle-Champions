@@ -1,4 +1,4 @@
-class IC_UpdateClass_Class
+class SH_UpdateClass
 {
     static UpdatedFunctions := {}
     UpdateClassFunctions(byref classToUpdate, classWithOverrideFunctions, ignoreWarnings := false)
@@ -19,4 +19,10 @@ class IC_UpdateClass_Class
             }
         }
     }
+}
+
+; For backwards compatibility
+class IC_UpdateClass_Class extends SH_UpdateClass
+{
+
 }

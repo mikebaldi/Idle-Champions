@@ -1,6 +1,5 @@
 ; GameSettings class contains IC's GameSettings class structure. Useful for finding details for doing server calls.
-#include %A_LineFile%\..\IC_StaticMemoryPointer_Class.ahk
-class IC_GameSettings_Class extends IC_StaticMemoryPointer_Class
+class IC_GameSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {

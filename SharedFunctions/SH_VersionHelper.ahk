@@ -1,4 +1,4 @@
-class IC_VersionHelper_Class
+class SH_VersionHelper
 {
     ; Takes a version string in form of v#.#.# (versionTesting) and checks to see if it's as new as or newer than a second version string (versionComparing)
     ; Returns -1 if newer, 0 if older, 1 if the same

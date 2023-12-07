@@ -1,8 +1,8 @@
 ; GameManager class contains the in game data structure layout
 
-#include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
+#include %A_LineFile%\..\SH_MemoryPointer.ahk
 
-class IC_StaticMemoryPointer_Class extends IC_MemoryPointer_Class
+class SH_StaticMemoryPointer extends SH_MemoryPointer
 {
     staticOffset := 0
 

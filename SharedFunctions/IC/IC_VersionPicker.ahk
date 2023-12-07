@@ -1,10 +1,10 @@
 
-#include %A_LineFile%\..\json.ahk
-#include %A_LineFile%\..\MemoryRead\classMemory.ahk
-#include %A_LineFile%\..\CLR.ahk
+#include %A_LineFile%\..\..\json.ahk
+#include %A_LineFile%\..\..\MemoryRead\classMemory.ahk
+#include %A_LineFile%\..\..\CLR.ahk
 #include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
 #include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
-#include %A_LineFile%\..\IC_GUIFunctions_Class.ahk
+#include %A_LineFile%\..\..\SH_GUIFunctions.ahk
 
 Gui, ICSHVersionPicker:New
 GUIFunctions.LoadTheme("ICSHVersionPicker")
@@ -124,7 +124,7 @@ VersionPickerSaveChoice()
 ; Closes the current Script
 ICSHVersionPickerGuiClose()
 {
-    scriptHubLoc := A_LineFile . "\..\..\ICScriptHub.ahk"
+    scriptHubLoc := A_LineFile . "\..\..\..\ICScriptHub.ahk"
     Run, %scriptHubLoc%
     ExitApp
 }

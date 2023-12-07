@@ -1,8 +1,7 @@
 ; CrusadersGameDataSet class contains IC's CrusadersGameDataSet class structure. Useful for finding information in defines.
 ; Note static loc is == its instance loc
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
 
-class IC_CrusadersGameDataSet_Class extends IC_MemoryPointer_Class
+class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
 {
     GetVersion()
     {

@@ -1,5 +1,4 @@
-#include %A_LineFile%\..\IC_StaticMemoryPointer_Class.ahk
-class IC_UserStatHandler_Class extends IC_StaticMemoryPointer_Class
+class IC_UserStatHandler_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {

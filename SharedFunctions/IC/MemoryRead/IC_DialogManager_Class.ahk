@@ -1,8 +1,7 @@
-#include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
 ; DialogManager class contains IC's DialogManager class structure. Useful for finding information in dialogues such as what Favor needs to be converted.
 ; DialogList needs to open a BlessingsStoreDialog object instead of a Dialog object.
 ; Searching for ptr depth of 1 has been fine.
-class IC_DialogManager_Class extends IC_MemoryPointer_Class
+class IC_DialogManager_Class extends SH_MemoryPointer
 {
     GetVersion()
     {
@@ -18,7 +17,7 @@ class IC_DialogManager_Class extends IC_MemoryPointer_Class
             this.UnityGameEngine := {}
             this.UnityGameEngine.Dialogs := {}
             structureOffsetsOverlay := this.StructureOffsets.Clone()
-            structureOffsetsOverlay[1] += 0x0 ;0x010
+            structureOffsetsOverlay[1] += 0x10 ; for myself (Steam only)
             offsets := (this.HasOverlay() AND _MemoryManager.is64Bit) ? structureOffsetsOverlay : this.StructureOffsets
             this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
             this.UnityGameEngine.Dialogs.DialogManager.BasePtr := this

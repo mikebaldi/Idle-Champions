@@ -1,5 +1,5 @@
-#include %A_LineFile%\..\..\IC_ArrayFunctions_Class.ahk
-#include %A_LineFile%\..\IC_MemoryManager_Class.ahk
+#include %A_LineFile%\..\..\SH_ArrFnc.ahk
+#include %A_LineFile%\..\SH__MemoryManager.ahk
 ; Class used to describe a memory locations. 
 ; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 

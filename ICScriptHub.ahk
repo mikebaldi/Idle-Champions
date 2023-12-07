@@ -171,11 +171,11 @@ HideToolTip()
 
 ;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
 ; Shared Functions
-#include %A_ScriptDir%\SharedFunctions\IC_SharedFunctions_Class.ahk
-#include %A_ScriptDir%\SharedFunctions\IC_ArrayFunctions_Class.ahk
-#include %A_ScriptDir%\SharedFunctions\IC_KeyHelper_Class.ahk
-#include %A_ScriptDir%\SharedFunctions\IC_GUIFunctions_Class.ahk
-#include %A_ScriptDir%\SharedFunctions\IC_UpdateClass_Class.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_ArrFnc.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_KeyHelper.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_GUIFunctions.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_UpdateClass.ahk
 #include *i %A_ScriptDir%\AddOns\AddOnsIncluded.ahk
 
 ;#IfWinActive ahk_exe AutoHotkeyU64.exe

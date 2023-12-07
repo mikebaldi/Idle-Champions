@@ -1,0 +1,9 @@
+{
+    "NameLess":"Addon Management",
+    "Version": "v2.1.0",
+    "Includes" : "SH_Addon_Management_Includes.ahk",
+    "Author" : "nyze & antilectual",
+    "Url" : "https://github.com/nyze/Addon-Management",
+    "Info" : "This is an addon that provides addon management for addons in Script Hub",
+    "Dependencies" : {}
+}

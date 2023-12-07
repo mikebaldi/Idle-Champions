@@ -29,15 +29,15 @@ global g_SaveHelper := new IC_SaveHelper_Class
 global g_BrivUserSettingsFromAddons := {}
 
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\IC_SharedFunctions_Class.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
 #include %A_LineFile%\..\..\..\ServerCalls\IC_ServerCalls_Class.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\IC_SaveHelper_Class.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\IC\IC_SaveHelper_Class.ahk
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\IC_GUIFunctions_Class.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\IC_UpdateClass_Class.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_UpdateClass.ahk
 
 ;check if first run
 If !IsObject( g_UserSettings )
@@ -71,7 +71,7 @@ class IC_BrivGemFarmRun_SharedData_Class
         ExitApp
     }
 }
-IC_UpdateClass_Class.UpdateClassFunctions(g_SharedData, IC_BrivGemFarmRun_SharedData_Class)
+SH_UpdateClass.UpdateClassFunctions(g_SharedData, IC_BrivGemFarmRun_SharedData_Class)
 
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize

@@ -3,10 +3,10 @@
 ; BaseAddress is the original pointer location all offsets are based off of. Typically something like: getModuleBaseAddress("mono-2.0-bdwgc.dll")+0x00491A90
 ; Is64Bit identifies if the object is using 32-bit or 64-bit addresses.
 
-#include %A_LineFile%\..\IC_MemoryManager_Class.ahk
-#include %A_LineFile%\..\IC_GameObjectStructure_Class.ahk
+#include %A_LineFile%\..\SH__MemoryManager.ahk
+#include %A_LineFile%\..\SH_GameObjectStructure.ahk
 
-class IC_MemoryPointer_Class
+class SH_MemoryPointer
 {
     ModuleOffset := 0
     StructureOffsets := 0

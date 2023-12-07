@@ -12,9 +12,7 @@
 ; - Dictionary entry values are looked up using the format of: dictObject[entryIndex] or dictObject["value", entryIndex]
 ; - Dictionary key values are looked up using the format of: dictObject["key", entryIndex]
 
-#include %A_LineFile%\..\IC_MemoryPointer_Class.ahk
-
-class IC_IdleGameManager_Class extends IC_MemoryPointer_Class
+class IC_IdleGameManager_Class extends SH_MemoryPointer
 {
 
     GetVersion()

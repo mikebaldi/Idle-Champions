@@ -10,8 +10,6 @@ global g_PreviousZoneStartTime
 global g_KeyPresses := {}
 global g_SharedData := new IC_SharedData_Class
 
-#include %A_LineFile%\..\IC_KeyHelper_Class.ahk
-#include %A_LineFile%\..\IC_ArrayFunctions_Class.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 
 class IC_SharedData_Class
@@ -72,17 +70,13 @@ class StackFailStates
     TALLY := [0,0,0,0,0,0]
 }
 
-class IC_SharedFunctions_Class
+class IC_SharedFunctions_Class extends SH_SharedFunctions
 {
     Memory := ""
-    Hwnd := 0
-    PID := 0
     UserID := ""
     UserHash := ""
     InstanceID := 0
     CurrentAdventure := 30 ; default cursed farmer
-    ErrorKeyDown := 0
-    ErrorKeyUp := 0
     GameStartFormation := 1
     ModronResetZone := 0
     CurrentZone := ""
@@ -104,33 +98,6 @@ class IC_SharedFunctions_Class
     GetVersion()
     {
         return "v2.7.4, 2023-10-30"
-    }
-
-    ;Gets data from JSON file
-    LoadObjectFromJSON( FileName )
-    {
-        FileRead, oData, %FileName%
-        data := "" 
-        try
-        {
-            data := JSON.parse( oData )
-        }
-        catch err
-        {
-            err.Message := err.Message . "`nFile:`t" . FileName
-            throw err
-        }
-        return data
-    }
-
-    ;Writes beautified json (object) to a file (FileName)
-    WriteObjectToJSON( FileName, ByRef object )
-    {
-        objectJSON := JSON.stringify( object )
-        objectJSON := JSON.Beautify( objectJSON )
-        FileDelete, %FileName%
-        FileAppend, %objectJSON%, %FileName%
-        return
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.

@@ -1,6 +1,5 @@
 ; EngineSettings class contains IC's EngineSettings class structure. Useful for finding webroot for doing server calls.
-#include %A_LineFile%\..\IC_StaticMemoryPointer_Class.ahk
-class IC_EngineSettings_Class extends IC_StaticMemoryPointer_Class
+class IC_EngineSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {

@@ -139,7 +139,7 @@ Class AddonManagement
         ; test for higher version 
         for addonIndex,addonObject in this.Addons{
             for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(Version, dependencyObject.Version)) {
+                if (dependencyObject.Name == Name AND SH_VersionHelper.IsVersionSameOrNewer(Version, dependencyObject.Version)) {
                     ;We have a addon who depends on the name, now check it it's enabled
                     if(this.Addons[addonIndex]["Enabled"]){
                         return addonIndex
@@ -174,7 +174,7 @@ Class AddonManagement
         {
             for _, dependency in v.Dependencies 
             {
-                if(this.Addons[AddonNumber]["Name"] == dependency.Name AND IC_VersionHelper_class.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], dependency.Version))
+                if(this.Addons[AddonNumber]["Name"] == dependency.Name AND SH_VersionHelper.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], dependency.Version))
                     if (k <= PositionWanted)
                         return k
             }
@@ -265,7 +265,7 @@ Class AddonManagement
             }
         }
         currAddon := this.GetAddon(Name, Version, indexOfAddon)
-        isNewer := (IC_VersionHelper_class.IsVersionSameOrNewer(currAddon.Version, Version) == -1)
+        isNewer := (SH_VersionHelper.IsVersionSameOrNewer(currAddon.Version, Version) == -1)
         if(isNewer)
             Version := currAddon.Version
         lastSwap := 0
@@ -590,7 +590,7 @@ Class AddonManagement
         ; try to higher version match
         for k,v in this.Addons
         {
-            if (v.Name == Name AND IC_VersionHelper_class.IsVersionSameOrNewer(v.Version,Version))
+            if (v.Name == Name AND SH_VersionHelper.IsVersionSameOrNewer(v.Version,Version))
             {
                 i := k
                 return v
