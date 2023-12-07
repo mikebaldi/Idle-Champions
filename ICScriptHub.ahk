@@ -171,7 +171,7 @@ HideToolTip()
 
 ;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
 ; Shared Functions
-#include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions_Includes.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_ArrFnc.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_KeyHelper.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_GUIFunctions.ahk

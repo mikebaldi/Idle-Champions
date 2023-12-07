@@ -1,9 +1,6 @@
 #include %A_LineFile%\..\SH_KeyHelper.ahk
 #include %A_LineFile%\..\SH_ArrFnc.ahk
 
-; Include SharedFunctions for your game here.
-#include *i %A_LineFile%\..\IC\IC_SharedFunctions_Class.ahk
-
 class SH_SharedFunctions
 {
     Hwnd := 0
