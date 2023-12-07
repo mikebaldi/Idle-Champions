@@ -29,7 +29,7 @@ GetScriptHubVersion()
 ;class and methods for parsing JSON (User details sent back from a server call)
 #include %A_ScriptDir%\SharedFunctions\json.ahk
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
-#include %A_ScriptDir%\ServerCalls\IC_ServerCalls_Class.ahk
+#include %A_ScriptDir%\ServerCalls\SH_ServerCalls_Includes.ahk
 ;logging functions
 ;#include *i %A_ScriptDir%\Logging\IC_Log_Class.ahk
 
