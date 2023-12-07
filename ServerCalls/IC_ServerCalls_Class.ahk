@@ -47,7 +47,7 @@ class IC_ServerCalls_Class
 
     UpdateDummyData()
     {
-        this.dummyData := "&language_id=1&timestamp=0&request_id=0&network_id=" . this.networkID . "&mobile_client_version=" . this.clientVersion
+        this.dummyData := "&language_id=1&timestamp=0&request_id=0&network_id=" . this.networkID . "&mobile_client_version=" . this.clientVersion . "&offline_v2_build=1"
     }
 
     SetServer(serverAddress)
@@ -317,7 +317,7 @@ class IC_ServerCalls_Class
             suggestedServer := response.play_server
         OutputDebug, % "Server Suggested web root is: " . suggestedServer
     }
-    #include  *i IC_ServerCalls_Class_Extra.ahk
+    #include *i %A_LineFile%\..\IC_ServerCalls_Class_Extra.ahk
 }
 
 class Byteglow_ServerCalls_Class
