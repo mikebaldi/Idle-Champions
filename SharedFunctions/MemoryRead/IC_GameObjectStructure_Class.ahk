@@ -84,7 +84,8 @@ class GameObjectStructure
             {
                 sizeObject := this.QuickClone()
                 sizeObject.ValueType := "Int"
-                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x4C : 0x18) ; get 64 Bit variation
+                ; TODO: Is "count" in a hashset at offset 0x18 in 32-bit?
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x30 : 0x18)
                 return sizeObject
             }
             else
@@ -117,8 +118,9 @@ class GameObjectStructure
         else if(this.ValueType == "HashSet")
         {
             ; TODO: Verify hashset has same offsets as lists
-            offset := this.CalculateOffset(key) + 0
-            collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
+            offset := this.CalculateHashSetOffset(key) + 0
+            ; if (GameObjectStructure.SystemTypes[this._CollectionKeyType] != "")
+            collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
@@ -182,7 +184,7 @@ class GameObjectStructure
 
     GetVersion()
     {
-        Return "v3.0.2, 2023-11-26"
+        Return "v3.1.0, 2023-12-06"
     }
 
     ; Returns the full offsets of this object after BaseAddress.
@@ -275,7 +277,7 @@ class GameObjectStructure
         this[key].FullOffsets.Push(collectionEntriesOffset, offset)
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
-        this[key].GSOName := key
+        ; this[key].GSOName := key
         this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
     }
 
@@ -299,7 +301,7 @@ class GameObjectStructure
         if(!valueType)
             valueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
-        ; val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         baseAddress := this.BasePtr.BaseAddress ? this.BasePtr.BaseAddress + 0 : this.BasePtr.BaseAddress ; do math on non-null non-zero value to ensure number instead of string. Prevents memory leaks.
         if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
@@ -394,6 +396,35 @@ class GameObjectStructure
         offset := baseOffset + ( offsetInterval * array.2 )
         if (array.1 == "value")
             offset += valueOffset
+        return offset
+    }
+
+    ; Used to calculate offsets of an item in a dict. requires an array with "key" or "value" as first entry and the dict index as second. indices start at 0.
+    CalculateHashSetOffset(key)
+    {
+        if(this.BasePtr.Is64Bit)
+        {
+            ; Look up if key is a standard type
+            hasType1 := GameObjectStructure.SystemTypes[this._CollectionKeyType] != ""
+            ; Look up correct byte sizes for standard types used in c# HashSets. Default non-standard byte size (8) otherwise.
+            type1Bytes := hasType1 ? GameObjectStructure.ValueTypeToBytes[GameObjectStructure.SystemTypes[this._CollectionKeyType]] : 0x8
+            itemSize := (hasType1 AND type1Bytes == 0x4) ? 0x4 : 0x8
+            ; 64-bit HashSet entries start at 0x20 for base types, 0x28 for class types
+            baseOffset := itemSize == 0x4 ? 0x20 : 0x28 
+            ; Default entry sizes (e.g. int hash entries will be 0xC bytes apart. Class types willbe 0x10 bytes apart)
+            offsetInterval := itemSize == 0x4 ? 0xC : 0x10
+            ; Special case for Quads as values
+            ;offsetInterval := GameObjectStructure.SystemTypes[this._CollectionValType] == "Quad" ? 0x20 : offsetInterval
+            ; value of entry starts after the key for the entry
+            valueOffset := itemSize
+        }
+        else
+        {
+            baseOffset := 0x18
+            offsetInterval := 0x10
+            valueOffset := 0x4
+        }
+        offset := baseOffset + ( offsetInterval * key )
         return offset
     }
 
