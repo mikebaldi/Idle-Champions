@@ -3,7 +3,7 @@
 ; Class used to describe a memory locations. 
 ; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 
-;       Note: "List", "Dict", and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
+;       Note: "List", "Dict", "Stack", "Queue" and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
 
 class GameObjectStructure
 {
@@ -73,6 +73,21 @@ class GameObjectStructure
                 sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x18 : 0xC)
                 return sizeObject
             }
+            ; TODO: Find 32-bit location for size in stacks and queues
+            if(this.ValueType == "Stack")
+            {
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x20 : 0x0)
+                return sizeObject
+            }
+            if(this.ValueType == "Queue")
+            {
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := "Int"
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x28 : 0x0)
+                return sizeObject
+            }
             else if(this.ValueType == "Dict")
             {
                 sizeObject := this.QuickClone()
@@ -93,8 +108,8 @@ class GameObjectStructure
                 return ""
             }
         } 
-        ; Special case for List collections in a gameobject.
-        else if(this.ValueType == "List")
+        ; Special case for List/Stack/Queue collections in a gameobject.
+        else if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
         {
             if key is number
             {
@@ -109,6 +124,14 @@ class GameObjectStructure
                 _items.FullOffsets.Push(collectionEntriesOffset)
                 _items.ValueType := this.BasePtr.Is64Bit ? "Int64" : "UInt"
                 return _items
+            }
+            else if (key == "_array")
+            {
+                collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x10 : 0x8
+                _array := this.StableClone()
+                _array.FullOffsets.Push(collectionEntriesOffset)
+                _array.ValueType := this.BasePtr.Is64Bit ? "Int64" : "UInt"
+                return _array
             }
             else
             {
@@ -309,7 +332,7 @@ class GameObjectStructure
             offsets.Push(this.BasePtr.Is64Bit ? 0x14 : 0xC)
             var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, valueType, offsets*)
         }
-        else if (valueType == "List" OR valueType == "Dict" OR valueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
+        else if (valueType == "List" OR valueType == "Dict" OR valueType == "HashSet" OR valueType == "Stack"  OR valueType == "Queue") ; custom ValueTypes not in classMemory.ahk
         {
             var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }
