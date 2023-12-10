@@ -46,14 +46,17 @@ global g_ConnectButton := A_LineFile . "\..\Images\connect-100x100.png"
 global g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-25x25.png"
 global g_SaveButton := A_LineFile . "\..\Images\save-100x100.png"
 global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
+global g_MacroButton := A_LineFile . "\..\Images\macro-100x100.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
 
 ;Load themes
 GUIFunctions.LoadTheme()
 if (GUIfunctions.isDarkMode)
+{
     g_ReloadButton := A_LineFile . "\..\Images\refresh-smooth-white-25x25.png"
-
+    g_MacroButton := A_LineFile . "\..\Images\macro-dark-100x100.png"
+}
 ;Load user settings
 g_UserSettings := IC_SharedFunctions_Class.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 ;check if first run
@@ -92,6 +95,7 @@ Gui, ICScriptHub: +HwndGUIICScriptHub
 global g_MenuBarXPos:=4
 GUIFunctions.AddButton(g_GameButton,"Launch_Clicked","LaunchClickButton")
 GUIFunctions.AddButton(g_ReloadButton,"Reload_Clicked","ReloadClickButton")
+GUIFunctions.AddButton(g_MacroButton, "Launch_Macro_Clicked", "LaunchMacroClickButton")
 
 GUIFunctions.UseThemeTextColor()
 ; Needed to add tabs
@@ -125,6 +129,19 @@ Launch_Clicked()
     g_SF.PID := ErrorLevel
 }
 
+Launch_Macro_Clicked()
+{
+    macroRecLoc :=  A_LineFile . "\..\SharedFunctions\SH_MacroRecorder.ahk"
+    try
+    {
+        Run, %A_AhkPath% /r "%macroRecLoc%"
+    }
+    catch
+    {
+        MsgBox, 48, Unable to launch Macro Recorder, `nThere was a problem launching the Macro Recorder
+    }
+}
+
 ICScriptHubGuiClose()
 {
     MsgBox 4,, Are you sure you want to `exit?
@@ -150,6 +167,7 @@ BuildToolTips()
 {
     GUIFunctions.AddToolTip("LaunchClickButton", "Launch Idle Champions")
     GUIFunctions.AddToolTip("ReloadClickButton", "Reload Script Hub")
+    GUIFunctions.AddToolTip("LaunchMacroClickButton", "Launch Macro Recorder")
 }
 
 ; Shows a tooltip if the control with mouseover has a tooltip associated with it.
