@@ -1727,9 +1727,9 @@
 				"staticOffset":3840
 			},
 			"GameSettings":{
-				"moduleAddress":7500112,
+				"moduleAddress":7673112,
 				"moduleOffset":[
-					2080
+					528
 				],
 				"staticOffset":2688
 			},
