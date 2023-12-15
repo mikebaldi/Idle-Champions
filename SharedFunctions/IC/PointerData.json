@@ -1703,6 +1703,61 @@
 				"staticOffset":0
 			}
 		},
+		"555":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":7672496,
+				"moduleOffset":[
+					640,
+					2688
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":7528480,
+				"moduleOffset":[
+					1296
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":7673112,
+				"moduleOffset":[
+					672
+				],
+				"staticOffset":3840
+			},
+			"GameSettings":{
+				"moduleAddress":7500112,
+				"moduleOffset":[
+					2080
+				],
+				"staticOffset":2688
+			},
+			"IdleGameManager":{
+				"moduleAddress":7512576,
+				"moduleOffset":[
+					3848
+				],
+				"staticOffset":""
+			},
+			"is64":1,
+			"UserData":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64
+				],
+				"staticOffset":3376
+			},
+			"UserStatHandler":{
+				"moduleAddress":4816360,
+				"moduleOffset":[
+					1024,
+					2048,
+					184
+				],
+				"staticOffset":0
+			}
+		},
 		"464.1":{
 			"CrusadersGameDataSet":{
 				"moduleAddress":4835272,
