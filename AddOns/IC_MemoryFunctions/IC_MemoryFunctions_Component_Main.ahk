@@ -12,7 +12,7 @@ Gui, ICScriptHub:Add, Text, x15 y+5, ReadTimeScaleMultiplier:
 Gui, ICScriptHub:Add, Text, vReadTimeScaleMultiplierID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadUncappedTimeScaleMultiplier:
 Gui, ICScriptHub:Add, Text, vReadUncappedTimeScaleMultiplierID x+2 w200,
-Gui, ICScriptHub:Add, Text, x15 y+5, ReadQuestRemainin:
+Gui, ICScriptHub:Add, Text, x15 y+5, ReadQuestRemaining:
 Gui, ICScriptHub:Add, Text, vReadQuestRemainingID x+2 w200,
 Gui, ICScriptHub:Add, Text, x15 y+5, ReadTransitioning:
 Gui, ICScriptHub:Add, Text, vReadTransitioningID x+2 w200,
