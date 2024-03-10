@@ -142,6 +142,26 @@ class IC_ChestPurchaser_Component
         return IC_ChestPurchaser_Component.chestDefs[chestIndex].graphic_id != "0"
     }
 
+    GetChestCostTypeV2ByID(chestID)
+    {
+        size := IC_ChestPurchaser_Component.chestDefs.Length()
+        loop, %size%
+        {
+            if (IC_ChestPurchaser_Component.GetChestIDBySlot(A_Index) == chestID)
+            {
+                if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost == "")
+                    return ""
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.event_v2_id != "")
+                    return "eventV2"
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.patron_id != "")
+                    return "patron " . IC_ChestPurchaser_Component.chestDefs[A_Index].cost.patron_id
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.soft_currency != "")
+                    return "gem"
+            }
+        }
+        return ""
+    }
+
     ReadChests()
     {
         size := IC_ChestPurchaser_Component.chestDefs.Length()
@@ -208,7 +228,10 @@ class IC_ChestPurchaser_Component
         while(buyCount > 0)
         {
             GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " buyCount " chests..."
-            response := g_ServerCall.CallBuyChests( chestID, buyCount )
+            if ( this.GetChestCostTypeV2ByID(chestID) == "eventV2")
+                response := g_ServerCall.CallBuyChests( chestID, buyCount, "eventV2" )
+            else
+                response := g_ServerCall.CallBuyChests( chestID, buyCount )
             if(!IsObject(response))
             {
                 MsgBox % "Error purchasing chest or parsing response."

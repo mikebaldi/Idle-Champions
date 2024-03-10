@@ -132,13 +132,18 @@ class IC_ServerCalls_Class
     }
 
     ; Buys <chests> number of <chestID> chests. Automatically uses Patron purchase call for patron chests.
-    CallBuyChests( chestID, chests )
+    CallBuyChests( chestID, chests, chestType := "")
     {
-        if ( chests > 100 )
-            chests := 100
+        if ( chests > 250 )
+            chests := 250
         else if ( chests < 1 )
             return
-        if(chestID != 152 AND chestID != 153 AND chestID != 219  AND chestID != 311 )
+        if(chestTYpe == "eventV2")
+        {
+            chestParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID "&chest_type_id=" chestID "&count=" chests "&spend_event_v2_tokens=1"
+            return this.ServerCall( "buysoftcurrencychest", chestParams )
+        }
+        else if(chestID != 152 AND chestID != 153 AND chestID != 219  AND chestID != 311)
         {
             chestParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID "&chest_type_id=" chestID "&count=" chests
             return this.ServerCall( "buysoftcurrencychest", chestParams )
