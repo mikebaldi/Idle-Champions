@@ -149,13 +149,13 @@ class IC_ChestPurchaser_Component
         {
             if (IC_ChestPurchaser_Component.GetChestIDBySlot(A_Index) == chestID)
             {
-                if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost == "")
+                if (IC_ChestPurchaser_Component.chestDefs[A_Index].details.cost == "")
                     return ""
-                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.event_v2_id != "")
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].details.cost.event_v2_id != "")
                     return "eventV2"
-                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.patron_id != "")
-                    return "patron " . IC_ChestPurchaser_Component.chestDefs[A_Index].cost.patron_id
-                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].cost.soft_currency != "")
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].details.cost.patron_id != "")
+                    return "patron " . IC_ChestPurchaser_Component.chestDefs[A_Index].details.cost.patron_id
+                else if (IC_ChestPurchaser_Component.chestDefs[A_Index].details.cost.soft_currency != "")
                     return "gem"
             }
         }
@@ -228,7 +228,7 @@ class IC_ChestPurchaser_Component
         while(buyCount > 0)
         {
             GuiControl, ICScriptHub:, ChestPurchaserCurrentChestCount, % "Buying " buyCount " chests..."
-            if ( this.GetChestCostTypeV2ByID(chestID) == "eventV2")
+            if ( IC_ChestPurchaser_Component.GetChestCostTypeV2ByID(chestID) == "eventV2")
                 response := g_ServerCall.CallBuyChests( chestID, buyCount, "eventV2" )
             else
                 response := g_ServerCall.CallBuyChests( chestID, buyCount )
@@ -243,7 +243,7 @@ class IC_ChestPurchaser_Component
                 return 
             }
             if(chestID != 152 AND chestID != 153 AND chestID != 219  AND chestID != 311 )
-                buyCount -= 100
+                buyCount -= 250
             else
                 buyCount -= 1
         }
