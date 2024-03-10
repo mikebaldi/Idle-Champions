@@ -12,3 +12,5 @@ this.ChestTypeDefines._CollectionValType := "CrusadersGame.Defs.ChestTypeDef"
 this.ChestTypeDefines.ID := New GameObjectStructure(this.ChestTypeDefines,"Int", [0x10])
 this.ChestTypeDefines.NamePlural := New GameObjectStructure(this.ChestTypeDefines,"UTF-16", [0x20])
 this.ChestTypeDefines.Name := New GameObjectStructure(this.ChestTypeDefines,"UTF-16", [0x18])
+this.ChestTypeDefines.Cost := New GameObjectStructure(this.ChestTypeDefines,"Int", [0x50])
+this.ChestTypeDefines.Cost.Type := New GameObjectStructure(this.ChestTypeDefines.Cost,"Int", [0x30])
