@@ -93,7 +93,7 @@ class IC_MemoryFunctionsFullRead_Component
     SwapPointers()
     {
         MsgBox, Closing Script Hub and running the pointer version picker.
-        versionPickerLoc := A_LineFile . "\..\..\..\SharedFunctions\IC\IC_VersionPicker.ahk"
+        versionPickerLoc := A_LineFile . "\..\..\IC_Core\IC_VersionPicker.ahk"
         Run, %versionPickerLoc%
         ExitApp
     }

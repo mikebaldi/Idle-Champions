@@ -33,7 +33,7 @@ global g_BrivUserSettingsFromAddons := {}
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
 ;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
 #include %A_LineFile%\..\..\..\ServerCalls\IC_ServerCalls_Class.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\IC\IC_SaveHelper_Class.ahk
+#include %A_LineFile%\..\..\IC_Core\IC_SaveHelper_Class.ahk
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 #include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk

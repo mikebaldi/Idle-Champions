@@ -1,8 +1,8 @@
 ;wrapper with memory reading functions sourced from: https://github.com/Kalamity/classMemory
-#include %A_LineFile%\..\..\..\json.ahk
-#include %A_LineFile%\..\..\..\MemoryRead\SH__MemoryManager.ahk
-#include %A_LineFile%\..\..\..\MemoryRead\SH_MemoryPointer.ahk
-#include %A_LineFile%\..\..\..\MemoryRead\SH_StaticMemoryPointer.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\json.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\MemoryRead\SH__MemoryManager.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\MemoryRead\SH_MemoryPointer.ahk
+#include %A_LineFile%\..\..\..\..\SharedFunctions\MemoryRead\SH_StaticMemoryPointer.ahk
 #include %A_LineFile%\..\IC_IdleGameManager_Class.ahk
 #include %A_LineFile%\..\IC_GameSettings_Class.ahk
 #include %A_LineFile%\..\IC_EngineSettings_Class.ahk

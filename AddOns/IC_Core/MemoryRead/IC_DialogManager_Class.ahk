@@ -17,7 +17,7 @@ class IC_DialogManager_Class extends SH_MemoryPointer
             this.UnityGameEngine := {}
             this.UnityGameEngine.Dialogs := {}
             structureOffsetsOverlay := this.StructureOffsets.Clone()
-            ;structureOffsetsOverlay[1] += 0x10 ; for myself (Steam only)
+            structureOffsetsOverlay[1] += 0x10 ; for myself (Steam only)
             offsets := (this.HasOverlay() AND _MemoryManager.is64Bit) ? structureOffsetsOverlay : this.StructureOffsets
             this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
             this.UnityGameEngine.Dialogs.DialogManager.BasePtr := this
