@@ -1,1 +1,1 @@
-#include *i %A_LineFile%\..\IC_SharedFunctions_Class.ahk
+#include %A_LineFile%\..\IC_SharedFunctions_Class.ahk
