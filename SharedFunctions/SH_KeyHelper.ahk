@@ -7,10 +7,12 @@ class KeyHelper
     {
         KeyMap := {}
         KeyMap[]
-        ; KeyMap["ClickDmg"] := "0xC0"
-        ; KeyMap["{ClickDmg}"] := "0xC0"
-        KeyMap["ClickDmg"] := "0xDF"
-        KeyMap["{ClickDmg}"] := "0xDF"
+        KeyMap["ClickDmg"] := "0xC0"
+        KeyMap["{ClickDmg}"] := "0xC0"
+        ; KeyMap["ClickDmg"] := "0xDF"
+        ; KeyMap["{ClickDmg}"] := "0xDF"
+        ; KeyMap["ClickDmg"] := "0xF3" ; Japanese Keyboard?
+        ; KeyMap["{ClickDmg}"] := "0xF3"
         alphabet := ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
         extraKeys := ["Left","Right","Esc","Shift","Alt","Ctrl","``","RCtrl","LCtrl"]
         fKeys := ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
