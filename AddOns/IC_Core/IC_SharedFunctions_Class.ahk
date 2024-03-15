@@ -11,6 +11,7 @@ global g_KeyPresses := {}
 global g_SharedData := new IC_SharedData_Class
 g_SF := new IC_SharedFunctions_Class
 
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 
 class IC_SharedData_Class
