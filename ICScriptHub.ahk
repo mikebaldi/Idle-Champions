@@ -84,7 +84,7 @@ if(g_UserSettings[ "WriteSettings" ] == true)
 }
 
 
-global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
+global g_SF := new SH_SharedFunctions ; includes MemoryFunctions in g_SF.Memory
 
 ;define a new gui with tabs and buttons
 Gui, ICScriptHub:New
