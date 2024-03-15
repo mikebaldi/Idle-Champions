@@ -170,7 +170,7 @@ Class AddonManagement
                 return indexOfDependency
         }
         ; Check to make sure this addon is not after any addons that depend on it 
-        for k,v in this.Addons
+        for k,v in this.AddonsEnabled
         {
             for _, dependency in v.Dependencies 
             {
@@ -303,10 +303,7 @@ Class AddonManagement
             ; Here we load the Addons that are required on first startup
             startupAddons := []
             startupAddons.Push(Object("Name","Addon Management","Version","v1.0."))
-            startupAddons.Push(Object("Name","Briv Gem Farm","Version","v1.0."))
-            startupAddons.Push(Object("Name","Game Location Settings","Version","v0.1."))
-            startupAddons.Push(Object("Name","About","Version","v0.1."))
-            startupAddons.Push(Object("Name","Briv Gem Farm Stats","Version","v1.0."))
+            startupAddons.Push(Object("Name","IC Core","Version","v.1."))
             this.EnabledAddons := startupAddons 
             ; this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
             forceType := 2
