@@ -51,6 +51,8 @@ class SH_SharedFunctions
     https://www.autohotkey.com/docs/v1/misc/SendMessageList.htm
     https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendmessage
     https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setfocus (ControlFocus == SetFocus)
+    https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keydown
+    https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keyup
     
     Expected:
         SendMessage, MsgNumber , wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText, Timeout
@@ -60,7 +62,7 @@ class SH_SharedFunctions
         SendMessage,
                 MsgNumber - (WM_KEYDOWN := 0x0100, WM_KEYUP := 0x0101),
                 wParam - ("`" = "0xC0", "a" = Format("0x{:X}", GetKeyVK("a")),
-                lParam - (0)
+                lParam - (0x0 for keydown, 0xC0000001 for keyup. Also can include scancode See WM-keydown/keyup documentation.)
                 Control - ("") No specific control specified
                 WinTitle - (ahk_id 0x1234) where 0x1234 is the window handle of the window being sent keypress
                 WinText - ("") No Specific window text specified
@@ -99,6 +101,8 @@ class SH_SharedFunctions
                     ;     TestVar[v] := 0
                     ; TestVar[v] += 1
                     key := g_KeyMap[v]
+                    sc := g_SCKeyMap[v] << 16
+                    lparam := 0x0 & sc
                     SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyDown++
@@ -110,6 +114,8 @@ class SH_SharedFunctions
                 for k, v in values
                 {
                     key := g_KeyMap[v]
+                    sc := g_SCKeyMap[v] << 16
+                    lparam := 0xC0000001 & sc
                     SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyUp++
@@ -120,18 +126,24 @@ class SH_SharedFunctions
         else
         {
             key := g_KeyMap[values]
+            sc := g_SCKeyMap[v] << 16
             if(hold)
             {
                 g_InputsSent++
                 ; if TestVar[v] == ""
                 ;     TestVar[v] := 0
                 ; TestVar[v] += 1
-                SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
+                
+                lparam := sc
+                SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                 if ErrorLevel
                     this.ErrorKeyDown++
             }
             if(release)
-                SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,,,%timeout%
+            {
+                lparam := 0xC0000001 & sc
+                SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
+            }
             if ErrorLevel
                 this.ErrorKeyUp++
             ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
