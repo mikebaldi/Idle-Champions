@@ -3,6 +3,38 @@
 ; GetKeyVK() built in function to get the virtual key. Value is formatted to hex for use in SendMessage calls
 class KeyHelper
 {
+    ; Updates virtual and scancode keymaps.
+    BuildVirtualKeysMap(ByRef vKeys, ByRef scKeys)
+    {
+        vKeys["ClickDmg"] := GetKeyVK("``")
+        vKeys["{ClickDmg}"] := GetKeyVK("``")
+        scKeys["ClickDmg"] := GetKeySC("``")
+        scKeys["{ClickDmg}"] := GetKeySC("``")
+        alphabet := ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+        extraKeys := ["Left","Right","Esc","Shift","Alt","Ctrl","``","RCtrl","LCtrl"]
+        fKeys := ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
+        numKeys := ["0","1","2","3","4","5","6","7","8","9"]
+        
+        allKeys := {}
+        allKeys.Push(alphabet*)
+        allKeys.Push(extraKeys*)
+        allKeys.Push(fKeys*)
+        allKeys.Push(numKeys*)
+
+        for k,v in allKeys
+        {
+            index := "{" . v . "}"
+            vk := GetKeyVK(v)
+            sc := GetKeySC(v)
+            formattedHexCode := Format("0x{:X}", vk)
+            vKeys[index] := formattedHexCode
+            vKeys[v] := formattedHexCode
+            scKeys[index] := formattedHexCode
+            scKeys[v] := formattedHexCode
+        }
+    }
+
+    ; Returns mapping of most used keys. 
     BuildVirtualKeysMap()
     {
         KeyMap := {}
