@@ -1,9 +1,14 @@
 {
 	"Name":"Memory Functions",
-	"Version": "v0.2.2",
+	"Version": "v0.2.3",
     "Includes" : "IC_MemoryFunctions_Component.ahk",
     "Author" : "Antilectual & mikebaldi1980",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_MemoryFunctions",
     "Info" : "This AddOn displays relevant information from the game. It can be useful for debugging issues in the game. It will update automatically while connected to a BrivGemFarm.",
-    "Dependencies" : {}
+    "Dependencies" : [
+        {
+            "Name":"IC Core",
+            "Version":"v0.1.0"
+        }
+    ]
 }
