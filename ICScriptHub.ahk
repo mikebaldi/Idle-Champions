@@ -33,7 +33,9 @@ GetScriptHubVersion()
 ;logging functions
 ;#include *i %A_ScriptDir%\Logging\IC_Log_Class.ahk
 
-global g_KeyMap := KeyHelper.BuildVirtualKeysMap()
+global g_KeyMap:= {}
+global g_SCKeyMap:= {}
+KeyHelper.BuildVirtualKeysMap(g_KeyMap, g_SCKeyMap)
 global g_ServerCall
 global g_UserSettings := {}
 global g_TabControlHeight := 630
@@ -189,7 +191,7 @@ HideToolTip()
 
 ;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
 ; Shared Functions
-#include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions_Includes.ahk
+#include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_ArrFnc.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_KeyHelper.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_GUIFunctions.ahk
