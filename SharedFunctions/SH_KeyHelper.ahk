@@ -29,8 +29,8 @@ class KeyHelper
             formattedHexCode := Format("0x{:X}", vk)
             vKeys[index] := formattedHexCode
             vKeys[v] := formattedHexCode
-            scKeys[index] := formattedHexCode
-            scKeys[v] := formattedHexCode
+            scKeys[index] := sc
+            scKeys[v] := sc
         }
     }
 

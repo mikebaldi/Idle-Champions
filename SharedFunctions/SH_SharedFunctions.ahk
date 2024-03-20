@@ -102,8 +102,8 @@ class SH_SharedFunctions
                     ; TestVar[v] += 1
                     key := g_KeyMap[v]
                     sc := g_SCKeyMap[v] << 16
-                    lparam := 0x0 & sc
-                    SendMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,,,,%timeout%
+                    lparam := Format("0x{:X}", 0x0 | sc)
+                    SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyDown++
                     ;     PostMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,
@@ -115,8 +115,8 @@ class SH_SharedFunctions
                 {
                     key := g_KeyMap[v]
                     sc := g_SCKeyMap[v] << 16
-                    lparam := 0xC0000001 & sc
-                    SendMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,,,,%timeout%
+                    lparam := Format("0x{:X}", 0xC0000001 | sc)
+                    SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
                         this.ErrorKeyUp++
                     ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
@@ -134,14 +134,14 @@ class SH_SharedFunctions
                 ;     TestVar[v] := 0
                 ; TestVar[v] += 1
                 
-                lparam := sc
+                lparam := Format("0x{:X}", 0x0 | sc)
                 SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                 if ErrorLevel
                     this.ErrorKeyDown++
             }
             if(release)
             {
-                lparam := 0xC0000001 & sc
+                lparam := Format("0x{:X}", 0xC0000001 | sc)
                 SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
             }
             if ErrorLevel
