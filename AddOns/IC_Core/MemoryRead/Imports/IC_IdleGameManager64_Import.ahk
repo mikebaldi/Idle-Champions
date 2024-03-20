@@ -49,6 +49,7 @@ this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.targetArea
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.ExpTotal := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x50])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.CoreID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x48])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x4c])
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.GridSave := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x10])
 this.game.gameInstances.Controller.userData.ResetCurrencyHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Int", [0x78])
 this.game.gameInstances.Controller.userData.ResetCurrencyHandler.isForceConverting := New GameObjectStructure(this.game.gameInstances.Controller.userData.ResetCurrencyHandler,"Char", [0x28])
 this.game.gameInstances.Controller.userData.FeatHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Int", [0xb8])
