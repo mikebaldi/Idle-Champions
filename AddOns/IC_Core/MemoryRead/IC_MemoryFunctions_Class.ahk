@@ -577,6 +577,37 @@ class IC_MemoryFunctions_Class
         return -1
     }  
 
+    ReadModronGridArray()
+    {
+        ; TODO: Accept passed modron saves instead of hardcoded one used here
+        gridSave := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[2].GridSave.QuickClone()
+        gridHeight := gridSave.size.Read()
+        gridJSON := "["
+        loop, %gridHeight%
+        {
+            x := A_Index - 1
+            if (x > 0)
+                gridJSON .= ","
+            gridJSON .= "["
+            gridWidth := gridSave[x].size.Read()
+            if !gridHeight
+                gridHeight := 16
+            loop, %gridWidth%
+            {
+                y := A_Index - 1
+                if (y > 0)
+                    gridJSON .= ","
+                currRead := gridSave[x][y,,,0x4].Read("UInt")
+                gridJSON .= currRead
+                if(currRead != 0)
+                    currRead = 1
+            }
+            gridJSON .= "]"
+        }
+        gridJSON .= "]"
+        OutputDebug, % gridJSON
+        return gridJSON
+    }
     ;=================
     ; New
     ;=================

@@ -60,7 +60,7 @@ class GameObjectStructure
 
     ; BEWARE of cases where you may be looking in a dictionary for a key that is the same as a value of the object in the dictionary (e.g. dictionary["Effect"].Effect)
     ; When a key is not found for objects which have collections, use this function. 
-    __Get(key, index := 0, quickLookup := false)
+    __Get(key, index := 0, quickLookup := false, byteSizeOverride := 0x0)
     {
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
@@ -103,9 +103,12 @@ class GameObjectStructure
                 sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x30 : 0x18)
                 return sizeObject
             }
-            else
+            else ; Assume Array
             {
-                return ""
+                sizeObject := this.QuickClone()
+                sizeObject.ValueType := this.ValueType
+                sizeObject.FullOffsets.Push(this.BasePtr.Is64Bit ? 0x18 : 0xC)
+                return sizeObject
             }
         } 
         ; Special case for List/Stack/Queue collections in a gameobject.
@@ -199,8 +202,16 @@ class GameObjectStructure
             }
         }
         else
-        {
-            return
+        { 
+            if key is number
+            {
+                offset := this.CalculateArrayOffset(key,, byteSizeOverride) + 0
+                this.UpdateCollectionOffsets(key, "", offset)
+            }
+            else
+            {
+                return
+            }
         }
         return this[key]
     }
@@ -297,11 +308,23 @@ class GameObjectStructure
         this[key] := this.StableClone()
         this[key].IsAddedIndex := true
         location := this.FullOffsets.Count() + 1
-        this[key].FullOffsets.Push(collectionEntriesOffset, offset)
-        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
-        ; this[key].GSOName := key
-        this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
+        if(collectionEntriesOffset == "") ; Array type, has no items 
+        {
+            this[key].FullOffsets.Push( offset)
+            ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+            ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
+            ; this[key].GSOName := key
+            this.UpdateChildrenWithFullOffsets(this[key], location, [offset])
+        }
+        else
+        {
+            this[key].FullOffsets.Push(collectionEntriesOffset, offset)
+            ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+            ; this[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this[key].FullOffsets)
+            ; this[key].GSOName := key
+            this.UpdateChildrenWithFullOffsets(this[key], location, [collectionEntriesOffset, offset])
+        }
+        
     }
 
     ; Starting at currentObj, updates the fulloffsets variable in key and all children of key recursively.
@@ -420,6 +443,24 @@ class GameObjectStructure
         if (array.1 == "value")
             offset += valueOffset
         return offset
+    }
+
+    CalculateArrayOffset(indexLoc, indexStart := 0, byteSizeOverride := 0x0)
+    {
+        if(indexStart) ; If list is not 0 based indexing
+            indexLoc--             ; AHK uses 0 based array indexing, switch to 0 based
+        
+         if(this.BasePtr.Is64Bit)
+         {
+            if(!byteSizeOverride) ; No way to know 
+                itemSize := 0x8
+                ; itemSize := GameObjectStructure.ValueTypeToBytes[this.ValueType] ? GameObjectStructure.ValueTypeToBytes[this.ValueType] : 0x8
+            else
+                itemSize := byteSizeOverride
+            offset := 0x20 + ( indexLoc * itemSize )
+            return offset
+         }
+        return 0x10 + ( indexLoc * 0x4 )
     }
 
     ; Used to calculate offsets of an item in a dict. requires an array with "key" or "value" as first entry and the dict index as second. indices start at 0.
