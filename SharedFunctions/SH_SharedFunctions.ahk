@@ -126,7 +126,7 @@ class SH_SharedFunctions
         else
         {
             key := g_KeyMap[values]
-            sc := g_SCKeyMap[v] << 16
+            sc := g_SCKeyMap[values] << 16
             if(hold)
             {
                 g_InputsSent++
