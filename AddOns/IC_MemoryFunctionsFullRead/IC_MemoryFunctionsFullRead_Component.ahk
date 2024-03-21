@@ -14,7 +14,7 @@ GUIFunctions.UseThemeTextColor("TableTextColor")
 Gui, ICScriptHub:Add, ListView, x15 y+8 w525 h650 vMemoryFunctionsViewID, Function|x|Value
 
 GUIFunctions.UseThemeListViewBackgroundColor("MemoryFunctionsViewID")
-
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
 class IC_MemoryFunctionsFullRead_Component
 {
     static exclusionList := [ "__Init", "__new",  "BinarySearchList", "GenericGetValue", "OpenProcessReader", "ReadConversionCurrencyBySlot", "BuildChestIndexList", "InitializeChestsIndices", "ReadUserHash", "ReadUserID" ]
