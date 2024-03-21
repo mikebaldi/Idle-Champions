@@ -50,6 +50,17 @@ this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.ExpTotal :
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.CoreID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x48])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x4c])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.GridSave := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x10])
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Dict", [0x20])
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs._CollectionKeyType := "System.Int32"
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs._CollectionValType := "System.Int32"
+this.game.gameInstances.BuffHandler := New GameObjectStructure(this.game.gameInstances,"Int", [0x60])
+this.game.gameInstances.BuffHandler.activeBuffs := New GameObjectStructure(this.game.gameInstances.BuffHandler,"List", [0x20])
+this.game.gameInstances.BuffHandler.activeBuffs._CollectionValType := "CrusadersGame.Defs.BuffDef"
+this.game.gameInstances.BuffHandler.activeBuffs.Name := New GameObjectStructure(this.game.gameInstances.BuffHandler.activeBuffs,"UTF-16", [0x20])
+this.game.gameInstances.BuffHandler.activeBuffs.BaseEffectString := New GameObjectStructure(this.game.gameInstances.BuffHandler.activeBuffs,"UTF-16", [0x38])
+this.game.gameInstances.BuffHandler.activeBuffs.RemainingTime := New GameObjectStructure(this.game.gameInstances.BuffHandler.activeBuffs,"Float", [0xc4])
+this.game.gameInstances.BuffHandler.activeBuffs.Duration := New GameObjectStructure(this.game.gameInstances.BuffHandler.activeBuffs,"Int", [0x84])
+this.game.gameInstances.BuffHandler.activeBuffs.TotalDuration := New GameObjectStructure(this.game.gameInstances.BuffHandler.activeBuffs,"Int", [0xc0])
 this.game.gameInstances.Controller.userData.ResetCurrencyHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Int", [0x78])
 this.game.gameInstances.Controller.userData.ResetCurrencyHandler.isForceConverting := New GameObjectStructure(this.game.gameInstances.Controller.userData.ResetCurrencyHandler,"Char", [0x28])
 this.game.gameInstances.Controller.userData.FeatHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Int", [0xb8])
