@@ -1,7 +1,7 @@
 # IC Script Hub
 ## ``New:``
 > [!WARNING] 
-> When upgrading from a previous version to 4.0.0 you will need to run ``RunOnce.ahk`` once before running ICScriptHub.ahk. This is required to fix the ``Error: Unknown Class``.  
+> When upgrading from a previous version to 4.0.0 you will need to run ``Migrate-To-SH-4.0.0.ahk`` once before running ICScriptHub.ahk. This is required to fix the ``Error: Unknown Class``.  
 
 2024-03-21 [Script 4.0.0 Release](docfiles/update-3-6-0-news.md)
 
