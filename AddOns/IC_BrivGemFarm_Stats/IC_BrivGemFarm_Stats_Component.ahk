@@ -1,6 +1,4 @@
 #include %A_LineFile%\..\IC_BrivGemFarm_Stats_Functions.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\SH_UpdateClass.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk
 
 g_TabControlHeight := Max(g_TabControlHeight, 650)
 g_TabControlWidth := Max(g_TabControlWidth, 485)

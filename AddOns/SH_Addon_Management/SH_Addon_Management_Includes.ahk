@@ -2,7 +2,6 @@
 ;                        Includes
 ; ############################################################
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_VersionHelper.ahk
-#include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk
 
 #include *i %A_LineFile%\..\SH_Addon_Management_Component.ahk
 #include *i %A_LineFile%\..\SH_Addon_Management_Functions.ahk
