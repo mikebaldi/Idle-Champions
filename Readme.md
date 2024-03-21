@@ -1,10 +1,13 @@
 # IC Script Hub
 ## ``New:``
-2023-04-12: Script 3.6.0 Release  
-This update has quality of life (QOL) features to make the script a more enjoyable experience as well as updated code architecture to allow developers an easier time updating their script or making changes. See the notes [here](docfiles/update-3-6-0-news.md).
+> [!WARNING] 
+> When upgrading from a previous version to 4.0.0 you will need to run ``RunOnce.ahk`` once before running ICScriptHub.ahk. This is required to fix the ``Error: Unknown Class``.  
 
-2022-05-16:  Script Hub Importer  
-Script Hub has been updated for use with and with antilectual's [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets). See the the linked repo for instructions on how to use it to update Script Hub's Imports (offsets).  
+2024-03-21 [Script 4.0.0 Release](docfiles/update-3-6-0-news.md)
+
+## ``Previous:``
+2023-04-12: [Script 3.6.0 Release](docfiles/update-3-6-0-news.md).  
+2022-05-16: [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets).  
 
 ---  
 ## Introduction
