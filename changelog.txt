@@ -1,3 +1,8 @@
+March 21, 2024
+    Released version 4.0.0 (see news for changes).
+    Updated 64 bit Imports for v567. (Steam only)
+    Updated pointers for Steam v567.
+
 December 6, 2023
     Updated 64 bit Imports for v553.
     Updated EGS pointers for v553.
