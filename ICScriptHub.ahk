@@ -19,13 +19,6 @@ Process, Priority,, Normal
 
 CoordMode, Mouse, Client
 
-; Run Backwards compatability Script
- if FileExist(".\RunOnce.ahk")
- {
-    RunWait, %A_AhkPath% /r "%A_LineFile%\..\RunOnce.ahk"
-    FileMove, .\RunOnce.ahk, .\UpdateFix.ahk
- }
-
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
