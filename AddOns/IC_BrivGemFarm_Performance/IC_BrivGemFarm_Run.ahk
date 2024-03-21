@@ -41,6 +41,8 @@ global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
 global g_BrivUserSettingsFromAddons := {}
 
+#include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
+
 ;check if first run
 If !IsObject( g_UserSettings )
 {
