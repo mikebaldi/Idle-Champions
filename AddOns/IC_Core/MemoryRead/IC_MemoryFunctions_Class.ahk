@@ -577,10 +577,14 @@ class IC_MemoryFunctions_Class
         return -1
     }  
 
-    ReadModronGridArray()
+    ; Returns json of grid used for saving modron layout.
+    ; Expecting modronSave from this location: this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[x]
+    ; The int value for x is also acceptable.
+    ReadModronGridArray(modronSave)
     {
-        ; TODO: Accept passed modron saves instead of hardcoded one used here
-        gridSave := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[2].GridSave.QuickClone()
+        if (modronSave is number)
+            modronSave := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSave]
+        gridSave := modronSave.GridSave.QuickClone()
         gridHeight := gridSave.size.Read()
         gridJSON := "["
         loop, %gridHeight%
@@ -605,7 +609,7 @@ class IC_MemoryFunctions_Class
             gridJSON .= "]"
         }
         gridJSON .= "]"
-        OutputDebug, % gridJSON
+        ; OutputDebug, % gridJSON
         return gridJSON
     }
     ;=================
