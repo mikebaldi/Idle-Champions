@@ -29,6 +29,8 @@ class SH_SharedFunctions
     WriteObjectToJSON( FileName, ByRef object )
     {
         objectJSON := JSON.stringify( object )
+        if (!objectJSON)
+            return
         objectJSON := JSON.Beautify( objectJSON )
         FileDelete, %FileName%
         FileAppend, %objectJSON%, %FileName%
