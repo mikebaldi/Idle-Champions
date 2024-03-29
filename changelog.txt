@@ -1,5 +1,6 @@
 March 29, 2024
     Added backwards compatible IC_UpdateClass_Class to allow old addons to function while addon developers update addons.
+    Updated 64 bit Imports for v569. (Steam Only)
 
 March 21, 2024
     Released version 4.0.0 (see news for changes).
