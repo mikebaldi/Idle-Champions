@@ -6,10 +6,12 @@ class KeyHelper
     ; Updates virtual and scancode keymaps.
     BuildVirtualKeysMap(ByRef vKeys, ByRef scKeys)
     {
-        vKeys["ClickDmg"] := GetKeyVK("``")
-        vKeys["{ClickDmg}"] := GetKeyVK("``")
-        scKeys["ClickDmg"] := GetKeySC("``")
-        scKeys["{ClickDmg}"] := GetKeySC("``")
+        vKeys["ClickDmg"] := GetKeyVK("sc29")
+        vKeys["{ClickDmg}"] := GetKeyVK("sc29")
+        ;keyname := GetKeyName("sc29")
+        scKeys["ClickDmg"] := GetKeySC(Format("vk{:X}", vKeys["ClickDmg"])) 
+        scKeys["{ClickDmg}"] := GetKeySC(Format("vk{:X}", vKeys["{ClickDmg}"])) 
+        
         alphabet := ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
         extraKeys := ["Left","Right","Esc","Shift","Alt","Ctrl","``","RCtrl","LCtrl"]
         fKeys := ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
@@ -24,7 +26,7 @@ class KeyHelper
         for k,v in allKeys
         {
             index := "{" . v . "}"
-            vk := GetKeyVK(v)
+            vk := KeyHelper.GetVirtualKey(v) 
             sc := GetKeySC(v)
             formattedHexCode := Format("0x{:X}", vk)
             vKeys[index] := formattedHexCode
@@ -32,6 +34,15 @@ class KeyHelper
             scKeys[index] := sc
             scKeys[v] := sc
         }
+    }
+
+    GetVirtualKey(key)
+    {
+        sc := GetKeySC(key)                     ; Get scan code value (dec)
+        formattedSC := Format("sc{:X}", sc)     ; Reformat for use in GetKeyVK (sc + hex. e.g. scC0)
+        vk := GetKeyVK(formattedSC)             ; Get virtual key value (dec)
+        formattedVK := Format("0x{:X}", vk)     ; convert virtual key to hex code 
+        return formattedVK
     }
 
     ; ; Returns mapping of most used keys. 

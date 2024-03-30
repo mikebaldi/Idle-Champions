@@ -103,7 +103,8 @@ class SH_SharedFunctions
                     ;     TestVar[v] := 0
                     ; TestVar[v] += 1
                     key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v] << 16
+                    sc := g_SCKeyMap[v]
+                    sc := sc << 16
                     lparam := Format("0x{:X}", 0x0 | sc)
                     SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
@@ -116,7 +117,8 @@ class SH_SharedFunctions
                 for k, v in values
                 {
                     key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v] << 16
+                    sc := g_SCKeyMap[v]
+                    sc := sc << 16
                     lparam := Format("0x{:X}", 0xC0000001 | sc)
                     SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
                     if ErrorLevel
