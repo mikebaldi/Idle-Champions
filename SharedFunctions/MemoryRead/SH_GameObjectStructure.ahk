@@ -368,6 +368,17 @@ class GameObjectStructure
             second8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
             var := this.ConvQuadToString3( first8, second8 )
         }
+        else if (valueType == "Double?")
+        {
+            var := _MemoryManager.instance.read(baseAddress, "Double", (this.GetOffsets())*)
+            if !var
+            {
+                offsets := this.GetOffsets().Clone()
+                lastIndex := offsets.Count()
+                offsets[lastIndex] := offsets[lastIndex] + 0x8
+                var := _MemoryManager.instance.read(baseAddress, "Double", (offsets)*)
+            }
+        }
         else
         {
             var := _MemoryManager.instance.read(baseAddress, valueType, (this.GetOffsets())*)

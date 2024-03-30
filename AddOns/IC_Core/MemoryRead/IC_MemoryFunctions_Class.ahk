@@ -838,7 +838,8 @@ class IC_MemoryFunctions_Class
 
     ReadHeroLootEnchant(champID := 58, slot := 4)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double")
+        ; TODO: Handle multiple methods of reading a Nullable double depending on unity version.
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double?")
     }
 
     ReadHeroLootRarityValue(champID := 58, slot := 4)
@@ -854,7 +855,7 @@ class IC_MemoryFunctions_Class
     ReadBrivSlot4ilvl()
     {
         champID := 58, slot := 4
-        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double") + 1)
+        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double?") + 1)
     }
 
     ; Returns the formation array of the formation used in the currently active modron.
