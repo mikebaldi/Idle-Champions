@@ -1,8 +1,11 @@
 #include %A_LineFile%\..\json.ahk
 #include %A_LineFile%\..\SH_SharedFunctions.ahk
 ; Build a map of key inputs used by the script
-; KeyMap keys contains all basic keys built (e.g. "a", "b") as well as dictionaries of those keys (e.g. "{a}", "{b}")
-; GetKeyVK() built in function to get the virtual key. Value is formatted to hex for use in SendMessage calls
+; KeyMap keys contains all basic keys built (e.g. "a", "b") as well as dictionaries of those keys (e.g. "{a}", "{b}").
+; GetKeySC() built in function to get scancode keys. Value is left as decimal to allow for bitshifting when creating lparam args for SendMessage calls.
+; GetKeyVK() built in function to get the virtual key. Value is formatted to hex for use in SendMessage calls.
+; ScanCode is key at physical keyboard location and needed in new builds for multi-language keyboards.
+; Mapping saved in ScanCodes.json is created using us-en qwerty keyboard layout.
 class KeyHelper
 {
     ; Updates virtual key and scancode keymaps.

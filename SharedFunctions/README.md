@@ -21,7 +21,7 @@ Contains expanded functions for handling or updating GUI elements. If this file 
 
 > SH_KeyHelper.ahk  
 
-SH_KeyHelper helps convert keystrokes to a virtual key code which is used in SendMessage and PostMessage commands. It allows for expanded  compatability for international keyboards and more control than standard Send and SendInput ahk commands.
+SH_KeyHelper helps convert keystrokes to a virtual key code and scancode key code which are used in SendMessage and PostMessage commands. It allows for expanded compatibility for international keyboards and more control than standard Send and SendInput ahk commands.
 
 > SH_SharedFunctions.ahk
 
