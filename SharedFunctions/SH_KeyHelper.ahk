@@ -5,7 +5,7 @@
 ; GetKeyVK() built in function to get the virtual key. Value is formatted to hex for use in SendMessage calls
 class KeyHelper
 {
-    ; Updates virtual and scancode keymaps.
+    ; Updates virtual key and scancode keymaps.
     BuildVirtualKeysMap(ByRef vKeys, ByRef scKeys)
     {
         sharedFunctions := new SH_SharedFunctions
@@ -19,9 +19,9 @@ class KeyHelper
             vk := GetKeyVK(formattedSC)             ; Get virtual key value (dec)
             formattedVK := Format("0x{:X}", vk)     ; convert virtual key to hex code 
             vKeys[index] := formattedVK
-            vKeys[v] := formattedVK
+            vKeys[key] := formattedVK
             scKeys[index] := sc
-            scKeys[v] := sc
+            scKeys[key] := sc
         }
     }
 
