@@ -8,13 +8,11 @@
 ; Mapping saved in ScanCodes.json is created using us-en qwerty keyboard layout.
 class KeyHelper
 {
-    ; Updates virtual key and scancode keymaps.
-    BuildVirtualKeysMap(ByRef vKeys, ByRef scKeys)
+    ; Add virtual keys from a JSON file
+    AddVirtualKeysToMap(filePath, ByRef vKeys, ByRef scKeys)
     {
         sharedFunctions := new SH_SharedFunctions
-        fileName := A_LineFile . "/../ScanCodes.json"
-        scancodes := sharedFunctions.LoadObjectFromJSON(fileName)
-        
+        scancodes := sharedFunctions.LoadObjectFromJSON(filePath)
         for key,sc in scancodes
         {
             index := "{" . key . "}"
@@ -28,11 +26,22 @@ class KeyHelper
         }
     }
 
+    ; Updates virtual key and scancode keymaps.
+    BuildVirtualKeysMap(ByRef vKeys, ByRef scKeys)
+    {
+        fileName := A_LineFile . "/../ScanCodes.json"
+        KeyHelper.AddVirtualKeysToMap(fileName, vKeys, scKeys)
+
+        fileName := A_LineFile . "/../ScanCodesOverride.json"
+        if FileExist(fileName)
+            KeyHelper.AddVirtualKeysToMap(fileName, vKeys, scKeys)
+    }
+
     WriteScanCodesToJSON()
     {
         sharedFunctions := new SH_SharedFunctions
         output := {}
-        fileName := A_LineFile . "/../ScanCodes.json"
+        fileName := A_LineFile . "/../ScanCodesOverride.json"
         alphabet := ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
         extraKeys := ["Left","Right","Esc","Shift","Alt","Ctrl","``","RCtrl","LCtrl"]
         fKeys := ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"]
