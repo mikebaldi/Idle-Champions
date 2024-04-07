@@ -19,7 +19,7 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [Hybrid Turbo Stacking](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_HybridTurboStacking_Extra) by ImpEGamer  
 [Move Game Window](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MoveGameWindow_Mini_Extra) by antilectual  
 [Memory Updater](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_MemoryUpdater_Extra) by antilectual  
-[Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra) by mikebaldi  
+*[Nerds](https://github.com/Pneumatus/IC-Addons/tree/main/IC_NERDs_Extra) by Ismo    
 [No Modron Adventuring](https://github.com/antilectual/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by antilectual  
 [No Modron Adventuring Fork](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_NoModronAdventuring_Extra) by Emmote  
 [NrakkUltMaster](https://github.com/Pneumatus/IC-Addons/tree/main/IC_NrakkUltMaster_Extra) by Ismo  
@@ -36,4 +36,5 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 ~~[Auto Progress](https://github.com/JuanchiBruzzone/IC_AutoProgress)~~ by Henkypenky  
 ~~[Briv Farm for TR](https://github.com/MSivonen/IC_Briv_Farm_for_TR)~~ by Thatman  
 ~~[Bush Buddy](https://github.com/MSivonen/IC_BushBuddy)~~ by Thatman  
+~~[Nerds](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NERDs_Extra)~~ by mikebaldi  
 ~~[No Modron Leveling](https://github.com/mikebaldi/IC_Addons/tree/main/IC_NoModronLvling_Extra)~~ by mikebaldi  
