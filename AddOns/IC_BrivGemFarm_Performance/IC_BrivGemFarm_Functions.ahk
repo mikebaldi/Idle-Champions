@@ -84,6 +84,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         while ( !this.Memory.ReadUserIsInited() AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
+            Sleep, 20
         }
         if (ElapsedTime >= timeout)
         {

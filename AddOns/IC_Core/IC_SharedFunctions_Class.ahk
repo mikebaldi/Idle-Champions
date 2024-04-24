@@ -304,6 +304,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
+            Sleep, 20
         }
         return gold
     }
