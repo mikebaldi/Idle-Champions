@@ -1,3 +1,9 @@
+April 24, 2024
+    Merged scancode override file PR request.
+    Updated Nerds addon location in Addons.md.
+    Added sleeps to two busy waiting while loops.
+    Updated the KeyHelper write function to default to using the backtick character. Previous scancode is commented out.
+
 March 30, 2024
     Fixed reading Briv's slot 4 enchant level on steam version.
     Fixed click damage not working on non us-en keyboard layouts.
