@@ -56,7 +56,8 @@ class KeyHelper
         {
             output[v] := Format("0x{:X}", GetKeySC(v)) . ""
         }
-        output["ClickDmg"] := 0x29
+        ; output["ClickDmg"] := 0x29
+        output["ClickDmg"] := output["``"]
 
         sharedFunctions.WriteObjectToJSON( fileName, output )
         return
