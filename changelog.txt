@@ -1,3 +1,8 @@
+June 5, 2024
+    Merged ImpEGamer's fix for modron reset check.
+    Updated ActiveEffectKeyHandler to check for new effectKeysByHashedKeyName value since old one was removed on steam.
+    Updated 64 bit Imports for v580. For Steam ONLY which uses the new effectKeysByHashedKeyName variable.
+
 April 24, 2024
     Merged scancode override file PR request.
     Updated Nerds addon location in Addons.md.
