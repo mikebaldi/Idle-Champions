@@ -3,4 +3,4 @@ this.JimMagicalMysteryTourHandler.effect_k__BackingField := New GameObjectStruct
 this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers := New GameObjectStructure(this.JimMagicalMysteryTourHandler.effect_k__BackingField,"List", [0x38])
 this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers._CollectionValType := "CrusadersGame.Effects.EffectKeyHandler"
 this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers.stacks := New GameObjectStructure(this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers,"Int", [0x90])
-this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers.stacks.stackCount := New GameObjectStructure(this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers.stacks,"Double", [0x98])
+this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers.stacks.stackCount := New GameObjectStructure(this.JimMagicalMysteryTourHandler.effect_k__BackingField.effectKeyHandlers.stacks,"Double", [0xa8])
