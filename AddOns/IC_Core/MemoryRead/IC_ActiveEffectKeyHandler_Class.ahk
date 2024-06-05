@@ -70,9 +70,35 @@ class IC_ActiveEffectKeyHandler_Class
         ; assuming first item in effectKeysByKeyName[key]'s list. Note: DM has two for "force_allow_hero"
         ; need _items value to use offsets later      
         handlerAddressObj := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByKeyName[effectName].List[0].parentEffectKeyHandler.activeEffectHandlers._items
+        ; Check for update that uses effectKeysByHashedKeyName instead of effectKeysByKeyName
+        if (handlerAddressObj == "")
+        {
+            keyHash := this.GetKeyHash(champID, effectName)
+            if(keyHash != "") 
+            {
+                handlerAddressObj := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName[keyHash].List[0].parentEffectKeyHandler.activeEffectHandlers._items
+            }
+        }
+        
         ; use first item in the _items list as base address so offsets work later
         address := handlerAddressObj.Read() + handlerAddressObj.CalculateOffset(0) 
         return address
+    }
+
+    ; Finds the KeyHash value when effectKeysByHashedKeyName is used instead of effectKeysByKeyName.
+    GetKeyHash(champID, effectName)
+    {
+        size := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName.size.Read()
+        loop, %size%
+        {
+            effectNameLocal := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read()
+            if (effectName == effectNameLocal)
+            {
+                keyHash := this.Memory.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.Memory.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.KeyHash.Read()
+                return keyHash
+            }
+        }
+        return ""           
     }
 
     ResetCollections()
