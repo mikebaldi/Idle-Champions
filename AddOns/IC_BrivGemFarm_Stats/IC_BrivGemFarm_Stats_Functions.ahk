@@ -396,8 +396,8 @@ class IC_BrivGemFarm_Stats_Component
                     this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart + ( this.NordomXPStart - currentNordomXP ) ) / 5 ) / dtTotalTime, 2 )
                 else if(currentCoreXP)
                     this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart ) / 5 ) / dtTotalTime, 2 )
-                GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
             }
+            GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
             
             statsGemsSpent := g_SF.Memory.ReadGemsSpent()
             if (statsGemsSpent == 2147483647)
