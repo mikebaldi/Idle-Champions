@@ -161,7 +161,7 @@ class IC_BrivGemFarm_Stats_Component
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
-        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, ; % GemsTotal
+        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w200, ; % GemsTotal
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
         Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, ; % GemsPhr
         
@@ -169,6 +169,9 @@ class IC_BrivGemFarm_Stats_Component
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
         posX += 70
         Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w260,
+        GuiControlGet, pos, ICScriptHub:Pos, GemsTotalID
+        posX += 70
+        Gui, ICScriptHub:Add, Text, vGemsSpentWarningID x%posX% y%posY% w260,
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
         GUIFunctions.UseThemeTextColor()
@@ -193,6 +196,10 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vBadAutoprogressesID x+2 w200,  
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Calculated Target Stacks:
         Gui, ICScriptHub:Add, Text, vCalculatedTargetStacksID x+2 w200,
+        if (g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 0) {
+            Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, ForceOfflineRunThreshold Count:
+            Gui, ICScriptHub:Add, Text, vRunsCountID x+2 w200,
+        }
         GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsID
         g_DownAlign := g_DownAlign + posH -5
         g_TabControlHeight := Max(g_TabControlHeight, 700)
@@ -370,25 +377,44 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
             GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / this.TotalRunCount ) * 60, 2 )
 
-
-            ; Check if Nordom is in formation
-            formation := g_SF.Memory.GetFormationByFavorite(1)
-            foundNordom := g_SF.IsChampInFormation(100, formation)
-            formation := g_SF.Memory.GetFormationByFavorite(3)
-            foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
-            GuiControl, ICScriptHub:, NordomWarningID, % (foundNordom ? "WARNING: Nordom found. Verify BPH." : "")
-
             currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
             currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
-            if(foundNordom AND currentCoreXP AND currentCoreXP)
-                this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart + ( this.NordomXPStart - currentNordomXP ) ) / 5 ) / dtTotalTime, 2 )
-            else if(currentCoreXP)
-                this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart ) / 5 ) / dtTotalTime, 2 )
-            GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
-
-            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
-            GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
-            GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+            if (currentCoreXP == 2147483647)
+            {
+                this.BossesPerHour := Round( ( this.TotalRunCount * ( g_SF.Memory.GetModronResetArea() / 5 ) ) / dtTotalTime, 2 )
+                GuiControl, ICScriptHub:, NordomWarningID, Estimated due to capped Modron xp.
+            }
+            else
+            {
+                ; Check if Nordom is in formation
+                formation := g_SF.Memory.GetFormationByFavorite(1)
+                foundNordom := g_SF.IsChampInFormation(100, formation)
+                formation := g_SF.Memory.GetFormationByFavorite(3)
+                foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
+                GuiControl, ICScriptHub:, NordomWarningID, % (foundNordom ? "WARNING: Nordom found. Verify BPH." : "")
+                if(foundNordom AND currentCoreXP AND currentCoreXP)
+                    this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart + ( this.NordomXPStart - currentNordomXP ) ) / 5 ) / dtTotalTime, 2 )
+                else if(currentCoreXP)
+                    this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart ) / 5 ) / dtTotalTime, 2 )
+                GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
+            }
+            
+            statsGemsSpent := g_SF.Memory.ReadGemsSpent()
+            if (statsGemsSpent == 2147483647)
+            {
+                ; 1.83 is the average number of gems earned per zone.
+                ; It's (9.15 / 5). 9.15 being average gems per boss (with both gem hunter blessings active).
+                this.GemsTotal := Round( ( g_SF.Memory.GetModronResetArea() * 1.83 * this.TotalRunCount ), 2 )
+                GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
+                GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+                GuiControl, ICScriptHub:, GemsSpentWarningID, Estimated due to capped GemsSpent stat.
+            }
+            else
+            {
+                this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( statsGemsSpent - this.GemSpentStart )
+                GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
+                GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+            }
 
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
@@ -461,6 +487,9 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
             GuiControl, ICScriptHub:, BadAutoprogressesID, % SharedRunData.BadAutoProgress
             GuiControl, ICScriptHub:, CalculatedTargetStacksID, % SharedRunData.TargetStacks 
+            runsMax := g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
+            if (runsMax > 0)
+                GuiControl, ICScriptHub:, RunsCountID, % Mod( g_SF.Memory.ReadResetsCount(), runsMax )
         }
         catch
         {
@@ -549,6 +578,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, BadAutoProgressID, % 0
         }
         GuiControl, ICScriptHub:, NordomWarningID, % ""
+        GuiControl, ICScriptHub:, GemsSpentWarningID, % ""
     }
 
     ; Resets stats stored on the stats tab.
