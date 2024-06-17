@@ -170,7 +170,7 @@ class IC_BrivGemFarm_Stats_Component
         posX += 70
         Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w260,
         GuiControlGet, pos, ICScriptHub:Pos, GemsTotalID
-        posX += 70
+        posX += 90
         Gui, ICScriptHub:Add, Text, vGemsSpentWarningID x%posX% y%posY% w260,
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
