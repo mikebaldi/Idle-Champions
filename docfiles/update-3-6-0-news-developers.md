@@ -36,4 +36,4 @@ The repo also contains a [CT file](https://github.com/antilectual/IC_PointerBuil
 To understand how to use CE to find pointers, read the instructional information in the following files:  
 [Standard Pointers (IdleGameManager)](../Pointers.pdf)  
 [Static Pointers (Most others)](../GameSettingsStaticInstructions.pdf)  
-[Offsets (No longer needed, but here for informational purposes)](../Offsets.pdf)  
+[Offsets (No longer needed, but here for informational purposes)](how-to-update-memory-read-offsets-using-cheat-engine.md)  
