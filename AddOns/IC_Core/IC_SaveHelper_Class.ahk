@@ -86,7 +86,7 @@ class IC_SaveHelper_Class
         mimicSave .= "--BestHTTP`n" 
         mimicSave .= "Content-Disposition: form-data; name=""details_compressed""`n" 
         mimicSave .= "Content-Type: text/plain; charset=utf-8`n" 
-        mimicSave .= "Content-Length: "  (StrLen(userData) + 1)  "`n`n" 
+        mimicSave .= "Content-Length: "  StrLen(userData)  "`n`n" 
         mimicSave .= userData  "`n" 
         mimicSave .= "--BestHTTP`n" 
         mimicSave .= "Content-Disposition: form-data; name=""checksum""`n" 
