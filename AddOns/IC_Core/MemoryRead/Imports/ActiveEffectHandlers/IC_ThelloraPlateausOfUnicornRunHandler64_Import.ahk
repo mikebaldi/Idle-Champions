@@ -7,7 +7,7 @@ this.ThelloraPlateausOfUnicornRunHandler.controller.userData.StatHandler.ServerS
 this.ThelloraPlateausOfUnicornRunHandler.controller.userData.StatHandler.ServerStats._CollectionKeyType := "System.String"
 this.ThelloraPlateausOfUnicornRunHandler.controller.userData.StatHandler.ServerStats._CollectionValType := "Engine.Numeric.Quad"
 this.ThelloraPlateausOfUnicornRunHandler.gameInstance := New GameObjectStructure(this.ThelloraPlateausOfUnicornRunHandler,"Int", [0x20])
-this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler := New GameObjectStructure(this.ThelloraPlateausOfUnicornRunHandler.gameInstance,"Int", [0x48])
+this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler := New GameObjectStructure(this.ThelloraPlateausOfUnicornRunHandler.gameInstance,"Int", [0x50])
 this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler.ServerStats := New GameObjectStructure(this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler,"Dict", [0x20])
 this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler.ServerStats._CollectionKeyType := "System.String"
 this.ThelloraPlateausOfUnicornRunHandler.gameInstance.StatHandler.ServerStats._CollectionValType := "Engine.Numeric.Quad"

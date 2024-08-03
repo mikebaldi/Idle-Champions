@@ -2,5 +2,5 @@
 this.NrakkUltimateAttackHandler.maxAttacks := New GameObjectStructure(this.NrakkUltimateAttackHandler,"Int", [0xe0])
 this.NrakkUltimateAttackHandler.attacksCounter := New GameObjectStructure(this.NrakkUltimateAttackHandler,"Int", [0x114])
 this.NrakkUltimateAttackHandler.overlay := New GameObjectStructure(this.NrakkUltimateAttackHandler,"Int", [0x98])
-this.NrakkUltimateAttackHandler.overlay.lastSetFilledPercent := New GameObjectStructure(this.NrakkUltimateAttackHandler.overlay,"Float", [0x39c])
-this.NrakkUltimateAttackHandler.overlay.lastSetTargetArcPercent := New GameObjectStructure(this.NrakkUltimateAttackHandler.overlay,"Float", [0x398])
+this.NrakkUltimateAttackHandler.overlay.lastSetFilledPercent := New GameObjectStructure(this.NrakkUltimateAttackHandler.overlay,"Float", [0x3a4])
+this.NrakkUltimateAttackHandler.overlay.lastSetTargetArcPercent := New GameObjectStructure(this.NrakkUltimateAttackHandler.overlay,"Float", [0x3a0])
