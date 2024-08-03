@@ -34,6 +34,6 @@ See the repo [Here](https://github.com/antilectual/IC_PointerBuilder).
 The repo also contains a [CT file](https://github.com/antilectual/IC_PointerBuilder/blob/main/IC_Script_Hub_Ptrs_Helper.ct) to simplify finding pointers, especially the static ones.  
 
 To understand how to use CE to find pointers, read the instructional information in the following files:  
-[Standard Pointers (IdleGameManager)](../Pointers.pdf)  
+[Standard Pointers (IdleGameManager)](how-to-find-idle-champions-pointers-with-cheat-engine.md)  
 [Static Pointers (Most others)](../GameSettingsStaticInstructions.pdf)  
-[Offsets (No longer needed, but here for informational purposes)](../Offsets.pdf)  
+[Offsets (No longer needed, but here for informational purposes)](how-to-update-memory-read-offsets-using-cheat-engine.md)  
