@@ -1,3 +1,9 @@
+August 3, 2024
+    Updated imports to work for Steam v587.
+    Merged Emmote's pull request to update stats addon to show current tally of runs for Hybrid runs.
+    Merged EoD's pull request to fix malformed saves that can cause recovery attempts for failed runs to fail.
+    Merged EoD's pull request to update Pointer/Offset documentation from PDF to markdown.
+
 June 5, 2024
     Merged ImpEGamer's fix for modron reset check.
     Updated ActiveEffectKeyHandler to check for new effectKeysByHashedKeyName value since old one was removed on steam.
