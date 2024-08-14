@@ -27,6 +27,7 @@ class GameObjectStructure
         ,"System.Int32" : "Int"
         ,"System.UInt32" : "UInt"
         ,"System.Int64" : "Int64"
+        ,"System.Enum" : "Int"
         ,"System.UInt64" : "Int64"
         ,"System.Single" : "Float"
         ,"System.USingle" : "UFloat"
@@ -218,7 +219,7 @@ class GameObjectStructure
 
     GetVersion()
     {
-        Return "v3.2.1, 2024-03-30"
+        Return "v3.2.2, 2024-08-14"
     }
 
     ; Returns the full offsets of this object after BaseAddress.
