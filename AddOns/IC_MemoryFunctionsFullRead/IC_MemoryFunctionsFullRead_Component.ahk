@@ -79,7 +79,7 @@ class IC_MemoryFunctionsFullRead_Component
                         currentObject := ActiveEffectKeySharedFunctions[k][k1]
                         fncToCall := ObjBindMethod(currentObject, k2)
                         value := v2.Maxparams >= 2 ? fncToCall.Call(valueToPass) : fncToCall.Call()
-                        value := IsObject(value) ? ArrFnc.GetDecFormattedArrayString(value) : value
+                        value := IsObject(value) ? ArrFnc.GetAlphaNumericArrayString(value) : value
                         value := value == "" ? "-- ERROR --" : value
                         valuePassedString := (v2.Maxparams >= 2 ? "(" . valueToPass . ")" : "")
                         LV_Add(, parameterString, valuePassedString, value)
