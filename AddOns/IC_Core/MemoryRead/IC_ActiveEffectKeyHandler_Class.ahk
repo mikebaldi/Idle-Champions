@@ -27,7 +27,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.4.2, 2024-06-05"
+        return "v2.5.0, 2024-08-14"
     }
 
     Refresh()
