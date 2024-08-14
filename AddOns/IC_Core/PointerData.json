@@ -853,6 +853,63 @@
 				"moduleOffset":"",
 				"staticOffset":""
 			}
+		},
+		"583.1":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64,
+					3248
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":4824176,
+				"moduleOffset":[
+					2480
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":4807312,
+				"moduleOffset":[
+					3528,
+					120,
+					216
+				],
+				"staticOffset":4032
+			},
+			"GameSettings":{
+				"moduleAddress":4816448,
+				"moduleOffset":[
+					2080
+				],
+				"staticOffset":2688
+			},
+			"IdleGameManager":{
+				"moduleAddress":4807312,
+				"moduleOffset":[
+					3248
+				],
+				"staticOffset":""
+			},
+			"is64":1,
+			"UserData":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64
+				],
+				"staticOffset":3376
+			},
+			"UserStatHandler":{
+				"moduleAddress":4816360,
+				"moduleOffset":[
+					1024,
+					2048,
+					184
+				],
+				"staticOffset":0
+			}
 		}
 	},
 	"Kartridge":{
@@ -1895,6 +1952,70 @@
 				"moduleAddress":7671704,
 				"moduleOffset":[
 					2208
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":7815920,
+				"moduleOffset":[
+					640,
+					224,
+					0,
+					120,
+					172,
+					104
+				],
+				"staticOffset":0
+			},
+			"GameSettings":{
+				"moduleAddress":10564936,
+				"moduleOffset":[
+					352,
+					2152,
+					160,
+					432
+				],
+				"staticOffset":592
+			},
+			"IdleGameManager":{
+				"moduleAddress":7655936,
+				"moduleOffset":[
+					3848
+				],
+				"staticOffset":""
+			},
+			"is64":1,
+			"UserData":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64
+				],
+				"staticOffset":3376
+			},
+			"UserStatHandler":{
+				"moduleAddress":4816360,
+				"moduleOffset":[
+					1024,
+					2048,
+					184
+				],
+				"staticOffset":0
+			}
+		},
+		"587":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":7815856,
+				"moduleOffset":[
+					640,
+					2784
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":7815856,
+				"moduleOffset":[
+					640,
+					3104
 				],
 				"staticOffset":""
 			},
