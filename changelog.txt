@@ -1,3 +1,9 @@
+August 14, 2024
+    Added Ellywick hero functions.
+    Added Steam v587 pointers.
+    Updated MemoryFunctionsFullRead to be able to read text based arrays for hero handlers.
+    Updated Addons.md.
+
 August 3, 2024
     Updated imports to work for Steam v587.
     Merged Emmote's pull request to update stats addon to show current tally of runs for Hybrid runs.
