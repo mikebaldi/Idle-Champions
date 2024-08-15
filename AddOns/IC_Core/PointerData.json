@@ -2004,18 +2004,20 @@
 		},
 		"587":{
 			"CrusadersGameDataSet":{
-				"moduleAddress":7815856,
+				"moduleAddress":7671704,
 				"moduleOffset":[
-					640,
-					2784
+					56,
+					64,
+					2912
 				],
 				"staticOffset":""
 			},
 			"DialogManager":{
-				"moduleAddress":7815856,
+				"moduleAddress":7671704,
 				"moduleOffset":[
-					640,
-					3104
+					56,
+					64,
+					3232
 				],
 				"staticOffset":""
 			},
