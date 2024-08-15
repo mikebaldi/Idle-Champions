@@ -79,7 +79,7 @@ Class AddonManagement
             currDependency := this.GetAddon(v.Name, v.Version, indexODependency)
             if (!IsObject(currDependency))
             {
-                MsgBox, 48, Warning, % "Can't find the addon " . currDependency.Name . " required by " . Name . "`n" . Name . " will be disabled."
+                MsgBox, 48, Warning, % "Can't find the addon """ . v.Name . " " . v.Version . """ required by " . Name . "`n" . Name . " will be disabled."
                 this.DisableAddon(Name,Version)
                 return false
             }
