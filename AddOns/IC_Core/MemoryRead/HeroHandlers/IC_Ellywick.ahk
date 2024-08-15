@@ -18,7 +18,6 @@ class Ellywick
             return g_SF.Memory.ActiveEffectKeyHandler.EllywickCallOfTheFeywildHandler.deckOfManyThingsHandler.currentMonsterKills.Read()
         }
 
-
         ReadCardsInHand()
         {
             size := g_SF.Memory.ActiveEffectKeyHandler.EllywickCallOfTheFeywildHandler.deckOfManyThingsHandler.cardsInHand.size.Read()
