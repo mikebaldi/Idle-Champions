@@ -66,7 +66,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.4.7, 2024-03-30"
+        return "v2.4.8, 2024-08-17"
     }
 
     GetPointersVersion()
@@ -130,6 +130,22 @@ class IC_MemoryFunctions_Class
             var := _MemoryManager.instance.read(baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
         }
         return var
+    }
+
+    ; Finds the dictionary index "bonus_modron_exp_mult" is found (if it is found)
+    GetXPBlessingSlot()
+    {
+
+        effectsSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance.size.read()
+        if (effectsSize < 0 OR effectsSize > 200)
+            return ""
+        loop, %effectsSize%
+        {
+            value := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance["value", A_Index - 1].Dictionary["value", 0].def.BaseEffectKeyParams_k__BackingField.OriginalEffectKey.read()
+            if (value == "bonus_modron_exp_mult")
+                return (A_Index - 1)
+        }
+        return ""
     }
 
     ;=========================================
