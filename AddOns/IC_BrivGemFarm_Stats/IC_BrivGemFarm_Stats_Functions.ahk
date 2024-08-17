@@ -168,7 +168,7 @@ class IC_BrivGemFarm_Stats_Component
         GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
         posX += 70
-        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w260,
+        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w265,
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
         g_DownAlign := g_DownAlign + posH -5
         GUIFunctions.UseThemeTextColor()
@@ -378,14 +378,25 @@ class IC_BrivGemFarm_Stats_Component
             foundNordom := g_SF.IsChampInFormation(100, formation)
             formation := g_SF.Memory.GetFormationByFavorite(3)
             foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
-            GuiControl, ICScriptHub:, NordomWarningID, % (foundNordom ? "WARNING: Nordom found. Verify BPH." : "")
-
+            ; Check if Mechanus (+10% core xp) bonus exists
+            foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot()
+            foundXPMod := foundMechanusBlessing OR foundNordom
+            GuiControl, ICScriptHub:, NordomWarningID, % (foundXPMod ? "WARNING: Nordom/Mechanus found. Verify BPH." : "")
             currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
             currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
-            if(foundNordom AND currentCoreXP AND currentCoreXP)
-                this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart + ( this.NordomXPStart - currentNordomXP ) ) / 5 ) / dtTotalTime, 2 )
+            xpGain := currentCoreXP - this.CoreXPStart 
+            if(foundXPMod AND foundNordom AND currentCoreXP AND currentCoreXP)
+                ; xpGain := ( xpGain / 1.1 ) + ( this.NordomXPStart - currentNordomXP ) ; Other possible calculation
+                xpGain := ( xpGain + (this.NordomXPStart - currentNordomXP ) ) / 1.1
+            else if(foundNordom AND currentCoreXP AND currentCoreXP)
+                xpGain := xpGain + ( this.NordomXPStart - currentNordomXP )
+            else if (foundXPMod AND currentCoreXP AND currentCoreXP)
+                xpGain := xpGain / 1.1
             else if(currentCoreXP)
-                this.BossesPerHour := Round( ( ( currentCoreXP - this.CoreXPStart ) / 5 ) / dtTotalTime, 2 )
+                xpGain := currentCoreXP - this.CoreXPStart  
+            ; unmodified levels completed / 5 = boss levels completed
+            if(currentCoreXP)
+                this.bossesPerHour := Round( (xpGain / 5) dtTotalTime, 2)
             GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
 
             this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
