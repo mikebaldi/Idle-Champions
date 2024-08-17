@@ -381,7 +381,7 @@ class IC_BrivGemFarm_Stats_Component
             ; Check if Mechanus (+10% core xp) bonus exists
             foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot()
             foundXPMod := foundMechanusBlessing OR foundNordom
-            GuiControl, ICScriptHub:, NordomWarningID, % (foundXPMod ? "WARNING: Nordom/Mechanus found. Verify BPH." : "")
+            GuiControl, ICScriptHub:, NordomWarningID, % (foundXPMod ? "Nordom/Mechanus found. Verify BPH." : "")
             currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
             currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
             xpGain := currentCoreXP - this.CoreXPStart 
