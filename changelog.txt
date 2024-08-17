@@ -1,3 +1,7 @@
+August 17, 2024
+    Updated 64 bit Imports for v588. (Steam only)
+    Updated stats addon to account for Blessing of Mechanus.
+
 August 14, 2024
     Added Ellywick hero functions.
     Added Steam v587 pointers.
@@ -5,7 +9,7 @@ August 14, 2024
     Updated Addons.md.
 
 August 3, 2024
-    Updated imports to work for Steam v587.
+    Updated 64 bit Imports for v587. (Steam only)
     Merged Emmote's pull request to update stats addon to show current tally of runs for Hybrid runs.
     Merged EoD's pull request to fix malformed saves that can cause recovery attempts for failed runs to fail.
     Merged EoD's pull request to update Pointer/Offset documentation from PDF to markdown.
