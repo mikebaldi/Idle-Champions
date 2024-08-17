@@ -396,7 +396,7 @@ class IC_BrivGemFarm_Stats_Component
                 xpGain := currentCoreXP - this.CoreXPStart  
             ; unmodified levels completed / 5 = boss levels completed
             if(currentCoreXP)
-                this.bossesPerHour := Round( (xpGain / 5) dtTotalTime, 2)
+                this.bossesPerHour := Round( (xpGain / 5) / dtTotalTime, 2)
             GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
 
             this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
