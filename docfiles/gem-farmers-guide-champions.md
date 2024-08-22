@@ -1,104 +1,127 @@
 [< Return to an Setting Up a Gem Farm](setting-up-a-gem-farm.md)
 
 # A Gem Farmer's Guide to Champions
-> 
+
 ## Important champions
-In order by seat.
 
-### `Thellora` (Slot 1)
+The champions are in order of recommendation in their respective slots.
 
-`Thellora` will jump zones based on favor at the start of a run.
+Glossary:
 
-Always beneficial.
+- BPH: Boses Per Hour
+- GPH: Gems Per Hour
 
-Recommendation: **Highly recommended**
+### Slot 1
 
-### `Deekin` (Slot 1)
+1. `Thellora` will jump zones based on favor at the start of a run.\
+  Always beneficial.\
+  Recommendation: **Highly recommended**
 
-`Deekin` will increase the spawn speed through the "Boss wants speed" specialization. 
+1. `Deekin` will increase the spawn speed through the "Boss wants speed" specialization.\
+  Pick the right-hand spec.\
+  Performs the same task as Widdle.\
+  Use the better geared champion you have between Deekin and Widdle if you don't have Thellora.\
+  Recommendation: **Situational**
 
-Performs the same task as Widdle.
+1. `Ezmerelda` allows spawning additional enemies that she favors.\
+  The spawning of additional enemies costs resources that are only worth if it the total BPH is very low (e.g. below 500).\
+  Recommendation: **only one very low BPH**
 
-Use the better geared champion you have between Deekin and Widdle if you don't have Thellora.
+### Slot 2
 
-Pick the right-hand spec.
+1. `Widdle` increases the spawn rate of mobs. Useful to a certain degree and worth a spot in your Gem Farm. A better scaling version of Deekin.\
+  Use the better geared champion you have between Widdle and Deekin.\
+  Recommendations: **Highly recommended**
 
-Recommendation: **Situational**
+1. `Lae'zel` can zone requirements by tracking kills and "completes" a zone if the accumulated number of kills is large enough. This is tracked across zones.\
+  Lae'zel can be a nice addition if Widdle is not available in an adventure.\
+  Recommendations: **Situational**
 
-### `Widdle` (Slot 2)
+### Slot 3
 
-`Widdle` increases the spawn rate of mobs. Useful to a certain degree and worth a spot in your Gem Farm. A better scaling version of Deekin.
+1. `BBEG` has an ability that lowers the requirements of the next zone when a zone is cleared in under 5s.\
+  Can be skipped if the party is in a 1-kill zone completion (does not happen with an Ellywick formation).\
+  Recommendation: **Highly recommended**
 
-Use the better geared champion you have between Widdle and Deekin.
+1. `Nahara` has an ability that lowers the requirements over time if Nahara can kill enemies continously with one shot.\
+  If cannot clear a zone within 5s of real time yet, Nahara can replace BBEG, otherwise BBEG is recommended over Nahara.\
+  Recommendations: **Recommended**
 
-Recommendations: **Highly recommended**
+### Slot 4
 
-### `BBEG` (Slot 3)
+1. `Sentry` has an ability that has a chance to lower the requirements of the next zone when she is not attacked in the previous zone.\
+  Pick the middle spec.\
+  Can be skipped if the party is in a 1-kill zone completion (does not happen with an Ellywick formation).\
+  With sufficient ilevels in Hew Man and Widdle, can be skipped as well if BBEG is present.\
+  Recommendation: **Recommended**
 
-`BBEG` has an ability that lowers the requirements of the next zone when a zone is cleared in under 5s.
+### Slot 5
 
-Recommendation: **Useful when party is not 1-kill zone completion**
+1. `Briv` is the core element of a Gem farm.\
+  Pick the left spec.\
+  Recommendation: **Required**
 
-### `Sentry` (Slot 4)
+### Slot 6
 
-`Sentry` has an ability that has a chance to lower the requirements of the next zone when she is not attacked in the previous zone.
+1. `Shandie` is really useful for the Gem Farm as she acts like a free speed pot once Dash is up and running, which takes 30 seconds (10 with feat). Potions reduced the time to activation accordingly.\
+  Recommendation: **Highly recommended**
 
-Pick the middle spec.
+### Slot 7
 
-Recommendation: **Useful when party is not 1-kill zone completion**
+1. `Minsc` has a 33% chance to spawn one additional enemies and 10% chance to spawn two additional enemies, allowing zone requirements to be completed quicker.\
+  The spawning of additional enemies costs resources that are only worth if it the total BPH is very low (e.g. below 500).\
+  Recommendation: **only one very low BPH**
 
-### `Shandie` (Slot 6)
+### Slot 8
 
-`Shandie` is really useful for the Gem Farm as she acts like a free speed pot once Dash is up and running, which takes 30 seconds (10 with feat). Potions reduced the time to activation accordingly.
+1. `Hew Maan` is also a strongly recommended champion. Their ability to massively increase the number of quest rewards you gain per kill is the reason why Gem Farms can get very fast.\
+  If you're serious about your gem farming, you'll want to get Hew to as close to zone completion with 1 kill as you can. Sentry can help out here.\
+  Recommendation: **Highly recommended**
 
-Recommendation: **Strongly recommended**
+1. `Tatyana` TBD\
+  Recommendation: **TBD**
 
-### `Hew Maan` (Slot 8)
+### Slot 9
 
-`Hew Maan` is also a strongly recommended champion. Their ability to massively increase the number of quest rewards you gain per kill is the reason why Gem Farms can get very fast.
+1. `Diana` speeds up the  transition between zones up to 400% and can speed up the whole gem far considerably.\
+  Recommendation: **Highly recommended**
 
-If you're serious about your gem farming, you'll want to get Hew to as close to zone completion with 1 kill as you can. Sentry can help out here.
+### Slot 10
 
-Recommendation: **Strongly recommended**
+1. `Ellywick` can increase the GPH with her "The Deck of Many Things" ability. The more gem cards she holds, the higher the GPH will be.\
+  Pick the right spec (gem cards).\
+  Recommendation: **Highly recommended**
 
-### `Havilar` (Slot 10)
+1. `Virgil` TBD\
+  Can Ellywick if one wants to increase BPH by sacrificing GPH.\
+  Recommendation: **Situational**
 
-`Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill for your party, such as "Cursed Farmer".
+1. `Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill for your party, such as "Cursed Farmer".\
+  Recommendation: **Situational**
 
-Recommendation: **Situational**
+### Slot 12
 
-## Other notable champions (or classes of champions)
-### Gold find champions
+1. `Melf` TBD\
+  Recommendation: **TBD**
 
-Gold find champions are important in some Gem Farms. Eventually your limiting factor will become the amount of stacks `Briv` can achieve in one client restart. 
-
-It can be useful to increase the distance your Gem Farm can run for before hitting the Click Wall and that's where Gold find champions come in.
-
-This is just a list of Gold farm champions:
-
-* `Jarlaxle` - Slot 4 - Has a solid 50% gold find feat.
-* `Ellywick` - Slot 10 - Increases gold find when you use her right-hand spec.
-* `Rust` - Slot 11 - Good when you have the right-hand spec, and no familiar on his Ultimate ability, as long as Rust manages to pick up his gold coin during your run. This RNG aspect may put some people off.
-* `Azaka` - Slot 12 - Her Ultimate ability will summon a pair of tigers that cause mobs to drop gold with each attack when you use her right-hand spec. 
+1. `Vi` TBD\
+  Recommendation: **TBD**
 
 ### Health-share tanks
 
-Health-share tanks can be useful to drop into the W formation in order to bolster `Briv`'s tanking capability, which in turn will increase the number of Steelbone stacks you get when offline stacking. 
+Health-share tanks can be useful to drop into the W formation in order to bolster `Briv`'s tanking capability, which in turn will increase the number of Steelbone stacks you get when offline stacking.
+
+Try to get only as many Steelbone stacks as required, as large numbers of Steelbone stacks can cause offline calcuation to increase. For example, 40.000 SB stacks will take multiple seconds while 5.000 SB stacks are caclulated quite quickly.
 
 Use this method with caution as unexpected synergy can suddenly cause the offline calculation to decide you killed everything in the zone rather than tanked for stacks.
 
 A health-share tank or two is usually okay though.
 
-* `Aila` - Slot 9
-* `Dragonbait` - Slot 11
-* `Gromma` - Slot 3
-* `Havilar` - Slot 10
-* `Nayeli` - Slot 3
-* `Nova` - Slot 11
-* `Selise` - Slot 12
-* `Tyril` - Slot 10
-* `Wulfgar` - Slot 10
-* ...
+- Slot 3: `Gromma`, `Nayeli`
+- Slot 9: `Aila`
+- Slot 10: `Havilar`, `Tyril`, `Wulfgar`
+- Slot 11: `Dragonbait`, `Nova`
+- Slot 12: `Selise`
 
 I have not included `Sgt. Knox` due to being in Slot 6. If you're Gem Farming, slot 6 will be guaranteed for Shandie (and if you don't yet have Shandie, timegate her ASAP).
 
