@@ -109,20 +109,7 @@ Glossary:
 
 ### Health-share tanks
 
-Health-share tanks can be useful to drop into the W formation in order to bolster `Briv`'s tanking capability, which in turn will increase the number of Steelbone stacks you get when offline stacking.
-
-Try to get only as many Steelbone stacks as required, as large numbers of Steelbone stacks can cause offline calcuation to increase. For example, 40.000 SB stacks will take multiple seconds while 5.000 SB stacks are caclulated quite quickly.
-
-Use this method with caution as unexpected synergy can suddenly cause the offline calculation to decide you killed everything in the zone rather than tanked for stacks.
-
-A health-share tank or two is usually okay though.
-
-- Slot 3: `Gromma`, `Nayeli`
-- Slot 9: `Aila`
-- Slot 10: `Havilar`, `Tyril`, `Wulfgar`
-- Slot 11: `Dragonbait`, `Nova`
-- Slot 12: `Selise`
-
-I have not included `Sgt. Knox` due to being in Slot 6. If you're Gem Farming, slot 6 will be guaranteed for Shandie (and if you don't yet have Shandie, timegate her ASAP).
+Health-share tanks are not useful to increase the amount of Steelbone stacks gathered by Briv in the Stacking zone.
+Using health share usually results in less Steelbone stacks instead of more.
 
 [< Return to an Setting Up a Gem Farm](setting-up-a-gem-farm.md)
