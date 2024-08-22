@@ -64,6 +64,7 @@ Glossary:
 ### Slot 6
 
 1. `Shandie` is really useful for the Gem Farm as she acts like a free speed pot once Dash is up and running, which takes 30 seconds (10 with feat). Potions reduced the time to activation accordingly.\
+  Later in the game, Shandie can be skipped with enough speed bonus in the team. For example, using Hew's feat and Huge + Large + Medium speed potions will already reach the cap of 10x speed increase.\
   Recommendation: **Highly recommended**
 
 ### Slot 7
@@ -93,7 +94,7 @@ Glossary:
   Recommendation: **Highly recommended**
 
 1. `Virgil` TBD\
-  Can Ellywick if one wants to increase BPH by sacrificing GPH.\
+  Can replace Ellywick if one wants to increase BPH by sacrificing GPH.\
   Recommendation: **Situational**
 
 1. `Havilar` will increase the quest rewards gained when killing imps. This makes her useful for specific adventures where you don't already have a 1-kill for your party, such as "Cursed Farmer".\
