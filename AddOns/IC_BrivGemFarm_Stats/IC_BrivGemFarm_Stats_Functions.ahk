@@ -161,7 +161,7 @@ class IC_BrivGemFarm_Stats_Component
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
-        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w50, ; % GemsTotal
+        Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w200, ; % GemsTotal
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
         Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w200, ; % GemsPhr
         
