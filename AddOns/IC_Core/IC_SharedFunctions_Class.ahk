@@ -27,6 +27,7 @@ class IC_SharedData_Class
     OpenedGoldChests := 0
     PurchasedGoldChests := 0
     PurchasedSilverChests := 0
+    GemsSpent := 0
     ShinyCount := 0
     TriggerStart := false
     TotalRollBacks := 0
