@@ -13,6 +13,7 @@ class IC_BrivGemFarm_Stats_Component
     CoreXPStart := 0
     NordomXPStart := 0
     GemStart := 0
+    CurrentGemsSpent := 0
     GemSpentStart := 0
     BossesPerHour := 0
     LastResetCount := 0
@@ -324,7 +325,9 @@ class IC_BrivGemFarm_Stats_Component
                 this.CoreXPStart := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
                 this.NordomXPStart := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
                 this.GemStart := g_SF.Memory.ReadGems()
-                this.GemSpentStart := g_SF.Memory.ReadGemsSpent()
+                this.GemSpentStart := 0
+                if (IsObject(this.SharedRunData))
+                    this.GemSpentStart := this.SharedRunData.GemsSpent
                 this.LastResetCount := g_SF.Memory.ReadResetsCount()
                 silverChests := g_SF.Memory.ReadChestCountByID(1)
                 goldChests := g_SF.Memory.ReadChestCountByID(2)
@@ -399,7 +402,10 @@ class IC_BrivGemFarm_Stats_Component
                 this.bossesPerHour := Round( (xpGain / 5) / dtTotalTime, 2)
             GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
 
-            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
+            this.CurrentGemsSpent := 0
+            if (IsObject(this.SharedRunData))
+                this.CurrentGemsSpent := this.SharedRunData.GemsSpent
+            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( this.CurrentGemsSpent - this.GemSpentStart )
             GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
             GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
 
@@ -524,6 +530,7 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.OpenedGoldChests := 0
             SharedRunData.PurchasedGoldChests := 0
             SharedRunData.PurchasedSilverChests := 0
+            SharedRunData.GemsSpent := 0
             SharedRunData.ShinyCount := 0
             SharedRunData.TotalRollBacks := 0
             SharedRunData.BadAutoProgress := 0

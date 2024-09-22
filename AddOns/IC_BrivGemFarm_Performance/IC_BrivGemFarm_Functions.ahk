@@ -888,6 +888,7 @@ class IC_BrivGemFarm_Class
                 {
                     g_SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
                     g_SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
+                    g_SharedData.GemsSpent += numChests * (chestID == 1 ? 50 : 500)
                     g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
                     g_SF.TotalGoldChests := (chestID == 2) ? response.chest_count : g_SF.TotalGoldChests
                     g_SF.TotalGems := response.currency_remaining
