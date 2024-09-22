@@ -595,6 +595,7 @@ class IC_BrivGemFarm_Stats_Component
         this.NordomXPStart := 0
         this.GemStart := 0
         this.GemSpentStart := 0
+        this.CurrentGemsSpent := 0
         this.BossesPerHour := 0
         this.LastResetCount := 0
         this.RunStartTime := A_TickCount
