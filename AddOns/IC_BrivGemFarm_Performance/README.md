@@ -24,7 +24,7 @@ Instructions:
 
 Notes:
 
-1. You can can settings at any point during the run by clicking Save Settings again.
+1. You can change settings at any point during the run by clicking Save Settings again.
 2. First run is ignored for stats, in case it is a partial run.
 3. Settings save to and load from `BrivGemFarmSettings.json` file.
 4. Recommended SB stack level is [Modron Reset Zone] - X, with X = 4 for single skip, X = 6 for double skip, X = 8 for triple skip, and X = 10 for quadruple skip.
