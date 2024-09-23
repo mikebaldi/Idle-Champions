@@ -263,15 +263,15 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         sleepTime := 125
 
         if ( forceToggle )
-            this.DirectedInput(,, g_SCKeyMap["g"] )
+            this.DirectedInput(,, g_SCKeyMap["g"])
         if ( this.Memory.ReadAutoProgressToggled() != isToggled )
-            this.DirectedInput(,, g_SCKeyMap["g"] )
+            this.DirectedInput(,, g_SCKeyMap["g"])
         while ( this.Memory.ReadAutoProgressToggled() != isToggled AND forceState AND ElapsedTime < 5001 )
         {
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * keyCount)
             {
-                this.DirectedInput(,, g_SCKeyMap["g"] )
+                this.DirectedInput(,, g_SCKeyMap["g"])
                 keyCount++
             }
         }
@@ -300,7 +300,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
-                this.DirectedInput(,, g_SCKeyMap["q"] )
+                this.DirectedInput(,, g_SCKeyMap["q"])
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
@@ -468,7 +468,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.ResetServerCall()
             ; try a fall back
             this.FallBackFromZone()
-            this.DirectedInput(,, g_SCKeyMap["q"] ) ; safety for correct party
+            this.DirectedInput(,, g_SCKeyMap["q"]) ; safety for correct party
             this.ToggleAutoProgress(1, true)
             lastCheck := dtCurrentZoneTime
             fallBackTries++
@@ -533,14 +533,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ;check to bench briv
         if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,[g_SCKeyMap["e"]])
+            this.DirectedInput(,, g_SCKeyMap["e"])
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ;check to unbench briv
         if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,[g_SCKeyMap["q"]])
+            this.DirectedInput(,, g_SCKeyMap["q"])
             g_SharedData.SwapsMadeThisRun++
             return
         }
@@ -549,14 +549,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
         {
-            this.DirectedInput(,,[g_SCKeyMap["e"]])
+            this.DirectedInput(,, g_SCKeyMap["e"])
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ; check to swap briv from favorite 2 to favorite 1 (W to Q)
         if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
-            this.DirectedInput(,,[g_SCKeyMap["q"]])
+            this.DirectedInput(,, g_SCKeyMap["q"])
             g_SharedData.SwapsMadeThisRun++
             return
         }
