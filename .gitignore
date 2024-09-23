@@ -16,3 +16,4 @@ AddOns/*_Addon_Management/AddonManagement.json
 LastGUID*.json
 Current*.json
 SharedFunctions/ScanCodesOverride.json
+.idea/

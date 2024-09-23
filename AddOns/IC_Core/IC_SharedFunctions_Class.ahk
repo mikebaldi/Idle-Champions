@@ -164,7 +164,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            this.DirectedInput(,,"{e}")
+            this.DirectedInput(,,g_SCKeyMap["e"])
             if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
                 this.ToggleAutoProgress(1,0,false)
             Sleep, %sleepTime%
@@ -263,15 +263,15 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         sleepTime := 125
 
         if ( forceToggle )
-            this.DirectedInput(,, "{g}" )
+            this.DirectedInput(,, g_SCKeyMap["g"] )
         if ( this.Memory.ReadAutoProgressToggled() != isToggled )
-            this.DirectedInput(,, "{g}" )
+            this.DirectedInput(,, g_SCKeyMap["g"] )
         while ( this.Memory.ReadAutoProgressToggled() != isToggled AND forceState AND ElapsedTime < 5001 )
         {
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * keyCount)
             {
-                this.DirectedInput(,, "{g}" )
+                this.DirectedInput(,, g_SCKeyMap["g"] )
                 keyCount++
             }
         }
@@ -293,14 +293,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ElapsedTime := 0
         counter := 0
         sleepTime := 250
-        this.DirectedInput(,, "{q}")
+        this.DirectedInput(,, g_SCKeyMap["q"])
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
-                this.DirectedInput(,, "{q}" )
+                this.DirectedInput(,, g_SCKeyMap["q"] )
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
@@ -355,7 +355,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     DoDashWait( DashWaitMaxZone := 2000 )
     {
         this.ToggleAutoProgress( 0, false, true )
-        this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
+        this.LevelChampByID( 47, 230, 7000, g_SCKeyMap["q"]) ; level shandie
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
         this.Memory.ActiveEffectKeyHandler.Refresh()
@@ -468,7 +468,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.ResetServerCall()
             ; try a fall back
             this.FallBackFromZone()
-            this.DirectedInput(,, "{q}" ) ; safety for correct party
+            this.DirectedInput(,, g_SCKeyMap["q"] ) ; safety for correct party
             this.ToggleAutoProgress(1, true)
             lastCheck := dtCurrentZoneTime
             fallBackTries++
@@ -533,14 +533,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ;check to bench briv
         if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,["{e}"]*)
+            this.DirectedInput(,,[g_SCKeyMap["e"]])
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ;check to unbench briv
         if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,["{q}"]*)
+            this.DirectedInput(,,[g_SCKeyMap["q"]])
             g_SharedData.SwapsMadeThisRun++
             return
         }
@@ -549,14 +549,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
         {
-            this.DirectedInput(,,["{e}"]*)
+            this.DirectedInput(,,[g_SCKeyMap["e"]])
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ; check to swap briv from favorite 2 to favorite 1 (W to Q)
         if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
-            this.DirectedInput(,,["{q}"]*)
+            this.DirectedInput(,,[g_SCKeyMap["q"]])
             g_SharedData.SwapsMadeThisRun++
             return
         }
@@ -870,11 +870,11 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if(this.Memory.ReadCurrentZone() == 1)
             return
         if(formationFavoriteNum == 1)
-            spam := ["{q}"]
+            spam := [g_SCKeyMap["q"]]
         else if(formationFavoriteNum == 2)
-            spam := ["{w}"]
+            spam := [g_SCKeyMap["w"]]
         else if(formationFavoriteNum == 3)
-            spam := ["{e}"]
+            spam := [g_SCKeyMap["e"]]
         else
             spam := ""
         g_SharedData.LoopString := "Waiting for offline settings wipe..."
