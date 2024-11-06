@@ -1,3 +1,7 @@
+November 6, 2024
+    Updated 64 bit Imports for v596. (Steam only)
+    Updated pointers for EGS v596.
+    
 August 17, 2024
     Updated 64 bit Imports for v588. (Steam only)
     Updated stats addon to account for Blessing of Mechanus.
