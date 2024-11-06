@@ -13,8 +13,10 @@ Script Hub uses an addon system to add/update functionality. Developers can writ
 [AzakaQWE](https://github.com/Fedvee/IC-addons/tree/main/IC_AzakaQWE_Extra) by Fedv  
 [Better Azaka](https://github.com/Pneumatus/IC-Addons/tree/main/IC_BetterAzaka_Extra) by Ismo  
 [BrivGemFarm BrivFeatSwap](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_BrivFeatSwap_Extra) by ImpEGamer  
+*[BrivGemFarm HideDefaultProfile](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_BrivGemFarm_HideDefaultProfile_Extra) by Emmote  
 [BrivGemFarm HybridTurboStacking](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_HybridTurboStacking_Extra) by ImpEGamer  
 [BrivGemFarm LevelUp](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_LevelUp_Extra) by ImpEGamer  
+*[Claim Daily Platinum](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_ClaimDailyPlatinum_Extra) by Emmote  
 [Close Welcome Back](https://github.com/Pneumatus/IC-Addons/tree/main/IC_BrivGemFarm_CloseWelcomeBack_Extra) by Ismo  
 *[EGS Overlay Swatter](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_EGSOverlaySwatter_Extra) by Emmote  
 *[Game Settings Fix](https://github.com/Emmotes/IC_Addons/tree/main/IC_Addons/IC_GameSettingsFix_Extra) by Emmote  
