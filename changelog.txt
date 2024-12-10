@@ -1,3 +1,7 @@
+December 10, 2024
+    Updated 64 bit Imports for v600. (Steam only)
+    Updated pointers for EGS v600.
+
 November 6, 2024
     Updated 64 bit Imports for v596. (Steam only)
     Updated pointers for EGS v596.
