@@ -243,6 +243,7 @@ class IC_BrivGemFarm_Class
             if (g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
             {
                 g_SharedData.BossesHitThisRun := 0
+                g_SharedData.LevelsWalkedThisRun := 0
                 g_SF.ToggleAutoProgress( 0, false, true )
                 g_SharedData.StackFail := this.CheckForFailedConv()
                 g_SF.WaitForFirstGold()
