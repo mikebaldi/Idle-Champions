@@ -21,6 +21,7 @@ class IC_SharedData_Class
     LoopString := ""
     TotalBossesHit := 0
     BossesHitThisRun := 0
+    LevelsWalkedThisRun := 0
     SwapsMadeThisRun := 0
     StackFail := 0
     OpenedSilverChests := 0
@@ -550,6 +551,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if (!brivBenched AND isFormation2 AND isWalkZone)
         {
             this.DirectedInput(,,["{e}"]*)
+            g_SharedData.LevelsWalkedThisRun++
             g_SharedData.SwapsMadeThisRun++
             return
         }

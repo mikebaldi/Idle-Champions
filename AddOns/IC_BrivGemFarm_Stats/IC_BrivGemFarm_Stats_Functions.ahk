@@ -184,7 +184,9 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h125 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Boss Levels Hit `This `Run:
-        Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Levels Walked `This `Run:
+        Gui, ICScriptHub:Add, Text, vLevelsWalkedThisRunID x+2 w200,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, RollBacks Hit Since Start:
@@ -367,7 +369,7 @@ class IC_BrivGemFarm_Stats_Component
                     GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
             }
 
-            GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
+            GuiControl, ICScriptHub:, TotalRunCountID, % StrFnc.NumberFormat(this.TotalRunCount)
             dtTotalTime := (A_TickCount - this.ScriptStartTime) / 3600000
             GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
             GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / this.TotalRunCount ) * 60, 2 )
@@ -397,24 +399,24 @@ class IC_BrivGemFarm_Stats_Component
             ; unmodified levels completed / 5 = boss levels completed
             if(currentCoreXP)
                 this.bossesPerHour := Round( (xpGain / 5) / dtTotalTime, 2)
-            GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
+            GuiControl, ICScriptHub:, bossesPhrID, % StrFnc.NumberFormat(this.BossesPerHour)
 
             this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
-            GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
-            GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+            GuiControl, ICScriptHub:, GemsTotalID, % StrFnc.NumberFormat(this.GemsTotal)
+            GuiControl, ICScriptHub:, GemsPhrID, % StrFnc.NumberFormat(Round( this.GemsTotal / dtTotalTime, 2 ))
 
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
 
             if (IsObject(this.SharedRunData))
             {
-                GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
-                GuiControl, ICScriptHub:, GoldsGainedID, % currentGoldChests - this.GoldChestCountStart + this.SharedRunData.OpenedGoldChests
-                GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
-                GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+                GuiControl, ICScriptHub:, SilversGainedID, % StrFnc.NumberFormat(currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests) ; current - Start + Opened = Purchased + Dropped
+                GuiControl, ICScriptHub:, GoldsGainedID, % StrFnc.NumberFormat(currentGoldChests - this.GoldChestCountStart + this.SharedRunData.OpenedGoldChests)
+                GuiControl, ICScriptHub:, SilversOpenedID, % StrFnc.NumberFormat(this.SharedRunData.OpenedSilverChests)
+                GuiControl, ICScriptHub:, GoldsOpenedID, % StrFnc.NumberFormat(this.SharedRunData.OpenedGoldChests)
                 global ShiniesClassNN
                 g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
-                GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
+                GuiControl, ICScriptHub:, ShiniesID, % StrFnc.NumberFormat(this.SharedRunData.ShinyCount)
             }
             ++this.TotalRunCount
             this.StackFail := 0
@@ -469,11 +471,12 @@ class IC_BrivGemFarm_Stats_Component
             textColor := Format("{:#x}", GUIFunctions.CurrentTheme["HeaderTextColor"])
             GuiControl, ICScriptHub: +c%textColor%, LoopID, 
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
-            GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
-            GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
-            GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
-            GuiControl, ICScriptHub:, BadAutoprogressesID, % SharedRunData.BadAutoProgress
-            GuiControl, ICScriptHub:, CalculatedTargetStacksID, % SharedRunData.TargetStacks
+            GuiControl, ICScriptHub:, BossesHitThisRunID, % StrFnc.NumberFormat(SharedRunData.BossesHitThisRun)
+            GuiControl, ICScriptHub:, LevelsWalkedThisRunID, % StrFnc.NumberFormat(SharedRunData.LevelsWalkedThisRun)
+            GuiControl, ICScriptHub:, TotalBossesHitID, % StrFnc.NumberFormat(SharedRunData.TotalBossesHit)
+            GuiControl, ICScriptHub:, TotalRollBacksID, % StrFnc.NumberFormat(SharedRunData.TotalRollBacks)
+            GuiControl, ICScriptHub:, BadAutoprogressesID, % StrFnc.NumberFormat(SharedRunData.BadAutoProgress)
+            GuiControl, ICScriptHub:, CalculatedTargetStacksID, % StrFnc.NumberFormat(SharedRunData.TargetStacks)
             runsMax := g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
             if (runsMax > 1)
             {
@@ -518,6 +521,7 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.LoopString := ""
             SharedRunData.TotalBossesHit := 0
             SharedRunData.BossesHitThisRun := 0
+            SharedRunData.LevelsWalkedThisRun := 0
             SharedRunData.SwapsMadeThisRun := 0
             SharedRunData.StackFail := 0
             SharedRunData.OpenedSilverChests := 0
@@ -538,25 +542,26 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, FastRunTimeID, % this.FastRunTime
         GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
         GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
-        GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
+        GuiControl, ICScriptHub:, TotalRunCountID, % StrFnc.NumberFormat(this.TotalRunCount)
         GuiControl, ICScriptHub:, dtTotalTimeID, % 0
         GuiControl, ICScriptHub:, AvgRunTimeID, % 0
-        GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
-        GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
-        GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+        GuiControl, ICScriptHub:, bossesPhrID, % StrFnc.NumberFormat(this.BossesPerHour)
+        GuiControl, ICScriptHub:, GemsTotalID, % StrFnc.NumberFormat(this.GemsTotal)
+        GuiControl, ICScriptHub:, GemsPhrID, % StrFnc.NumberFormat(Round( this.GemsTotal / dtTotalTime, 2 ))
         if(IsObject(this.SharedRunData))
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
-            GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.PurchasedSilverChests
-            GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.PurchasedGoldChests
-            GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
-            GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
-            GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
-            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % this.SharedRunData.SwapsMadeThisRun
-            GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
-            GuiControl, ICScriptHub:, TotalBossesHitID, % this.SharedRunData.TotalBossesHit
-            GuiControl, ICScriptHub:, TotalRollBacksID, % this.SharedRunData.TotalRollBacks
-            GuiControl, ICScriptHub:, BadAutoProgressID, % this.SharedRunData.BadAutoProgress
+            GuiControl, ICScriptHub:, SilversGainedID, % StrFnc.NumberFormat(this.SharedRunData.PurchasedSilverChests)
+            GuiControl, ICScriptHub:, GoldsGainedID, % StrFnc.NumberFormat(this.SharedRunData.PurchasedGoldChests)
+            GuiControl, ICScriptHub:, SilversOpenedID, % StrFnc.NumberFormat(this.SharedRunData.OpenedSilverChests)
+            GuiControl, ICScriptHub:, GoldsOpenedID, % StrFnc.NumberFormat(this.SharedRunData.OpenedGoldChests)
+            GuiControl, ICScriptHub:, ShiniesID, % StrFnc.NumberFormat(this.SharedRunData.ShinyCount)
+            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % StrFnc.NumberFormat(this.SharedRunData.SwapsMadeThisRun)
+            GuiControl, ICScriptHub:, BossesHitThisRunID, % StrFnc.NumberFormat(this.SharedRunData.BossesHitThisRun)
+            GuiControl, ICScriptHub:, LevelsWalkedThisRunID, % StrFnc.NumberFormat(this.SharedRunData.LevelsWalkedThisRun)
+            GuiControl, ICScriptHub:, TotalBossesHitID, % StrFnc.NumberFormat(this.SharedRunData.TotalBossesHit)
+            GuiControl, ICScriptHub:, TotalRollBacksID, % StrFnc.NumberFormat(this.SharedRunData.TotalRollBacks)
+            GuiControl, ICScriptHub:, BadAutoProgressID, % StrFnc.NumberFormat(this.SharedRunData.BadAutoProgress)
         }
         else
         {
@@ -568,6 +573,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, ShiniesID, % 0
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % 0
             GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
+            GuiControl, ICScriptHub:, LevelsWalkedThisRunID, % 0
             GuiControl, ICScriptHub:, TotalBossesHitID, % 0
             GuiControl, ICScriptHub:, TotalRollBacksID, % 0
             GuiControl, ICScriptHub:, BadAutoProgressID, % 0
