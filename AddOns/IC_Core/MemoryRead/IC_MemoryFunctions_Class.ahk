@@ -763,43 +763,38 @@ class IC_MemoryFunctions_Class
 
     ReadHeroUpgradeRequiredLevel(champID := 1, upgradeID := 7)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].RequiredLevel.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].RequiredLevel.Read()
     }
 
     ; Checks for specialization graphic. No graphic means no spec.
     ReadHeroUpgradeIsSpec(champID := 1, upgradeID := 7)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].defaultSpecGraphic.Read() > 0
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Def.defaultSpecGraphic.Read() > 0
     }
 
     ReadHeroUpgradeRequiredUpgradeID(champID := 1, upgradeID := 7)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].RequiredUpgradeID.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Def.RequiredUpgradeID.Read()
     }
 
     ReadHeroUpgradeID(champID := 1, upgradeID := 7)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].ID.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Id.Read()
     }
 
-    ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 8) ;upgradeID is "slot" ; battle master 
+    ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 7) ;upgradeID is "slot" ; battle master 
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades["value", upgradeID].SpecializationName.Read()
-    }
-
-    ReadHeroUpgradeSpecializationNameByID(champID := 1, upgradeID := 7) ; battle master 
-    {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades[upgradeID].SpecializationName.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Def.SpecializationName.Read()
     }
 
     ReadHeroUpgradeIsPurchased(champID := 1, upgradeID := 7)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].allUpgrades[upgradeID].IsPurchased.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.PurchasedUpgrades[upgradeID].Read() != ""
     }
 
     ReadHeroUpgradesSize(champID := 1)
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].allUpgrades.size.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.upgradesByUpgradeId.size.Read()
     }
 
     ReadHeroIsOwned(champID := 1)
@@ -827,9 +822,9 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[currIndex].nextUpgrade.IsPurchased.Read()
     }
 
-    ReadPurchasedUpgradeID(champID := 1, index := 0)
+        ReadPurchasedUpgradeID(champID := 1, index := 0) ; Deprecated 
     {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].purchasedUpgradeIDs[index].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
     }
 
     ;=========================
