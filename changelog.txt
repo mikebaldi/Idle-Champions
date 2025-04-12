@@ -1,3 +1,7 @@
+April 11, 2025
+    Updated 64 bit Imports for v618.2. (Steam only)
+    Fixed methods that used the now removed variable of "allUpgrades".
+
 December 10, 2024
     Updated 64 bit Imports for v600. (Steam only)
     Updated pointers for EGS v600.
