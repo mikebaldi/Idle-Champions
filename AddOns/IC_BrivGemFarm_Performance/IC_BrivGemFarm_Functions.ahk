@@ -437,7 +437,7 @@ class IC_BrivGemFarm_Class
     {
         if (!g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
             g_SF.FallBackFromBossZone()
-        inputValues := "{w}" ; Stack farm formation hotkey
+        inputValues := g_SCKeyMap["w"] ; Stack farm formation hotkey
         g_SF.DirectedInput(,, inputValues )
         g_SF.WaitForTransition( inputValues )
         g_SF.ToggleAutoProgress( 0 , false, true )
@@ -647,12 +647,12 @@ class IC_BrivGemFarm_Class
         g_SharedData.LoopString := "Leveling champions"
         formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
         isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
-        g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
+        g_SF.LevelChampByID( 58, 170, 7000, g_SCKeyMap["q"]) ; level briv
         if (isShandieInFormation)
-            g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
+            g_SF.LevelChampByID( 47, 230, 7000, g_SCKeyMap["q"]) ; level shandie
         isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
         if (isHavilarInFormation)
-            g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
+            g_SF.LevelChampByID( 56, 15, 7000, g_SCKeyMap["q"]) ; level havi
         if (g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
