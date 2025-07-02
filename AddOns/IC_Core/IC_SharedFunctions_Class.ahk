@@ -1,9 +1,7 @@
 /*  Various functions for use with scripts for Idle Champions.
     change log
-    v 0.2 11/11/21
-    1. refactoring of logging
-    2. toggle auto progress function
-    3. add some failsafes for when key inputs aren't registering
+    v 0.3 2025/07/02
+    1. CNE changed `ReadFormationTransitionDir` to 4 during non-QTs. Broke animation skipping.
 */
 
 global g_PreviousZoneStartTime
@@ -99,7 +97,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v3.0.0, 2024-03-15"
+        return "v3.0.1, 2025-07-02"
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.
@@ -566,7 +564,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     BenchBrivConditions(settings)
     {
         ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
-        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() == 3 )
+        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
             return true
         ;bench briv not in a preferred briv jump zone
         if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
