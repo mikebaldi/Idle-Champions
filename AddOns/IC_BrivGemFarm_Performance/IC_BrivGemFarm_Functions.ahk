@@ -40,6 +40,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
         this.sprint := this.Memory.ReadHasteStacks()
         this.steelbones := this.Memory.ReadSBStacks()
+        if (this.BrivHasThunderStep())
+            this.steelbones := Floor(this.steelbones * 1.2)
     }
 
     ; sets the user information used in server calls such as user_id, hash, active modron, etc.
@@ -159,6 +161,26 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         }
         g_PreviousZoneStartTime := A_TickCount
         return
+    }
+    
+    BrivHasThunderStep() ;Thunder step 'Gain 20% More Sprint Stacks When Converted from Steelbones', feat 2131.
+    {
+        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(58, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(58, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
+        {
+            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
+            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
+            return (thunderInQ OR thunderInE)
+        }
+        else if (g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetActiveModronFormationSaveSlot()))
+            return true
+		else
+		{
+			feats := g_SF.Memory.GetHeroFeats(58)
+			for k, v in feats
+				if (v == 2131)
+					return true
+		}
+		return false
     }
 }
 
