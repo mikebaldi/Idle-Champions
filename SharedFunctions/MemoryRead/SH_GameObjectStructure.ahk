@@ -348,7 +348,7 @@ class GameObjectStructure
         if(!valueType)
             valueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging thisStructure Offsets
-        val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        ; val := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
         baseAddress := this.BasePtr.BaseAddress ? this.BasePtr.BaseAddress + 0 : this.BasePtr.BaseAddress ; do math on non-null non-zero value to ensure number instead of string. Prevents memory leaks.
         if(valueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
         {
