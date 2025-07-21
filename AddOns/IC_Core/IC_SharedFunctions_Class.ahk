@@ -542,6 +542,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             g_SharedData.SwapsMadeThisRun++
             return
         }
+        ; TODO: Fix check to not fail when the formation hasn't finished deploying (out of gold to purchase champs etc.)
         isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
         isWalkZone := this.Settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
         ; check to swap briv from favorite 2 to favorite 3 (W to E)

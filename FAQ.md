@@ -17,9 +17,6 @@ Many advanced settings are hidden from the UI to make the new user experience mo
     * Easily add new addons by dropping them into the Addons folder.
     * Addons are great for developers. If there is a feature missing, it is relatively easy to create (or ask for someone to create) an Addon that does what you want using generic shared functions.
 
-* **The BrivGemFarm addon is using a lot of CPU. Is there some way I can reduce its load on my computer?**  
-See the readme for the ``IC_GemFarm_Potato`` addon [here](./Addons/IC_BrivGemFarm_Potato/README.md)
-
 * **How does BrivGemFarm handle buying and opening chests?**  
 The logic works like this:
   * If there is at least .1 seconds left during stack restart and your gems are higher than the maintenance level, it will **buy** between 0 and 100 **silver chests** depending on what you can afford.
