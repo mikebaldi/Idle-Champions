@@ -1,3 +1,10 @@
+August 1, 2025
+    Fixed HewMaan handler.
+    Fixed some potential infinite recursion locations.
+    Updated imports to use new form. Requires updated Importer to generate imports. Generates warnings for mismatched imports/script versions.
+    updated ActiveEffectKeyHandler to reduce clock cycles.
+        -Note: Refresh will now take a hero handler and only refresh that handler.
+
 April 11, 2025
     Updated 64 bit Imports for v618.2. (Steam only)
     Fixed methods that used the now removed variable of "allUpgrades".

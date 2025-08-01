@@ -1,6 +1,6 @@
 {
 	"Name":"IC Core",
-    "Version": "v0.1.1",
+    "Version": "v0.1.2",
     "Includes" : "IC_Core_Includes.ahk",
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_Core",
