@@ -139,7 +139,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     DoRushWait()
     {
         this.ToggleAutoProgress( 0, false, true )
-        this.Memory.ActiveEffectKeyHandler.Refresh()
+        this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.EffectKeyString)
         StartTime := A_TickCount
         ElapsedTime := 0
         timeout := 8000 ; 7s seconds

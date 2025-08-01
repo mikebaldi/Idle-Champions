@@ -356,7 +356,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
-        this.Memory.ActiveEffectKeyHandler.Refresh()
+        this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.EffectKeyString)
         StartTime := A_TickCount
         ElapsedTime := 0
         timeScale := this.Memory.ReadTimeScaleMultiplier()
@@ -405,7 +405,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.ReadDashActive())
             return true
         else if (!this.Memory.ActiveEffectKeyHandler.TimeScaleWhenNotAttackedHandler.BaseAddress)
-            this.Memory.ActiveEffectKeyHandler.Refresh()
+            this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.EffectKeyString)
         return false
     }
 
