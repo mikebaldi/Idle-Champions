@@ -17,7 +17,7 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
             this.CrusadersGame := {}
             this.CrusadersGame.Defs := {}
             this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.StructureOffsets )
-            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := this
+            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new IC_BasePtr_Class("IC_CrusadersGameDataSet_Class", this.BaseAddress)
             this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
             if(!_MemoryManager.is64bit)
             {

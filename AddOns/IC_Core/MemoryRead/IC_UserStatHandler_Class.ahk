@@ -14,7 +14,7 @@ class IC_UserStatHandler_Class extends SH_StaticMemoryPointer
             this.CrusadersGame := {}
             this.CrusadersGame.User := {}
             this.CrusadersGame.User.UserStatHandler := new GameObjectStructure(this.StructureOffsets)
-            this.CrusadersGame.User.UserStatHandler.BasePtr := this
+            this.CrusadersGame.User.UserStatHandler.BasePtr := new IC_BasePtr_Class("IC_UserStatHandler_Class", this.BaseAddress)
             this.CrusadersGame.User.UserStatHandler.Is64Bit := _MemoryManager.is64Bit
             if(!_MemoryManager.is64Bit)
             {

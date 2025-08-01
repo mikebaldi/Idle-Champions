@@ -39,7 +39,6 @@ class GameObjectStructure
                                 , "UShort": 0x4, "Int": 0x4, "UInt": 0x4
                                 , "Int64": 0x8, "UInt64": 0x8, "Float": 0x4
                                 , "UFloat": 0x4, "Double": 0x8, "Char": 0x4, "UTF-16" : 0x8, "Quad": 0x10 }
-   
     ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
     {
@@ -303,12 +302,12 @@ class GameObjectStructure
         this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
     }
 
-    ; Creates a gameobject at key, updates its offsets, copies the other values in the object to key object, propegates changes down chain of objects under key. 
+    ; Creates a gameobject at key, updates its offsets, copies the other values in the object to key object, propagates changes down chain of objects under key. 
     UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
     {
         this[key] := this.StableClone()
         this[key].IsAddedIndex := true
-        location := this.FullOffsets.Count() + 1
+        location := this.FullOffsets.Count() == 0 ? this.FullOffsets.Count() : this.FullOffsets.Count() + 1
         if(collectionEntriesOffset == "") ; Array type, has no items 
         {
             this[key].FullOffsets.Push( offset)

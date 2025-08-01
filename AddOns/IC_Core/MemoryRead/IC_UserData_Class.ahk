@@ -14,7 +14,7 @@ class IC_UserData_Class extends SH_StaticMemoryPointer
             this.CrusadersGame := {}
             this.CrusadersGame.User := {}
             this.CrusadersGame.User.UserData := new GameObjectStructure(this.StructureOffsets)
-            this.CrusadersGame.User.UserData.BasePtr := this
+            this.CrusadersGame.User.UserData.BasePtr := new IC_BasePtr_Class("IC_UserData_Class", this.BaseAddress)
             this.CrusadersGame.User.UserData.Is64Bit := _MemoryManager.is64Bit
             if(!_MemoryManager.is64Bit)
             {

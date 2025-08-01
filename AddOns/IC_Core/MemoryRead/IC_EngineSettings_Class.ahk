@@ -15,7 +15,7 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
             this.UnityGameEngine := {}
             this.UnityGameEngine.Core := {}
             this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
-            this.UnityGameEngine.Core.EngineSettings.BasePtr := this
+            this.UnityGameEngine.Core.EngineSettings.BasePtr := new IC_BasePtr_Class("IC_EngineSettings_Class", this.BaseAddress)
             this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
             if(!_MemoryManager.is64Bit)
             {

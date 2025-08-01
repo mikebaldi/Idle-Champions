@@ -6,6 +6,19 @@
 #include %A_LineFile%\..\SH__MemoryManager.ahk
 #include %A_LineFile%\..\SH_GameObjectStructure.ahk
 
+class IC_BasePtr_Class
+{
+    __new(name, baseAddress)
+    {
+        this.Name := name
+        this.BaseAddress := baseAddress
+    }
+
+    Is64bit := True
+    BaseAddress := ""
+    Name := ""
+}
+
 class SH_MemoryPointer
 {
     ModuleOffset := 0

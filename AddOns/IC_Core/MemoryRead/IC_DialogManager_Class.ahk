@@ -20,7 +20,7 @@ class IC_DialogManager_Class extends SH_MemoryPointer
             ; structureOffsetsOverlay[1] += 0x10 ; for myself (Steam only)
             offsets := (this.HasOverlay() AND _MemoryManager.is64Bit) ? structureOffsetsOverlay : this.StructureOffsets
             this.UnityGameEngine.Dialogs.DialogManager := new GameObjectStructure(offsets)
-            this.UnityGameEngine.Dialogs.DialogManager.BasePtr := this
+            this.UnityGameEngine.Dialogs.DialogManager.BasePtr := new IC_BasePtr_Class("IC_DialogManager_Class", this.BaseAddress)
             this.UnityGameEngine.Dialogs.DialogManager.Is64Bit := _MemoryManager.is64Bit
             if(!_MemoryManager.is64Bit)
             {

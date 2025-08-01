@@ -31,8 +31,9 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
         {
             this.Is64Bit := _MemoryManager.is64bit
             ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
+            ; this.StructureOffsets[1] += 0x10
             this.IdleGameManager := New GameObjectStructure(this.StructureOffsets)
-            this.IdleGameManager.BasePtr := this
+            this.IdleGameManager.BasePtr := new IC_BasePtr_Class("IC_IdleGameManager_Class", this.BaseAddress)
             this.IdleGameManager.Is64Bit := _MemoryManager.is64bit
             if(!_MemoryManager.is64bit)
             {
