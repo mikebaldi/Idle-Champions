@@ -10,7 +10,7 @@ class IC_ActiveEffectKeyHandler_Class
     HeroHandler := ""
     GameInstance := 0
     
-    __new(gameManager := "")
+    __new(memory := "")
     {
         for hero, heroObj in ActiveEffectKeySharedFunctions
         {
@@ -23,7 +23,7 @@ class IC_ActiveEffectKeyHandler_Class
                 }
             }
         }
-        this.GameManager := gameManager
+        this.GameManager := memory.GameManager
         this.Refresh()
     }
  
