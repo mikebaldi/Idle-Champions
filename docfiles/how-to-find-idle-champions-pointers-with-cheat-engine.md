@@ -1,6 +1,8 @@
 
 ## A Quick Run Down Of Finding Idle Champions Pointers With Cheat Engine
 
+Static pointers work a little differently. More information is in the [GameSettingsStaticInstructions.pdf](../GameSettingsStaticInstructions.pdf).
+
 1. Restart your computer.
 
 2. Open Idle Champions and Cheat Engine 3.

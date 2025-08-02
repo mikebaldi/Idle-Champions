@@ -1,5 +1,6 @@
 
 ## How To Update Memory Read Offsets Using Cheat Engine
+`Outdated`  Please see [imports](..\Readme.md#imports) to update offsets.
 
 With the method laid out below we will use Cheat Engine and a working pointer to the CrusadersGameController structure to find new offsets for memory reads that are no longer working correctly, due to the structures shifting offsets. If every memory read is no longer working, then the following method may not work as that would be a sign that the pointer to CrusadersGameController is no longer good.
 
