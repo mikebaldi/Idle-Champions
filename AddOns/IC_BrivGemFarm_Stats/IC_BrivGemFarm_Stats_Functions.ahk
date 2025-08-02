@@ -31,7 +31,7 @@ class IC_BrivGemFarm_Stats_Component
     
     SharedRunData[]
     {
-        get 
+        get
         {
             try
             {
@@ -108,14 +108,14 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Haste Stack `Count:
         Gui, ICScriptHub:Add, Text, vg_StackCountHID x+2 w200, ; % g_StackCountH
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Last Close Game Reason:
-        Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300, 
+        Gui, ICScriptHub:Add, Text, vLastCloseGameReasonID x+2 w300,
         GUIFunctions.UseThemeTextColor()
     }
 
     ; Adds the Once per run group box to the stats tab page under the current run group.
     AddOncePerRunGroup()
     {
-        global        
+        global
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         g_DownAlign := posY + posH -5
         Gui, ICScriptHub:Font, w700
@@ -211,7 +211,7 @@ class IC_BrivGemFarm_Stats_Component
         }
         this.StatsTabFunctions := {}
     }
-    
+
     ;======================
     ; GUI Update Functions
     ;======================
@@ -261,8 +261,8 @@ class IC_BrivGemFarm_Stats_Component
             {
                 sbStackMessage := sbStackMessage . " [last]"
             }
-        } 
-        else 
+        }
+        else
         {
             lastStackedSB := (this.SbLastStacked > 0) ? (" (Last reset: " . this.SbLastStacked . ")") : ""
             sbStackMessage := sbStacks . lastStackedSB
@@ -274,11 +274,12 @@ class IC_BrivGemFarm_Stats_Component
             {
                 hasteStackMessage := hasteStackMessage . " [last]"
             }
-        } 
-        else 
+        }
+        else
         {
             hasteStackMessage := hasteStacks
         }
+
         GuiControl, ICScriptHub:, g_StackCountSBID, % sbStackMessage
         GuiControl, ICScriptHub:, g_StackCountHID, % hasteStackMessage
 
@@ -304,7 +305,6 @@ class IC_BrivGemFarm_Stats_Component
             this.LastResetCount := g_SF.Memory.ReadResetsCount()
             this.isStarted := true
         }
-
         this.StackFail := Max(this.StackFail, IsObject(this.SharedRunData) ? this.SharedRunData.StackFail : 0)
         this.TriggerStart := IsObject(this.SharedRunData) ? this.SharedRunData.TriggerStart : this.LastTriggerStart
         if ( g_SF.Memory.ReadResetsCount() > this.LastResetCount OR (g_SF.Memory.ReadResetsCount() == 0 AND g_SF.Memory.ReadOfflineDone() AND this.LastResetCount != 0 ) OR (this.TriggerStart AND this.LastTriggerStart != this.TriggerStart) )
@@ -330,14 +330,14 @@ class IC_BrivGemFarm_Stats_Component
                 goldChests := g_SF.Memory.ReadChestCountByID(2)
                 this.SilverChestCountStart := (silverChests != "") ? silverChests : 0
                 this.GoldChestCountStart := (goldChests != "") ? goldChests : 0
-                
+
                 ; start count after first run since total chest count is counted after first run
-                if(IsObject(this.SharedRunData)) 
+                if(IsObject(this.SharedRunData))
                 {
                     this.SharedRunData.PurchasedGoldChests := 0
-                    this.SharedRunData.PurchasedSilverChests := 0    
+                    this.SharedRunData.PurchasedSilverChests := 0
                 }
-                
+
                 this.FastRunTime := 1000
                 this.ScriptStartTime := A_TickCount
             }
@@ -446,7 +446,7 @@ class IC_BrivGemFarm_Stats_Component
                 if(slots != "")
                 {
                     shnieisByChampString := SubStr(shnieisByChampString,1,StrLen(shnieisByChampString)-1)
-                }                
+                }
                 shnieisByChampString .= "]`n"
             }
             shnieisByChampString := SubStr(shnieisByChampString, 1, StrLen(shnieisByChampString)-1)
@@ -467,7 +467,7 @@ class IC_BrivGemFarm_Stats_Component
         {
             SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             textColor := Format("{:#x}", GUIFunctions.CurrentTheme["HeaderTextColor"])
-            GuiControl, ICScriptHub: +c%textColor%, LoopID, 
+            GuiControl, ICScriptHub: +c%textColor%, LoopID,
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
@@ -482,19 +482,19 @@ class IC_BrivGemFarm_Stats_Component
             }
             else
             {
-                GuiControl, ICScriptHub:, HybridStatsCountTitle,  
-                GuiControl, ICScriptHub:, HybridStatsCountValue,  
+                GuiControl, ICScriptHub:, HybridStatsCountTitle,
+                GuiControl, ICScriptHub:, HybridStatsCountValue,
             }
         }
         catch
         {
             textColor := Format("{:#x}", GUIFunctions.CurrentTheme["ErrorTextColor"])
-            GuiControl, ICScriptHub: +c%textColor%, LoopID, 
+            GuiControl, ICScriptHub: +c%textColor%, LoopID,
             GuiControl, ICScriptHub:, LoopID, % "Error reading from gem farm script [Closed Script?]."
         }
     }
 
-    
+
     ;==========================
     ; Stats GUI Reset Functions
     ;==========================
