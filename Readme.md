@@ -1,13 +1,10 @@
 # IC Script Hub
 ## ``New:``
-> [!WARNING] 
-> When upgrading from a previous version to 4.0.0 you will need to run ``Migrate-To-SH-4.0.0.ahk`` once before running ICScriptHub.ahk. This is required to fix the ``Error: Unknown Class``.  
+2025-08-02:  
 
-2024-03-21 [Script 4.0.0 Release](docfiles/update-4-0-0-news.md)
+Added important [imports](#imports) section. Please read it before running IC Script Hub.
 
-## ``Previous:``
-2023-04-12: [Script 3.6.0 Release](docfiles/update-3-6-0-news.md).  
-2022-05-16: [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets).  
+As of game version 629, due to changes with hotkeys the [LevelUp](https://github.com/imp444/IC_Addons/tree/main/IC_BrivGemFarm_LevelUp_Extra) addon is required to run smoothly. Refer to [Addons.md](Addons.md) for links to more commonly used addons.
 
 ---  
 ## Introduction
@@ -31,7 +28,7 @@ This script is the successor to ModronGUI.
 This script reads system memory. I do not know CNE's stance on reading system memory used by the game, so use at your own risk. Pointers may break on any given update and I may no longer decide to update them.
 
 **Warning2**:
-CNE will at times push out multiple patches during the week, changing classes and thus their structure in memory. This can change offsets which will break memory reading functions. It is advised you disable auto updates and keep a back up of a working Assembly-CSharp.dll from your install folder. Offsets will likely only be updated on weekends and not necessarily every weekend.
+CNE will at times push out multiple patches during the week, changing classes and thus their structure in memory. This can change offsets which will break memory reading functions. It is advised you disable auto updates and keep a back up of a working Assembly-CSharp.dll from your install folder. Refer to the [imports](#imports) section for updating offsets.
 
 ## Prerequisites
 
@@ -46,6 +43,17 @@ This will be the easiest way for you to keep up to date with any changes made in
 You may use any Git client you wish. [Here is a step-by-step guide](docfiles/getting-started-with-ic-script-hub-using-git.md) to installing and using Git Desktop with `IC Script Hub`.
 
 If you would rather grab the latest version of the code manually, [head over here to learn how to do that](docfiles/getting-started-with-ic-script-hub-using-zip.md). I really don't recommend it though, as you will have to repeat this entire process every single time as opposed to simply opening an application and clicking a button.
+
+## Imports
+
+IC updates often and because of this the script needs to be updated to be able read the game properly. This is done using `imports`. These currently differ based on if you play on Steam, EGS, or another service.
+
+To create them yourself you can use the export/import tools here: [ScriptHub-AutomaticOffsets](https://github.com/antilectual/ScriptHub-AutomaticOffsets).
+
+To update the imports for your version you can use community created imports, which [Emmote](https://github.com/Emmotes) so generously keeps updated [here](https://github.com/Emmotes/ic_scripting_imports) or on the official [IC discord server](https://discord.com/invite/idlechampions/).
+
+And to update the script:
+In `[Script Hub Folder]\AddOns\IC_Core\MemoryRead\` replace the `Imports` folder there with the `Imports` folder from the zip/repository. Then completely restart the script.
 
 ## I know Git Fu!
 
