@@ -26,7 +26,7 @@ class SH_MemoryPointer
 {
     ModuleOffset := 0
     StructureOffsets := 0
-    BaseAddress := ""
+    BasePtr := {}
     Is64Bit := ""
 
     __new(moduleOffset := 0, structureOffsets := 0)
@@ -47,6 +47,19 @@ class SH_MemoryPointer
         }
         this.StructureOffsets := structureOffsets
         this.Refresh()
+    }
+
+    ResetBasePtr(currentObj)
+    {
+        this["basePtr"] := currentObj.BasePtr
+        for k,v in this
+        {
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
+            {
+                v.BasePtr := currentObj.BasePtr
+                v.ResetBasePtr(this) ; Go into game objects
+            }
+        }
     }
 
     GetVersion()

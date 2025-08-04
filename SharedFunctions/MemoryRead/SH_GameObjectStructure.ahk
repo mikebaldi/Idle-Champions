@@ -563,17 +563,13 @@ class GameObjectStructure
 
     ResetBasePtr(currentObj)
     {
-        for k,v in currentObj
+        this["BasePtr"] := currentObj.BasePtr
+        for k,v in this
         {
-            if(k=="BasePtr")
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
             {
-                v.basePtr := currentObj.BasePtr
-                continue
-            }
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "" AND k != "BasePtr")
-            {
-                v.BaseAddress := currentObj.BaseAddress
-                this.ResetBasePtr(v)
+                v.BasePtr := currentObj.BasePtr
+                v.ResetBasePtr(v)
             }
         }
     }

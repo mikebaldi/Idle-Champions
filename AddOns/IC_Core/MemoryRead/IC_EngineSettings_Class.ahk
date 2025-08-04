@@ -8,24 +8,23 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
 
     Refresh()
     {
-        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.BasePtr.BaseAddress != baseAddress)
         {
+            this.BasePtr.BaseAddress := baseAddress
             this.Is64Bit := _MemoryManager.is64bit
             if (this.UnityGameEngine == "")
             {
                 this.UnityGameEngine := {}
                 this.UnityGameEngine.Core := {}
                 this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
-                this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+                this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
                 this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
                 #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk
+                return
             }
-            else
-            {
-                this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.UnityGameEngine.Core.EngineSettings.ResetBasePtr(this.UnityGameEngine.Core.EngineSettings)
-            }
+            this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.ResetBasePtr(this.UnityGameEngine.Core.EngineSettings)
         }
     }
 }

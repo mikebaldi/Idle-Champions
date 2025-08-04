@@ -70,7 +70,7 @@ class IC_ActiveEffectKeyHandler_Class
         this[handlerName].Is64Bit := _MemoryManager.is64Bit
         this[handlerName].BaseAddress := baseAddress
         this[handlerName].BasePtr := this[handlerName]
-        this.ResetBaseAddress(currentObj)
+        this.ResetBaseAddress(this[handlerName])
     }
 
     ResetBaseAddress(currentObj)

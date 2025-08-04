@@ -10,24 +10,23 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
     
     Refresh()
     {
-        this.BaseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
+        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (this.BasePtr.BaseAddress != baseAddress)
         {
+            this.BasePtr.BaseAddress := baseAddress
             this.Is64Bit := _MemoryManager.is64bit
             if (this.CrusadersGame == "")
             {
                 this.CrusadersGame := {}
                 this.CrusadersGame.Defs := {}
                 this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.StructureOffsets)
-                this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+                this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
                 this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
                 #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
+                return
             }
-            else
-            {
-                this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.CrusadersGame.Defs.CrusadersGameDataSet.ResetBasePtr(this.CrusadersGame.Defs.CrusadersGameDataSet)
-            }
+            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.ResetBasePtr(this.CrusadersGame.Defs.CrusadersGameDataSet)
         }
     }
 }
