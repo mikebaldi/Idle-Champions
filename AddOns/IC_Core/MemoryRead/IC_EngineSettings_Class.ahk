@@ -12,12 +12,20 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
         if (this.Is64Bit != _MemoryManager.is64Bit) ; Build structure one time. 
         {
             this.Is64Bit := _MemoryManager.is64bit
-            this.UnityGameEngine := {}
-            this.UnityGameEngine.Core := {}
-            this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
-            this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-            this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
-            #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
+            if (this.UnityGameEngine == "")
+            {
+                this.UnityGameEngine := {}
+                this.UnityGameEngine.Core := {}
+                this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
+                this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+                this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
+                #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk
+            }
+            else
+            {
+                this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+                this.UnityGameEngine.Core.EngineSettings.ResetBasePtr()
+            }
         }
     }
 }

@@ -561,6 +561,23 @@ class GameObjectStructure
         }
     }
 
+    ResetBasePtr(currentObj)
+    {
+        for k,v in currentObj
+        {
+            if(k=="BasePtr")
+            {
+                v.basePtr := currentObj.BasePtr
+                continue
+            }
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "" AND k != "BasePtr")
+            {
+                v.BaseAddress := currentObj.BaseAddress
+                this.ResetBasePtr(v)
+            }
+        }
+    }
+
     ResetCollections()
     {
         this.DictionaryObject := {}
