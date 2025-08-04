@@ -23,7 +23,7 @@ class IC_UserStatHandler_Class extends SH_StaticMemoryPointer
             else
             {
                 this.CrusadersGame.User.UserStatHandler.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.CrusadersGame.User.UserStatHandler.ResetBasePtr()
+                this.CrusadersGame.User.UserStatHandler.ResetBasePtr(this.CrusadersGame.User.UserStatHandler)
             }
         }
     }

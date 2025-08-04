@@ -45,7 +45,7 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
             else ; Objects exist, update memory addresses only
             {
                 this.IdleGameManager.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.IdleGameManager.ResetBasePtr()
+                this.IdleGameManager.ResetBasePtr(this.IdleGameManager)
             }
         }
     }

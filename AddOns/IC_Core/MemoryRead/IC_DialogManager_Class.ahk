@@ -29,7 +29,7 @@ class IC_DialogManager_Class extends SH_MemoryPointer
             else
             {
                 this.UnityGameEngine.Dialogs.DialogManager.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.UnityGameEngine.Dialogs.DialogManager.ResetBasePtr()
+                this.UnityGameEngine.Dialogs.DialogManager.ResetBasePtr(this.UnityGameEngine.Dialogs.DialogManager)
             }
         }
     }

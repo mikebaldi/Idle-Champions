@@ -24,7 +24,7 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
             else
             {
                 this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.UnityGameEngine.Core.EngineSettings.ResetBasePtr()
+                this.UnityGameEngine.Core.EngineSettings.ResetBasePtr(this.UnityGameEngine.Core.EngineSettings)
             }
         }
     }

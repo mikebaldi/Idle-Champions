@@ -23,7 +23,7 @@ class IC_UserData_Class extends SH_StaticMemoryPointer
             else
             {
                 this.CrusadersGame.User.UserData.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.CrusadersGame.User.UserData.ResetBasePtr()
+                this.CrusadersGame.User.UserData.ResetBasePtr(this.CrusadersGame.User.UserData)
             }
         }
     }

@@ -23,7 +23,7 @@ class IC_GameSettings_Class extends SH_StaticMemoryPointer
             else
             {
                 this.CrusadersGame.GameSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.CrusadersGame.GameSettings.ResetBasePtr()
+                this.CrusadersGame.GameSettings.ResetBasePtr(this.CrusadersGame.GameSettings)
             }
         }
     }

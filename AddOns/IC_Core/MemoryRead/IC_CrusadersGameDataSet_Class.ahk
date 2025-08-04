@@ -26,7 +26,7 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
             else
             {
                 this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
-                this.CrusadersGame.Defs.CrusadersGameDataSet.ResetBasePtr()
+                this.CrusadersGame.Defs.CrusadersGameDataSet.ResetBasePtr(this.CrusadersGame.Defs.CrusadersGameDataSet)
             }
         }
     }
