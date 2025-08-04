@@ -17,7 +17,7 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
 
     GetVersion()
     {
-        return "v2.1.0, 2023-03-19"
+        return "v2.1.1, 2025-08-03"
     }
 
     Refresh()
@@ -33,17 +33,10 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
             ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
             ; this.StructureOffsets[1] += 0x10
             this.IdleGameManager := New GameObjectStructure(this.StructureOffsets)
-            this.IdleGameManager.BasePtr := new IC_BasePtr_Class("IC_IdleGameManager_Class", this.BaseAddress)
+            this.IdleGameManager.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
             this.IdleGameManager.Is64Bit := _MemoryManager.is64bit
-            if(!_MemoryManager.is64bit)
-            {
-                ; Build offsets for class using imported AHK files.
-                #include *i %A_LineFile%\..\Imports\IC_IdleGameManager32_Import.ahk
-            }
-            else
-            {
-                #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
-            }
+            ; Build offsets for class using imported AHK files.
+            #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk
             ; DEBUG: Enable this line to be able to view the variable name of the GameObject. (e.g. this.game would have a GSOName variable that says "game" )
             ; this.game.SetNames()
         }

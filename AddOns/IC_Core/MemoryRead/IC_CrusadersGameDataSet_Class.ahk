@@ -5,7 +5,7 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.0, 2023-03-18"
+        return "v2.1.1, 2025-08-03"
     }
     
     Refresh()
@@ -17,16 +17,9 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
             this.CrusadersGame := {}
             this.CrusadersGame.Defs := {}
             this.CrusadersGame.Defs.CrusadersGameDataSet := new GameObjectStructure( this.StructureOffsets )
-            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new IC_BasePtr_Class("IC_CrusadersGameDataSet_Class", this.BaseAddress)
+            this.CrusadersGame.Defs.CrusadersGameDataSet.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
             this.CrusadersGame.Defs.CrusadersGameDataSet.Is64Bit := _MemoryManager.is64bit
-            if(!_MemoryManager.is64bit)
-            {
-                #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet32_Import.ahk
-            }
-            else
-            {
-                #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
-            }
+            #include *i %A_LineFile%\..\Imports\IC_CrusadersGameDataSet64_Import.ahk
         }
     }
 }

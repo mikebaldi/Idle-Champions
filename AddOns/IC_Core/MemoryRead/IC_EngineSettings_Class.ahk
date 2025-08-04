@@ -3,7 +3,7 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.0, 2023-03-18"
+        return "v2.1.1, 2025-08-03"
     }
 
     Refresh()
@@ -15,16 +15,9 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
             this.UnityGameEngine := {}
             this.UnityGameEngine.Core := {}
             this.UnityGameEngine.Core.EngineSettings := new GameObjectStructure(this.StructureOffsets)
-            this.UnityGameEngine.Core.EngineSettings.BasePtr := new IC_BasePtr_Class("IC_EngineSettings_Class", this.BaseAddress)
+            this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
             this.UnityGameEngine.Core.EngineSettings.Is64Bit := _MemoryManager.is64Bit
-            if(!_MemoryManager.is64Bit)
-            {
-                #include *i %A_LineFile%\..\Imports\IC_EngineSettings32_Import.ahk
-            }
-            else
-            {
-                #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
-            }
+            #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk    
         }
     }
 }

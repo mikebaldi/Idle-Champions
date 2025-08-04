@@ -6,17 +6,20 @@
 #include %A_LineFile%\..\SH__MemoryManager.ahk
 #include %A_LineFile%\..\SH_GameObjectStructure.ahk
 
-class IC_BasePtr_Class
+class SH_BasePtr
 {
-    __new(name, baseAddress)
-    {
-        this.Name := name
-        this.BaseAddress := baseAddress
-    }
-
-    Is64bit := True
+    ModuleOffset := 0
+    StructureOffsets := 0
     BaseAddress := ""
-    Name := ""
+    Is64bit := True
+
+    __new(baseAddress := 0, moduleOffset := 0, structureOffsets := 0, is64Bit := True)
+    {
+        this.BaseAddress := baseAddress
+        this.ModuleOffset := moduleOffset
+        this.StructureOffsets := structureOffsets
+        this.Is64Bit := is64Bit
+    }
 }
 
 class SH_MemoryPointer
@@ -48,23 +51,6 @@ class SH_MemoryPointer
 
     GetVersion()
     {
-        return "v0.0.2, 2023-09-03"
-    }
-
-    Refresh()
-    {
-        ; _MemoryManager should only be refreshed outside of MemoryPointer, but must be refreshed before refreshing a memory pointer.
-        _MemoryManager.Refresh()       
-        this.BaseAddress := _MemoryManager.baseAddress+this.ModuleOffset
-        this.Is64Bit := _MemoryManager.is64Bit
-    }
-
-    ResetCollections()
-    {
-        for k,v in this
-        {
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
-                this[k].ResetCollections()
-        }
+        return "v0.0.3, 2025-08-03"
     }
 }

@@ -2,7 +2,7 @@ class IC_UserData_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v0.0.1, 2023-10-28"
+        return "v0.0.2, 2025-08-03"
     }
 
     Refresh()
@@ -14,16 +14,9 @@ class IC_UserData_Class extends SH_StaticMemoryPointer
             this.CrusadersGame := {}
             this.CrusadersGame.User := {}
             this.CrusadersGame.User.UserData := new GameObjectStructure(this.StructureOffsets)
-            this.CrusadersGame.User.UserData.BasePtr := new IC_BasePtr_Class("IC_UserData_Class", this.BaseAddress)
+            this.CrusadersGame.User.UserData.BasePtr := new SH_BasePtr(this.BaseAddress, this.ModuleOffset, this.StructureOffsets)
             this.CrusadersGame.User.UserData.Is64Bit := _MemoryManager.is64Bit
-            if(!_MemoryManager.is64Bit)
-            {
-                #include *i %A_LineFile%\..\Imports\IC_UserData32_Import.ahk
-            }
-            else
-            {
-                #include *i %A_LineFile%\..\Imports\IC_UserData64_Import.ahk    
-            }
+            #include *i %A_LineFile%\..\Imports\IC_UserData64_Import.ahk
         }
     }
 }
