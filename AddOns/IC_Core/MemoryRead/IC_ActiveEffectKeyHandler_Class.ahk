@@ -36,8 +36,6 @@ class IC_ActiveEffectKeyHandler_Class
     Refresh(HandlerName := "")
     {
         ; reset HeroHandler in case the game was not open and GameManager objects were not built at startup.
-        test := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[IC_MemoryFunctions_Class.GetHeroHandlerIndexByChampID(58)].effects.effectKeysByHashedKeyName
-        test.ResetBasePtr(test)
         this.HeroHandler := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler
         if(HandlerName != "")
             this.RefreshHandler(HandlerName)
@@ -90,13 +88,6 @@ class IC_ActiveEffectKeyHandler_Class
         size := effectsByKeyName.size.Read()
         loop, %size%
         {
-            testObject0 := effectsByKeyName
-            testObject1 := effectsByKeyName["value", A_Index - 1]
-            testObject2 := effectsByKeyName["value", A_Index - 1].List
-            testObject3 := effectsByKeyName["value", A_Index - 1].List[0]
-            testObject4 := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key           
-            testObject5 := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read()
-            testObject6 := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[IC_MemoryFunctions_Class.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read()
             if (effectName == effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read())
                 return keyHash := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.KeyHash.Read()
         }

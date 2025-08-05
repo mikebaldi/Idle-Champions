@@ -182,7 +182,7 @@ class GameObjectStructure
                 if(index == this.LastDictIndex[key])                                            ; Use previously created object if it is still being used.
                     return this.DictionaryObject[key]
                 isUnstableStableKey := (keyReadObject.ValueType == "")                          ; Key value is not a known type which means the key is likely a pointer and subject to unpredictable changes. (Do not cache these dictionary lookups)
-                this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset, isUnstableStableKey) ; Build a dictonary entry for this key.
+                this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset, isUnstableStableKey) ; Build a dictionary entry for this key.
                 key := isUnstableStableKey ? GameObjectStructure.InvalidDictionaryKeyString : key ; Use default value if key is unstable 
                 return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
             }
@@ -197,7 +197,7 @@ class GameObjectStructure
                 collectionEntriesOffset := this.BasePtr.Is64Bit ? 0x18 : 0xC                    ; Offset for the entries (key/value location) of the collection.
                 offset := this.CalculateDictOffset(["value",keyIndex]) + 0                      ; Expected offset to the value corresponding to the key.
                 isUnstableStableKey := GameObjectStructure.SystemTypes[this._CollectionKeyType] == "" ; Key value is not a known type
-                this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset, isUnstableStableKey)   ; Build a dictonary entry for this key.
+                this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset, isUnstableStableKey)   ; Build a dictionary entry for this key.
                 key := isUnstableStableKey ? GameObjectStructure.InvalidDictionaryKeyString : key ; Use default value if key is unstable 
                 return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
             }
@@ -565,13 +565,9 @@ class GameObjectStructure
 
     ResetBasePtr(currentObj)
     {
-        this["BasePtr"] := currentObj.BasePtr
+        this.BasePtr := currentObj.BasePtr
         for k,v in this
         {
-            if(k == "heroes" or k == "effectKeysByHashedKeyName")
-            {
-                test := v.DictionaryObject
-            }
             if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
             {
                 v.BasePtr := currentObj.BasePtr
@@ -586,7 +582,7 @@ class GameObjectStructure
             else if(k == "DictionaryObject")
             {
                 for dictKey, dictValue in v
-                    v.ResetBasePtr(currentObj)
+                    dictValue.ResetBasePtr(currentObj)
             }
         }
     }
