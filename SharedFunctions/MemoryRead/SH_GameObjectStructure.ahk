@@ -19,6 +19,7 @@ class GameObjectStructure
     LastDictIndex := {}
     _CollectionKeyType := ""
     _CollectionValType := ""
+    BasePtr := {}
     static InvalidDictionaryKeyString := "<invalid key>"
     static SystemTypes := { "System.Byte" : "Char"
         ,"System.UByte" : "UChar"
@@ -438,6 +439,7 @@ class GameObjectStructure
             ; 64-bit dictionary entries start at 0x28
             baseOffset := 0x28
             ; Default entry sizes (e.g. int/int dict entries will be 0x10 bytes apart)
+            ;(key,value,next)(4,4,8), (4,8,8)
             offsetInterval := itemSize == 0x4 ? 0x10 : 0x18
             ; Special case for Quads as values
             offsetInterval := GameObjectStructure.SystemTypes[this._CollectionValType] == "Quad" ? 0x20 : offsetInterval
@@ -566,10 +568,25 @@ class GameObjectStructure
         this["BasePtr"] := currentObj.BasePtr
         for k,v in this
         {
+            if(k == "heroes" or k == "effectKeysByHashedKeyName")
+            {
+                test := v.DictionaryObject
+            }
             if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
             {
                 v.BasePtr := currentObj.BasePtr
                 v.ResetBasePtr(v)
+            }
+            ; else if(k == "DictionaryObject" AND v.MaxIndex() > 0)
+            ; {
+            ;     size := v.MaxIndex()
+            ;     loop %size%
+            ;         v.ResetBasePtr(currentObj)
+            ; }
+            else if(k == "DictionaryObject")
+            {
+                for dictKey, dictValue in v
+                    v.ResetBasePtr(currentObj)
             }
         }
     }

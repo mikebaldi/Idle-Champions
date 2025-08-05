@@ -13,12 +13,12 @@ class SH_BasePtr
     BaseAddress := ""
     Is64bit := True
 
-    __new(baseAddress := 0, moduleOffset := 0, structureOffsets := 0, is64Bit := True)
+    __new(baseAddress := 0, moduleOffset := 0, structureOffsets := 0)
     {
         this.BaseAddress := baseAddress
         this.ModuleOffset := moduleOffset
         this.StructureOffsets := structureOffsets
-        this.Is64Bit := is64Bit
+        this.Is64Bit := _MemoryManager.is64Bit
     }
 }
 

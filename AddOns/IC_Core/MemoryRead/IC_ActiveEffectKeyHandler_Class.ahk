@@ -36,6 +36,8 @@ class IC_ActiveEffectKeyHandler_Class
     Refresh(HandlerName := "")
     {
         ; reset HeroHandler in case the game was not open and GameManager objects were not built at startup.
+        test := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[IC_MemoryFunctions_Class.GetHeroHandlerIndexByChampID(58)].effects.effectKeysByHashedKeyName
+        test.ResetBasePtr(test)
         this.HeroHandler := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler
         if(HandlerName != "")
             this.RefreshHandler(HandlerName)
@@ -50,39 +52,23 @@ class IC_ActiveEffectKeyHandler_Class
         baseAddress := this.GetBaseAddress(HandlerName)
         if(this[HandlerName] == "")
             this.NewHandlerObject(HandlerName, baseAddress)
-        else if(baseAddress != this[HandlerName].BaseAddress)
-            this.UpdateBaseAddress(HandlerName, baseAddress)
+        else if(baseAddress != this[HandlerName].BasePtr.BaseAddress)
+        { 
+            this[handlerName].BasePtr.Is64Bit := _MemoryManager.is64Bit
+            this[handlerName].BasePtr.BaseAddress := baseAddress
+            this[handlerName].ResetBasePtr(this[handlerName])
+        }
     }
 
     NewHandlerObject(HandlerName, baseAddress)
     {
-        this[HandlerName] := New GameObjectStructure([])
-        this.UpdateBaseAddress(HandlerName, baseAddress)
+        this[handlerName] := New GameObjectStructure([])
+        this[handlerName].BasePtr := new SH_BasePtr(baseAddress)
         functionName := "Build" . HandlerName
         this.handlerFnc := ObjBindMethod(this, functionName)
         if (this.handlerFnc == "") ; import does not exist
             return
-        this.handlerFnc()
-    }
-
-    UpdateBaseAddress(handlerName, baseAddress)
-    {
-        this[handlerName].Is64Bit := _MemoryManager.is64Bit
-        this[handlerName].BaseAddress := baseAddress
-        this[handlerName].BasePtr := this[handlerName]
-        this.ResetBaseAddress(this[handlerName])
-    }
-
-    ResetBaseAddress(currentObj)
-    {
-        for k,v in currentObj
-        {
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "" AND k != "BasePtr")
-            {
-                v.BaseAddress := currentObj.BaseAddress
-                this.RebuildBaseAndOffsets(v)
-            }
-        }
+        this.handlerFnc() ; Build child objects from imports.
     }
 
     GetBaseAddress(handlerName)
@@ -103,8 +89,17 @@ class IC_ActiveEffectKeyHandler_Class
         effectsByKeyName := this.HeroHandler.heroes[IC_MemoryFunctions_Class.GetHeroHandlerIndexByChampID(champID)].effects.effectKeysByHashedKeyName
         size := effectsByKeyName.size.Read()
         loop, %size%
+        {
+            testObject0 := effectsByKeyName
+            testObject1 := effectsByKeyName["value", A_Index - 1]
+            testObject2 := effectsByKeyName["value", A_Index - 1].List
+            testObject3 := effectsByKeyName["value", A_Index - 1].List[0]
+            testObject4 := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key           
+            testObject5 := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read()
+            testObject6 := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[IC_MemoryFunctions_Class.GetHeroHandlerIndexByChampID(ChampID)].effects.effectKeysByHashedKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read()
             if (effectName == effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.Key.Read())
                 return keyHash := effectsByKeyName["value", A_Index - 1].List[0].parentEffectKeyHandler.def.KeyHash.Read()
+        }
         return ""           
     }
 

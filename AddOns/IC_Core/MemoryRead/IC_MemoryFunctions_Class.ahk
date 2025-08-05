@@ -849,7 +849,6 @@ class IC_MemoryFunctions_Class
 
     ReadHeroLootEnchant(champID := 58, slot := 4)
     {
-        ; TODO: Handle multiple methods of reading a Nullable double depending on unity version.
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double?")
     }
 
