@@ -4,7 +4,6 @@
 ; LastUpdated := "2023-03-19"
 ; ValueType describes what kind of data is at the location in memory. 
 ;       Note: "List", "Dict", "Stack", "Queue" and "HashSet" are not a memory data type but are being used to identify conditions such as when a ListIndex must be added.
-
 class GameObjectStructure
 {
     ; Reserved words for GameObjectStructure. Imports with same  name will cause unpredictable behavior.
@@ -14,9 +13,6 @@ class GameObjectStructure
     BaseAddressPtr := ""            ; The name of the pointer class that created this object.
     Offset := 0x0                   ; The offset from last object to this object.
     IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
-    GSOName := ""
-    DictionaryObject := {}
-    LastDictIndex := {}
     _CollectionKeyType := ""
     _CollectionValType := ""
     BasePtr := {}
@@ -144,6 +140,8 @@ class GameObjectStructure
         }
         else if(this.ValueType == "HashSet")
         {
+            if key is not integer ; Don't try to create key objects when keys are invalid
+                return
             ; TODO: Verify hashset has same offsets as lists
             offset := this.CalculateHashSetOffset(key) + 0
             ; if (GameObjectStructure.SystemTypes[this._CollectionKeyType] != "")
@@ -231,8 +229,7 @@ class GameObjectStructure
     ; Function makes copy of the current object and its lists but not a full deep copy.
     QuickClone()
     {
-        var := new GameObjectStructure
-        var.FullOffsets := this.FullOffsets.Clone()
+        var := new GameObjectStructure(this.FullOffsets)
         var.BasePtr := this.BasePtr
         var.ValueType := this.ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
@@ -244,13 +241,15 @@ class GameObjectStructure
     }
 
     ; Function makes a deep copy of the current object.
-    Clone()
+    Clone(typeOfObject := "")
     {
-        var := new GameObjectStructure
+        var := new GameObjectStructure(this.FullOffsets)
         ; Iterate all the elements of the game object structure and clone time
         for k,v in this
         {
-            if(IsObject(v) AND k != "BasePtr") ; Keep BasePtr as a reference
+            if(isObject(v) AND k =="DictionaryObject") ; Ignore self referential dictionary.
+                continue
+            else if(IsObject(v) AND k != "BasePtr") ; Keep BasePtr as a reference
                 var[k] := v.Clone()
             else
                 var[k] := v
@@ -261,10 +260,12 @@ class GameObjectStructure
     ; For cloning without copying dynamically added items to the clone. Ignores objects with IsAddedIndex = true
     StableClone(key := "")
     {
-        var := new GameObjectStructure
+        var := new GameObjectStructure(this.FullOffsets)
         ; Iterate all the elements of the game object structure and clone time
         for k,v in this
         {
+            if(isObject(v) AND k =="DictionaryObject") ; Do not copy self referential dictionary objects
+                continue
             if(!IsObject(v) OR k == "BasePtr") ; Keep BasePtr as a reference
             {
                 ; if(k == "_CollectionKeyType" OR k == "_CollectionValType")
@@ -299,7 +300,7 @@ class GameObjectStructure
         this.DictionaryObject[key].ValueType := GameObjectStructure.SystemTypes[this._CollectionValType] ? GameObjectStructure.SystemTypes[this._CollectionValType] : this.DictionaryObject[key].ValueType
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         ; this.DictionaryObject[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.DictionaryObject[key].FullOffsets)
-        ; this.DictionaryObject[key].GSOName := key                                       
+        ;this.DictionaryObject[key].GSOName := key                                       
         this.UpdateChildrenWithFullOffsets(this.DictionaryObject[key], offsetInsertLoc, [collectionEntriesOffset, offset]) ; Update all sub-objects with their missing collection/item offsets.
     }
 
@@ -333,12 +334,19 @@ class GameObjectStructure
     {
         for k,v in currentObj
         {
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "" AND k != "BasePtr")
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
             {
                 v.FullOffsets.InsertAt(insertLoc, offset*)
                 v.UpdateChildrenWithFullOffsets(v, insertLoc, offset)
                 ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
                 ; v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
+            }
+            else if (k == "DictionaryObject")
+            {
+                for x,y in z
+                {
+                    y.UpdateChildrenWithFullOffsets(y, insertLoc, offset)
+                }
             }
         }
     }
@@ -439,7 +447,6 @@ class GameObjectStructure
             ; 64-bit dictionary entries start at 0x28
             baseOffset := 0x28
             ; Default entry sizes (e.g. int/int dict entries will be 0x10 bytes apart)
-            ;(key,value,next)(4,4,8), (4,8,8)
             offsetInterval := itemSize == 0x4 ? 0x10 : 0x18
             ; Special case for Quads as values
             offsetInterval := GameObjectStructure.SystemTypes[this._CollectionValType] == "Quad" ? 0x20 : offsetInterval
@@ -563,7 +570,7 @@ class GameObjectStructure
         }
     }
 
-    ResetBasePtr(currentObj)
+    ResetBasePtr(currentObj, name :="")
     {
         this.BasePtr := currentObj.BasePtr
         for k,v in this
@@ -571,18 +578,17 @@ class GameObjectStructure
             if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure" AND v.FullOffsets != "")
             {
                 v.BasePtr := currentObj.BasePtr
-                v.ResetBasePtr(v)
+                name := k
+                v.ResetBasePtr(v, name)
             }
-            ; else if(k == "DictionaryObject" AND v.MaxIndex() > 0)
-            ; {
-            ;     size := v.MaxIndex()
-            ;     loop %size%
-            ;         v.ResetBasePtr(currentObj)
-            ; }
             else if(k == "DictionaryObject")
             {
                 for dictKey, dictValue in v
-                    dictValue.ResetBasePtr(currentObj)
+                {
+                    ; Assume gameobjects, since dictionaryObject should be dict of gameobjects.
+                    dictValue.BasePtr := currentObj.BasePtr
+                    dictValue.ResetBasePtr(dictValue, name)
+                }
             }
         }
     }
@@ -606,5 +612,32 @@ class GameObjectStructure
                 this[k].ResetCollections()
             }
         }
+    }
+
+    ; Outputs a string of every chain of objects down from this one and saves them to ObjectsLog.json (not in actual json)
+    BuildNames(name)
+    {
+        global g_string
+        for k,v in this
+        {
+            if(k == "DictionaryObject" AND v.Count() > 0)
+            {
+                for j,x in v
+                {
+                    ; if(IsObject(x) AND ObjGetBase(x).__Class == "GameObjectStructure")
+                    value := x.BuildNames(name . k . ".")   
+                }
+                    ; g_string := g_string . name . "`n"
+            }
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
+                value := v.BuildNames(name . k . ".")  
+        }
+        if (value == "")
+        {
+            name := name . "`n"
+            FileAppend, %name%, % A_LineFile . "\..\ObjectsLog.json"
+        }
+        value := "STOP"
+        return value
     }
 }

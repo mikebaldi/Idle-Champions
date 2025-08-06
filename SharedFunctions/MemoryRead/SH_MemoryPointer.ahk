@@ -66,4 +66,16 @@ class SH_MemoryPointer
     {
         return "v0.0.3, 2025-08-03"
     }
+
+    ; Debugging function - saves full 
+    Print()
+    {
+        global g_string
+        FileDelete, % A_LineFile . "\..\ObjectsLog.json"
+        for k,v in this
+        {
+            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
+                v.BuildNames(This.Base.Base.__Class . ".")
+        }
+    }
 }

@@ -109,6 +109,7 @@ class IC_InventoryView_Component
             this.Settings := {}
             writeSettings := True
         }
+        ; TODO check if is integer is working properly here
         if(!(this.Settings["LoadChests"] is integer))
         {
             this.Settings["LoadChests"] := True
