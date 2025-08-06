@@ -39,7 +39,7 @@ class _MemoryManager
         }
     }
 
-    Refresh(baseAddress := "mono-2.0-bdwgc.dll")
+    Refresh(moduleName := "mono-2.0-bdwgc.dll")
     {
         this.isInstantiated := false
         ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
@@ -55,9 +55,10 @@ class _MemoryManager
         }
         else
         {
-            return false
+            this.baseAddress[moduleName] := -1
+            return False
         }
-        this.baseAddress[baseAddress] := this.instance.getModuleBaseAddress(baseAddress)
+        this.baseAddress[moduleName] := this.instance.getModuleBaseAddress(moduleName)
         return true
     }
 }

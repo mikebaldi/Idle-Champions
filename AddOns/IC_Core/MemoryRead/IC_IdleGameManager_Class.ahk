@@ -26,13 +26,15 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
         ;structure pointers
         ;==================
         baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
-        if (this.BasePtr.BaseAddress != baseAddress)
+        if (_MemoryManager.is64bit == "") ; Don't build offsets if no client is available to check variable types.
+            return
+        if (this.BasePtr.BaseAddress != baseAddress) ; OR this.Is64Bit != _MemoryManager.is64bit) (in case 32 bit returns)
         {
             this.BasePtr.BaseAddress := baseAddress
             this.Is64Bit := _MemoryManager.is64bit
             ; Note: Using example Offsets 0xCB0,0 from CE, 0 is a mod (+) and disappears leaving just 0xCB0
             ; this.StructureOffsets[1] += 0x10
-            if (this.IdleGameManager == "")  ; first run - Build objects
+            if (this.IdleGameManager == "") ; OR resetThis)  ; first run - Build objects OR 32bit switch
             {
                 this.IdleGameManager := New GameObjectStructure(this.StructureOffsets)
                 this.IdleGameManager.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)

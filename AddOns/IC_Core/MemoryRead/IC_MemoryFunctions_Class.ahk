@@ -53,6 +53,7 @@ class IC_MemoryFunctions_Class
         this.PointerVersionString := currentPointers.Version . (currentPointers.Platform ? (" (" currentPointers.Platform  . ") ") : "")
         _MemoryManager.exeName := g_UserSettings[ "ExeName" ]
         _MemoryManager.Refresh()
+        this.Is64bit := _MemoryManager.Is64Bit
         this.GameManager := new IC_IdleGameManager_Class(currentPointers.IdleGameManager.moduleAddress, currentPointers.IdleGameManager.moduleOffset)
         this.GameSettings := new IC_GameSettings_Class(currentPointers.GameSettings.moduleAddress, currentPointers.GameSettings.staticOffset, currentPointers.GameSettings.moduleOffset)
         this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
@@ -82,7 +83,9 @@ class IC_MemoryFunctions_Class
     {
         global g_UserSettings
         _MemoryManager.exeName := g_UserSettings[ "ExeName" ]
-        _MemoryManager.Refresh()
+        isExeRead := _MemoryManager.Refresh()
+        if(isExeRead == -1)
+            return
         if(_MemoryManager.handle == "")
             MsgBox, , , Could not read from exe. Try running as Admin. , 7
         this.Is64Bit := _MemoryManager.is64Bit

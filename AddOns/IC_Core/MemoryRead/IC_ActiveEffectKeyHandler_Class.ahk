@@ -52,7 +52,6 @@ class IC_ActiveEffectKeyHandler_Class
             this.NewHandlerObject(HandlerName, baseAddress)
         else if(baseAddress != this[HandlerName].BasePtr.BaseAddress)
         { 
-            this[handlerName].BasePtr.Is64Bit := _MemoryManager.is64Bit
             this[handlerName].BasePtr.BaseAddress := baseAddress
             this[handlerName].ResetBasePtr(this[handlerName])
         }

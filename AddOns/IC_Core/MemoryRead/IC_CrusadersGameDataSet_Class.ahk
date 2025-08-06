@@ -9,7 +9,9 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
     }
     
     Refresh()
-    {
+    {        
+        if (_MemoryManager.is64bit == "") ; Don't build offsets if no client is available to check variable types.
+            return
         baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
         if (this.BasePtr.BaseAddress != baseAddress)
         {
