@@ -3,11 +3,11 @@ class IC_GameSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.1, 2025-08-03"
+        return "v2.1.2, 2025-08-06"
     }
 
     Refresh()
-{        
+    {        
         if (_MemoryManager.is64bit == "") ; Don't build offsets if no client is available to check variable types.
             return
         baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset

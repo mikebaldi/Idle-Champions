@@ -29,7 +29,7 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.6.0, 2025-08-01"
+        return "v2.6.1, 2025-08-06"
     }
 
     ; Used to update the create new game objects or refresh base addresses when they change.

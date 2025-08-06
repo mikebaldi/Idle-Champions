@@ -5,7 +5,7 @@ class IC_CrusadersGameDataSet_Class extends SH_MemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.1, 2025-08-03"
+        return "v2.1.2, 2025-08-06"
     }
     
     Refresh()

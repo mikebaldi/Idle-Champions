@@ -64,7 +64,7 @@ class SH_MemoryPointer
 
     GetVersion()
     {
-        return "v0.0.3, 2025-08-03"
+        return "v0.0.4, 2025-08-06"
     }
 
     ; Debugging function - saves full 
