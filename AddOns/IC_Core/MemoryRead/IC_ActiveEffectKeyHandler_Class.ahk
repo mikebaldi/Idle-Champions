@@ -20,6 +20,7 @@ class IC_ActiveEffectKeyHandler_Class
                 {
                     this.HeroHandlerIDs[handler] := heroObj.HeroID
                     this.HeroEffectNames[handler] := handlerObj.EffectKeyString
+                    this.HeroEffectKeys[handlerObj.EffectKeyString] := handler
                 }
             }
         }
@@ -29,24 +30,25 @@ class IC_ActiveEffectKeyHandler_Class
  
     GetVersion()
     {
-        return "v2.6.1, 2025-08-06"
+        return "v2.6.2, 2025-08-06"
     }
 
     ; Used to update the create new game objects or refresh base addresses when they change.
-    Refresh(HandlerName := "")
+    Refresh(HandlerEffectKey := "")
     {
         ; reset HeroHandler in case the game was not open and GameManager objects were not built at startup.
         this.HeroHandler := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler
-        if(HandlerName != "")
-            this.RefreshHandler(HandlerName)
+        if(HandlerEffectKey != "")
+            this.RefreshHandler(HandlerEffectKey)
         else
             for k,v in this.HeroEffectNames
                 this.RefreshHandler(k)
     }
 
     ;  
-    RefreshHandler(HandlerName := "")
+    RefreshHandler(HandlerEffectKey := "")
     {
+        HandlerName := this.HeroEffectKeys[HandlerEffectKey] 
         baseAddress := this.GetBaseAddress(HandlerName)
         if(this[HandlerName] == "")
             this.NewHandlerObject(HandlerName, baseAddress)
