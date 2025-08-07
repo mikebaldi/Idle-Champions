@@ -6,6 +6,7 @@ class IC_ActiveEffectKeyHandler_Class
 {
     HeroHandlerIDs := {} 
     HeroEffectNames := {}
+    HeroEffectKeys := {}
     GameManager := ""
     HeroHandler := ""
     GameInstance := 0
@@ -41,7 +42,7 @@ class IC_ActiveEffectKeyHandler_Class
         if(HandlerEffectKey != "")
             this.RefreshHandler(HandlerEffectKey)
         else
-            for k,v in this.HeroEffectNames
+            for k,v in this.HeroEffectKeys
                 this.RefreshHandler(k)
     }
 
