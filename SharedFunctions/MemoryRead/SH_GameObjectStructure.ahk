@@ -343,7 +343,7 @@ class GameObjectStructure
             }
             else if (k == "DictionaryObject")
             {
-                for x,y in z
+                for x,y in v
                 {
                     y.UpdateChildrenWithFullOffsets(y, insertLoc, offset)
                 }
