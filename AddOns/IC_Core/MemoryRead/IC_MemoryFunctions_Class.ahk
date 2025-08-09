@@ -139,7 +139,7 @@ class IC_MemoryFunctions_Class
     GetXPBlessingSlot()
     {
 
-        effectsSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance.size.read()
+        effectsSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance.size.Read()
         if (effectsSize < 0 OR effectsSize > 200)
             return ""
         loop, %effectsSize%
@@ -750,9 +750,10 @@ class IC_MemoryFunctions_Class
     ReadBoughtLastUpgradeBySeat( seat := 1)
     {
         upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel
+        upgradesGroup := this.GameManager.game.gameInstances[thiss.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel.Count.Read()
          ; TODO: Dig into why this hashset's .size calc isn't correct and needs these offsets instead. Is it something to do with extending hashset instead of being hashset?
         upgradesGroup.FullOffsets.Push(0x20, 0x30)
-        upgradeGroupsSize := upgradesGroup.read()
+        upgradeGroupsSize := upgradesGroup.Read()
         purchasedSize :=  this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.PurchasedUpgrades.size.Read()
         if (purchasedSize > 0 AND upgradeGroupsSize > 0)
             return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
@@ -809,7 +810,7 @@ class IC_MemoryFunctions_Class
     {
         upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.upgradeGroupsByLevel
         upgradesGroup.FullOffsets.Push(0x20, 0x30)
-        upgradeGroupsSize := upgradesGroup.read()
+        upgradeGroupsSize := upgradesGroup.Read()
         purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
         if (purchasedSize > 0 AND upgradeGroupsSize > 0)
             return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
