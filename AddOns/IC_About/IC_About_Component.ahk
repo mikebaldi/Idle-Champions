@@ -38,6 +38,8 @@ class IC_About_Component
         string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)`n`n"
         if(isFunc(g_SF.Memory.GetVersion))
             string .= "MemoryFunctions Version: " . g_SF.Memory.GetVersion() . "`n"
+        if(isFunc(GameObjectStructure.GetVersion))
+            string .= "GameObjectStructure Version: " . GameObjectStructure.GetVersion() . "`n"
         if(isFunc(IC_IdleGameManager_Class.GetVersion))
             string .= "IdleGameManager Memory: " . IC_IdleGameManager_Class.GetVersion() . "`n"
         if(isFunc(IC_GameSettings_Class.GetVersion))
@@ -48,10 +50,10 @@ class IC_About_Component
             string .= "CrusadersGameDataSet Memory: " . IC_CrusadersGameDataSet_Class.GetVersion() . "`n"
         if(isFunc(IC_DialogManager_Class.GetVersion))
             string .= "DialogManager Memory: " . IC_DialogManager_Class.GetVersion() . "`n"
-        if(isFunc(IC_UserStatHandler_Class.GetVersion))
-            string .= "UserStatHandler Memory: " . IC_UserStatHandler_Class.GetVersion() . "`n"    
-        if(isFunc(IC_UserData_Class.GetVersion))
-            string .= "UserData Memory: " . IC_UserData_Class.GetVersion() . "`n"           
+        ; if(isFunc(IC_UserStatHandler_Class.GetVersion))
+        ;     string .= "UserStatHandler Memory: " . IC_UserStatHandler_Class.GetVersion() . "`n"    
+        ; if(isFunc(IC_UserData_Class.GetVersion))
+        ;     string .= "UserData Memory: " . IC_UserData_Class.GetVersion() . "`n"           
         if(isFunc(IC_ActiveEffectKeyHandler_Class.GetVersion))
             string .= "EffectKeyHandler Memory: " . IC_ActiveEffectKeyHandler_Class.GetVersion() . "`n`n"
         if(isFunc(IC_SharedFunctions_Class.GetVersion))
