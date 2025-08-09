@@ -37,7 +37,7 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
             if (this.IdleGameManager == "") ; OR resetThis)  ; first run - Build objects OR 32bit switch
             {
                 this.IdleGameManager := New GameObjectStructure(this.StructureOffsets)
-                this.IdleGameManager.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+                this.IdleGameManager.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets, "IdleGameManager")
                 this.IdleGameManager.Is64Bit := _MemoryManager.is64bit
                 ; Build offsets for class using imported AHK files.
                 #include *i %A_LineFile%\..\Imports\IC_IdleGameManager64_Import.ahk

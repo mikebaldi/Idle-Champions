@@ -63,7 +63,7 @@ class IC_ActiveEffectKeyHandler_Class
     NewHandlerObject(HandlerName, baseAddress)
     {
         this[handlerName] := New GameObjectStructure([])
-        this[handlerName].BasePtr := new SH_BasePtr(baseAddress)
+        this[handlerName].BasePtr := new SH_BasePtr(baseAddress, 0, 0, "ActiveEffectKeyHandler")
         functionName := "Build" . HandlerName
         this.handlerFnc := ObjBindMethod(this, functionName)
         if (this.handlerFnc == "") ; import does not exist

@@ -25,7 +25,7 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
                 #include *i %A_LineFile%\..\Imports\IC_EngineSettings64_Import.ahk
                 return
             }
-            this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.UnityGameEngine.Core.EngineSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets, "EngineSettings")
             this.ResetBasePtr(this.UnityGameEngine.Core.EngineSettings)
         }
     }

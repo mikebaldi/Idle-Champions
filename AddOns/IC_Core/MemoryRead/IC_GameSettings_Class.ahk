@@ -24,7 +24,7 @@ class IC_GameSettings_Class extends SH_StaticMemoryPointer
                 #include *i %A_LineFile%\..\Imports\IC_GameSettings64_Import.ahk
                 return
             }
-            this.CrusadersGame.GameSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.CrusadersGame.GameSettings.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets, "GameSettings")
             this.ResetBasePtr(this.CrusadersGame.GameSettings)
         }
     }

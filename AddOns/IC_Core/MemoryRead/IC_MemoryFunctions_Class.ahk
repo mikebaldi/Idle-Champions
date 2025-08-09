@@ -338,11 +338,13 @@ class IC_MemoryFunctions_Class
 
     ReadUserID()
     {
+        ; return this.GameManager.game.gameUser.ID.Read() ; alternative
         return this.GameSettings.UserID.Read()
     }
 
     ReadUserHash()
     {
+        ; return this.GameManager.game.gameUser.Hash.Read() ; Alternative
         return this.GameSettings.Hash.Read()
     }
 

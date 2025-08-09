@@ -30,7 +30,7 @@ class IC_DialogManager_Class extends SH_MemoryPointer
                 #include *i %A_LineFile%\..\Imports\IC_DialogManager64_Import.ahk
                 return
             }
-            this.UnityGameEngine.Dialogs.DialogManager.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.UnityGameEngine.Dialogs.DialogManager.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets, "DialogManager")
             this.ResetBasePtr(this.UnityGameEngine.Dialogs.DialogManager)
         }
     }

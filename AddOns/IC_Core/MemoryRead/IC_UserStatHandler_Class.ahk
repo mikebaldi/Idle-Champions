@@ -24,7 +24,7 @@ class IC_UserStatHandler_Class extends SH_StaticMemoryPointer
                 #include *i %A_LineFile%\..\Imports\IC_UserStatHandler64_Import.ahk
                 return
             }
-            this.CrusadersGame.User.UserStatHandler.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets)
+            this.CrusadersGame.User.UserStatHandler.BasePtr := new SH_BasePtr(this.BasePtr.BaseAddress, this.ModuleOffset, this.StructureOffsets, "UserStatHandler")
             this.ResetBasePtr(this.CrusadersGame.User.UserStatHandler)
         }
     }
