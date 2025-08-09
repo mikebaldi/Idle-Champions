@@ -1212,7 +1212,7 @@ class IC_MemoryFunctions_Class
     HeroHasFeatSavedInFormation(heroID, featID, formationSlot)
     {
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
-        if(size <= 0 OR size > 10) ; sanity check, should be < 6 but set to 10 in case of future game field familiar increase.
+        if(size <= 0 OR size > 10) ; sanity check
             return false
         Loop, %size%
         {
@@ -1226,7 +1226,7 @@ class IC_MemoryFunctions_Class
     HeroHasAnyFeatsSavedInFormation(heroID, formationSlot)
     {
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
-        if(size <= 0 OR size > 10) ; sanity check, should be < 6 but set to 10 in case of future game field familiar increase.
+        if(size <= 0 OR size > 10) ; sanity check
             return false
         return true
     }
