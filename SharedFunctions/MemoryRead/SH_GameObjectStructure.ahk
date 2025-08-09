@@ -541,15 +541,13 @@ class GameObjectStructure
         ; skip attempts on unreasonable dictionary sizes.
         if (dictCount < 0 OR dictCount > 32000)
             return ""
-        ; test if key is int or string or other?
-        valueType := "" ; Read() will use default if no value set
-        if key is not integer
-            valueType := "UTF-16"
         currIndex := Array()
         currIndex[1] := "Key"
         indexReadObject := new GameObjectStructure(this.FullOffsets)
         indexReadObject.BasePtr := this.BasePtr
         indexReadObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x18 : 0xC) ; Collection Items offset for Dictionaries
+        if key is not integer ; test if key is int or string or other?
+            indexReadObject.ValueType := "UTF-16" ; Read() will use default if no value set
         loop, % dictCount
         {
             if (A_Index > 1)
