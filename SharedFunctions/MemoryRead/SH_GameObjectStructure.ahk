@@ -509,32 +509,6 @@ class GameObjectStructure
 
     ; TODO: Convert to proper dictionary lookup.  Current method is O(n) instead of O(1)
     ; Iterates a dictionary collection looking for the matching key value
-    GetDictIndexOfKey(key)
-    {
-        dictCount := this.size.Read()
-        ; skip attempts on unreasonable dictionary sizes.
-        if (dictCount < 0 OR dictCount > 32000)
-            return ""
-        ; test if key is int or string or other?
-        valueType := "" ; Read() will use default if no value set
-        if key is not integer
-            valueType := "UTF-16"
-        loop, % dictCount
-        {
-            ; Using quickLookup = true to avoid building full game objects for each dictionary entry.
-            currKey := this["key", A_Index - 1, true].Read(valueType)
-            ; DEBUG: debug value for same item in dictionary
-            ; currVal := this["value", A_Index - 1].Read()
-
-            if (currKey == key)
-            {
-                this["key", A_Index - 1] ; Build relevant dictionary object fully.
-                return A_Index - 1
-            }
-        }
-        return -1
-    } 
-
     GetDictIndexOfKeyQuick(key)
     {
         dictCount := this.size.Read()
