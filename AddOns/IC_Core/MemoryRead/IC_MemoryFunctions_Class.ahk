@@ -67,7 +67,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.5.0, 2025-08-06"
+        return "v2.5.1, 2025-08-09"
     }
 
     GetPointersVersion()
@@ -747,16 +747,16 @@ class IC_MemoryFunctions_Class
         return formation
     }
 
-    ReadBoughtLastUpgrade( seat := 1)
+    ReadBoughtLastUpgradeBySeat( seat := 1)
     {
-        val := true
-        ; The nextUpgrade pointer could be null if no upgrades are found.
-        if (this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat[seat].nextupgrade.Read())
-        {
-            ;TODO Re-Verify this value
-            val := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat[seat].nextupgrade.IsPurchased.Read()
-        }
-        return val
+        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel
+         ; TODO: Dig into why this hashset's .size calc isn't correct and needs these offsets instead. Is it something to do with extending hashset instead of being hashset?
+        upgradesGroup.FullOffsets.Push(0x20, 0x30)
+        upgradeGroupsSize := upgradesGroup.read()
+        purchasedSize :=  this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.PurchasedUpgrades.size.Read()
+        if (purchasedSize > 0 AND upgradeGroupsSize > 0)
+            return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
+        return True ; assume true to prevent upgrade spam on bad reads.
     }
 
     ;=========================
@@ -805,29 +805,15 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].Owned.Read()
     }
 
-    GetHeroNextUpgradeIsPurchased(champID := 1)
+    ReadBoughtLastUpgradeByChampID(champID := 1)
     {
-        currIndex := -1
-        size := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes.size.Read()
-        if size != 12
-            return ""
-        loop, %size%
-        {
-            currID := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[A_Index - 1].hero.def.ID.read()
-            if ( currID == champID)
-            {
-                currIndex := A_Index - 1
-                break
-            }
-        }
-        if (currIndex < 0)
-            return ""
-        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[currIndex].nextUpgrade.IsPurchased.Read()
-    }
-
-        ReadPurchasedUpgradeID(champID := 1, index := 0) ; Deprecated 
-    {
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
+        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.upgradeGroupsByLevel
+        upgradesGroup.FullOffsets.Push(0x20, 0x30)
+        upgradeGroupsSize := upgradesGroup.read()
+        purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
+        if (purchasedSize > 0 AND upgradeGroupsSize > 0)
+            return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
+        return True ; assume true to prevent upgrade spam on bad reads.
     }
 
     ;=========================
