@@ -10,7 +10,6 @@ class GameObjectStructure
     FullOffsets := Array()          ; Full list of offsets required to get from base pointer to this object
     FullOffsetsHexString := ""      ; Same as above but in readable hex string format. (Enable commented lines assigning this value to use for debugging)
     ValueType := "Int"              ; What type of value should be expected for the memory read.
-    BaseAddressPtr := ""            ; The name of the pointer class that created this object.
     Offset := 0x0                   ; The offset from last object to this object.
     IsAddedIndex := false           ; __Get lookups on non-existent keys will create key objects with this value being true. Prevents cloning non-existent values.
     _CollectionKeyType := ""
@@ -175,6 +174,7 @@ class GameObjectStructure
             offset := this.CalculateOffset(key) + 0
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+            return this[key]
         }
         else if (key == "_items" or key == "_array")
         {
@@ -226,7 +226,7 @@ class GameObjectStructure
         else
         {
             ; TODO: Look into feasibility of using same dictionary hash function to look up keys. (Requires DLL call?)
-            keyIndex := this.GetDictIndexOfKey(key)                                         ; Look up what index has the key entry equal to the key passed in.
+            keyIndex := this.GetDictIndexOfKeyQuick(key)                                         ; Look up what index has the key entry equal to the key passed in.
             if(keyIndex < 0)                                                                ; Failed to find index, do not create an entry.
                 return
             if(keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
@@ -526,6 +526,37 @@ class GameObjectStructure
             ; DEBUG: debug value for same item in dictionary
             ; currVal := this["value", A_Index - 1].Read()
 
+            if (currKey == key)
+            {
+                this["key", A_Index - 1] ; Build relevant dictionary object fully.
+                return A_Index - 1
+            }
+        }
+        return -1
+    } 
+
+    GetDictIndexOfKeyQuick(key)
+    {
+        dictCount := this.size.Read()
+        ; skip attempts on unreasonable dictionary sizes.
+        if (dictCount < 0 OR dictCount > 32000)
+            return ""
+        ; test if key is int or string or other?
+        valueType := "" ; Read() will use default if no value set
+        if key is not integer
+            valueType := "UTF-16"
+        currIndex := Array()
+        currIndex[1] := "Key"
+        indexReadObject := new GameObjectStructure(this.FullOffsets)
+        indexReadObject.BasePtr := this.BasePtr
+        indexReadObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x18 : 0xC) ; Collection Items offset for Dictionaries
+        loop, % dictCount
+        {
+            if (A_Index > 1)
+                indexReadObject.FullOffsets.Pop()
+            currIndex[2] := A_Index - 1
+            indexReadObject.FullOffsets.Push(this.CalculateDictOffset(currIndex)) ; Index Offset
+            currKey := indexReadObject.Read()
             if (currKey == key)
             {
                 this["key", A_Index - 1] ; Build relevant dictionary object fully.
