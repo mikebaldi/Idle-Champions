@@ -676,7 +676,7 @@ class IC_MemoryFunctions_Class
 
     ReadUltimateCooldownByItem(item := 0)
     {
-        return g_SF.Memory.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].ultimateAttack.internalCooldownTimer.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.ultimatesBar.ultimateItems[item].ultimateAttack.internalCooldownTimer.Read()
     }
 
     ReadWelcomeBackActive()
@@ -1235,14 +1235,14 @@ class IC_MemoryFunctions_Class
     {
         if (heroID < 1)
             return ""
-        size := g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List.size.Read()
+        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List.size.Read()
         ; Sanity check, should be < 4 but set to 10 in case of future feat num increase.
         if (size < 0 || size > 10)
             return ""
         featList := []
         Loop, %size%
         {
-            value := g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List[A_Index - 1].ID.Read()
+            value := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List[A_Index - 1].ID.Read()
             featList.Push(value)
         }
         return featList
