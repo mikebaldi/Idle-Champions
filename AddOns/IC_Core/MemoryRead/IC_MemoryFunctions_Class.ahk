@@ -59,8 +59,8 @@ class IC_MemoryFunctions_Class
         this.EngineSettings := new IC_EngineSettings_Class(currentPointers.EngineSettings.moduleAddress, currentPointers.EngineSettings.staticOffset, currentPointers.EngineSettings.moduleOffset)
         this.CrusadersGameDataSet := new IC_CrusadersGameDataSet_Class(currentPointers.CrusadersGameDataSet.moduleAddress, currentPointers.CrusadersGameDataSet.moduleOffset)
         this.DialogManager := new IC_DialogManager_Class(currentPointers.DialogManager.moduleAddress, currentPointers.DialogManager.moduleOffset)
-        this.UserStatHandler := new IC_UserStatHandler_Class(currentPointers.UserStatHandler.moduleAddress, currentPointers.UserStatHandler.staticOffset, currentPointers.UserStatHandler.moduleOffset)
-        this.UserData := new IC_UserData_Class(currentPointers.UserData.moduleAddress, currentPointers.UserData.staticOffset, currentPointers.UserData.moduleOffset)
+        ; this.UserStatHandler := new IC_UserStatHandler_Class(currentPointers.UserStatHandler.moduleAddress, currentPointers.UserStatHandler.staticOffset, currentPointers.UserStatHandler.moduleOffset)
+        ; this.UserData := new IC_UserData_Class(currentPointers.UserData.moduleAddress, currentPointers.UserData.staticOffset, currentPointers.UserData.moduleOffset)
         this.ActiveEffectKeyHandler := new IC_ActiveEffectKeyHandler_Class(this)
     }
 
@@ -94,8 +94,8 @@ class IC_MemoryFunctions_Class
         this.EngineSettings.Refresh()
         this.CrusadersGameDataSet.Refresh()
         this.DialogManager.Refresh()
-        this.UserStatHandler.Refresh()
-        this.UserData.Refresh()
+        ; this.UserStatHandler.Refresh()
+        ; this.UserData.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
     }
 
