@@ -16,7 +16,7 @@ class IC_IdleGameManager_Class extends SH_MemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.2, 2025-08-06"
+        return "v2.1.3, 2025-08-11"
     }
 
     Refresh()

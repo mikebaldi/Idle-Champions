@@ -101,7 +101,7 @@ class GameObjectStructure
 
     GetVersion()
     {
-        Return "v3.4.0, 2025-08-09"
+        Return "v3.4.1, 2025-08-11"
     }
 
     ; Returns the full offsets of this object after BaseAddress.

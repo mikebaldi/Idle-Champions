@@ -1,3 +1,16 @@
+August 11, 2025
+    Fixed new bug with dictionary objects that made it into the last update.
+    Fixed memory reads that tried to check if a champion was fully leveled, but lost their reference values in the dll.
+    Updated teh GameObjectStructure with some significant changes.
+        - Cleaned up __Get() code and broke functionality into smaller functions for better readability.
+        - Added "__version" as new variable for checking a collection's version. Requires Imports update.
+        - Added caching to volatile dictionaries which resets on their version updating rather than resetting on every read.
+        - Added new Helper functions DoesCollectionNeedReset and ResetCollection utilizing the version additions above.
+       
+August 6, 2025
+    Fixed issues with pointer addresses not refreshing properly.
+    Fixed multiple performance slowdowns.
+
 August 1, 2025
     Updated Readme.md.
 

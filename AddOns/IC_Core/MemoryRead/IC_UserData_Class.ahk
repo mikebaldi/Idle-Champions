@@ -2,7 +2,7 @@ class IC_UserData_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v0.0.2, 2025-08-03"
+        return "v0.0.3, 2025-08-11"
     }
 
     Refresh()
