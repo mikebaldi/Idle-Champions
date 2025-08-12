@@ -1,12 +1,12 @@
 ReloadBrivGemFarmSettings(loadFromFile := True)
 {
-    writeSettings := false
+    writeSettings := False
     if(loadFromFile)
         g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
     If !IsObject( g_BrivUserSettings )
     {
         g_BrivUserSettings := {}
-        writeSettings := true
+        writeSettings := True
     }
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
@@ -65,15 +65,17 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
     if ( g_BrivUserSettings[ "BrivJumpBuffer" ] == "" )
         g_BrivUserSettings[ "BrivJumpBuffer" ] := 0
     if ( g_BrivUserSettings[ "DisableDashWait" ] == "" )
-        g_BrivUserSettings[ "DisableDashWait" ] := false
+        g_BrivUserSettings[ "DisableDashWait" ] := False
     if ( g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] == "" )
-        g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := true
+        g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ] := True
     if ( g_BrivUserSettings[ "AutoCalculateBrivStacks" ] == "" )
         g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := False
     if (g_BrivUserSettings[ "AutoCalculateWorstCase" ] == "" )
-        g_BrivUserSettings[ "AutoCalculateWorstCase" ] := true
+        g_BrivUserSettings[ "AutoCalculateWorstCase" ] := True
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
 	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
+    if ( g_BrivUserSettings[ "IsEGS" ] == "" )
+        g_BrivUserSettings[ "IsEGS" ] := False
     ; Found legacy settings file.
     if ( !writeSettings AND loadFromFile AND g_BrivUserSettings[ "LastSettingsUsed" ] == "" )
     {

@@ -35,7 +35,8 @@ class IC_About_Component
             string .= "Idle Champions Game Version: " . gameVersion . "`n"
         if(isFunc(g_SF.Memory.GetPointersVersion))
             string .= "Current Pointers: " . (g_SF.Memory.GetPointersVersion() ? g_SF.Memory.GetPointersVersion() : " ---- ") . "`n"
-        string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . (g_ImportsGameVersionPlatform32 != "" ? " " : "") . g_ImportsGameVersionPlatform32 . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . (g_ImportsGameVersionPlatform64 != "" ? " " : "") . g_ImportsGameVersionPlatform64 . " (64 bit)`n`n"
+        string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . (g_ImportsGameVersionPlatform32 != "" ? " " : "") . g_ImportsGameVersionPlatform32 . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . (g_ImportsGameVersionPlatform64 != "" ? " " : "") . g_ImportsGameVersionPlatform64 . " (64 bit)`n"
+        string .= "Game Location: " . (g_UserSettings[ "InstallPath" ] == "explorer.exe ""com.epicgames.launcher://apps/7e508f543b05465abe3a935960eb70ac%3A48353a502e72433298f25827e03dbff0%3A40cb42e38c0b4a14a1bb133eb3291572?action=launch&silent=true""" ? "EGS" : "Steam/Other") . "`n`n" 
         if(isFunc(g_SF.Memory.GetVersion))
             string .= "MemoryFunctions Version: " . g_SF.Memory.GetVersion() . "`n"
         if(isFunc(GameObjectStructure.GetVersion))
