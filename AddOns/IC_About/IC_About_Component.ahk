@@ -35,7 +35,7 @@ class IC_About_Component
             string .= "Idle Champions Game Version: " . gameVersion . "`n"
         if(isFunc(g_SF.Memory.GetPointersVersion))
             string .= "Current Pointers: " . (g_SF.Memory.GetPointersVersion() ? g_SF.Memory.GetPointersVersion() : " ---- ") . "`n"
-        string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)`n`n"
+        string .= "Imports Versions: " . (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . (g_ImportsGameVersionPlatform32 != "" ? " " : "") . g_ImportsGameVersionPlatform32 . " (32 bit), " . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . (g_ImportsGameVersionPlatform64 != "" ? " " : "") . g_ImportsGameVersionPlatform64 . " (64 bit)`n`n"
         if(isFunc(g_SF.Memory.GetVersion))
             string .= "MemoryFunctions Version: " . g_SF.Memory.GetVersion() . "`n"
         if(isFunc(GameObjectStructure.GetVersion))
