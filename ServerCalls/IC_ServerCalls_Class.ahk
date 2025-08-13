@@ -30,6 +30,9 @@ class IC_ServerCalls_Class
     webRoot := "http://ps22.idlechampions.com/~idledragons/"
     timeoutVal := 60000
     playServerExcludes := "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
+    settings := ""
+    proxy := ""
+    
 
     __New( userID, userHash, instanceID := 0 )
     {
@@ -37,12 +40,13 @@ class IC_ServerCalls_Class
         this.userHash := userHash
         this.instanceID := instanceID
         this.shinies := 0
+        this.LoadSettings()
         return this
     }
 
     GetVersion()
     {
-        return "v2.4.2, 2023-08-22"
+        return "v2.4.3, 2025-08-13"
     }
 
     UpdateDummyData()
@@ -68,6 +72,8 @@ class IC_ServerCalls_Class
         ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
         WR.SetTimeouts( 0, 45000, 30000, timeout )  
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
+        if (this.proxy != "")
+            WR.SetProxy(2, this.proxy)
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -213,6 +219,8 @@ class IC_ServerCalls_Class
         ; https://learn.microsoft.com/en-us/windows/win32/winhttp/iwinhttprequest-settimeouts defaults: 0 (DNS Resolve), 60000 (connection timeout. 60s), 30000 (send timeout), 60000 (receive timeout)
         WR.SetTimeouts( "0", "15000", "7500", "30000" )
         ; WR.SetProxy( 2, "IP:PORT" )  Send web traffic through a proxy server. A local proxy may be helpful for debugging web calls.
+        if (this.proxy != "")
+            WR.SetProxy(2, this.proxy)
         Try {
             WR.Open( "POST", URLtoCall, true )
             boundaryHeader = 
@@ -322,6 +330,13 @@ class IC_ServerCalls_Class
             suggestedServer := response.play_server
         OutputDebug, % "Server Suggested web root is: " . suggestedServer
     }
+    
+    LoadSettings()
+    {
+        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
+        if(IsObject(this.Settings))
+            this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
+    }
     #include *i %A_LineFile%\..\IC_ServerCalls_Class_Extra.ahk
 }
 
@@ -337,6 +352,8 @@ class Byteglow_ServerCalls_Class
         timeout := timeout ? timeout : this.timeoutVal
         WR := ComObjCreate( "WinHttp.WinHttpRequest.5.1" )
         WR.SetTimeouts( 0, 45000, 30000, timeout )
+        if (this.proxy != "")
+            WR.SetProxy(2, this.proxy)
         Try {
             WR.Open( "POST", URLtoCall, true )
             WR.SetRequestHeader( "Content-Type","application/x-www-form-urlencoded" )
@@ -362,4 +379,17 @@ class Byteglow_ServerCalls_Class
         params := "gild=" . gild . "&enchant=" . ilvls . "&rarity=" . rarity . "&metalborn=" . isMetalborn . "&target=" . modronReset
         return this.ServerCall( "briv-stacks", params)
     }    
+    
+    __New()
+    {
+        this.LoadSettings()
+        return this
+    }
+
+    LoadSettings()
+    {
+        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
+        if(IsObject(this.Settings))
+            this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
+    }
 }
