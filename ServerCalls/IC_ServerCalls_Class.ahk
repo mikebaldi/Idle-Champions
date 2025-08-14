@@ -14,7 +14,7 @@
 */
 
 ; json library must be included if this file is used outside of Script Hub
-
+#include %A_LineFile%\..\SH_ServerCalls.ahk 
 
 class IC_ServerCalls_Class extends SH_ServerCalls
 {
