@@ -14,9 +14,9 @@
 */
 
 ; json library must be included if this file is used outside of Script Hub
-#include %A_LineFile%\..\..\SharedFunctions\json.ahk
 
-class IC_ServerCalls_Class
+
+class IC_ServerCalls_Class extends SH_ServerCalls
 {
     userID := 0
     userHash := ""
@@ -31,7 +31,6 @@ class IC_ServerCalls_Class
     timeoutVal := 60000
     playServerExcludes := "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
     settings := ""
-    proxy := ""
     
 
     __New( userID, userHash, instanceID := 0 )
@@ -331,12 +330,6 @@ class IC_ServerCalls_Class
         OutputDebug, % "Server Suggested web root is: " . suggestedServer
     }
     
-    LoadSettings()
-    {
-        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
-        if(IsObject(this.Settings))
-            this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
-    }
     #include *i %A_LineFile%\..\IC_ServerCalls_Class_Extra.ahk
 }
 

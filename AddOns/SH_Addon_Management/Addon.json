@@ -1,9 +1,10 @@
 {
     "NameLess":"Addon Management",
-    "Version": "v2.1.0",
+    "Version": "v2.1.1",
     "Includes" : "SH_Addon_Management_Includes.ahk",
     "Author" : "nyze & antilectual",
-    "Url" : "https://github.com/nyze/Addon-Management",
+    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/SH_Addon_Management",
+    "test" : "https://raw.githubusercontent.com/mikebaldi/Idle-Champions/refs/heads/main/AddOns/SH_Addon_Management/Addon.json",
     "Info" : "This is an addon that provides addon management for addons in Script Hub",
     "Dependencies" : {}
 }
