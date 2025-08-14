@@ -500,7 +500,7 @@ Class AddonManagement
         for k,v in this.Addons 
         {
             IsEnabled := v["Enabled"] ? "yes" : "no"
-            LV_Add( , IsEnabled, v.Name, v.Version, v.Dir)
+            LV_Add( , IsEnabled, v.Name, v.Version, v.MostRecentVer, v.Dir)
         }
         loop, 4
         {
@@ -605,6 +605,7 @@ Class Addon
     Dir :=
     Name :=
     Version :=
+    MostRecentVer :=
     Includes :=
     Author :=
     Url :=
@@ -623,8 +624,30 @@ Class Addon
             this.Info := SettingsObject["Info"]
             this.Dependencies := SettingsObject["Dependencies"]
             this.Enabled := 0
+            if( g_UserSettings[ "CheckForUpdates" ] )
+                this.MostRecentVer := this.GetMostRecentVersion()
         }
     }
+
+    ; Requires a github.com url.
+    GetMostRecentVersion()
+    {
+        
+        splitString := StrSplit(currentControl, "_")
+        remoteUrl := this.Url
+        if(InStr(remoteUrl, "https://github.com"))
+        {
+            remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
+            remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
+            remoteUrl := remoteUrl . "/Addon.json"
+            serverCaller := new SH_ServerCalls()
+            addonInfo := serverCaller.BasicServerCall(remoteURL) 
+            return addonInfo["Version"]
+        }
+        else
+            return ""
+    }
+
     enable(){
         this.Enabled := 1
     }
