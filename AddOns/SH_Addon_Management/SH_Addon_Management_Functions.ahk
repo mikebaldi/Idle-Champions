@@ -255,7 +255,7 @@ Class AddonManagement
     EnableAddon(Name, byref Version)
     {
         isNewer := false
-        ; Check if another version is allready enabled
+        ; Check if another version is already enabled
         for k,v in this.Addons 
         {
             if(v.Name = Name AND v.Version != Version AND v.Enabled)
@@ -305,7 +305,6 @@ Class AddonManagement
             startupAddons.Push(Object("Name","Addon Management","Version","v1.0."))
             startupAddons.Push(Object("Name","IC Core","Version","v.1."))
             this.EnabledAddons := startupAddons 
-            ; this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
             forceType := 2
         }
         ; enable all addons that needed to be added
@@ -338,10 +337,24 @@ Class AddonManagement
                 this.NewerEnabledAddons.Push(v.Clone())
                 forceType := 1
             }
+            this.UpdateMostRecentVersion(v)
         }
         if (!FileExist(this.GeneratedAddonIncludeFile) or forceType == 2)
             this.GenerateIncludeFile() 
         this.ForceWrite(forceType)
+    }
+
+    UpdateMostRecentVersion(enabledAddon)
+    {
+        for k,v in this.Addons
+        {
+            if(enabledAddon.Name == this.Addons[k].Name)
+            {
+                enabledAddon.MostRecentVer := this.Addons[k].MostRecentVer
+                return
+            }
+
+        }
     }
 
     ForceWrite(forceType)
@@ -612,6 +625,7 @@ Class Addon
     Info :=
     Dependencies := []
     Enabled := 
+    serverCaller := new SH_ServerCalls()
 
     __New(SettingsObject) {
         If IsObject( SettingsObject ){
@@ -640,8 +654,7 @@ Class Addon
             remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
             remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
             remoteUrl := remoteUrl . "/Addon.json"
-            serverCaller := new SH_ServerCalls()
-            addonInfo := serverCaller.BasicServerCall(remoteURL) 
+            addonInfo := this.serverCaller.BasicServerCall(remoteURL) 
             return addonInfo["Version"]
         }
         else
