@@ -5,11 +5,14 @@ Gui, ICScriptHub:Tab, About
 GUIFunctions.UseThemeTextColor()
 aboutRows := 21
 aboutGroupBoxHeight := aboutRows * 15
-Gui, ICScriptHub:Add, GroupBox, x+15 y+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
+Gui, ICScriptHub:Add, Text, vAboutLineHeightTest w50,     
+GuiControlGet, xyVal, ICScriptHub:Pos, AboutLineHeightTest
+Gui, ICScriptHub:Add, GroupBox, xp+15 yp+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
 Gui, ICScriptHub:Add, Text, vAboutVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
 
+
 AboutEnabledAddonsValues := IC_About_Component.GetEnabledAddons()
-AboutAddonGroupBoxHeight := (AboutEnabledAddonsRows + 2) * 15
+AboutAddonGroupBoxHeight := (AboutEnabledAddonsRows + 2) * (xyValH+1) + 15
 GuiControlGet, xyVal, ICScriptHub:Pos, AboutVersionGroupBox
 xyValX += 0
 xyValY += (aboutGroupBoxHeight + 15)
@@ -90,18 +93,21 @@ class IC_About_Component
     {
         global AboutEnabledAddonsValues
         global xyValX
+        GuiControlGet, pos, ICScriptHub:Pos, AboutLineHeightTest
+        height := posH + 1
         xyValX := xyValX + 20
         Gui, ICScriptHub:Add, Text, x%xyValX% yp+10 w400 r1
+        GUIFunctions.UseThemeTextColor()
         for k,v in AboutEnabledAddonsValues
         {
             if(InStr(v, "Out of Date"))
             {   
                 GUIFunctions.UseThemeTextColor("WarningTextColor", 600) 
-                Gui, ICScriptHub:Add, Text, x%xyValX% yp+10 w400 r1, % v
+                Gui, ICScriptHub:Add, Text, x%xyValX% yp+%height% w400 r1, % v
                 GUIFunctions.UseThemeTextColor()
                 Continue
             }    
-            Gui, ICScriptHub:Add, Text, x%xyValX% yp+10 w400 r1, % v
+            Gui, ICScriptHub:Add, Text, x%xyValX% yp+%height% w400 r1, % v
         }
         xyValX := xyVal - 20
     }
