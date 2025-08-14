@@ -21,6 +21,17 @@ class ActiveEffectKeySharedFunctions
     #include *i %A_LineFile%\..\IC_Thellora.ahk
     #include *i %A_LineFile%\..\IC_Nrakk.ahk
     #include *i %A_LineFile%\..\IC_Ellywick.ahk
+
+    Add(heroObject, heroName)
+    {
+        if(!IsObject(heroObject))
+            return
+        if(this[heroName] == "")
+            this[heroName] := heroObject
+        else if (IsObject(this[heroName]))
+            for k,v in heroObject
+                this[heroName][k] := v.Clone()
+    }
 }
 
 
