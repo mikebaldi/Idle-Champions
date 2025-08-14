@@ -2,6 +2,7 @@ August 14, 2025
     Added latest version check to the Addons window.
         Edit Settings.json in the main SH folder and change/add "CheckForUpdates":0 to disable.
     Added option to add a proxy server in Settings.json for server calls.
+    Added an outdated addons check on the About tab.
 
 August 11, 2025
     Fixed new bug with dictionary objects that made it into the last update.
