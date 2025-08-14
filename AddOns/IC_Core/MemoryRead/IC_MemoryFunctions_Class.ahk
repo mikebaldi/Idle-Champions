@@ -67,7 +67,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.5.2, 2025-08-11"
+        return "v2.5.3, 2025-08-14"
     }
 
     GetPointersVersion()
@@ -1209,9 +1209,13 @@ class IC_MemoryFunctions_Class
         return version
     }
     
-    HeroHasFeatSavedInFormation(heroID, featID, formationSlot)
+    HeroHasFeatSavedInFormation(heroID :=58, featID := 2131, formationSlot := 0)
     {
+    ;     heroID := 58
+    ;     formationSlot := this.GetSavedFormationSlotByFavorite(1)
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
+        if(size == "")
+            return ""
         if(size <= 0 OR size > 10) ; sanity check
             return false
         Loop, %size%
@@ -1223,9 +1227,12 @@ class IC_MemoryFunctions_Class
         return false
     }
     
-    HeroHasAnyFeatsSavedInFormation(heroID, formationSlot)
+    HeroHasAnyFeatsSavedInFormation(heroID := 51, formationSlot := 0)
     {
+        ; heroID :=58
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
+        if(size == "")
+            return ""
         if(size <= 0 OR size > 10) ; sanity check
             return false
         return true
