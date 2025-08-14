@@ -286,6 +286,10 @@ class IC_MemoryFunctions_Class
     ;=========================================================
     ;herohandler - champion related information accessed by ID
     ;=========================================================
+    ReadClickLevel()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].ClickLevel.Read()
+    }
 
     ReadChampListSize()
     {
