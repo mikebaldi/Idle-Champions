@@ -189,6 +189,11 @@ class GameObjectStructure
 
     GetDictionaryObject(key, index, quickLookup)
     {
+        if(IsObject(key) AND key.Count() == 2)
+        {
+            index := key[2]
+            key := key[1]
+        }
         isUnstable := GameObjectStructure.SystemTypes[this._CollectionKeyType] == ""        ; Check if Key value is not a known type - Unstable is a dictionary of pointers that can change k,v pairs often.
         if(isUnstable AND this.DoesCollectionNeedReset())
             this.ResetCollection()
