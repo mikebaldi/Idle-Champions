@@ -1240,7 +1240,7 @@ class IC_MemoryFunctions_Class
         return false
     }
     
-    HeroHasAnyFeatsSavedInFormation(heroID := 51, formationSlot := 0)
+    HeroHasAnyFeatsSavedInFormation(heroID := 58, formationSlot := 0)
     {
         ; heroID :=58
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
