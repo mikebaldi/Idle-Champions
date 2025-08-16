@@ -67,7 +67,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.5.3, 2025-08-14"
+        return "v2.5.4, 2025-08-16"
     }
 
     GetPointersVersion()
@@ -269,6 +269,10 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.inited.Read()
     }
 
+    ReadIsSplashVideoActive()
+    {
+        return this.GameManager.game.loadingScreen.SplashScreen.IsActive_k__BackingField.Read()
+    }
     ;=================
     ;Screen Resolution
     ;=================
@@ -774,6 +778,11 @@ class IC_MemoryFunctions_Class
     ReadHeroUpgradeRequiredLevel(champID := 1, upgradeID := 7)
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].RequiredLevel.Read()
+    }
+
+    ReadHeroUpgradeRequiredLevelByIndex(champID := 1, upgradeIndex := 7)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId["key", upgradeIndex].RequiredLevel.Read()
     }
 
     ; Checks for specialization graphic. No graphic means no spec.
