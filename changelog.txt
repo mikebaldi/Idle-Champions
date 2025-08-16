@@ -1,3 +1,10 @@
+August 15, 2025
+    Updated HeroHasFeats memory functions to properly error when reads fail.
+    Added an Add function to ActiveEffectKeyHandlers so addon creators can more easily add their own champions.
+    Added ReadClickLevel, ReadSplashVideoActive, and ReadHeroUpgradeRequiredLevelByIndex to memory functions.
+    Fixed a bug with how user settings are loaded.
+    Added feature to automatically open Addon Management window if no addons are loaded.
+
 August 14, 2025
     Added latest version check to the Addons window.
         Edit Settings.json in the main SH folder and change/add "CheckForUpdates":0 to disable.
