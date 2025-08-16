@@ -108,3 +108,6 @@ AddonManagementSaveClicked(){
 	IfMsgBox, Yes
 		Reload
 }
+
+If (AddonManagement.ShowAddonGUI)
+	AddonOpenGuiClicked()

@@ -25,6 +25,7 @@ Class AddonManagement
     NeedSave := 0
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
+    ShowAddonGUI := False
 
     ; ############################################################
     ;                        Functions
@@ -300,11 +301,10 @@ Class AddonManagement
         ; If the file does not exist we should create it with the default settings
         if(!FileExist(this.AddonManagementConfigFile)) 
         {
-            ; Here we load the Addons that are required on first startup
-            startupAddons := []
-            startupAddons.Push(Object("Name","Addon Management","Version","v1.0."))
-            startupAddons.Push(Object("Name","IC Core","Version","v.1."))
-            this.EnabledAddons := startupAddons 
+            ; Here we used load the Addons that are required on first startup
+            ; startupAddons := []
+            ; startupAddons.Push(Object("Name","IC Core","Version","v.1."))
+            this.EnabledAddons := []
             forceType := 2
         }
         ; enable all addons that needed to be added
@@ -327,6 +327,9 @@ Class AddonManagement
         this.OrderAddons()
         ; Enable addons
         this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
+        ; Show Addon GUI if no addons loaded
+        if((this.EnabledAddons).Count() <= 0)
+            this.ShowAddonGUI := True
         for k, v in this.EnabledAddons
         {
             versionValue := v.Version
@@ -368,15 +371,10 @@ Class AddonManagement
                 updatedAddonsString .= "`n" . v.Name . " " . v.Version 
             }
             MsgBox, % updatedAddonsString
+            return
         }
         if(forceType == 2)
-        {
             this.ForceWriteSettings()
-            MsgBox, 36, Restart, Your settings file has been updated. `nIC Script Hub may need to reload. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
-        
     }
 
     ForceWriteSettings()
@@ -482,18 +480,9 @@ Class AddonManagement
             if (v.Enabled)
                 generatedText .= "#include *i %A_LineFile%\..\" . v.Dir . "\" . v.Includes . "`n"
         IncludeFile := this.GeneratedAddonIncludeFile
-        if(!FileExist(IncludeFile))
-        {
-            FileAppend, %generatedText%, %IncludeFile%
-            MsgBox, 36, Restart, This looks like your first time running Script Hub. `nSettings have been updated. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
-        else
-        {
+        if(FileExist(IncludeFile))
             FileDelete, %IncludeFile%
-            FileAppend, %generatedText%, %IncludeFile%
-        }
+        FileAppend, %generatedText%, %IncludeFile%
     }
     ; ------------------------------------------------------------
     ;
