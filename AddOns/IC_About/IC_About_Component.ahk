@@ -16,7 +16,7 @@ AboutAddonGroupBoxHeight := (AboutEnabledAddonsRows + 2) * (xyValH+1) + 15
 GuiControlGet, xyVal, ICScriptHub:Pos, AboutVersionGroupBox
 xyValX += 0
 xyValY += (aboutGroupBoxHeight + 15)
-Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, Enabled Addons: 
+Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
 IC_About_Component.ShowEnabledAddons()
 ; Gui, ICScriptHub:Add, Text, vAboutAddonStringID xp+20 yp+25 w400 r%AboutEnabledAddonsRows%, % AboutEnabledAddonsString
 
