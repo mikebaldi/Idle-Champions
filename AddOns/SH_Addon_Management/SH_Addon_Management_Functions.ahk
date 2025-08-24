@@ -340,24 +340,10 @@ Class AddonManagement
                 this.NewerEnabledAddons.Push(v.Clone())
                 forceType := 1
             }
-            this.UpdateMostRecentVersion(v)
         }
         if (!FileExist(this.GeneratedAddonIncludeFile) or forceType == 2)
             this.GenerateIncludeFile() 
         this.ForceWrite(forceType)
-    }
-
-    UpdateMostRecentVersion(enabledAddon)
-    {
-        for k,v in this.Addons
-        {
-            if(enabledAddon.Name == this.Addons[k].Name)
-            {
-                enabledAddon.MostRecentVer := this.Addons[k].MostRecentVer
-                return
-            }
-
-        }
     }
 
     ForceWrite(forceType)
@@ -502,7 +488,7 @@ Class AddonManagement
         for k,v in this.Addons 
         {
             IsEnabled := v["Enabled"] ? "yes" : "no"
-            LV_Add( , IsEnabled, v.Name, v.Version, v.MostRecentVer, v.Dir)
+            LV_Add( , IsEnabled, v.Name, v.Version, v.Dir)
         }
         loop, 4
         {
@@ -558,7 +544,7 @@ Class AddonManagement
         EnabledAddons := []
         for k,v in this.Addons
             if (v.Enabled)
-                EnabledAddons.Push(Object("Name", v.Name, "Version",v.Version))
+                EnabledAddons.Push(Object("Name", v.Name, "Version", v.Version, "Url", v.Url))
         ThingsToWrite := {}
         ThingsToWrite["Enabled Addons"] := EnabledAddons
         ThingsToWrite["Addon Order"] := Order
@@ -627,27 +613,7 @@ Class Addon
             this.Info := SettingsObject["Info"]
             this.Dependencies := SettingsObject["Dependencies"]
             this.Enabled := 0
-            if( g_UserSettings[ "CheckForUpdates" ] )
-                this.MostRecentVer := this.GetMostRecentVersion()
         }
-    }
-
-    ; Requires a github.com url.
-    GetMostRecentVersion()
-    {
-        
-        splitString := StrSplit(currentControl, "_")
-        remoteUrl := this.Url
-        if(InStr(remoteUrl, "https://github.com"))
-        {
-            remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
-            remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
-            remoteUrl := remoteUrl . "/Addon.json"
-            addonInfo := this.serverCaller.BasicServerCall(remoteURL) 
-            return addonInfo["Version"]
-        }
-        else
-            return ""
     }
 
     enable(){

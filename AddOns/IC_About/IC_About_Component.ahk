@@ -8,6 +8,7 @@ class IC_About_Component
 {
     EnabledAddonsValues := Array()
     VersionStringValues := Array()
+    ServerCaller := ""
 
     Build()
     {
@@ -28,7 +29,21 @@ class IC_About_Component
         xyValX += 0
         xyValY += (aboutGroupBoxHeight + 15)
         Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
+        IC_About_Component.AddAddonToggle()
         IC_About_Component.BuildEnabledAddons()
+    }
+
+    AddAddonToggle()
+    {
+        global
+        local xLoc := xyValX + GUIFunctions.GetControlSizeFromBasicText("Enabled Addons [OFF]") + 10
+        Gui, ICScriptHub:Font, underline 
+        GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
+        Gui, ICScriptHub:Add, Text, vAboutToggleAddonCheck x%xLoc% y%xyValY%, Toggle
+        GUIFunctions.UseThemeTextColor()
+        Gui, ICScriptHub:Font, norm
+        toggleAddonCheckFnc := ObjBindMethod(IC_About_Component, "ToggleAddonCheck")
+        GuiControl,ICScriptHub: +g, AboutToggleAddonCheck, % toggleAddonCheckFnc
     }
 
     ; Refreshes game version and compares to imports. Updates UI Accordingly.
@@ -164,8 +179,10 @@ class IC_About_Component
         enabledAddons := Array()
         for k,v in AddonManagement.EnabledAddons
         {
-            if(v.MostRecentVer != "" AND SH_VersionHelper.IsVersionNewer(v.MostRecentVer, v.Version))
-                string := v.Name . " Version: " . v.Version . "`t -- Out of Date (" . v.MostRecentVer . ") -- `n" 
+            if(g_UserSettings[ "CheckForUpdates" ] == True)
+                mostRecent := this.GetMostRecentVersion(v.Url)
+            if(mostRecent != "" AND SH_VersionHelper.IsVersionNewer(mostRecent, v.Version))
+                string := v.Name . " Version: " . v.Version . "`t -- Out of Date (" . mostRecent . ") -- `n" 
             else
                 string := v.Name . " Version: " . v.Version . "`n"
             
@@ -203,5 +220,30 @@ class IC_About_Component
         versionPickerLoc := A_LineFile . "\..\..\IC_Core\IC_VersionPicker.ahk"
         Run, %versionPickerLoc%
         ExitApp
+    }
+
+    ToggleAddonCheck()
+    {
+        g_UserSettings[ "CheckForUpdates" ] := ! g_UserSettings[ "CheckForUpdates" ] 
+        GuiControl,ICScriptHub:, AboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
+        GuiControl,ICScriptHub:Hide, AboutToggleAddonCheck
+        GuiControl,ICScriptHub:Show, AboutToggleAddonCheck
+        SaveUserSettings()
+    }
+
+    GetMostRecentVersion(remoteUrl)
+    {
+        if(this.ServerCaller == "")
+            this.ServerCaller := new SH_ServerCalls()
+        if(InStr(remoteUrl, "https://github.com"))
+        {
+            remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
+            remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
+            remoteUrl := remoteUrl . "/Addon.json"
+            addonInfo := this.ServerCaller.BasicServerCall(remoteURL) 
+            return addonInfo["Version"]
+        }
+        else
+            return ""
     }
 }

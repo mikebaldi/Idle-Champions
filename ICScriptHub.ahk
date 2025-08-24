@@ -86,9 +86,8 @@ if ( g_UserSettings[ "CheckForUpdates" ] == "" )
 if(g_UserSettings[ "WriteSettings" ] == true)
 {
     g_UserSettings.Delete("WriteSettings")
-    SH_SharedFunctions.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+    SaveUserSettings()
 }
-
 
 global g_SF := new SH_SharedFunctions ; includes MemoryFunctions in g_SF.Memory
 
@@ -113,6 +112,11 @@ GUIFunctions.UseThemeBackgroundColor()
 Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPosition" ] " y" . g_UserSettings[ "WindowYPosition" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)"
 GUIFunctions.UseThemeTitleBar("ICScriptHub")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
+
+SaveUserSettings()
+{
+    SH_SharedFunctions.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+}
 
 Reload_Clicked()
 {

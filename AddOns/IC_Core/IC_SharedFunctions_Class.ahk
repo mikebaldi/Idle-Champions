@@ -632,7 +632,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         return
     }
 
-    ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
+    ; Attempts to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
         timeoutVal := 32000 + 90000 ; 32s + waitforgameready timeout

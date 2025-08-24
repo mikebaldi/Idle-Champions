@@ -64,7 +64,7 @@ class IC_GameLocationSettings_Component
         if( NewInstallExe == "")
             NewInstallExe := "IdleDragons.exe"
         g_UserSettings[ "ExeName"] := NewInstallExe
-        g_SF.WriteObjectToJSON( A_LineFile . "\..\..\..\Settings.json", g_UserSettings )
+        SaveUserSettings()
         Gui, InstallGUI:Hide
         Gui, ICScriptHub:Default
         Return
