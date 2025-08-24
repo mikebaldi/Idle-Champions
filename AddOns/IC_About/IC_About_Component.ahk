@@ -11,8 +11,8 @@ Gui, ICScriptHub:Add, GroupBox, xp+15 yp+15 w425 h%aboutGroupBoxHeight% vAboutVe
 GUIFunctions.UseThemeTextColor()
 Gui, ICScriptHub:Add, Text, vAboutVersionStringID xp+20 yp+25 w400 r%aboutRows%, % IC_About_Component.GetVersionString()
 
-AboutEnabledAddonsValues := IC_About_Component.GetEnabledAddons()
-AboutAddonGroupBoxHeight := (AboutEnabledAddonsRows + 2) * (xyValH+1) + 15
+IC_About_Component.GetEnabledAddons()
+AboutAddonGroupBoxHeight := (IC_About_Component.EnabledAddonsValues.Count() + 2) * (xyValH+1) + 15
 GuiControlGet, xyVal, ICScriptHub:Pos, AboutVersionGroupBox
 xyValX += 0
 xyValY += (aboutGroupBoxHeight + 15)
@@ -27,6 +27,12 @@ if(isFunc(g_SF.Memory.GetPointersVersion) AND isFunc(g_SF.Memory.ReadGameVersion
 
 class IC_About_Component
 {
+    EnabledAddonsValues := Array()
+    EnabledAddonsRows := 0
+
+    VersionStringValues := Array()
+    VersionStringRows := 0
+
     GetVersionString()
     {
         global
@@ -74,7 +80,6 @@ class IC_About_Component
     GetEnabledAddons()
     {
         string := ""
-        global AboutEnabledAddonsRows := 0
         enabledAddons := Array()
         for k,v in AddonManagement.EnabledAddons
         {
@@ -84,21 +89,20 @@ class IC_About_Component
                 string := v.Name . " Version: " . v.Version . "`n"
             
             enabledAddons.Push(string)
-            AboutEnabledAddonsRows++
         }
+        this.EnabledAddonsValues := enabledAddons
         return enabledAddons
     }
 
     ShowEnabledAddons()
     {
-        global AboutEnabledAddonsValues
         global xyValX
         GuiControlGet, posVal, ICScriptHub:Pos, AboutLineHeightTest
         height := posValH + 1
         xyValX := xyValX + 20
         Gui, ICScriptHub:Add, Text, x%xyValX% yp+10 w0
         GUIFunctions.UseThemeTextColor()
-        for k,v in AboutEnabledAddonsValues
+        for k,v in this.EnabledAddonsValues
         {
             if(InStr(v, "Out of Date"))
             {   
