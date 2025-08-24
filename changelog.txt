@@ -1,5 +1,6 @@
 August 24, 2025
     Updated about addon to warn about mismatched imports.
+    Updated about addon to have more coverage on location settings.
 
 August 15, 2025
     Updated HeroHasFeats memory functions to properly error when reads fail.

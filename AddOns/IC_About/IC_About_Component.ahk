@@ -47,7 +47,18 @@ class IC_About_Component
         if(isFunc(g_SF.Memory.GetPointersVersion))
             this.VersionStringValues.Push("Current Pointers: " . (g_SF.Memory.GetPointersVersion() ? g_SF.Memory.GetPointersVersion() : " ---- "))
         this.VersionStringValues.Push("Imports: "  . (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . (g_ImportsGameVersionPlatform64 != "" ? " (" . g_ImportsGameVersionPlatform64 . ")" : ""))
-        this.VersionStringValues.Push("Game Location: " . (g_UserSettings[ "InstallPath" ] == "explorer.exe ""com.epicgames.launcher://apps/7e508f543b05465abe3a935960eb70ac%3A48353a502e72433298f25827e03dbff0%3A40cb42e38c0b4a14a1bb133eb3291572?action=launch&silent=true""" ? "EGS" : "Steam/Other"))
+        local gameLocationString := "Game Location Setting: "
+        if(InStr(g_UserSettings[ "InstallPath" ], "com.epicgames.launcher:"))
+            gameLocationString .= """epicgames.launcher"" (EGS)"
+        else if(InStr(g_UserSettings[ "InstallPath" ], "legendary.exe"))
+            gameLocationString .= """legendary.exe"" (Legendary)"
+        else if(InStr(g_UserSettings[ "InstallPath" ], "heroic://"))
+            gameLocationString .= """heroic://"" (Heroic)"
+        else if(InStr(g_UserSettings[ "InstallPath" ], "IdleDragons.exe"))
+            gameLocationString .= "IdleDragons.exe (Steam/Other)"
+        else
+            gameLocationString .= "(Unknown)"
+        this.VersionStringValues.Push(gameLocationString)
         this.VersionStringValues.Push(" ")
         if(isFunc(g_SF.Memory.GetVersion))
             this.VersionStringValues.Push("MemoryFunctions Version: " . g_SF.Memory.GetVersion())
