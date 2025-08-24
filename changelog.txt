@@ -1,6 +1,7 @@
 August 24, 2025
     Updated about addon to warn about mismatched imports.
     Updated about addon to have more coverage on location settings.
+    Added a refresh link on the About tab to refresh game version and imports warning without reloading the script.
 
 August 15, 2025
     Updated HeroHasFeats memory functions to properly error when reads fail.

@@ -2,16 +2,14 @@
 GUIFunctions.AddTab("About")
 
 Gui, ICScriptHub:Tab, About
-IC_About_Component.Refresh()
+IC_About_Component.Build()
 
 class IC_About_Component
 {
     EnabledAddonsValues := Array()
-    EnabledAddonsRows := 0
     VersionStringValues := Array()
-    VersionStringRows := 0
 
-    Refresh()
+    Build()
     {
         global
         GUIFunctions.UseThemeTextColor()
@@ -22,7 +20,7 @@ class IC_About_Component
         Gui, ICScriptHub:Add, GroupBox, xp+15 yp+15 w425 h%aboutGroupBoxHeight% vAboutVersionGroupBox, Version Info: 
         xyValX += 0
         xyValY += (aboutGroupBoxHeight + 15)
-        IC_About_Component.ShowScriptVersions()
+        IC_About_Component.BuildScriptVersions()
 
         IC_About_Component.GetEnabledAddons()
         AboutAddonGroupBoxHeight := (IC_About_Component.EnabledAddonsValues.Count() + 2) * (xyValH+1) + 15
@@ -30,7 +28,30 @@ class IC_About_Component
         xyValX += 0
         xyValY += (aboutGroupBoxHeight + 15)
         Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
-        IC_About_Component.ShowEnabledAddons()
+        IC_About_Component.BuildEnabledAddons()
+    }
+
+    ; Refreshes game version and compares to imports. Updates UI Accordingly.
+    Refresh()
+    {
+        global AboutComponentImportsWarning, AboutComponentGameVersion, g_SF, _MemoryManager, g_ImportsGameVersion64, g_ImportsGameVersionPostFix64
+        ; local gameVersionaArch, gameVersion, xyVal, xLoc, xyValX, xyValY, xyValH, xyValW
+        g_SF.Memory.OpenProcessReader()
+        gameVersionaArch := _MemoryManager.is64bit ? " (64 bit)" : " (32 bit)"
+        gameVersion := "Idle Champions Game Version: " . (g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch)
+        GuiControl,ICScriptHub:, AboutComponentGameVersion, % gameVersion
+        GuiControl,ICScriptHub:, AboutComponentImportsWarning, % " "
+        if(g_SF.Memory.ReadGameVersion() != g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)
+            GuiControl,ICScriptHub:, AboutComponentImportsWarning, % "Warning: Does not match game version!"
+        width := GUIFunctions.GetControlSizeFromBasicText(gameVersion)
+        GuiControlGet, xyVal, ICScriptHub:Pos, AboutComponentGameVersion
+        xLoc := xyValX + width
+        GuiControl,ICScriptHub:Move, AboutComponentRefreshLink, % "x"xLoc
+        ; Controls like to disappear sometimes when moved, so hide/show to refresh their view.
+        GuiControl,ICScriptHub:Hide, AboutComponentGameVersion
+        GuiControl,ICScriptHub:Show, AboutComponentGameVersion
+        GuiControl,ICScriptHub:Hide, AboutComponentRefreshLink
+        GuiControl,ICScriptHub:Show, AboutComponentRefreshLink
     }
 
     GetScriptVersions()
@@ -90,9 +111,10 @@ class IC_About_Component
         this.VersionStringValues.Push("`nAHK Version: " . A_AhkVersion)
     }
 
-    ShowScriptVersions()
+    BuildScriptVersions()
     {
-        global xyValX, AboutPointerChangeLink
+        global ;xyValX, AboutPointerChangeLink
+        local k, v, height
         GuiControlGet, posVal, ICScriptHub:Pos, AboutLineHeightTest
         height := posValH + 1
         xyValX := xyValX + 36
@@ -100,11 +122,23 @@ class IC_About_Component
         GUIFunctions.UseThemeTextColor()
         for k,v in this.VersionStringValues
         {
-            if(InStr(v, "Imports:") AND g_SF.Memory.ReadGameVersion() != g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)
+            if(InStr(v, "Game Version:"))
+            {
+                Gui, ICScriptHub:Add, Text, vAboutComponentGameVersion x%xyValX% yp+%height% r1, % v
+                Gui, ICScriptHub:Font, underline 
+                GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
+                Gui, ICScriptHub:Add, Text, x+6 vAboutComponentRefreshLink, Refresh
+                GUIFunctions.UseThemeTextColor()
+                Gui, ICScriptHub:Font, norm
+                AboutComponentRefresh := ObjBindMethod(IC_About_Component, "Refresh")
+                GuiControl,ICScriptHub: +g, AboutComponentRefreshLink, % AboutComponentRefresh
+                Continue
+            }
+            else if(InStr(v, "Imports:") AND g_SF.Memory.ReadGameVersion() != g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)
             {   
                 Gui, ICScriptHub:Add, Text, x%xyValX% yp+%height% r1, % v
                 GUIFunctions.UseThemeTextColor("WarningTextColor", 600) 
-                Gui, ICScriptHub:Add, Text, x+6 r1, % "Warning: Does not match game version!"
+                Gui, ICScriptHub:Add, Text, vAboutComponentImportsWarning x+6 r1, % "Warning: Does not match game version!"
                 GUIFunctions.UseThemeTextColor()
                 Continue
             }    
@@ -141,11 +175,12 @@ class IC_About_Component
         return enabledAddons
     }
 
-    ShowEnabledAddons()
+    BuildEnabledAddons()
     {
-        global xyValX
+        global
         GuiControlGet, posVal, ICScriptHub:Pos, AboutLineHeightTest
-        height := posValH + 1
+        local height := posValH + 1
+        local k,v
         xyValX := xyValX + 20
         Gui, ICScriptHub:Add, Text, x%xyValX% yp+10 w0
         GUIFunctions.UseThemeTextColor()

@@ -26,11 +26,22 @@ class GUIFunctions
     }
 
     ; Add a Button across the top of the GUI.
-    AddButton(Picture,FunctionToCall,VariableName){
+    AddButton(Picture,FunctionToCall,VariableName)
+    {
         global
         Gui, ICScriptHub:Tab
         Gui, ICScriptHub:Add, Picture, x%g_MenuBarXPos% y5 h25 w25 g%FunctionToCall% v%VariableName% +0x4000000, %Picture%
         g_MenuBarXPos+=30
+    }
+
+    GetControlSizeFromBasicText(textValue)
+    {
+        ; "GuiControl, Delete" is not implemented. Create GUI and destroy when done.
+        local xyVal, xyValX, xyValY, xyValH, xyValW
+        Gui, TemporaryGUI:Add, Text, vSHTextBuilder, % textValue
+        GuiControlGet xyVal, TemporaryGUI:Pos, SHTextBuilder
+        Gui, TemporaryGUI:Destroy
+        return xyValW
     }
     
     ; Add a tooltip message to a control in a specific window.
