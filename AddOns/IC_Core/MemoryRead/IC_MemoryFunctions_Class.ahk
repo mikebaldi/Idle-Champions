@@ -67,7 +67,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.5.4, 2025-08-16"
+        return "v2.5.5, 2025-08-24"
     }
 
     GetPointersVersion()
@@ -641,6 +641,24 @@ class IC_MemoryFunctions_Class
         ; OutputDebug, % gridJSON
         return gridJSON
     }
+
+
+    ReadModronAutoFormation()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[this.GetCurrentModronSaveSlot()].TogglePreferences[0].Read()
+    }
+
+    ReadModronAutoReset()
+
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[this.GetCurrentModronSaveSlot()].TogglePreferences[1].Read()
+    }
+    ReadModronAutoBuffs()
+
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[this.GetCurrentModronSaveSlot()].TogglePreferences[2].Read()
+    }
+
     ;=================
     ; New
     ;=================
