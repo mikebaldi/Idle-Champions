@@ -28,7 +28,7 @@ class IC_About_Component
         GuiControlGet, xyVal, ICScriptHub:Pos, AboutVersionGroupBox
         xyValX += 0
         xyValY += (aboutGroupBoxHeight + 15)
-        Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
+        Gui, ICScriptHub:Add, GroupBox, x%xyValX% y%xyValY% w425 h%AboutAddonGroupBoxHeight% vAboutAddonGroupBox, % "Enabled Addons: "
         IC_About_Component.AddAddonToggle()
         IC_About_Component.BuildEnabledAddons()
     }
@@ -36,10 +36,12 @@ class IC_About_Component
     AddAddonToggle()
     {
         global
-        local xLoc := xyValX + GUIFunctions.GetControlSizeFromBasicText("Enabled Addons [OFF]") + 10
+        local xLoc := xyValX + GUIFunctions.GetControlSizeFromBasicText("Enabled Addons") + 10
         Gui, ICScriptHub:Font, underline 
         GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
-        Gui, ICScriptHub:Add, Text, vAboutToggleAddonCheck x%xLoc% y%xyValY%, % "Toggle "
+        toggleText := "[" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]"
+        local width := GUIFunctions.GetControlSizeFromBasicText("[OFF]") + 7
+        Gui, ICScriptHub:Add, Text, vAboutToggleAddonCheck x%xLoc% y%xyValY% w%width%, % toggleText
         GUIFunctions.UseThemeTextColor()
         Gui, ICScriptHub:Font, norm
         toggleAddonCheckFnc := ObjBindMethod(IC_About_Component, "ToggleAddonCheck")
@@ -224,8 +226,8 @@ class IC_About_Component
 
     ToggleAddonCheck()
     {
-        g_UserSettings[ "CheckForUpdates" ] := ! g_UserSettings[ "CheckForUpdates" ] 
-        GuiControl,ICScriptHub:, AboutAddonGroupBox, % "Enabled Addons [" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]: "
+        g_UserSettings[ "CheckForUpdates" ] := ! g_UserSettings[ "CheckForUpdates" ]    
+        GuiControl,ICScriptHub:, AboutToggleAddonCheck, % "[" . (g_UserSettings["CheckForUpdates"] ? "ON" : "OFF") . "]"
         GuiControl,ICScriptHub:Hide, AboutToggleAddonCheck
         GuiControl,ICScriptHub:Show, AboutToggleAddonCheck
         SaveUserSettings()
