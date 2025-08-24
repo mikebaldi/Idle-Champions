@@ -1,3 +1,6 @@
+August 24, 2025
+    Updated about addon to warn about mismatched imports.
+
 August 15, 2025
     Updated HeroHasFeats memory functions to properly error when reads fail.
     Added an Add function to ActiveEffectKeyHandlers so addon creators can more easily add their own champions.
