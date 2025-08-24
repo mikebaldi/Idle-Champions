@@ -1,6 +1,6 @@
 {
     "NameLess":"Addon Management",
-    "Version": "v2.1.1",
+    "Version": "v2.1.2",
     "Includes" : "SH_Addon_Management_Includes.ahk",
     "Author" : "nyze & antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/SH_Addon_Management",

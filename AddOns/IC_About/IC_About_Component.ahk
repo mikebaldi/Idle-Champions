@@ -39,7 +39,7 @@ class IC_About_Component
         local xLoc := xyValX + GUIFunctions.GetControlSizeFromBasicText("Enabled Addons [OFF]") + 10
         Gui, ICScriptHub:Font, underline 
         GUIFunctions.UseThemeTextColor("SpecialTextColor1", 600)
-        Gui, ICScriptHub:Add, Text, vAboutToggleAddonCheck x%xLoc% y%xyValY%, Toggle
+        Gui, ICScriptHub:Add, Text, vAboutToggleAddonCheck x%xLoc% y%xyValY%, % "Toggle "
         GUIFunctions.UseThemeTextColor()
         Gui, ICScriptHub:Font, norm
         toggleAddonCheckFnc := ObjBindMethod(IC_About_Component, "ToggleAddonCheck")
