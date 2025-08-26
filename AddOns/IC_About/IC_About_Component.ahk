@@ -125,7 +125,8 @@ class IC_About_Component
             this.VersionStringValues.Push("ServerCalls Version: " . IC_ServerCalls_Class.GetVersion())
         if(isFunc(_classLog.GetVersion))
             this.VersionStringValues.Push("Log Class Version: " . _classLog.GetVersion())
-        this.VersionStringValues.Push("`nAHK Version: " . A_AhkVersion)
+        this.VersionStringValues.Push(" ")
+        this.VersionStringValues.Push("AHK Version: " . A_AhkVersion)
     }
 
     BuildScriptVersions()
