@@ -11,7 +11,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "ForceOfflineRunThreshold" ] := OptionSettingEdit_ForceOfflineRunThreshold
         g_BrivUserSettings[ "BrivJumpBuffer" ] := OptionSettingEdit_BrivJumpBuffer
         g_BrivUserSettings[ "DashWaitBuffer" ] := OptionSettingEdit_DashWaitBuffer
-        g_BrivUserSettings[ "ResetZoneBuffer" ] := OptionSettingEdit_ResetZoneBuffer
         g_BrivUserSettings[ "WindowXPosition" ] := OptionSettingEdit_WindowXPosition
         g_BrivUserSettings[ "WindowYPosition" ] := OptionSettingEdit_WindowYPosition
         g_BrivUserSettings[ "ManualBrivJumpValue" ] := OptionSettingEdit_ManualBrivJumpValue
@@ -37,7 +36,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GuiControl, ICScriptHub:, OptionSettingEdit_ForceOfflineRunThreshold, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_BrivJumpBuffer, % g_BrivUserSettings[ "BrivJumpBuffer" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_DashWaitBuffer, % g_BrivUserSettings[ "DashWaitBuffer" ]
-            GuiControl, ICScriptHub:, OptionSettingEdit_ResetZoneBuffer, % g_BrivUserSettings[ "ResetZoneBuffer" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPosition, % g_BrivUserSettings[ "WindowXPosition" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPosition, % g_BrivUserSettings[ "WindowYPosition" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_ManualBrivJumpValue, % g_BrivUserSettings[ "ManualBrivJumpValue" ]
@@ -56,7 +54,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GUIFunctions.AddToolTip( "OptionSettingText_ForceOfflineRunThreshold", "Stack offline once in every N runs as reported by Resets done of current core (0 or 1 = disable)")
             GUIFunctions.AddToolTip( "OptionSettingText_BrivJumpBuffer", "How many areas before a modron reset zone that switching to e formation over q formation is desired.")
             GUIFunctions.AddToolTip( "OptionSettingText_DashWaitBuffer", "The distance from your modron's reset zone where dashwait will stop being activated.")
-            GUIFunctions.AddToolTip( "OptionSettingText_ResetZoneBuffer", "Change this value to increase the number of zones the script will go waiting for modron reset after stacking before manually resetting")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowXPosition", "Where the gem farm script will appear horizontally across your screen")
             GUIFunctions.AddToolTip( "OptionSettingText_WindowYPosition", "Where the gem farm script will appear vertically on your screen")            
             GUIFunctions.AddToolTip( "OptionSettingText_ManualBrivJumpValue", "Set Briv's jump level for stack calculations. Useful for feat swapping setups. 0 is the default value which will ignore this setting.")

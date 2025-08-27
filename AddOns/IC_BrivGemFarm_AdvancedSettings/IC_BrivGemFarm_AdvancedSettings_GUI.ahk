@@ -21,7 +21,6 @@ Gui, ICScriptHub:Font, w400
 ;g_BrivUserSettings[ "DashWaitBuffer" ]
 ;g_BrivUserSettings[ "DoChestsContinuous" ]
 ;g_BrivUserSettings[ "HiddenFarmWindow" ]
-;g_BrivUserSettings[ "ResetZoneBuffer" ]
 ;g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
 ;g_BrivUserSettings[ "WindowXPosition" ]
 ;g_BrivUserSettings[ "WindowYPosition" ]
@@ -37,7 +36,6 @@ Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ForceOfflineGemThreshold x15 y+5 
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ForceOfflineRunThreshold x15 y+10 w50, % g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_BrivJumpBuffer x15 y+10 w50, % g_BrivUserSettings[ "BrivJumpBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_DashWaitBuffer x15 y+10 w50, % g_BrivUserSettings[ "DashWaitBuffer" ]
-Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ResetZoneBuffer x15 y+10 w50, % g_BrivUserSettings[ "ResetZoneBuffer" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowXPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowXPosition" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_WindowYPosition x15 y+10 w50, % g_BrivUserSettings[ "WindowYPosition" ]
 Gui, ICScriptHub:Add, Edit, vOptionSettingEdit_ManualBrivJumpValue x15 y+10 w50, % g_BrivUserSettings[ "ManualBrivJumpValue" ]
@@ -51,7 +49,6 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10 vOptionSettingText_ForceOffli
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ForceOfflineRunThreshold, ForceOfflineRunThreshold
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_BrivJumpBuffer, BrivJumpBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_DashWaitBuffer, DashWaitBuffer
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ResetZoneBuffer, ResetZoneBuffer
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowXPosition, WindowXPosition
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_WindowYPosition, WindowyPosition
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18 vOptionSettingText_ManualBrivJumpValue, ManualSetBrivJumpValue

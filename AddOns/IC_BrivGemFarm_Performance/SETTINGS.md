@@ -30,9 +30,6 @@ Same as `ForceOfflineGemThreshold`, but specified as max amount of runs based on
 * **HiddenFarmWindow**: 0 / 1  
 You can enable or disable the visibility of the second script window (the one that does the farming) by setting this value. 0 will have it show when it is run. 1 will hide it so only an icon in the tray appears.
 
-* **ResetZoneBuffer**: 0-2000 (41 is default)
-By default, the script assumes you do not want to do early stacking with Briv and that if you go 41 levels beyond your stack zone, you have your modron reset area incorrectly set. If this is not the case, you can change this value to increase the number of zones the script will go waiting for modron reset after stacking before manually resetting. Since there is an area cap of 2000, setting this to 2000 effectively disables it.
-
 * **RestoreLastWindowOnGameOpen**: 0 / 1  
 You can enable or disable whether the script will try to switch focus back to the last active window immediately when the game opens.  
 

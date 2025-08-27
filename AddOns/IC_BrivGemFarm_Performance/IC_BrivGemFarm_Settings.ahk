@@ -50,8 +50,6 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
     if ( g_BrivUserSettings[ "DoChestsContinuous" ] == "" )
         g_BrivUserSettings[ "DoChestsContinuous" ] := 0
-    if ( g_BrivUserSettings[ "ResetZoneBuffer" ] == "" )
-        g_BrivUserSettings[ "ResetZoneBuffer" ] := 41
     if (g_BrivUserSettings[ "IgnoreBrivHaste" ] == "" )
         g_BrivUserSettings[ "IgnoreBrivHaste" ] := 0
     if ( g_BrivUserSettings[ "MinStackZone" ] == "" )

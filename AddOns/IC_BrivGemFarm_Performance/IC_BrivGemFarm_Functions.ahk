@@ -385,16 +385,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
             forcedResetReason := "Briv ran out of jumps but has enough stacks for a new adventure"
             g_SF.RestartAdventure(forcedResetReason)
-        }
-        ; stacks are more than the target stacks and party is more than "ResetZoneBuffer" levels past stack zone, restart adventure
-        ; (for restarting after stacking without going to modron reset level)
-        if (stacks >= targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ] + g_BrivUserSettings["ResetZoneBuffer"])
-        {
-            stackFail := StackFailStates.FAILED_TO_RESET_MODRON ; 6
-            g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            forcedResetReason := " Stacks > target stacks & party > " . g_BrivUserSettings["ResetZoneBuffer"] . " levels past stack zone"
-            g_SF.RestartAdventure(forcedResetReason)
-        }           
+        }         
         return stackfail
     }
 
@@ -741,6 +732,17 @@ class IC_BrivGemFarm_Class
             return -1
         return formation
     }
+    
+    ; Test Modron Reset Automation is enabled
+    TestModronResetAutomationEnabled()
+    {
+        testFunc := ObjBindMethod(g_SF.Memory, "ReadModronAutoReset")
+        foundModronResetStatus := g_SF.Memory.ReadModronAutoReset()
+        
+        errMsg := "Please confirm that Modron Reset Automation is enabled."
+        modronAutomationStatus := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := True, shouldBeEqual := True)
+        return modronAutomationStatus
+    }
 
     ; Run tests to check if favorite formations are saved, they have champions, and that the expected champion is/isn't included.
     RunChampionInFormationTests(champion, favorite, includeChampion, txtCheck)
@@ -779,6 +781,9 @@ class IC_BrivGemFarm_Class
 
         formationE := g_SF.FindChampIDinSavedFavorite( champion, favorite := 3, includeChampion := False  )
         if (formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
+            return -1
+            
+        if (this.TestModronResetAutomationEnabled() == -1)
             return -1
 
         if ((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1, True)))
