@@ -37,6 +37,29 @@ class SH_SharedFunctions
         return
     }
 
+    
+    ; Helper function to add commas every 3 digits for display purposes.
+    AddThousandsSeperator(val)
+    {
+        if (!(val is number) || Abs(val) < 1000)
+            return val
+        return RegExReplace(val, "(\G|[^\d,.])\d{1,3}(?=(\d{3})+(\D|$))", "$0,")
+    }
+    
+    ; Convert val to scientific notation
+    GetScientificNotation(val, minExponents := 7, thousandsSeparate := true)
+    {
+        if !(val is number)
+            return val
+        sciNote := Format("{:2.2e}", val)
+        ePos := InStr(sciNote, "e")
+        postExp := Format("{:02d}", SubStr(sciNote, ePos+2))
+        if (postExp < minExponents)
+            return thousandsSeparate ? this.AddThousandsSeperator(val) : val
+        signExp := SubStr(sciNote, ePos+1, 1)
+        return SubStr(sciNote, 1, ePos) . (signExp=="+" ? "" : signExp) . postExp
+    }
+
     ;====================================================
     ;Keyboard/Mouse input (and helper) functions
     ;====================================================
