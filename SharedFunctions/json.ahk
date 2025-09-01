@@ -15,7 +15,7 @@
 ;;;-------------------------------------------------------------------------;;;
 
 ;#Include ..\Includes\Includes.ahk
-
+; ComObjError(false) ; Disable com ending script on com error. (Disables some com functionality??)
 
 ;;;-------------------------------------------------------------------------;;;
 ;;;                          Public Class Section                           ;;;
@@ -107,10 +107,10 @@ class JSON {
 		if !this.verify(script)
 			return false
 		
-		concateneted := (key ? ((SubStr(key, 1, 1) = "[" ? "" : ".") . key) : "")
+		concatenated := (key ? ((SubStr(key, 1, 1) = "[" ? "" : ".") . key) : "")
 		
 		try {
-			jsObject := this.JS.eval("(" . script . ")" . concateneted)
+			jsObject := this.JS.eval("(" . script . ")" . concatenated)
 			result := jsObject.IsArray()
 			
 			if (result = "")
@@ -120,13 +120,13 @@ class JSON {
 			
 			if (result = -1) {
 				Loop % jsObject.length
-					object[A_Index - 1] := this.JS.eval("JSON.stringify((" . script . ")" . concateneted . "[" . (A_Index - 1) . "],'','" . indent . "')")
+					object[A_Index - 1] := this.JS.eval("JSON.stringify((" . script . ")" . concatenated . "[" . (A_Index - 1) . "],'','" . indent . "')")
 			}
 			else if (result = 0) {
 				keys := jsObject.GetKeys()
 			
 				Loop % keys.length
-					k := keys[A_Index - 1], object[k] := this.JS.eval("JSON.stringify((" . script . ")" . concateneted . "['" . k . "'],'','" . indent . "')")
+					k := keys[A_Index - 1], object[k] := this.JS.eval("JSON.stringify((" . script . ")" . concatenated . "['" . k . "'],'','" . indent . "')")
 			}
 			
 			return object
@@ -143,7 +143,7 @@ class JSON {
 			return false
 		}
 		
-		return jsObject ; Modified by Antilectual to maintain basic string reads from json file.
+		return jsObject ; Modified by Antilectual to maintain basic string reads from json file. jsObject is truthy.
 	}
 	
 	_ObjToString(object) {

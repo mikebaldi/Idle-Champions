@@ -23,7 +23,7 @@ class IC_TimerExample2_Class
     ; Starts the saved timed functions (typically to be started when briv gem farm is started)
     StartTimedFunctions()
     {
-        ; Iterates the timemd functions stored in this class and starts them using their corresponding timer.
+        ; Iterates the timed functions stored in this class and starts them using their corresponding timer.
         for func,timer in this.TimerFunctions
         {
             ; Start the timed function.
@@ -34,7 +34,7 @@ class IC_TimerExample2_Class
     ; Stops the saved timed functions (typically to be stopped when briv gem farm is stopped)
     StopTimedFunctions()
     {
-        ; Iterates the timemd functions stored in this class and stops them.
+        ; Iterates the timed functions stored in this class and stops them.
         for func,timer in this.TimerFunctions
         {
             ; Off tells the function to stop repeating.
