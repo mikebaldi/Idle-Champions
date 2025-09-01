@@ -140,6 +140,7 @@ class JSON {
 		try
 			jsObject := this.JS.eval("(" . script . ")")
 		catch {
+			Sleep, 500
 			return false
 		}
 		
