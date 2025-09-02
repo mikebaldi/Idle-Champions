@@ -28,7 +28,7 @@ class JSON {
 		if jsObject := this.verify(script)
 			return js ? jsObject : this._CreateObject(jsObject)
 		else
-			return false
+			return script ; Changed to returns original rather than false on fail
 	}
 	
 	print(object, js := false, indent := "") {
