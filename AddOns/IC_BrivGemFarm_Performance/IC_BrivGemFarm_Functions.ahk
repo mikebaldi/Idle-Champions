@@ -29,39 +29,48 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     ; Store important user data [UserID, Hash, InstanceID, Briv Stacks, Gems, Chests]
     SetUserCredentials()
     {
-        this.UserID := this.Memory.ReadUserID()
-        this.UserHash := this.Memory.ReadUserHash()
-        this.InstanceID := this.Memory.ReadInstanceID()
+        jsonObj := {}
+        jsonObj.UserID := this.UserID := this.Memory.ReadUserID()
+        jsonObj.UserHash := this.UserHash := this.Memory.ReadUserHash()
+        jsonObj.InstanceID  := this.InstanceID := this.Memory.ReadInstanceID()
         ; needed to know if there are enough chests to open using server calls
-        this.TotalGems := this.Memory.ReadGems()
+        jsonObj.TotalGems := this.TotalGems := this.Memory.ReadGems()
         silverChests := this.Memory.ReadChestCountByID(1)
         goldChests := this.Memory.ReadChestCountByID(2)
-        this.TotalSilverChests := (silverChests != "") ? silverChests : this.TotalSilverChests
-        this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
-        this.sprint := this.Memory.ReadHasteStacks()
-        this.steelbones := this.Memory.ReadSBStacks()
+        jsonObj.TotalSilverChests := this.TotalSilverChests := (silverChests != "") ? silverChests : this.TotalSilverChests
+        jsonObj.TotalGoldChests := this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
+        jsonObj.sprint := this.sprint := this.Memory.ReadHasteStacks()
+        jsonObj.steelbones := this.steelbones := this.Memory.ReadSBStacks()
         if (this.BrivHasThunderStep())
-            this.steelbones := Floor(this.steelbones * 1.2)
+            jsonObj.steelbones := this.steelbones := Floor(this.steelbones * 1.2)
+        return jsonObj
     }
 
     ; sets the user information used in server calls such as user_id, hash, active modron, etc.
     ResetServerCall()
     {
-        this.SetUserCredentials()
+        jsonObj := this.SetUserCredentials()
         g_ServerCall := new IC_BrivServerCall_Class( this.UserID, this.UserHash, this.InstanceID )
         version := this.Memory.ReadBaseGameVersion()
         if (version != "")
             g_ServerCall.clientVersion := version
+        this.GetWebRoot()            
+        jsonObj.webroot := g_ServerCall.webroot
+        jsonObj.networkID := g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
+        jsonObj.activeModronID := g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
+        jsonObj.activePatronID := g_ServerCall.activePatronID := this.PatronID ;this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
+        g_ServerCall.UpdateDummyData()
+        jsonObj.dummyData := g_ServerCall.dummyData
+        base.WriteObjectToJSON(A_LineFile . "\..\ServerCall_Settings.json" , jsonObj)
+    }
+
+    GetWebRoot()
+    {
         tempWebRoot := this.Memory.ReadWebRoot()
         httpString := StrSplit(tempWebRoot,":")[1]
         isWebRootValid := httpString == "http" or httpString == "https"
         g_ServerCall.webroot := isWebRootValid ? tempWebRoot : g_ServerCall.webroot
-        g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
-        g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
-        g_ServerCall.activePatronID := this.PatronID ;this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
-        g_ServerCall.UpdateDummyData()
     }
-
 
     /*  WaitForModronReset - A function that monitors a modron resetting process.
 

@@ -76,7 +76,7 @@ class IC_About_Component
         global
         this.VersionStringValues := Array() 
         g_SF.Memory.OpenProcessReader()
-        this.VersionStringValues.Push("Script Version: " . GetScriptHubVersion())
+        this.VersionStringValues.Push("Script Version: " . this.GetScriptVersionString())
         this.VersionStringValues.Push(" ")
         local gameVersionaArch := _MemoryManager.is64bit ? " (64 bit)" : " (32 bit)"
         local gameVersion := g_SF.Memory.ReadGameVersion() == "" ? " -- Game not found on Script Hub load. --" : g_SF.Memory.ReadGameVersion() . gameVersionaArch 
@@ -234,19 +234,43 @@ class IC_About_Component
         SaveUserSettings()
     }
 
-    GetMostRecentVersion(remoteUrl)
+    GetMostRecentVersion(remoteURL)
     {
         if(this.ServerCaller == "")
             this.ServerCaller := new SH_ServerCalls()
-        if(InStr(remoteUrl, "https://github.com"))
+        if(InStr(remoteURL, "https://github.com"))
         {
-            remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
-            remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
-            remoteUrl := remoteUrl . "/Addon.json"
+            remoteURL := StrReplace(remoteURL, "https://github.com", "https://raw.githubusercontent.com")
+            remoteURL := StrReplace(remoteURL, "/tree/", "/refs/heads/")
+            remoteURL := remoteURL . "/Addon.json"
             addonInfo := this.ServerCaller.BasicServerCall(remoteURL) 
             return addonInfo["Version"]
         }
         else
             return ""
+    }
+
+    GetScriptVersionString()
+    {
+        if(!g_UserSettings[ "CheckForUpdates" ])
+            return GetScriptHubVersion()
+        regex := "(.*)," ; capture group up to first comma
+        currentVersionLine := GetScriptHubVersion()
+        RegExMatch(currentVersionLine, regex, currentVersion)
+        currentVersion := currentVersion1
+        this.ServerCaller := new SH_ServerCalls()
+        remoteURL := "https://raw.githubusercontent.com/mikebaldi/Idle-Champions/refs/heads/main/ICScriptHub.ahk"
+        remoteScript := this.ServerCaller.BasicServerCall(remoteURL)
+        line := StrSplit(remoteScript, "`n", "`r")
+        versionLine := line[25]
+        regex := """(.*)," ; capture group starting at first quote up to first comma
+        RegExMatch(versionLine, regex, version)
+        version := version1
+        isRemoteNewer := SH_VersionHelper.IsVersionNewer(version, currentVersion)
+        if(isRemoteNewer)
+            versionString := currentVersionLine . "   -- " version "  Available --"
+        else
+            versionString := currentVersionLine
+        return versionString
     }
 }

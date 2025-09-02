@@ -1,3 +1,8 @@
+September 2, 2025
+    Updated VersionPicker to choose Steam Pointers when CNE client > 600.
+    Fixed memory read/write critical error crash (hopefully!).
+    Updated about addon to show if ICScriptHub needs an update.
+
 August 24, 2025
     Updated about addon to warn about mismatched imports.
     Updated about addon to have more coverage on location settings.
