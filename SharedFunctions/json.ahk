@@ -138,13 +138,11 @@ class JSON {
 	
 	verify(script) {
 		try
+		{
 			jsObject := this.JS.eval("(" . script . ")")
-		catch {
-			Sleep, 500
-			return false
+			return jsObject ; Modified by Antilectual to maintain basic string reads from json file. jsObject is truthy.
 		}
-		
-		return jsObject ; Modified by Antilectual to maintain basic string reads from json file. jsObject is truthy.
+		return false
 	}
 	
 	_ObjToString(object) {
