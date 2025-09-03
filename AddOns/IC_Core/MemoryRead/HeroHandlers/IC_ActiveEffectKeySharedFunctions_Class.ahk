@@ -28,9 +28,14 @@ class ActiveEffectKeySharedFunctions
             return
         if(this[heroName] == "")
             this[heroName] := heroObject
-        else if (IsObject(this[heroName]))
-            for k,v in heroObject
-                this[heroName][k] := v.Clone()
+        for k,v in this[heroName]
+            if(IsObject(v))
+            {
+                g_SF.Memory.ActiveEffectKeyHandler.HeroHandlerIDs[k] := heroObject.HeroID
+                g_SF.Memory.ActiveEffectKeyHandler.HeroEffectNames[k] := v.EffectKeyString
+                g_SF.Memory.ActiveEffectKeyHandler.HeroEffectKeys[v.EffectKeyString] := k
+                g_SF.Memory.ActiveEffectKeyHandler.Refresh(v.EffectKeyString)
+            }
     }
 }
 
