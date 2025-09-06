@@ -316,3 +316,6 @@ this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.BaseDPS
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve := New GameObjectStructure(this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats,"Dict", [0x18])
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionKeyType := "System.Int32"
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionValType := "Engine.Numeric.Quad"
+this.game.gameInstances.Screen.uiController.topBar.dpsMenuBox := New GameObjectStructure(this.game.gameInstances.Screen.uiController.topBar,"Int", [0x360])
+this.game.gameInstances.Screen.uiController.topBar.dpsMenuBox.menuBox := New GameObjectStructure(this.game.gameInstances.Screen.uiController.topBar.dpsMenuBox,"Int", [0x368])
+this.game.gameInstances.Screen.uiController.topBar.dpsMenuBox.menuBox.numberOfUnclaimedQuests := New GameObjectStructure(this.game.gameInstances.Screen.uiController.topBar.dpsMenuBox.menuBox,"Int", [0x42c])
