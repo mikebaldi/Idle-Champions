@@ -26,7 +26,7 @@ GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+5 w50, % g_BrivUserSettings[ "StackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[ "MinStackZone" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, GroupBox, Section w400 h70, Target haste stacks for next run
+Gui, ICScriptHub:Add, GroupBox, Section w400 h50, Target haste stacks for next run
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
@@ -50,7 +50,6 @@ GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
 xyValX += 55
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
-GuiControlGet, xyVal, ICScriptHub:Pos, BrivAutoCalcStatsCheck
 Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
 GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
 xyValX += 55
@@ -71,17 +70,12 @@ Gui, ICScriptHub:Add, Text, x+2 gBriv_Visit_Byteglow_Speed_Link, % "byteglow"
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Font, norm
 Gui, ICScriptHub:Add, Text, x+1 gBriv_Visit_Byteglow_Speed_Link, % ")"
-;Gui, ICScriptHub:Add, Text, x+10 yp+5, Target Haste stacks for next run
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsCheck xs+10 y+10 gBrivAutoDetectStacks_Click, Auto Detect (Ignores detected/byteglow)
 ; ------- ------------------- --------------
 
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
-GuiControlGet, xyVal, ICScriptHub:Pos, BrivAutoCalcStatsCheck
-xyValY += 12
-Gui, ICScriptHub:Add, Checkbox, vBrivAutoCalcStatsWorstCaseCheck x%xyValX% y%xyValY% Hidden, Worst Case
 
 IC_BrivGemFarm_Component.ProfilesList := {}
 IC_BrivGemFarm_Component.ProfileLastSelected := "Default"
@@ -168,22 +162,6 @@ Briv_Delete_Profile_Clicked()
         IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked("Default")
     }
 }
-DisableBrivTargetStacksBox(g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
-
-BrivAutoDetectStacks_Click()
-{
-    Gui, ICScriptHub:Submit, NoHide
-    isChecked := %A_GuiControl%
-    DisableBrivTargetStacksBox(isChecked)
-}
-
-DisableBrivTargetStacksBox(doDisable)
-{
-    if(doDisable)
-        GuiControl,ICScriptHub:Disable, NewTargetStacks
-    else
-        GuiControl,ICScriptHub:Enable, NewTargetStacks
-}
 
 GuiControl, Choose, ICScriptHub:ModronTabControl, BrivGemFarm
 
@@ -214,8 +192,6 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
-        GuiControl,ICScriptHub:, BrivAutoCalcStatsCheck, % g_BrivUserSettings[ "AutoCalculateBrivStacks" ]
-        GuiControl,ICScriptHub:, BrivAutoCalcStatsWorstCaseCheck, % g_BrivUserSettings[ "AutoCalculateWorstCase" ]
     }
     
     Briv_Run_Clicked()
@@ -357,8 +333,6 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
         g_BrivUserSettings[ "MinGemCount" ] := StrReplace(NewMinGemCount, ",")
-        g_BrivUserSettings[ "AutoCalculateBrivStacks" ] := BrivAutoCalcStatsCheck
-        g_BrivUserSettings[ "AutoCalculateWorstCase" ] := BrivAutoCalcStatsWorstCaseCheck
         g_BrivUserSettings[ "LastSettingsUsed" ] := profile? profile : BrivDropDownSettings
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
         shouldIgnoreTimer := False
@@ -453,9 +427,6 @@ class IC_BrivGemFarm_Component
         GuiControl, ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ]
         GuiControl, ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ]
         GuiControl, ICScriptHub:, NewMinGemCount, % g_BrivUserSettings[ "MinGemCount" ]
-        GuiControl, ICScriptHub:, BrivAutoCalcStatsCheck, % g_BrivUserSettings[ "AutoCalculateBrivStacks" ]
-        GuiControl, ICScriptHub:, BrivAutoCalcStatsWorstCaseCheck, % g_BrivUserSettings[ "AutoCalculateWorstCase" ]  
-        DisableBrivTargetStacksBox(g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
         ; Load advanced settings.
         if(OptionSettingCheck_DoChestsContinuous != "")
             IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
