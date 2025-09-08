@@ -99,7 +99,6 @@ class IC_MemoryFunctions_Class
         ; this.UserStatHandler.Refresh()
         ; this.UserData.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
-        this.GetChampIDToIndexMap() ; maps champion ID to its index in the hero handler
         ; this.GetChampIDToNameMap()
     }
 
