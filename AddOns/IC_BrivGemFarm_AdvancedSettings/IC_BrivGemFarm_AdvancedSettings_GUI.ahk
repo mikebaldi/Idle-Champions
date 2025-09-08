@@ -19,13 +19,11 @@ Gui, ICScriptHub:Font, w400
 ;g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
 ;g_BrivUserSettings[ "BrivJumpBuffer" ]
 ;g_BrivUserSettings[ "DashWaitBuffer" ]
-;g_BrivUserSettings[ "DoChestsContinuous" ]
 ;g_BrivUserSettings[ "HiddenFarmWindow" ]
 ;g_BrivUserSettings[ "RestoreLastWindowOnGameOpen" ]
 ;g_BrivUserSettings[ "WindowXPosition" ]
 ;g_BrivUserSettings[ "WindowYPosition" ]
 
-Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_DoChestsContinuous x15 y+5, DoChestsContinuous
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_HiddenFarmWindow x15 y+5, HiddenFarmWindow
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingCheck_RestoreLastWindowOnGameOpen x15 y+5, RestoreLastWindowOnGameOpen
 Gui, ICScriptHub:Add, Checkbox, vOptionSettingEdit_IgnoreBrivHaste x15 y+5, IgnoreBrivHaste

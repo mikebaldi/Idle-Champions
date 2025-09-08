@@ -1,13 +1,15 @@
 ReloadBrivGemFarmSettings(loadFromFile := True)
 {
+    global g_BrivUserSettings
     writeSettings := False
     if(loadFromFile)
-        g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
-    If !IsObject( g_BrivUserSettings )
+        userSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
+    If !IsObject( userSettings )
     {
-        g_BrivUserSettings := {}
+        userSettings := {}
         writeSettings := True
     }
+    g_BrivUserSettings := {}
     if ( g_BrivUserSettings[ "Fkeys" ] == "" )
         g_BrivUserSettings[ "Fkeys" ] := 1
     if ( g_BrivUserSettings[ "StackFailRecovery" ] == "" )
@@ -48,8 +50,6 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
     }
     if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
         g_BrivUserSettings[ "HiddenFarmWindow" ] := 0
-    if ( g_BrivUserSettings[ "DoChestsContinuous" ] == "" )
-        g_BrivUserSettings[ "DoChestsContinuous" ] := 0
     if (g_BrivUserSettings[ "IgnoreBrivHaste" ] == "" )
         g_BrivUserSettings[ "IgnoreBrivHaste" ] := 0
     if ( g_BrivUserSettings[ "MinStackZone" ] == "" )
@@ -70,14 +70,17 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
 	    g_BrivUserSettings[ "PreferredBrivJumpZones" ] := [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
     if ( g_BrivUserSettings[ "IsEGS" ] == "" )
         g_BrivUserSettings[ "IsEGS" ] := False
-    ; Found legacy settings file.
-    if ( !writeSettings AND loadFromFile AND g_BrivUserSettings[ "LastSettingsUsed" ] == "" )
-    {
-        g_BrivUserSettings[ "LastSettingsUsed" ] := "LegacySettings"
-        g_SF.WriteObjectToJSON( A_LineFile . "\..\Profiles\LegacySettings_Settings.json" , g_BrivUserSettings )
-    }
     if ( g_BrivUserSettings[ "LastSettingsUsed" ] == "" )
         g_BrivUserSettings[ "LastSettingsUsed" ] := "Default"
-    if( writeSettings == true )
+    ; Found legacy settings file.
+    if ( !writeSettings AND loadFromFile AND userSettings[ "LastSettingsUsed" ] == "" )
+    {
+        userSettings[ "LastSettingsUsed" ] := "LegacySettings"
+        g_SF.WriteObjectToJSON( A_LineFile . "\..\Profiles\LegacySettings_Settings.json" , userSettings )
+    }
+    ; strip unused settings from the settings file.
+    for k,v in g_BrivUserSettings
+        g_BrivUserSettings[k] := userSettings[k]
+    if (writeSettings == True)
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
 }

@@ -319,7 +319,7 @@ class IC_BrivGemFarm_Component
         local v1
         this.UpdateStatus("Saving Settings...")
         Gui, ICScriptHub:Submit, NoHide
-        if(OptionSettingCheck_DoChestsContinuous != "")
+        if(OptionSettingCheck_HiddenFarmWindow != "")
             IC_BrivGemFarm_AdvancedSettings_Component.SaveAdvancedSettings()
         g_BrivUserSettings[ "Fkeys" ] := FkeysCheck
         g_BrivUserSettings[ "StackFailRecovery" ] := StackFailRecoveryCheck
@@ -428,7 +428,7 @@ class IC_BrivGemFarm_Component
         GuiControl, ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ]
         GuiControl, ICScriptHub:, NewMinGemCount, % g_BrivUserSettings[ "MinGemCount" ]
         ; Load advanced settings.
-        if(OptionSettingCheck_DoChestsContinuous != "")
+        if(OptionSettingCheck_HiddenFarmWindow != "")
             IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
         g_BrivUserSettings[ "LastSettingsUsed" ] := settings
         this.BrivUserSettingsProfile := g_BrivUserSettings.Clone()
