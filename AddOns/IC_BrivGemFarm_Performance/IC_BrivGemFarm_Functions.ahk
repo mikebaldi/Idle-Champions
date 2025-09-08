@@ -374,7 +374,7 @@ class IC_BrivGemFarm_Class
         {
             stackFail := StackFailStates.FAILED_TO_REACH_STACK_ZONE_HARD ; 4
             g_SharedData.StackFailStats.TALLY[stackfail] += 1
-            forcedResetReason := "Briv ran out of jumps but has enough stacks for a new adventure"
+            forcedResetReason := "Briv ran out of jumps but has stacks for next. [@" . g_SF.Memory.ReadHighestZone() . "]"
             g_SF.RestartAdventure(forcedResetReason)
         }         
         return stackfail
