@@ -5,14 +5,15 @@
 #NoEnv ; Avoids checking empty variables to see if they are environment variables.
 ListLines Off
 
+
+#include %A_LineFile%\..\..\IC_Core\IC_SharedData_Class.ahk
+#include %A_LineFile%\..\..\IC_Core\IC_SaveHelper_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\ServerCalls\SH_ServerCalls_Includes.ahk
-#include %A_LineFile%\..\..\IC_Core\IC_SaveHelper_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\ObjRegisterActive.ahk
 
 global g_BrivServerCall := new IC_BrivGemFarm_ServerCalls_Class
 global g_SaveHelper := new IC_SaveHelper_Class
-global g_SeverSharedData
 
 class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 {
@@ -21,13 +22,14 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 
     __New()
     {
+        this.SharedData := new IC_SharedData_Class
         this.LoadSettings()
         this.LoadServerCallSettings()
         this.LoadUserSettings()
-        
+        this.LoadGemFarmGUID()
         ; ComObjCreate("Scriptlet.TypeLib").GUID
         if (this["GemFarmGUID"] != "")
-            ObjRegisterActive(g_SeverSharedData, this["GemFarmGUID"])
+            ObjRegisterActive(this.SharedData, this["GemFarmGUID"])
     }
 
     LoadSettings(settingsLoc := "")
@@ -53,6 +55,11 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         this.UserSettings := this.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
     }
 
+    LoadGemFarmGUID()
+    {
+        this.GemFarmGUID := this.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
+    }
+
     LaunchCalls()
     {
         if (A_Args[1] != "") ; Launch a single command from params
@@ -70,19 +77,25 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             fnc.Call()
     }
 
+    ; DoChestsSetup()
+    ; {
+    ;     g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
+    ;     loopString := ""
+    ;     while ...
+    ;         g_SharedData.LoopString := "Stack Sleep: " . this.UserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
+    ; }
+
     ; ; Sends calls for buying or opening chests and tracks chest metrics.
     ; ; TODO: Modify for logging (to json or csv?)
     ; DoChests(numSilverChests, numGoldChests)
     ; {
     ;     serverRateBuy := 250
     ;     serverRateOpen := 1000
-    ;     ; no chests to do - Replaces g_BrivUserSettings[ "DoChests" ] setting.
-    ;     if !(g_BrivUserSettings[ "BuySilvers" ] OR g_BrivUserSettings[ "BuyGolds" ] OR g_BrivUserSettings[ "OpenSilvers" ] OR g_BrivUserSettings[ "OpenGolds" ])
+    ;     ; no chests to do - Replaces this.UserSettings[ "DoChests" ] setting.
+    ;     if !(this.UserSettings[ "BuySilvers" ] OR this.UserSettings[ "BuyGolds" ] OR this.UserSettings[ "OpenSilvers" ] OR this.UserSettings[ "OpenGolds" ])
     ;         return
 
     ;     StartTime := A_TickCount
-    ;     g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-    ;     loopString := ""
     ;     startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
     ;     startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
     ;     startingOpenedGoldChests := g_SharedData.OpenedGoldChests
@@ -90,63 +103,44 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ;     currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
     ;     ElapsedTime := 0
 
-    ;     doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-    ;     while( ( g_BrivUserSettings[ "RestartStackTime" ] > ElapsedTime ) OR doHybridStacking)
-    ;     {
-    ;         g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
+    ;     doHybridStacking := ( this.UserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( this.UserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+
+
     ;         effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
 
     ;         ;BUYCHESTS
-    ;         gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
+    ;         gems := g_SF.TotalGems - this.UserSettings[ "MinGemCount" ]
     ;         amount := Min(Floor(gems / 50), serverRateBuy )
-    ;         if (g_BrivUserSettings[ "BuySilvers" ] AND amount > 0)
+    ;         if (this.UserSettings[ "BuySilvers" ] AND amount > 0)
     ;             this.BuyChests( chestID := 1, effectiveStartTime, amount )
-    ;         gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
+    ;         gems := g_SF.TotalGems - this.UserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
     ;         amount := Min(Floor(gems / 500) , serverRateBuy )
-    ;         if (g_BrivUserSettings[ "BuyGolds" ] AND amount > 0)
+    ;         if (this.UserSettings[ "BuyGolds" ] AND amount > 0)
     ;             this.BuyChests( chestID := 2, effectiveStartTime, amount )
     ;         ; OPENCHESTS
     ;         amount := Min(g_SF.TotalSilverChests, serverRateOpen)
-    ;         if (g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0)
+    ;         if (this.UserSettings[ "OpenSilvers" ] AND amount > 0)
     ;             this.OpenChests( chestID := 1, effectiveStartTime, amount)
     ;         amount := Min(g_SF.TotalGoldChests, serverRateOpen)
-    ;         if (g_BrivUserSettings[ "OpenGolds" ] AND amount > 0)
+    ;         if (this.UserSettings[ "OpenGolds" ] AND amount > 0)
     ;             this.OpenChests( chestID := 2, effectiveStartTime, amount )
 
     ;         updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
     ;         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
     ;         loopString := currentLoopString == "" ? loopString : currentLoopString
 
-    ;         if (!g_BrivUserSettings[ "DoChestsContinuous" ] ) ; Do one time if not continuous
-    ;             return loopString == "" ? "Chests ----" : loopString
-    ;         if (updatedTallies == currentChestTallies) ; call failed, likely ran out of time. Don't want to call more if out of time.
-    ;             return loopString == "" ? "Chests ----" : loopString
     ;         currentChestTallies := updatedTallies
     ;         ElapsedTime := A_TickCount - StartTime
-    ;     }
+    
+    ;     this.WriteObjectToJSON( A_LineFile . "\..\LastCallResponse.json" )
     ;     return loopString
     ; }
 
-    ; /*  BuyChests - A method to buy chests based on parameters passed.
-
-    ;     Parameters:
-    ;     chestID   - The ID of the chest to be bought. Default is 1 (silver).
-    ;     startTime - The number of milliseconds that have elapsed since the system was started, up to 49.7 days.
-    ;         Used to estimate if there is enough time to perform those actions before attempting to do them.
-    ;     numChests - expected number of chests to buy. Default is 100.
-            
-    ;     Return Values:
-    ;     None
-
-    ;     Side Effects:
-    ;     On success, will update g_SharedData.PurchasedSilverChests and g_SharedData.PurchasedGoldChests.
-    ;     On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
-    ; */
     ; BuyChests( chestID := 1, startTime := 0, numChests := 100)
     ; {
     ;     startTime := startTime ? startTime : A_TickCount
     ;     purchaseTime := 100 ; .1s
-    ;     if (g_BrivUserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime))
+    ;     if (this.UserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime))
     ;     {
     ;         if (numChests > 0)
     ;         {
@@ -163,22 +157,6 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ;     }
     ; }
 
-    ; /*  OpenChests - A method to open chests based on parameters passed.
-
-    ;     Parameters:
-    ;     chestID   - The ID of the chest to be bought. Default is 1 (silver).
-    ;     startTime - The number of milliseconds that have elapsed since the system was started, up to 49.7 days.
-    ;         Used to estimate if there is enough time to perform those actions before attempting to do them.
-    ;     numChests - expected number of chests to open. Default is 100.
-
-
-    ;     Return Values:
-    ;     None
-
-    ;     Side Effects:
-    ;     On success, will update g_SharedData.OpenedSilverChests and g_SharedData.OpenedGoldChests.
-    ;     On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
-    ; */
     ; OpenChests( chestID := 1, startTime := 0, numChests := 99 )
     ; {
     ;     timePerGold := 4.5
@@ -186,7 +164,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ;     timePerChest := chestID == 1 ? timePerSilver : timePerGold
     ;     startTime := startTime ? startTime : A_TickCount
     ;     ; openChestTimeEst := 1000 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
-    ;     if (g_BrivUserSettings[ "RestartStackTime" ] - ( A_TickCount - startTime) < numChests * timePerChest)
+    ;     if (this.UserSettings[ "RestartStackTime" ] - ( A_TickCount - startTime) < numChests * timePerChest)
     ;         numChests := Floor(( A_TickCount - startTime) / timePerChest)
     ;     if (numChests < 1)
     ;         return

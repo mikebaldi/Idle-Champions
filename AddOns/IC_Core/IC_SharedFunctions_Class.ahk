@@ -9,47 +9,10 @@ global g_KeyPresses := {}
 global g_SharedData := new IC_SharedData_Class
 g_SF := new IC_SharedFunctions_Class
 
+#include %A_LineFile%\..\IC_SharedData_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 
-class IC_SharedData_Class
-{
-    ; Note stats vs States. Confusing, but intended.
-    StackFailStats := new StackFailStates
-    LoopString := ""
-    TotalBossesHit := 0
-    BossesHitThisRun := 0
-    SwapsMadeThisRun := 0
-    StackFail := 0
-    OpenedSilverChests := 0
-    OpenedGoldChests := 0
-    PurchasedGoldChests := 0
-    PurchasedSilverChests := 0
-    ShinyCount := 0
-    TriggerStart := false
-    TotalRollBacks := 0
-    BadAutoProgress := 0
-    PreviousStacksFromOffline := 0
-    TargetStacks := 0
-    ShiniesByChamp := {}
-    ShiniesByChampJson := ""
-
-    Close()
-    {
-        ExitApp
-    }
-
-    ReloadSettings(ReloadSettingsFunc)
-    {
-        reloadFunc := Func(ReloadSettingsFunc)
-        reloadFunc.Call()
-    }
-
-    ShowGUI()
-    {
-        Gui, show
-    }
-}
 
 class StackFailStates
 {
