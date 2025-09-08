@@ -157,7 +157,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 67
+        sleepTime := 250
         g_SharedData.LoopString := "Killing boss before stacking."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
@@ -193,7 +193,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 67
+        sleepTime := 250
         g_SharedData.LoopString := "Falling back from boss zone."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
@@ -323,7 +323,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 20
+        sleepTime := 250
         g_SharedData.LoopString := "Waiting for Transition..."
         while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
         {
