@@ -50,9 +50,9 @@ class ArrFnc
             if IsObject(array1[A_Index])
                   var .= this.GetDecFormattedArrayString(array1[A_Index]) . "] "
             if ( A_Index < itemCount )
-            var .= Format("{:d}", array1[A_Index]) . ", "
+                var .= Format("{:d}", array1[A_Index]) . ", "
             else
-            var .= Format("{:d}", array1[A_Index])
+                var .= Format("{:d}", array1[A_Index])
         }
         var .= " ]"
         return var

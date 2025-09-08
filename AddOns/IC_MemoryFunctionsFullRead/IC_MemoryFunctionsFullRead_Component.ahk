@@ -58,7 +58,11 @@ class IC_MemoryFunctionsFullRead_Component
                 lastTick := A_TickCount
                 value := v.Maxparams >= 2 ? fncToCall.Call(valueToPass) : fncToCall.Call()
                 timeToExec := (A_TickCount - lastTick) / 1000
-                value := IsObject(value) ? ArrFnc.GetDecFormattedArrayString(value) : value
+                numberCheck := value[1]
+                if numberCheck is number
+                    value := ArrFnc.GetDecFormattedArrayString(value) ; 0 based arrays lose first element (0) since A_Index starts at 1 and not 0.
+                else if IsObject(value)
+                    value := ArrFnc.GetAlphaNumericArrayString(value)
                 value := value == "" ? "-- ERROR --" : value
                 valuePassedString := (v.Maxparams >= 2 ? "(" . valueToPass . ")" : "")
                 LV_Add(, parameterString, timeToExec, valuePassedString, value)

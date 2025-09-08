@@ -35,6 +35,8 @@ class IC_MemoryFunctions_Class
     GameInstance := 0
     PointerVersionString := ""
     ChestIndexByID := {} ; Map of ID/Chests for faster lookups
+    ; HeroIDToNameMap := {} ; Map of champions IDs/Names
+    HeroIDToIndexMap := {} ; Map of champion IDs/Index in hero handler
 
     __new(fileLoc := "CurrentPointers.json")
     {
@@ -97,6 +99,8 @@ class IC_MemoryFunctions_Class
         ; this.UserStatHandler.Refresh()
         ; this.UserData.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
+        this.GetChampIDToIndexMap() ; maps champion ID to its index in the hero handler
+        ; this.GetChampIDToNameMap()
     }
 
     ;=====================
@@ -298,6 +302,38 @@ class IC_MemoryFunctions_Class
     ReadChampListSize()
     {
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+    }
+
+    GetChampIDToNameMap()
+    {
+        champMap := {}
+        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+        if(size <= 0 OR size > 500) ; sanity check for number directory path folders
+            return ""
+        loop, %size%
+        {
+            name := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[A_Index - 1].def.name.Read()
+            if (name == "Y4E15" or name == "") ; invalid champions, Y4E15 looks to be current filler text.
+                continue
+            champMap[A_Index] := name
+        }
+        this.HeroIDToNameMap := champMap
+        return champMap
+    }
+
+    GetChampIDToIndexMap()
+    {
+        champMap := {}
+        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+        if(size <= 0 OR size > 500) ; sanity check for number directory path folders
+            return ""
+        loop, %size%
+        {
+            heroID := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[A_Index - 1].def.id.Read()
+            champMap[heroID] := A_Index - 1
+        }
+        this.HeroIDToIndexMap := champMap
+        return champMap
     }
 
     ReadChampHealthByID(ChampID := 0 )
@@ -1189,22 +1225,23 @@ class IC_MemoryFunctions_Class
     ; Returns the index of HeroHandler the champion is expected to be at. As of v472 hero defines became missing in the defines so champID can no longer be used as an index.
     GetHeroHandlerIndexByChampID(champID)
     {
-        if(champID < 107)
-            return champID - 1
-        ; No define exists for ID 107
-        if(champID == 107)
-            return ""
-        if(champID < 135)
-            return champID - 2
-        ; No define exists for ID 135            
-        if(champID == 135)
-            return ""
-        if(champID < 137)
-            return champID - 3
-        ; No define exists for ID 137
-        if(champID == 137)
-            return ""
-        return champID - 4
+        return this.HeroIDToIndexMap[champID]
+        ; if(champID < 107)
+        ;     return champID - 1
+        ; ; No define exists for ID 107
+        ; if(champID == 107)
+        ;     return ""
+        ; if(champID < 135)
+        ;     return champID - 2
+        ; ; No define exists for ID 135            
+        ; if(champID == 135)
+        ;     return ""
+        ; if(champID < 137)
+        ;     return champID - 3
+        ; ; No define exists for ID 137
+        ; if(champID == 137)
+        ;     return ""
+        ; return champID - 4
     }
 
     ; Builds this.ChestIndexByID from memory values.
