@@ -157,15 +157,18 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 250
+        sleepTime := 60
         g_SharedData.LoopString := "Killing boss before stacking."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            this.DirectedInput(,,"{e}")
-            if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
-                this.ToggleAutoProgress(1,0,false)
-            Sleep, %sleepTime%
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
+            {
+                this.DirectedInput(,,"{e}")
+                if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
+                    this.ToggleAutoProgress(1,0,false)
+            }
+            Sleep, 20
         }
         if(ElapsedTime >= maxLoopTime)
             return 0
@@ -323,7 +326,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 250
+        sleepTime := 75
         g_SharedData.LoopString := "Waiting for Transition..."
         while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
         {

@@ -7,23 +7,34 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     RestartAdventure( reason := "" )
     {
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
+        jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
         this.CloseIC( reason )
-        if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
-        {
-            response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
-        }
-        else if (this.sprint != "" AND this.steelbones != "")
-        {
-            response := g_serverCall.CallPreventStackFail(this.sprint + this.steelbones)
+        stacks := (this.sprint?this.sprint:0) + (this.steelbones?this.steelbones:0)
+        if (stacks >= 190000)
             g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
-        }
+        ; Save stacks
+        if (stacks > 49) ; minimum is 49
+            g_ServerCall.CallPreventStackFail(stacks)
         else
-        {
             g_SharedData.LoopString := "ServerCall: Restarting adventure (no manual stack conv.)"
+        ; Restart adventure
+        jsonObj["Calls"] := {"CallEndAdventure" : [], "CallLoadAdventure" : [this.CurrentAdventure]}
+        jsonObj["ServerCallGUID"] := ComObjCreate("Scriptlet.TypeLib").GUID
+        base.WriteObjectToJSON(A_LineFile . "\..\ServerCall_Settings.json" , jsonObj)
+        scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
+        Run, %A_AhkPath% "%scriptLocation%"
+        ; this.WaitForCalls()
+    }
+
+    WaitForCalls(GUID)
+    {
+        startTime := A_TickCount
+        ElapsedTime := 0
+        while (!g_SharedData.CallsAreComplete[GUID] and ElapsedTime < 30000)
+        {
+            ElapsedTime := A_TickCount - startTime
+            Sleep, 1000
         }
-        response := g_ServerCall.CallEndAdventure()
-        response := g_ServerCall.CallLoadAdventure( this.CurrentAdventure )
-        g_SharedData.TriggerStart := true
     }
 
     ; Store important user data [UserID, Hash, InstanceID, Briv Stacks, Gems, Chests]
@@ -198,29 +209,9 @@ class IC_BrivServerCall_Class extends IC_ServerCalls_Class
     ; forces an attempt for the server to remember stacks
     CallPreventStackFail(stacks, launchScript := False)
     {
-        response := ""
-        stacks := g_SaveHelper.GetEstimatedStackValue(stacks)
-        userData := g_SaveHelper.GetCompressedDataFromBrivStacks(stacks)
-        checksum := g_SaveHelper.GetSaveCheckSumFromBrivStacks(stacks)
-        save :=  g_SaveHelper.GetSave(userData, checksum, this.userID, this.userHash, this.networkID, this.clientVersion, this.instanceID)
-        if (launchScript) ; do server call from new script to prevent hanging script due to network issues.
-        {
-            webRoot := this.webRoot
-            scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_SaveStacks.ahk"
-            Run, %A_AhkPath% "%scriptLocation%" "%webRoot%" "%save%"
-        }
-        else
-        {
-            try
-            {
-                response := this.ServerCallSave(save)
-            }
-            catch, ErrMsg
-            {
-                g_SharedData.LoopString := "Failed to save Briv stacks"
-            }
-        }
-        return response
+        call := "CallPreventStackFail"
+        scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
+        Run, %A_AhkPath% "%scriptLocation%" "%call%" "%stacks%"
     }
 }
 
@@ -285,9 +276,6 @@ class IC_BrivGemFarm_Class
                 this.DoPartySetup()
                 lastResetCount := g_SF.Memory.ReadResetsCount()
                 g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-                worstCase := g_BrivUserSettings[ "AutoCalculateWorstCase" ]
-                g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone(worstCase) + 50 ; 50 stack safety net
-                this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(g_SF.Memory.ReadCurrentZone(), g_SF.Memory.GetModronResetArea() + 1  - g_SF.ThelloraRushTest(), worstCase)
                 ; Don't reset last stack success area if 3 or more runs have failed to stack.
                 this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
                 this.StackFailAreasThisRunTally := {}
@@ -322,12 +310,6 @@ class IC_BrivGemFarm_Class
                 }
                 lastModronResetZone := g_SF.ModronResetZone
                 g_SF.InitZone( keyspam )
-                if (g_SF.ModronResetZone != lastModronResetZone)
-                {
-                    worstCase := g_BrivUserSettings[ "AutoCalculateWorstCase" ]
-                    g_SharedData.TargetStacks := this.TargetStacks := g_SF.CalculateBrivStacksToReachNextModronResetZone(worstCase) + 50 ; 50 stack safety net
-                    this.LeftoverStacks := g_SF.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetModronResetArea() + 1, worstCase)
-                }
                 g_SF.ToggleAutoProgress( 1 )
                 continue
             }
@@ -432,7 +414,7 @@ class IC_BrivGemFarm_Class
     {
         if (this.ShouldOfflineStack())
         {
-            currentStacks := g_BrivUserSettings[ "IgnoreBrivHaste" ] ? g_SF.Memory.ReadSBStacks() : ( g_SF.Memory.ReadHasteStacks() + g_SF.Memory.ReadSBStacks() )
+            currentStacks := g_BrivUserSettings[ "IgnoreBrivHaste" ] ? g_SF.Memory.ReadSBStacks() : ( (g_SF.Memory.ReadHasteStacks() + 0) + (g_SF.Memory.ReadSBStacks() + 0) )
             return currentStacks
         }
         else
@@ -465,8 +447,8 @@ class IC_BrivGemFarm_Class
         g_SF.ToggleAutoProgress( 0 , false, true )
         StartTime := A_TickCount
         ElapsedTime := 0
-        counter := 0
-        sleepTime := 50
+        counter := 1
+        sleepTime := 250
         g_SharedData.LoopString := "Setting stack farm formation."
         while ( !g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 2 )) AND ElapsedTime < 5000 )
         {
@@ -487,7 +469,8 @@ class IC_BrivGemFarm_Class
             this.StackRestart()
         else
             this.StackNormal()
-        ; SetFormation needs to occur before dashwait in case game erronously placed party on boss zone after stack restart
+        ; SetFormation needs to occur before dashwait in case game erroneously placed party on boss zone after stack restart
+        g_SharedData.LoopString := "Switching to stack farm formation."
         g_SF.SetFormation(g_BrivUserSettings) 
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
@@ -505,7 +488,7 @@ class IC_BrivGemFarm_Class
     StackRestart()
     {
         lastStacks := stacks := this.GetNumStacksFarmed()
-        targetStacks := g_BrivUserSettings[ "TargetStacks" ]
+        targetStacks := g_BrivUserSettings[ "TargetStacks" ] + 0
         if (stacks >= targetStacks)
             return
         numSilverChests := g_SF.Memory.ReadChestCountByID(1)
@@ -539,6 +522,7 @@ class IC_BrivGemFarm_Class
                 ElapsedTime := A_TickCount - StartTime
             }
             g_SF.SafetyCheck()
+            stacks := this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
             if (g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ])
             {
@@ -580,7 +564,7 @@ class IC_BrivGemFarm_Class
     Returns:
     */
     ; Stack Briv's SteelBones by switching to his formation.
-    StackNormal(maxOnlineStackTime := 300000)
+    StackNormal(maxOnlineStackTime := 90000)
     {
         lastStacks := stacks := this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "TargetStacks" ]

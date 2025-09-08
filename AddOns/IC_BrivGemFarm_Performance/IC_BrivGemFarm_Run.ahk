@@ -1,3 +1,4 @@
+#Requires AutoHotkey 1.1.33+ <1.2
 #SingleInstance force
 ;put together with the help from many different people. thanks for all the help.
 
