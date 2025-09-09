@@ -256,3 +256,7 @@ MiniScriptWarning()
             return True
     }
 }
+
+; Refresh GUI after all addons loaded.
+GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+Gui, ICScriptHub:show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight

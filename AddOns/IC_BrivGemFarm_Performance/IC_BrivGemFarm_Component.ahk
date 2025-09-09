@@ -67,7 +67,7 @@ Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck x%xyValX% y+5, Buy gold chests?
 Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck x%xyValX% y+5, Open silver chests?
 Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck x%xyValX% y+5, Open gold chests?
 Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck x%xyValX% y+5, Wait to buy/open chests?
-Gui, ICScriptHub:Add, Slider, vBuyGoldChestRatioSlider Range0-100 x20 y+5 gBriv_Update_Chest_Ratio_Slider AltSubmit, 100
+Gui, ICScriptHub:Add, Slider, vBuyGoldChestRatioSlider Range0-100 x20 y+8 gBriv_Update_Chest_Ratio_Slider AltSubmit, 100
 GuiControlGet, xyVal, ICScriptHub:Pos, BuyGoldChestRatioSlider
 xyValX += 120
 xyValY += 3
@@ -91,6 +91,7 @@ Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumSilverChestCount, % g_BrivUserS
 
 
 
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
 GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
 xyValX += 55
 xyValY += 5
@@ -99,7 +100,6 @@ Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks
 GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
 xyValX += 55
 xyValY += 5
-GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
