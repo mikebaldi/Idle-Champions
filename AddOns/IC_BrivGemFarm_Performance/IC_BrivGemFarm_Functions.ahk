@@ -518,7 +518,7 @@ class IC_BrivGemFarm_Class
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . chestsCompletedString
-                Sleep, 62
+                Sleep, 124
                 ElapsedTime := A_TickCount - StartTime
             }
             g_SF.SafetyCheck()
@@ -810,50 +810,38 @@ class IC_BrivGemFarm_Class
 
 
     ; Sends calls for buying or opening chests and tracks chest metrics.
-    DoChests(numSilverChests, numGoldChests)
+    DoChests(numSilverChests := "", numGoldChests := "")
     {
-        serverRateBuy := 250
-        serverRateOpen := 1000
-        ; no chests to do - Replaces g_BrivUserSettings[ "DoChests" ] setting.
-        if !(g_BrivUserSettings[ "BuySilvers" ] OR g_BrivUserSettings[ "BuyGolds" ] OR g_BrivUserSettings[ "OpenSilvers" ] OR g_BrivUserSettings[ "OpenGolds" ])
-            return
-
-        StartTime := A_TickCount
         g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
+        return this.DoChestsSetup()
+    }
+
+    DoChestsSetup()
+    {
         loopString := ""
+        ElapsedTime := 0
         startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
         startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
         startingOpenedGoldChests := g_SharedData.OpenedGoldChests
         startingOpenedSilverChests := g_SharedData.OpenedSilverChests
-        currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
-        ElapsedTime := 0
 
-        doHybridStacking := ( g_BrivUserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( g_BrivUserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-        g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
-        effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
-
-        ;BUYCHESTS
-        gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ]
-        amount := Min(Floor(gems / 50), serverRateBuy )
-        if (g_BrivUserSettings[ "BuySilvers" ] AND amount > 0)
-            this.BuyChests( chestID := 1, effectiveStartTime, amount )
-        gems := g_SF.TotalGems - g_BrivUserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
-        amount := Min(Floor(gems / 500) , serverRateBuy )
-        if (g_BrivUserSettings[ "BuyGolds" ] AND amount > 0)
-            this.BuyChests( chestID := 2, effectiveStartTime, amount )
-        ; OPENCHESTS
-        amount := Min(g_SF.TotalSilverChests, serverRateOpen)
-        if (g_BrivUserSettings[ "OpenSilvers" ] AND amount > 0)
-            this.OpenChests( chestID := 1, effectiveStartTime, amount)
-        amount := Min(g_SF.TotalGoldChests, serverRateOpen)
-        if (g_BrivUserSettings[ "OpenGolds" ] AND amount > 0)
-            this.OpenChests( chestID := 2, effectiveStartTime, amount )
-
-        updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
+        try
+        {
+            silverChests := this.Memory.ReadChestCountByID(1)
+            goldChests := this.Memory.ReadChestCountByID(2)
+            gems := this.Memory.ReadGems()
+            call := "DoChests"
+            scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
+            Run, %A_AhkPath% "%scriptLocation%" "%call%" "%silverChests%" "%goldChests%" "%gems%"
+        }
+        catch
+        {
+            loopString .= "Failed to run chest buy/open script"
+        }
+        
+        ; after chests buy/open
         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
-        loopString := currentLoopString == "" ? loopString : currentLoopString
-        currentChestTallies := updatedTallies
-        ElapsedTime := A_TickCount - StartTime
+	    loopString := currentLoopString == "" ? loopString : currentLoopString
         return loopString == "" ? "Chests ----" : loopString
     }
 
@@ -886,6 +874,7 @@ class IC_BrivGemFarm_Class
         On success, will update g_SharedData.PurchasedSilverChests and g_SharedData.PurchasedGoldChests.
         On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
     */
+    ; DEPRICATED - user server call script
     BuyChests( chestID := 1, startTime := 0, numChests := 100)
     {
         startTime := startTime ? startTime : A_TickCount
@@ -923,6 +912,7 @@ class IC_BrivGemFarm_Class
         On success, will update g_SharedData.OpenedSilverChests and g_SharedData.OpenedGoldChests.
         On success, will update g_SF.TotalSilverChests, g_SF.TotalGoldChests, g_SF.TotalGems
     */
+    ; DEPRICATED - user servercall script
     OpenChests( chestID := 1, startTime := 0, numChests := 99 )
     {
         timePerGold := 4.5

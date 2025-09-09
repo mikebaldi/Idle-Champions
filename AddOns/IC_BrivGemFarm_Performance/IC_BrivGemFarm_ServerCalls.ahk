@@ -1,7 +1,6 @@
 #Requires AutoHotkey 1.1.33+ <1.2
 #SingleInstance, Off
 #NoTrayIcon
-#Persistent
 #NoEnv ; Avoids checking empty variables to see if they are environment variables.
 ListLines Off
 
@@ -32,6 +31,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             ObjRegisterActive(this.SharedData, this["GemFarmGUID"])
     }
 
+    ; Load global server call Settings into this class.
     LoadSettings(settingsLoc := "")
     {
         settingsLoc := settingsLoc ? settingsLoc : A_LineFile . "\..\..\..\ServerCalls\Settings.json"
@@ -40,6 +40,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
     }
 
+    ; Load script defined server call Settings into this class.
     LoadServerCallSettings()
     {
         this.ServerSettings := this.LoadObjectFromJSON( A_LineFile . "\..\ServerCall_Settings.json" )
@@ -50,16 +51,19 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
                 this[k] := v
     }
 
+    ; Load gem farm settings into this class.
     LoadUserSettings()
     {
         this.UserSettings := this.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
     }
 
+    ; Load gem farm com object GUID into this class.
     LoadGemFarmGUID()
     {
         this.GemFarmGUID := this.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
     }
 
+    ; Execute any function calls passed to this class via arguments or saved in script defined server call settings file.
     LaunchCalls()
     {
         if (A_Args[1] != "") ; Launch a single command from params
@@ -77,106 +81,135 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             fnc.Call()
     }
 
-    ; DoChestsSetup()
-    ; {
-    ;     g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-    ;     loopString := ""
-    ;     while ...
-    ;         g_SharedData.LoopString := "Stack Sleep: " . this.UserSettings[ "RestartStackTime" ] - ElapsedTime . " " . loopString
-    ; }
+    ; Sends calls for buying or opening chests and tracks chest metrics.
+    ; TODO: Modify for logging (to json or csv?)
+    DoChests(numSilverChests, numGoldChests, totalGems)
+    {
+        ; bad memory reads
+        if (numSilverChests == "" OR numGoldChests == "") 
+            return
+        ; no chests to do - Replaces this.UserSettings[ "DoChests" ] setting.
+        if !(this.UserSettings[ "BuySilvers" ] OR this.UserSettings[ "BuyGolds" ] OR this.UserSettings[ "OpenSilvers" ] OR this.UserSettings[ "OpenGolds" ])
+            return
+        ; no silvers to open
+        if (!this.UserSettings[ "BuySilvers" ] AND (numSilverChests <= this.UserSettings["MinSilverChestCount"]))
+            ; no golds to open
+            if (!this.UserSettings[ "BuyGolds" ] AND (numGoldChests <= this.UserSettings["MinGoldChestCount"]))
+                return
 
-    ; ; Sends calls for buying or opening chests and tracks chest metrics.
-    ; ; TODO: Modify for logging (to json or csv?)
-    ; DoChests(numSilverChests, numGoldChests)
-    ; {
-    ;     serverRateBuy := 250
-    ;     serverRateOpen := 1000
-    ;     ; no chests to do - Replaces this.UserSettings[ "DoChests" ] setting.
-    ;     if !(this.UserSettings[ "BuySilvers" ] OR this.UserSettings[ "BuyGolds" ] OR this.UserSettings[ "OpenSilvers" ] OR this.UserSettings[ "OpenGolds" ])
-    ;         return
+        hybridStackTimeout := Min(this.UserSettings[ "ForceOfflineGemThreshold" ] * 15000, 300000)  ; 5 minute timeout (20 hybrid runs), or 15s per run if < 20
 
-    ;     StartTime := A_TickCount
-    ;     startingPurchasedSilverChests := g_SharedData.PurchasedSilverChests
-    ;     startingPurchasedGoldChests := g_SharedData.PurchasedGoldChests
-    ;     startingOpenedGoldChests := g_SharedData.OpenedGoldChests
-    ;     startingOpenedSilverChests := g_SharedData.OpenedSilverChests
-    ;     currentChestTallies := startingPurchasedSilverChests + startingPurchasedGoldChests + startingOpenedGoldChests + startingOpenedSilverChests
-    ;     ElapsedTime := 0
+        StartTime := A_TickCount
+        ElapsedTime := 0
+        doHybridStacking := ( this.UserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( this.UserSettings[ "ForceOfflineRunThreshold" ] > 1 )
 
-    ;     doHybridStacking := ( this.UserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( this.UserSettings[ "ForceOfflineRunThreshold" ] > 1 )
+        if (doHybridStacking) ; buy/open at until user's min chests + serverRate >= chests left
+        {
+            ; < runTime * hybridCount (don't want to be double running purchase scripts) ; alternatively shared com flag?
+            while(ElapsedTime < hybridStackTimeout)
+            {
+                ElapsedTime := A_TickCount - StartTime
+                if !(DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
+                    break
+            }
+        }
+        else
+            DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
+               
+        return loopString
+    }
 
+    ; Tests for if chests should be bought or opened before doing so.
+    DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)
+    {
+        ; not in defs, needs to be tested to know if the max has changed
+        ; maxes accurate as of 9/9/2025
+        serverRateBuy := 250
+        serverRateOpen := 1000
+        goldChestCost := 500
+        silverChestCost := 50
 
-    ;         effectiveStartTime := doHybridStacking ? A_TickCount + 30000 : StartTime ; 30000 is an arbitrary time that is long enough to do buy/open (100/99) of both gold and silver chests.
+        response := ""
+        gems := totalGems - this.UserSettings[ "MinGemCount" ] ; gems left to buy with
+        gemsSilver := gems * this.UserSettings[ "BuySilverChestRatio" ] ; portion to silver
+        gemsGold := gems * this.UserSettings[ "BuyGoldChestRatio" ] ; portion to gold
 
-    ;         ;BUYCHESTS
-    ;         gems := g_SF.TotalGems - this.UserSettings[ "MinGemCount" ]
-    ;         amount := Min(Floor(gems / 50), serverRateBuy )
-    ;         if (this.UserSettings[ "BuySilvers" ] AND amount > 0)
-    ;             this.BuyChests( chestID := 1, effectiveStartTime, amount )
-    ;         gems := g_SF.TotalGems - this.UserSettings[ "MinGemCount" ] ; gems can change from previous buy, reset
-    ;         amount := Min(Floor(gems / 500) , serverRateBuy )
-    ;         if (this.UserSettings[ "BuyGolds" ] AND amount > 0)
-    ;             this.BuyChests( chestID := 2, effectiveStartTime, amount )
-    ;         ; OPENCHESTS
-    ;         amount := Min(g_SF.TotalSilverChests, serverRateOpen)
-    ;         if (this.UserSettings[ "OpenSilvers" ] AND amount > 0)
-    ;             this.OpenChests( chestID := 1, effectiveStartTime, amount)
-    ;         amount := Min(g_SF.TotalGoldChests, serverRateOpen)
-    ;         if (this.UserSettings[ "OpenGolds" ] AND amount > 0)
-    ;             this.OpenChests( chestID := 2, effectiveStartTime, amount )
+        ; BUYCHESTS -  wait until can do a max server call of golds or max server call of silvers - then do both - if WaitToBuyChests set
+        isMaxReady := ((Floor(gemsSilver / silverChestCost) > serverRateBuy OR Floor(gemsGold / goldChestCost) > serverRateBuy))
+        if ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ])
+        {
+            
+            amount := Floor(gemsSilver / silverChestCost)
+            response .= this.BuyChests( chestID := 1, amount )
+            amount := Floor(gemsGold / goldChestCost) 
+            response .= this.BuyChests( chestID := 2, amount )
+        }
 
-    ;         updatedTallies := g_SharedData.PurchasedSilverChests + g_SharedData.PurchasedGoldChests + g_SharedData.OpenedGoldChests + g_SharedData.OpenedSilverChests
-    ;         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
-    ;         loopString := currentLoopString == "" ? loopString : currentLoopString
+        ; OPENCHESTS - only open if can do a maxed call if WaitToBuyChests set
+        amount := Min(numSilverChests - this.UserSettings[ "MinSilverChestCount" ], serverRateOpen)
+        if (this.UserSettings[ "OpenSilvers" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
+            response .= this.OpenChests( chestID := 1, serverRateOpen )
+        amount := Min(numGoldChests - this.UserSettings[ "MinGoldChestCount" ], serverRateOpen)
+        if (this.UserSettings[ "OpenGolds" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
+            response .= this.OpenChests( chestID := 2, serverRateOpen )
 
-    ;         currentChestTallies := updatedTallies
-    ;         ElapsedTime := A_TickCount - StartTime
-    
-    ;     this.WriteObjectToJSON( A_LineFile . "\..\LastCallResponse.json" )
-    ;     return loopString
-    ; }
+        if (response / 1 > 0) ; AHK trickery to check if only numeric values were returned (all 1s) vs text/0 (incorrect if test for e.g. 1."".1.1)
+            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json" )
+        else if (response != "") ; "" would also be a failure
+            return doContinue := True
+        return doContinue := False
+    }
 
-    ; BuyChests( chestID := 1, startTime := 0, numChests := 100)
-    ; {
-    ;     startTime := startTime ? startTime : A_TickCount
-    ;     purchaseTime := 100 ; .1s
-    ;     if (this.UserSettings[ "RestartStackTime" ] > ( A_TickCount - startTime + purchaseTime))
-    ;     {
-    ;         if (numChests > 0)
-    ;         {
-    ;             response := g_BrivServerCall.CallBuyChests( chestID, numChests )
-    ;             if (response.okay AND response.success)
-    ;             {
-    ;                 g_SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
-    ;                 g_SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
-    ;                 g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
-    ;                 g_SF.TotalGoldChests := (chestID == 2) ? response.chest_count : g_SF.TotalGoldChests
-    ;                 g_SF.TotalGems := response.currency_remaining
-    ;             }
-    ;         }
-    ;     }
-    ; }
+    /*  BuyChests - A method to buy chests based on parameters passed.
 
-    ; OpenChests( chestID := 1, startTime := 0, numChests := 99 )
-    ; {
-    ;     timePerGold := 4.5
-    ;     timePerSilver := .75
-    ;     timePerChest := chestID == 1 ? timePerSilver : timePerGold
-    ;     startTime := startTime ? startTime : A_TickCount
-    ;     ; openChestTimeEst := 1000 ; chestID == 1 ? (numChests * 30.3) : numChests * 60.6 ; ~3s for silver, 6s for anything else
-    ;     if (this.UserSettings[ "RestartStackTime" ] - ( A_TickCount - startTime) < numChests * timePerChest)
-    ;         numChests := Floor(( A_TickCount - startTime) / timePerChest)
-    ;     if (numChests < 1)
-    ;         return
-    ;     chestResults := g_BrivServerCall.CallOpenChests( chestID, numChests )
-    ;     if (!chestResults.success)
-    ;         return
-    ;     g_SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
-    ;     g_SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
-    ;     g_SF.TotalSilverChests := (chestID == 1) ? chestResults.chests_remaining : g_SF.TotalSilverChests
-    ;     g_SF.TotalGoldChests := (chestID == 2) ? chestResults.chests_remaining : g_SF.TotalGoldChests
-    ;     g_SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
-    ; }
+        Parameters:
+        chestID   - The ID of the chest to be bought. (1 is silver, 2 is gold, etc).
+        numChests - expected number of chests to buy.
+            
+        Return Values:
+        Failed server response string or 1 if successful.
+
+        Side Effects:
+        On success, will update SharedData.PurchasedSilverChests and SharedData.PurchasedGoldChests.
+    */
+    BuyChests( chestID := "", numChests := "")
+    {
+        if (numChests <= 0 or chestID <= 0)
+            return
+        response := g_BrivServerCall.CallBuyChests( chestID, numChests )
+        if !(response.okay AND response.success)
+            return response
+        ; g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
+        this.SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
+        this.SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
+        this.CurrencyRemaining := response.currency_remaining
+        return okToContinue := 1
+    }
+
+    /*  OpenChests - A method to open chests based on parameters passed.
+
+        Parameters:
+        chestID   - The ID of the chest to be bought. (1 is silver, 2 is gold, etc).
+        numChests - expected number of chests to open. 
+
+        Return Values:
+        Failed server response string or 1 if successful.
+
+        Side Effects:
+        On success, will update SharedData.OpenedSilverChests and SharedData.OpenedGoldChests and SharedData.ShinyCount.
+    */
+    OpenChests( chestID := "", numChests := "" )
+    {
+        if (numChests <= 0 or chestID <= 0)
+            return
+        chestResults := g_BrivServerCall.CallOpenChests( chestID, numChests )
+        if (!chestResults.success)
+            return chestResults
+        this.SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
+        this.SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
+        this.SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
+        return okToContinue := 1
+    }
 
     ; forces an attempt for the server to remember stacks
     ; find and replace g_BrivServerCall.CallPreventStackFail with script run servercall.
@@ -216,8 +249,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     }
 }
 
+g_BrivServerCall.SharedData.ServerCallsAreComplete := False
 g_BrivServerCall.LaunchCalls()
-
-; g_ServerSharedData.CallsAreComplete[GUID] := True
-; ObjRegisterActive(g_SeverSharedData, "")
+g_BrivServerCall.SharedData.ServerCallsAreComplete := True
 ExitApp

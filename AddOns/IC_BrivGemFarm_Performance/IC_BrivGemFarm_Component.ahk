@@ -29,32 +29,6 @@ GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, GroupBox, Section w400 h50, Target haste stacks for next run
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
-GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, Text, x15 y+20, Chest options during a game restart for stacking.
-Gui, ICScriptHub:Add, Text, x15 y+5, NOTE: Buy Silver enabled may leave too few gems or too little time to also Buy Gold.
-Gui, ICScriptHub:Add, Checkbox, vBuySilversCheck x15 y+5, Buy silver chests?
-Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck x15 y+5, Buy gold chests? 
-Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck x15 y+5, Open silver chests?
-Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck x15 y+5, Open gold chests?
-GUIFunctions.UseThemeTextColor("InputBoxTextColor")
-Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
-GUIFunctions.UseThemeTextColor("DefaultTextColor")
-
-Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
-Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
-
-GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
-xyValX += 55
-xyValY += 5
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
-GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
-xyValX += 55
-xyValY += 5
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 
 ; ------- Haste Stacks Group --------------
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
@@ -71,11 +45,67 @@ GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Font, norm
 Gui, ICScriptHub:Add, Text, x+1 gBriv_Visit_Byteglow_Speed_Link, % ")"
 ; ------- ------------------- --------------
+GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
+xyValX += 0
+xyValY += 25
+
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, GroupBox, Section w400 h200 x%xyValX% y%xyValY%, Chest options during a game restart for stacking.
+
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
+Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
+Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+xyValX := 25
+; ------- Buy/Open Chests Group --------------
+Gui, ICScriptHub:Add, Checkbox, vBuySilversCheck x%xyValX% ys+20, Buy silver chests?
+Gui, ICScriptHub:Add, Checkbox, vBuyGoldsCheck x%xyValX% y+5, Buy gold chests? 
+Gui, ICScriptHub:Add, Checkbox, vOpenSilversCheck x%xyValX% y+5, Open silver chests?
+Gui, ICScriptHub:Add, Checkbox, vOpenGoldsCheck x%xyValX% y+5, Open gold chests?
+Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck x%xyValX% y+5, Wait to buy/open chests?
+Gui, ICScriptHub:Add, Slider, vBuyGoldChestRatioSlider Range0-100 x20 y+5 gBriv_Update_Chest_Ratio_Slider AltSubmit, 100
+GuiControlGet, xyVal, ICScriptHub:Pos, BuyGoldChestRatioSlider
+xyValX += 120
+xyValY += 3
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuyGoldChestRatioSliderText, % "Gold Chest Ratio: " g_BrivUserSettings[ "BuyGoldChestRatio" ] 
+Gui, ICScriptHub:Add, Slider, vBuySilverChestRatioSlider Range0-100 x20 y+15 gBriv_Update_Chest_Ratio_Slider AltSubmit, 0
+GuiControlGet, xyVal, ICScriptHub:Pos, BuySilverChestRatioSlider
+xyValX += 120
+xyValY += 4
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuySilverChestRatioSliderText, % "Silver Chest Ratio: " g_BrivUserSettings[ "BuySilverChestRatio" ] 
+
+Gui, ICScriptHub:Add, Text, x25 y+20, % "Reserve Chests --   Gold:"
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumGoldChestCount, % g_BrivUserSettings[ "MinGoldChestCount" ]
+
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, Text, x+10 yp+5, % "Silver:"
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumSilverChestCount, % g_BrivUserSettings[ "MinSilverChestCount" ]
+
+; ------- ------------------- --------------
+
+
+
+GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
+xyValX += 55
+xyValY += 5
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
+GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
+xyValX += 55
+xyValY += 5
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, `Time (ms) client remains closed to trigger Restart Stacking (0 disables)
 
 GuiControlGet, xyVal, ICScriptHub:Pos, NewMinGemCount
 xyValX += 105
 xyValY += 5
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Maintain this many gems when buying chests.
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%, Reserve this many gems when buying chests.
 
 IC_BrivGemFarm_Component.ProfilesList := {}
 IC_BrivGemFarm_Component.ProfileLastSelected := "Default"
@@ -118,6 +148,27 @@ Briv_Visit_Byteglow_Speed_Link()
 {
     byteglowURL := "http://ic.byteglow.com/speed"
     Run % byteglowURL 
+}
+
+Briv_Update_Chest_Ratio_Slider()
+{
+    ; Get the value of the slider that was just moved
+    If (A_GuiControl = "BuyGoldChestRatioSlider") {
+        GuiControlGet, BuyGoldChestRatioSliderValue,, BuyGoldChestRatioSlider
+        BuySilverChestRatioSliderValue := 100 - BuyGoldChestRatioSliderValue
+        GuiControl,, BuySilverChestRatioSlider, %BuySilverChestRatioSliderValue%
+    } Else { ; A_GuiControl must be Slider2
+        GuiControlGet, BuySilverChestRatioSliderValue,, BuySilverChestRatioSlider
+        BuyGoldChestRatioSliderValue := 100 - BuySilverChestRatioSliderValue
+        GuiControl,, BuyGoldChestRatioSlider, %BuyGoldChestRatioSliderValue%
+    }
+
+    Gui, ICScriptHub:Submit, NoHide
+    g_BrivUserSettings[ "BuyGoldChestRatio" ]  := BuyGoldChestRatioSliderValue
+    g_BrivUserSettings[ "BuySilverChestRatio" ] := BuySilverChestRatioSliderValue
+    GuiControl,,BuyGoldChestRatioSliderText, % "Gold Chest Ratio: " . Round(BuyGoldChestRatioSliderValue / 100, 2)
+    GuiControl,,BuySilverChestRatioSliderText, % "Silver Chest Ratio: " . Round(BuySilverChestRatioSliderValue / 100, 2)
+    Gui, ICScriptHub:Submit, NoHide
 }
 
 Briv_Save_Profile_Clicked()
@@ -191,7 +242,16 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
+        GuiControl,ICScriptHub:, BuyAllChestsCheck , % g_BrivUserSettings[ "WaitToBuyChests" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
+        ; Sliders
+        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % g_BrivUserSettings[ "BuyGoldChestRatio" ] 
+        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % g_BrivUserSettings[ "BuySilverChestRatio" ]
+        ; Force recolor of sliders so they don't have a white background with dark theme
+        GuiControlGet, sliderID, ICScriptHub:Hwnd, BuyGoldChestRatioSlider
+        WinActivate, ahk_id %sliderID% 
+        GuiControlGet, sliderID, ICScriptHub:Hwnd, BuySilverChestRatioSlider
+        WinActivate, ahk_id %sliderID% 
     }
     
     Briv_Run_Clicked()
@@ -332,6 +392,9 @@ class IC_BrivGemFarm_Component
         g_BrivUserSettings[ "BuyGolds" ] := BuyGoldsCheck
         g_BrivUserSettings[ "OpenSilvers" ] := OpenSilversCheck
         g_BrivUserSettings[ "OpenGolds" ] := OpenGoldsCheck
+        g_BrivUserSettings[ "WaitToBuyChests" ] := BuyAllChestsCheck
+        g_BrivUserSettings[ "MinGoldChestCount" ] := MinimumGoldChestCount
+        g_BrivUserSettings[ "MinSilverChestCount" ] := MinimumSilverChestCount
         g_BrivUserSettings[ "MinGemCount" ] := StrReplace(NewMinGemCount, ",")
         g_BrivUserSettings[ "LastSettingsUsed" ] := profile? profile : BrivDropDownSettings
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
@@ -426,8 +489,12 @@ class IC_BrivGemFarm_Component
         GuiControl, ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ]
         GuiControl, ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ]
         GuiControl, ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ]
+        GuiControl, ICScriptHub:, BuyAllChestsCheck, % g_BrivUserSettings[ "WaitToBuyChests" ]
         GuiControl, ICScriptHub:, NewMinGemCount, % g_BrivUserSettings[ "MinGemCount" ]
-        ; Load advanced settings.
+        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % g_BrivUserSettings[ "BuyGoldChestRatio" ] 
+        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % g_BrivUserSettings[ "BuySilverChestRatio" ]
+        GuiControl, ICScriptHub:, MinimumGoldChestCount , % g_BrivUserSettings[ "MinGoldChestCount" ]
+        GuiControl, ICScriptHub:, MinimumSilverChestCount, % g_BrivUserSettings[ "MinSilverChestCount" ]
         if(OptionSettingCheck_HiddenFarmWindow != "")
             IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
         g_BrivUserSettings[ "LastSettingsUsed" ] := settings
@@ -537,5 +604,4 @@ class IC_BrivGemFarm_Component
         }
     }
 }
-
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
