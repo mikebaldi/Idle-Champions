@@ -493,6 +493,7 @@ class IC_BrivGemFarm_Class
             return
         numSilverChests := g_SF.Memory.ReadChestCountByID(1)
         numGoldChests := g_SF.Memory.ReadChestCountByID(2)
+        gems := g_SF.Memory.ReadGems()
         retryAttempt := 0
         maxRetries := 2
         if (this.LastStackSuccessArea == 0)
@@ -514,7 +515,7 @@ class IC_BrivGemFarm_Class
             chestsCompletedString := ""
             StartTime := A_TickCount
             ElapsedTime := 0
-            chestsCompletedString := " " . this.DoChests(numSilverChests, numGoldChests)
+            chestsCompletedString := " " . this.DoChests(numSilverChests, numGoldChests, gems)
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
                 g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . chestsCompletedString
@@ -810,13 +811,13 @@ class IC_BrivGemFarm_Class
 
 
     ; Sends calls for buying or opening chests and tracks chest metrics.
-    DoChests(numSilverChests := "", numGoldChests := "")
+    DoChests(numSilverChests := "", numGoldChests := "", gems:= "")
     {
         g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
-        return this.DoChestsSetup()
+        return this.DoChestsSetup(numSilverChests, numGoldChests, gems)
     }
 
-    DoChestsSetup()
+    DoChestsSetup(numSilverChests := "", numGoldChests := "", gems:= "")
     {
         loopString := ""
         ElapsedTime := 0
@@ -827,12 +828,9 @@ class IC_BrivGemFarm_Class
 
         try
         {
-            silverChests := this.Memory.ReadChestCountByID(1)
-            goldChests := this.Memory.ReadChestCountByID(2)
-            gems := this.Memory.ReadGems()
             call := "DoChests"
             scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
-            Run, %A_AhkPath% "%scriptLocation%" "%call%" "%silverChests%" "%goldChests%" "%gems%"
+            Run, %A_AhkPath% "%scriptLocation%" "%call%" "%numSilverChests%" "%numGoldChests%" "%gems%"
         }
         catch
         {

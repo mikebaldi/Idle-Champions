@@ -97,7 +97,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             if (!this.UserSettings[ "BuyGolds" ] AND (numGoldChests <= this.UserSettings["MinGoldChestCount"]))
                 return
 
-        hybridStackTimeout := Min(this.UserSettings[ "ForceOfflineGemThreshold" ] * 15000, 300000)  ; 5 minute timeout (20 hybrid runs), or 15s per run if < 20
+        hybridStackTimeout := Min(this.UserSettings[ "ForceOfflineRunThreshold" ] * 15000, 300000)  ; 5 minute timeout (20 hybrid runs), or 15s per run if < 20
 
         StartTime := A_TickCount
         ElapsedTime := 0

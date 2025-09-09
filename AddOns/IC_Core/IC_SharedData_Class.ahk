@@ -20,6 +20,7 @@ class IC_SharedData_Class
     TargetStacks := 0
     ShiniesByChamp := {}
     ShiniesByChampJson := ""
+    ServerCallsAreComplete := True
 
     Close()
     {
