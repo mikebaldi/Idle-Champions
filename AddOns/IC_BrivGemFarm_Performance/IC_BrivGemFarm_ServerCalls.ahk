@@ -109,12 +109,12 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             while(ElapsedTime < hybridStackTimeout)
             {
                 ElapsedTime := A_TickCount - StartTime
-                if !(DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
+                if !(this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
                     break
             }
         }
         else
-            DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
+            this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
                
         return loopString
     }
