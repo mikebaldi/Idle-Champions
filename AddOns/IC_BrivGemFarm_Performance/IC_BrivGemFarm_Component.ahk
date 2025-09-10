@@ -11,7 +11,7 @@ GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 
 Gui, ICScriptHub:Add, Text, x15 y+15, Profile: 
-Gui, ICScriptHub:Add, DDL, gBriv_Load_Profile_Clicked x+6 hwndBrivDropDownSettingsHWND vBrivDropDownSettings,
+Gui, ICScriptHub:Add, DDL, gBriv_Load_Profile_Clicked x+6 hwndBrivDropDownSettingsHWND vBrivDropDownSettings, ||
 Gui, ICScriptHub:Add, Button, x+10 gBriv_Save_Profile_Clicked, Save Profile
 Gui, ICScriptHub:Add, Button, x+10 gBriv_Delete_Profile_Clicked, Delete Profile
 
@@ -243,7 +243,7 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, BuyGoldsCheck, % g_BrivUserSettings[ "BuyGolds" ] 
         GuiControl,ICScriptHub:, OpenSilversCheck, % g_BrivUserSettings[ "OpenSilvers" ] 
         GuiControl,ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ] 
-        GuiControl,ICScriptHub:, BuyAllChestsCheck , % g_BrivUserSettings[ "WaitToBuyChests" ] 
+        GuiControl,ICScriptHub:, BuyAllChestsCheck, % g_BrivUserSettings[ "WaitToBuyChests" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
         ; Sliders
         GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % g_BrivUserSettings[ "BuyGoldChestRatio" ] 
@@ -605,4 +605,6 @@ class IC_BrivGemFarm_Component
         }
     }
 }
+
+Gui, ICScriptHub:Submit, NoHide
 #include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
