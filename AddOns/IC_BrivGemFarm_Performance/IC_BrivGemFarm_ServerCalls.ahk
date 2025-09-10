@@ -148,10 +148,10 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         ; OPENCHESTS - only open if can do a maxed call if WaitToBuyChests set
         amount := Min(numSilverChests - this.UserSettings[ "MinSilverChestCount" ], serverRateOpen)
         if (this.UserSettings[ "OpenSilvers" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
-            response .= this.OpenChests( chestID := 1, serverRateOpen )
+            response .= this.OpenChests( chestID := 1, amount )
         amount := Min(numGoldChests - this.UserSettings[ "MinGoldChestCount" ], serverRateOpen)
         if (this.UserSettings[ "OpenGolds" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
-            response .= this.OpenChests( chestID := 2, serverRateOpen )
+            response .= this.OpenChests( chestID := 2, amount )
 
         if (response / 1 > 0) ; AHK trickery to check if only numeric values were returned (all 1s) vs text/0 (incorrect if test for e.g. 1."".1.1)
             this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json" )
