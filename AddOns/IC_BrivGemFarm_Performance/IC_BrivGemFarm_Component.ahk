@@ -253,6 +253,9 @@ class IC_BrivGemFarm_Component
         WinActivate, ahk_id %sliderID% 
         GuiControlGet, sliderID, ICScriptHub:Hwnd, BuySilverChestRatioSlider
         WinActivate, ahk_id %sliderID% 
+        ; Select an Edit box so left/right arrow keys do not change profiles
+        WinGet wID, ID, A 
+        ControlFocus, NewStackZone, ahk_id %wID%
     }
     
     Briv_Run_Clicked()
