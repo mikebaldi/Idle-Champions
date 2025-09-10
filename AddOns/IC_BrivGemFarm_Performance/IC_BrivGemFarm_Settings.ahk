@@ -39,7 +39,7 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
     
     ; New
     if ( g_BrivUserSettings[ "BuyGoldChestRatio" ] == "" )
-        g_BrivUserSettings[ "BuyGoldChestRatio" ] := 100
+        g_BrivUserSettings[ "BuyGoldChestRatio" ] := 1
     if ( g_BrivUserSettings[ "BuySilverChestRatio" ] == "" )
         g_BrivUserSettings[ "BuySilverChestRatio" ] := 0
     if ( g_BrivUserSettings[ "MinGoldChestCount" ] == "" )

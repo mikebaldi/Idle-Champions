@@ -72,12 +72,12 @@ Gui, ICScriptHub:Add, Slider, vBuyGoldChestRatioSlider Range0-100 x20 y+8 gBriv_
 GuiControlGet, xyVal, ICScriptHub:Pos, BuyGoldChestRatioSlider
 xyValX += 120
 xyValY += 3
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuyGoldChestRatioSliderText, % "Gold Chest Ratio: " g_BrivUserSettings[ "BuyGoldChestRatio" ] 
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuyGoldChestRatioSliderText, % "Gold Chest Ratio: " Round(g_BrivUserSettings[ "BuyGoldChestRatio" ], 2)
 Gui, ICScriptHub:Add, Slider, vBuySilverChestRatioSlider Range0-100 x20 y+15 gBriv_Update_Chest_Ratio_Slider AltSubmit, 0
 GuiControlGet, xyVal, ICScriptHub:Pos, BuySilverChestRatioSlider
 xyValX += 120
 xyValY += 4
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuySilverChestRatioSliderText, % "Silver Chest Ratio: " g_BrivUserSettings[ "BuySilverChestRatio" ] 
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY% w150 vBuySilverChestRatioSliderText, % "Silver Chest Ratio: " Round(g_BrivUserSettings[ "BuySilverChestRatio" ], 2)
 
 Gui, ICScriptHub:Add, Text, x25 y+20, % "Reserve Chests --   Gold:"
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
@@ -165,8 +165,8 @@ Briv_Update_Chest_Ratio_Slider()
     }
 
     Gui, ICScriptHub:Submit, NoHide
-    g_BrivUserSettings[ "BuyGoldChestRatio" ]  := BuyGoldChestRatioSliderValue
-    g_BrivUserSettings[ "BuySilverChestRatio" ] := BuySilverChestRatioSliderValue
+    g_BrivUserSettings[ "BuyGoldChestRatio" ]  := Round(BuyGoldChestRatioSliderValue / 100, 2)
+    g_BrivUserSettings[ "BuySilverChestRatio" ] := Round(BuySilverChestRatioSliderValue / 100, 2)
     GuiControl,,BuyGoldChestRatioSliderText, % "Gold Chest Ratio: " . Round(BuyGoldChestRatioSliderValue / 100, 2)
     GuiControl,,BuySilverChestRatioSliderText, % "Silver Chest Ratio: " . Round(BuySilverChestRatioSliderValue / 100, 2)
     Gui, ICScriptHub:Submit, NoHide
@@ -246,8 +246,8 @@ class IC_BrivGemFarm_Component
         GuiControl,ICScriptHub:, BuyAllChestsCheck, % g_BrivUserSettings[ "WaitToBuyChests" ] 
         GuiControl,ICScriptHub:, DisableDashWaitCheck, % g_BrivUserSettings[ "DisableDashWait" ]
         ; Sliders
-        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % g_BrivUserSettings[ "BuyGoldChestRatio" ] 
-        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % g_BrivUserSettings[ "BuySilverChestRatio" ]
+        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % Round(g_BrivUserSettings[ "BuyGoldChestRatio" ] * 100, 2)
+        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % Round(g_BrivUserSettings[ "BuySilverChestRatio" ] * 100, 2)
         ; Force recolor of sliders so they don't have a white background with dark theme
         GuiControlGet, sliderID, ICScriptHub:Hwnd, BuyGoldChestRatioSlider
         WinActivate, ahk_id %sliderID% 
@@ -495,8 +495,8 @@ class IC_BrivGemFarm_Component
         GuiControl, ICScriptHub:, OpenGoldsCheck, % g_BrivUserSettings[ "OpenGolds" ]
         GuiControl, ICScriptHub:, BuyAllChestsCheck, % g_BrivUserSettings[ "WaitToBuyChests" ]
         GuiControl, ICScriptHub:, NewMinGemCount, % g_BrivUserSettings[ "MinGemCount" ]
-        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % g_BrivUserSettings[ "BuyGoldChestRatio" ] 
-        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % g_BrivUserSettings[ "BuySilverChestRatio" ]
+        GuiControl, ICScriptHub:, BuyGoldChestRatioSlider , % Round(g_BrivUserSettings[ "BuyGoldChestRatio" ] * 100, 2)
+        GuiControl, ICScriptHub:, BuySilverChestRatioSlider, % Round(g_BrivUserSettings[ "BuySilverChestRatio" ] * 100, 2)
         GuiControl, ICScriptHub:, MinimumGoldChestCount , % g_BrivUserSettings[ "MinGoldChestCount" ]
         GuiControl, ICScriptHub:, MinimumSilverChestCount, % g_BrivUserSettings[ "MinSilverChestCount" ]
         if(OptionSettingCheck_HiddenFarmWindow != "")
