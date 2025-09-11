@@ -83,6 +83,14 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings.Delete("WindowYPositon")
         writeSettings := True
     }
+    if ( g_BrivUserSettings[ "BuySilvers" ] == "" )
+        g_BrivUserSettings[ "BuySilvers" ] := 1
+    if ( g_BrivUserSettings[ "BuyGolds" ] == "" )
+        g_BrivUserSettings[ "BuyGolds" ] := 0
+    if ( g_BrivUserSettings[ "OpenSilvers" ] == "" )
+        g_BrivUserSettings[ "OpenSilvers" ] := 1
+    if ( g_BrivUserSettings[ "OpenGolds" ] == "" )
+        g_BrivUserSettings[ "OpenGolds" ] := 1
     ; Found legacy settings file.
     if ( !writeSettings AND loadFromFile AND userSettings[ "LastSettingsUsed" ] == "" )
     {
