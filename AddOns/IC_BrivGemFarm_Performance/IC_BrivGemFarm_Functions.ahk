@@ -123,7 +123,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         Sleep, 100 ; extra wait for window to load
         hwnd := this.Hwnd
         WinActivate, ahk_id %hwnd% ; Idle Champions likes to be activated before it can be deactivated            
-        savedActive := this.SavedActiveWindow
+        savedActive := "ahk_id " . this.SavedActiveWindow
         WinActivate, %savedActive%
     }
 

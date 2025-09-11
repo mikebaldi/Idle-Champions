@@ -604,7 +604,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         timeoutVal := 32000 + 90000 ; 32s + waitforgameready timeout
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
-        WinGetActiveTitle, savedActive
+        ; WinGetActiveTitle, savedActive
+        WinGet, savedActive, ID, A
         this.SavedActiveWindow := savedActive
         StartTime := A_TickCount
         while ( !loadingZone AND ElapsedTime < timeoutVal )
@@ -677,7 +678,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ; Process exists, wait for the window:
         while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < timeoutLeft)
         {
-            WinGetActiveTitle, savedActive
+            
+            WinGet, savedActive, ID, A
             this.SavedActiveWindow := savedActive
             ElapsedTime := A_TickCount - StartTime
             Sleep, 62
