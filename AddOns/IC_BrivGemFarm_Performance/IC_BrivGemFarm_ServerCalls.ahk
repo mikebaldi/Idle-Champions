@@ -89,13 +89,14 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         if (numSilverChests == "" OR numGoldChests == "") 
             return
         ; no chests to do - Replaces this.UserSettings[ "DoChests" ] setting.
-        if !(this.UserSettings[ "BuySilvers" ] OR this.UserSettings[ "BuyGolds" ] OR this.UserSettings[ "OpenSilvers" ] OR this.UserSettings[ "OpenGolds" ])
+        if !(this.UserSettings[ "OpenChests" ] OR this.UserSettings[ "BuyChests" ])
             return
-        ; no silvers to open
-        if (!this.UserSettings[ "BuySilvers" ] AND (numSilverChests <= this.UserSettings["MinSilverChestCount"]))
-            ; no golds to open
-            if (!this.UserSettings[ "BuyGolds" ] AND (numGoldChests <= this.UserSettings["MinGoldChestCount"]))
-                return
+        ; no chests to do (not buying, nothing available to open)
+        if (!this.UserSettings[ "BuyChests" ] AND (numSilverChests <= this.UserSettings["MinSilverChestCount"] AND numGoldChests <= this.UserSettings["MinGoldChestCount"]))
+            return
+        ; no chests to do (not opening and not enough gems to buy)
+        if (!this.UserSettings[ "OpenChests" ] AND (totalGems -  g_BrivUserSettings[ "MinGemCount" ] < 50))
+            return
 
         hybridStackTimeout := Min(this.UserSettings[ "ForceOfflineRunThreshold" ] * 15000, 300000)  ; 5 minute timeout (20 hybrid runs), or 15s per run if < 20
 
@@ -147,10 +148,10 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 
         ; OPENCHESTS - only open if can do a maxed call if WaitToBuyChests set
         amount := Min(numSilverChests - this.UserSettings[ "MinSilverChestCount" ], serverRateOpen)
-        if (this.UserSettings[ "OpenSilvers" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
+        if (this.UserSettings[ "OpenChests" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
             response .= this.OpenChests( chestID := 1, amount )
         amount := Min(numGoldChests - this.UserSettings[ "MinGoldChestCount" ], serverRateOpen)
-        if (this.UserSettings[ "OpenGolds" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
+        if (this.UserSettings[ "OpenChests" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
             response .= this.OpenChests( chestID := 2, amount )
 
         if (response / 1 > 0) ; AHK trickery to check if only numeric values were returned (all 1s) vs text/0 (incorrect if test for e.g. 1."".1.1)

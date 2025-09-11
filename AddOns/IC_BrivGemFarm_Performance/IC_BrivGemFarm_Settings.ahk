@@ -26,14 +26,10 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings[ "TargetStacks" ] := 0
     if ( g_BrivUserSettings[ "RestartStackTime" ] == "" )
         g_BrivUserSettings[ "RestartStackTime" ] := 12000
-    if ( g_BrivUserSettings[ "BuySilvers" ] == "" )
-        g_BrivUserSettings[ "BuySilvers" ] := 1
-    if ( g_BrivUserSettings[ "BuyGolds" ] == "" )
-        g_BrivUserSettings[ "BuyGolds" ] := 0
-    if ( g_BrivUserSettings[ "OpenSilvers" ] == "" )
-        g_BrivUserSettings[ "OpenSilvers" ] := 1
-    if ( g_BrivUserSettings[ "OpenGolds" ] == "" )
-        g_BrivUserSettings[ "OpenGolds" ] := 1
+    if ( g_BrivUserSettings[ "BuyChests" ] == "" )
+        g_BrivUserSettings[ "BuyChests" ] := 1
+    if ( g_BrivUserSettings[ "OpenChests" ] == "" )
+        g_BrivUserSettings[ "OpenChests" ] := 1
     if ( g_BrivUserSettings[ "MinGemCount" ] == "" )
         g_BrivUserSettings[ "MinGemCount" ] := 0
     
