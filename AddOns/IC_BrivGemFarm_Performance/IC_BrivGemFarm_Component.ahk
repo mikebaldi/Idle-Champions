@@ -6,7 +6,6 @@ global g_BrivFarmModLoc := A_LineFile . "\..\IC_BrivGemFarm_Mods.ahk"
 global g_BrivFarmAddonStartFunctions := {}
 global g_BrivFarmAddonStopFunctions := {}
 global g_BrivFarmLastRunMiniscripts := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Miniscripts.json")
-
 GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 
@@ -48,9 +47,19 @@ GuiControlGet, xyVal, ICScriptHub:Pos, BrivGemFarmTargetHasteGroupBox
 xyValX += 0
 xyValY += 55
 
-; ------- Buy Chests Group --------------
+
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, GroupBox, Section w400 h110 x%xyValX% y%xyValY% vBrivGemFarmChestBuyGroupBox, Options for chest buying during a game restart for stacking.
+Gui, ICScriptHub:Add, GroupBox, Section w400 h230 x%xyValX% y%xyValY% vBrivGemFarmChestBuyGroupBox, Options for buying and opening chests during offline stacking.
+
+; ------- Bottom Button Bar  -----------------
+Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
+Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
+Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
+xyValX := 26
+
+; ------- Buy/Open Chests Group --------------
 Gui, ICScriptHub:Add, Checkbox, vBrivGemFarmBuyChestsCheck x26 ys+22, Buy chests?
 Gui, ICScriptHub:Add, Slider, vBuyGoldChestRatioSlider Range0-100 x20 y+8 gBriv_Update_Chest_Ratio_Slider AltSubmit, 100
 GuiControlGet, xyVal, ICScriptHub:Pos, BuyGoldChestRatioSlider
@@ -61,26 +70,9 @@ GuiControlGet, xyVal, ICScriptHub:Pos, BuySilverChestRatioSlider
 xyValY += 4
 Gui, ICScriptHub:Add, Text, x+5 y%xyValY% w150 vBuySilverChestRatioSliderText, % "Silver Chest Ratio: " Round(g_BrivUserSettings[ "BuySilverChestRatio" ], 2)
 
-GuiControlGet, xyVal, ICScriptHub:Pos, BrivGemFarmChestBuyGroupBox
-xyValX += 0
-xyValY += 115
-
 ; ------- Open Chests Group --------------
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, GroupBox, Section w400 h75 x%xyValX% y%xyValY%, Options for chest opening during a game restart for stacking.
-Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck x15 y+10, Only buy/open max chests (250 buy/1000 open)
-GUIFunctions.UseThemeTextColor("InputBoxTextColor")
-Gui, ICScriptHub:Add, Edit, vNewMinGemCount x15 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
-GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, Picture, x15 y+15 h50 w50 gBriv_Run_Clicked vBrivGemFarmPlayButton, %g_PlayButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Run_Stop_Clicked vBrivGemFarmStopButton, %g_StopButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Connect_Clicked vBrivGemFarmConnectButton, %g_ConnectButton%
-Gui, ICScriptHub:Add, Picture, x+15 h50 w50 gBriv_Save_Clicked vBrivGemFarmSaveButton, %g_SaveButton%
-Gui, ICScriptHub:Add, Text, x+15 y+-30 w240 h30 vgBriv_Button_Status,
-GUIFunctions.UseThemeTextColor("DefaultTextColor")
-xyValX := 26
-
-Gui, ICScriptHub:Add, Checkbox, vBrivGemFarmOpenChestsCheck x%xyValX% ys+22, Open chests?
+Gui, ICScriptHub:Add, Checkbox, vBrivGemFarmOpenChestsCheck x26 y+22, Open chests?
 Gui, ICScriptHub:Add, Text, x26 yp+25, % "Reserve Chests --   Gold:"
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumGoldChestCount, % g_BrivUserSettings[ "MinGoldChestCount" ]
@@ -90,10 +82,11 @@ Gui, ICScriptHub:Add, Text, x+10 yp+5, % "Silver:"
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumSilverChestCount, % g_BrivUserSettings[ "MinSilverChestCount" ]
 
+GUIFunctions.UseThemeTextColor("DefaultTextColor")
+Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck x26 y+10, Only buy/open max chests (250 buy/1000 open)
+GUIFunctions.UseThemeTextColor("InputBoxTextColor")
+Gui, ICScriptHub:Add, Edit, vNewMinGemCount x25 y+15 w100, % g_BrivUserSettings[ "MinGemCount" ]
 ; ------- ------------------- --------------
-
-
-
 
 
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
