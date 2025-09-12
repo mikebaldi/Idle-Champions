@@ -499,18 +499,13 @@ class IC_MemoryFunctions_Class
             return ""
         familiarList := {}
         Loop, %size%
-        {
-            value := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Familiars["Clicks"].List[A_Index - 1].Read()
-            familiarList.Push(value)
-        }
+            familiarList.Push(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Familiars["Clicks"].List[A_Index - 1].Read())
         return familiarList
     }
 
     GetFormationFamiliarsByFavorite(favorite := 1)
     {
-        slot := this.GetSavedFormationSlotByFavorite(favorite)
-        formation := this.GetFormationFieldFamiliarsBySlot(slot)
-        return formation
+        return this.GetFormationFieldFamiliarsBySlot(this.GetSavedFormationSlotByFavorite(favorite)) 
     }
 
     ; Reads the FormationCampaignID for the FormationSaves index passed in.
@@ -554,8 +549,7 @@ class IC_MemoryFunctions_Class
     ; Will return the spec ID for the hero if it's in the modron formation and has the spec. Otherwise returns "".
     GetCoreSpecializationForHero(heroID, specNum := 1)
     {
-        formationSaveSlot := this.GetActiveModronFormationSaveSlot()
-        return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSaveSlot].Specializations[heroID].List[specNum - 1].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[this.GetActiveModronFormationSaveSlot()].Specializations[heroID].List[specNum - 1].Read()
     }
 
     ;==============================
@@ -895,8 +889,7 @@ class IC_MemoryFunctions_Class
 
     ReadBrivSlot4ilvl()
     {
-        champID := 58, slot := 4
-        return Floor(this.GameManager.game.gameInstances[this.GameInstance].Controller.UserData.LootHandler.LootByHeroID[champID].List[slot-1].Enchant.Read("Double?") + 1)
+        return this.ReadHeroLootEnchant(champID := 58, slot := 4)
     }
 
     ; Returns the formation array of the formation used in the currently active modron.
@@ -1089,14 +1082,11 @@ class IC_MemoryFunctions_Class
     GetBlessingsDialogSlot()
     {
         size := this.ReadDialogsListSize()
-        if(size > 50 OR size < 0) ; sanity check
+        if(size < 0 OR size > 50) ; sanity check
             return ""
         loop, %size%
-        {
-            name := this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read()
-            if (name == "BlessingsStoreDialog")
+            if ("BlessingsStoreDialog" == this.DialogManager.dialogs[A_Index - 1].sprite.gameObjectName.Read())
                 return (A_Index - 1)
-        }
         return ""
     }
 
@@ -1112,7 +1102,7 @@ class IC_MemoryFunctions_Class
         if (dialogName == 1)                        ; Allows FullMemoryFunctions to not automatically error.
             dialogName := "LoadingTextBox"
         size := this.ReadDialogsListSize()
-        if(size > 50 OR size < 0) ; sanity check in case of bad read.
+        if(size < 0 OR size > 50) ; sanity check in case of bad read.
             return ""
         found := 0
         loop, %size%
@@ -1133,8 +1123,7 @@ class IC_MemoryFunctions_Class
     }
 
     GetForceConvertFavor()
-    {
-        ; slot := this.GetBlessingsDialogSlot()
+    {   ; slot := this.GetBlessingsDialogSlot()
         ; value := this.ReadForceConvertFavorBySlot(slot)
         return this.ReadForceConvertFavorBySlot(this.GetBlessingsDialogSlot())
     }
@@ -1195,10 +1184,7 @@ class IC_MemoryFunctions_Class
         if(size <= 0 OR size > 10000) ; Sanity checks
             return "" 
         loop, %size%
-        {
-            chestID := this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()
-            this.ChestIndexByID[chestID] := A_Index - 1
-        }
+            this.ChestIndexByID[this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()] := A_Index - 1
     }
 
     ; Creates GameObjectSTructure indexes of all chests in chest defines.
