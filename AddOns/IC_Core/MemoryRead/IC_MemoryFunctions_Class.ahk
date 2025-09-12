@@ -37,6 +37,9 @@ class IC_MemoryFunctions_Class
     ChestIndexByID := {} ; Map of ID/Chests for faster lookups
     ; HeroIDToNameMap := {} ; Map of champions IDs/Names
     HeroIDToIndexMap := {} ; Map of champion IDs/Index in hero handler
+    FormationFavorites := {}
+    LastFormationSavesVersion := ""
+    FormationFavoriteSlots := {}
 
     __new(fileLoc := "CurrentPointers.json")
     {
@@ -69,7 +72,7 @@ class IC_MemoryFunctions_Class
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion()
     {
-        return "v2.5.5, 2025-08-24"
+        return "v2.5.6, 2025-09-11"
     }
 
     GetPointersVersion()
@@ -99,44 +102,11 @@ class IC_MemoryFunctions_Class
         ; this.UserStatHandler.Refresh()
         ; this.UserData.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
-        ; this.GetChampIDToNameMap()
     }
 
     ;=====================
     ;General Purpose Calls
     ;=====================
-
-    ; Not for general use.
-    GenericGetValue(GameObject)
-    {
-        baseAddress := GameObject.BasePtr == "" ? GameObject.BaseAddress : GameObject.BasePtr.BaseAddress
-        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        ; val := ArrFnc.GetHexFormattedArrayString(GameObject.FullOffsets)
-        if(GameObject.ValueType == "UTF-16") ; take offsets of string and add offset to "value" of string based on 64/32bit
-        {
-            offsets := GameObject.FullOffsets.Clone()
-            offsets.Push(this.Is64Bit ? 0x14 : 0xC)
-            var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, GameObject.ValueType, offsets*)
-        }
-        else if (GameObject.ValueType == "List" or GameObject.ValueType == "Dict" or GameObject.ValueType == "HashSet") ; custom ValueTypes not in classMemory.ahk
-        {
-            var := _MemoryManager.instance.read(baseAddress, "Int", (GameObject.GetOffsets())*)
-        }
-        else if (GameObject.ValueType == "Quad") ; custom ValueTypes not in classMemory.ahk
-        {
-            offsets := GameObject.GetOffsets()
-            first8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
-            lastIndex := offsets.Count()
-            offsets[lastIndex] := offsets[lastIndex] + 0x8
-            second8 := _MemoryManager.instance.read(baseAddress, "Int64", (offsets)*)
-            var := GameObject.ConvQuadToString3( first8, second8 )
-        }
-        else
-        {
-            var := _MemoryManager.instance.read(baseAddress, GameObject.ValueType, (GameObject.GetOffsets())*)
-        }
-        return var
-    }
 
     ; Finds the dictionary index "bonus_modron_exp_mult" is found (if it is found)
     GetXPBlessingSlot()
@@ -146,11 +116,8 @@ class IC_MemoryFunctions_Class
         if (effectsSize < 0 OR effectsSize > 200)
             return ""
         loop, %effectsSize%
-        {
-            value := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance["value", A_Index - 1].Dictionary["value", 0].def.BaseEffectKeyParams_k__BackingField.OriginalEffectKey.read()
-            if (value == "bonus_modron_exp_mult")
+            if ("bonus_modron_exp_mult" == this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetUpgradeHandler.activeEffectsByInstance["value", A_Index - 1].Dictionary["value", 0].def.BaseEffectKeyParams_k__BackingField.OriginalEffectKey.read())
                 return (A_Index - 1)
-        }
         return ""
     }
 
@@ -222,16 +189,11 @@ class IC_MemoryFunctions_Class
     ReadUncappedTimeScaleMultiplier()
     {
         multiplierTotal := 1
-        i := 0
         size := this.ReadTimeScaleMultipliersCount()
         if(size <= 0 OR size > 100) ; sanity check, should be a positive integer and less than 10's. (Potions, 12 possible champions + feats, modron nodes)
             return ""
         loop, %size%
-        {
-            value := this.ReadTimeScaleMultiplierByIndex(i)
-            multiplierTotal *= Max(1.0, value)
-            i++
-        }
+            multiplierTotal *= Max(1.0, this.ReadTimeScaleMultiplierByIndex(A_Index - 1))
         return multiplierTotal
     }
 
@@ -306,7 +268,7 @@ class IC_MemoryFunctions_Class
     GetChampIDToNameMap()
     {
         champMap := {}
-        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+        size := this.ReadChampListSize()
         if(size <= 0 OR size > 500) ; sanity check for number directory path folders
             return ""
         loop, %size%
@@ -323,7 +285,7 @@ class IC_MemoryFunctions_Class
     GetChampIDToIndexMap()
     {
         champMap := {}
-        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes.size.Read()
+        size := this.ReadChampListSize()
         if(size <= 0 OR size > 500) ; sanity check for number directory path folders
             return ""
         loop, %size%
@@ -420,9 +382,7 @@ class IC_MemoryFunctions_Class
         if(size <= 0 OR size > 100) ; sanity check for number directory path folders
             return ""
         loop, %size%
-        {
             newString := newString . splitStringArray[A_Index] . "\"
-        }
         newString := newString . "IdleDragons_Data\StreamingAssets\downloaded_files\webRequestLog.txt"
         return newString
     }
@@ -615,12 +575,8 @@ class IC_MemoryFunctions_Class
             return ""
         ;cycle through saved formations to find save slot of Favorite
         loop, %saveSize%
-        {
             if (this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID.Read() == InstanceID)
-            {
                 return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].targetArea.Read()
-            }
-        }
         return -1
     }
 
@@ -632,12 +588,8 @@ class IC_MemoryFunctions_Class
             return ""
         ;cycle through saved formations to find save slot of Favorite
         loop, %saveSize%
-        {
             if (this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID.Read() == InstanceID)
-            {
                 return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].ExpTotal.Read()
-            }
-        }
         return -1
     }  
 
@@ -759,38 +711,60 @@ class IC_MemoryFunctions_Class
         {
             champID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation[A_Index - 1].Read()
             if (!ignoreEmptySlots or champID != -1)
-            {
                 Formation.Push( champID )
-            }
         }
         return Formation
     }
 
-    ; Looks for a saved formation matching a favorite. Returns -1 on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E)
+    ; Looks for a saved formation matching a favorite. Returns "" on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E)
     GetSavedFormationSlotByFavorite(favorite := 1)
     {
         ;reads memory for the number of saved formations
         formationSavesSize := this.ReadFormationSavesSize()
         if(formationSavesSize <= 0 OR formationSavesSize > 500) ; sanity check, should be less than 51 as of 2023-09-03
             return ""
-        ;cycle through saved formations to find save slot of Favorite
-        formationSaveSlot := -1
-        loop, %formationSavesSize%
+        saveID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.favoriteIDs[favorite - 1].Read()
+        version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
+        if(saveID := this.FormationFavoriteSlots[favorite] AND version == this.LastFormationSavesVersion)
+            return this.FormationFavoriteSlots[favorite]
+        index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 1, formationSavesSize, saveID)
+        this.FormationFavoriteSlots[favorite] := index
+        return index
+    }
+
+    ReadMostRecentFormationFavorite()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.mostRecentFormation.Favorite.Read()
+    }
+
+    GetMostRecentFormation()
+    {        
+        _size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.mostRecentFormation.Formation.size.Read()
+        if(_size <= 0 OR _size > 13) ; sanity check, should can be 12 max
+            return ""
+        Formation := Array()
+        loop, %_size%
         {
-            if (this.ReadFormationFavoriteIDBySlot(A_Index - 1) == favorite)
-            {
-                formationSaveSlot := A_Index - 1
-                Break
-            }
+            champID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.mostRecentFormation.Formation[A_Index - 1].Read()
+            if (champID != -1)
+                Formation.Push( champID )
         }
-        return formationSaveSlot
+        return Formation
     }
 
     ;Returns the formation stored at the favorite value passed in.
     GetFormationByFavorite( favorite := 0 )
     {
-        slot := this.GetSavedFormationSlotByFavorite(favorite)
-        formation := this.GetFormationSaveBySlot(slot)
+        version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
+        if (this.FormationFavorites[favorite] == "" OR version != this.LastFormationSavesVersion)
+        {
+            slot := this.GetSavedFormationSlotByFavorite(favorite)
+            formation := this.GetFormationSaveBySlot(slot)
+            this.FormationFavorites[favorite] := formation
+            this.LastFormationSavesVersion := version
+        }
+        else
+            return this.FormationFavorites[favorite]
         return formation
     }
 
@@ -800,12 +774,11 @@ class IC_MemoryFunctions_Class
         size := this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots.size.Read()
         if(size <= 0 OR size > 14) ; sanity check, 12 is the max number of concurrent champions possible.
             return ""
-        formation := size > 0 ? Array() : ""
+        formation := Array()
         loop, %size%
         {
             heroID := this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots[A_index - 1].hero.def.ID.Read()
-            heroID := heroID > 0 ? heroID : -1
-            formation.Push(heroID)
+            formation.Push(heroID > 0 ? heroID : -1)
         }
         return formation
     }
@@ -950,13 +923,8 @@ class IC_MemoryFunctions_Class
             return ""
         formationSaveSlot := -1
         loop, %formationSavesSize%
-        {
             if (this.ReadFormationSaveIDBySlot(A_Index - 1) == formationSaveID)
-            {
-                formationSaveSlot := A_Index - 1
-                Break
-            }
-        }
+                return A_Index - 1
         return formationSaveSlot
     }
 
@@ -980,19 +948,13 @@ class IC_MemoryFunctions_Class
     ; Finds the index of the current modron in ModronHandlers
     GetCurrentModronSaveSlot()
     {
-        modronSavesSlot := ""
         activeGameInstance := this.ReadActiveGameInstance()
         modronSavesSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves.size.Read()
         if(modronSavesSize <= 0 OR modronSavesSize > 20) ; sanity check, should be < 5 as of 2023-09-03
             return ""
         loop, %modronSavesSize%
-        {
             if (this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[A_Index - 1].InstanceID.Read() == activeGameInstance)
-            {
-                modronSavesSlot := A_Index - 1
-                return (A_Index - 1)
-            }
-        }
+                return A_Index - 1
     }
 
     ;======================
@@ -1197,17 +1159,13 @@ class IC_MemoryFunctions_Class
     BinarySearchList(gameListObject, lookupKeys, leftIndex, rightIndex, searchValue)
     {
         if(rightIndex < leftIndex)
-        {
             return -1
-        }
         else
         {
             middle := Ceil(leftIndex + ((rightIndex-leftIndex) / 2))
             newGameObject := gameListObject[middle - 1]
             for k,v in lookupKeys
-            {
                 newGameObject := newGameObject[v]
-            }
             IDValue := newGameObject.Read()
             ; failed memory read
             if(IDValue == "")
@@ -1225,22 +1183,9 @@ class IC_MemoryFunctions_Class
     GetHeroHandlerIndexByChampID(champID)
     {
         return this.HeroIDToIndexMap[champID]
-        ; if(champID < 107)
-        ;     return champID - 1
-        ; ; No define exists for ID 107
-        ; if(champID == 107)
-        ;     return ""
-        ; if(champID < 135)
-        ;     return champID - 2
-        ; ; No define exists for ID 135            
-        ; if(champID == 135)
-        ;     return ""
-        ; if(champID < 137)
-        ;     return champID - 3
-        ; ; No define exists for ID 137
-        ; if(champID == 137)
-        ;     return ""
-        ; return champID - 4
+        ; No define exists for ID 107
+        ; No define exists for ID 135     
+        ; No define exists for ID 137
     }
 
     ; Builds this.ChestIndexByID from memory values.
@@ -1265,32 +1210,24 @@ class IC_MemoryFunctions_Class
         if(size <= 0 OR size > 10000) ; Sanity checks
             return "" 
         loop, %size%
-        {
             this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1]
-        }
     }
 
     GetImportsVersion()
     {
-        version := !_MemoryManager.is64Bit ? ( (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " ) : ( (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)")
-        return version
+        return !_MemoryManager.is64Bit ? ( (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " ) : ( (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)")
     }
     
     HeroHasFeatSavedInFormation(heroID :=58, featID := 2131, formationSlot := 0)
     {
-    ;     heroID := 58
-    ;     formationSlot := this.GetSavedFormationSlotByFavorite(1)
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
         if(size == "")
             return ""
         if(size <= 0 OR size > 10) ; sanity check
             return false
         Loop, %size%
-        {
-            value := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List[A_Index - 1].Read()
-            if (value==featID)
+            if (featID == this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List[A_Index - 1].Read())
                 return true
-        }
         return false
     }
     
@@ -1315,10 +1252,7 @@ class IC_MemoryFunctions_Class
             return ""
         featList := []
         Loop, %size%
-        {
-            value := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List[A_Index - 1].ID.Read()
-            featList.Push(value)
-        }
+            featList.Push(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List[A_Index - 1].ID.Read())
         return featList
     }
 

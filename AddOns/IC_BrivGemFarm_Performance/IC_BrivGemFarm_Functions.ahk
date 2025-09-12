@@ -191,7 +191,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
             thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
             return (thunderInQ OR thunderInE)
         }
-        else if (g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetActiveModronFormationSaveSlot()))
+        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(58, 2131))
             return true
 		else
 		{
