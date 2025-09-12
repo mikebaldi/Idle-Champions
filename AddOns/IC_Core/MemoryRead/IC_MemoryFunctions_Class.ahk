@@ -684,7 +684,9 @@ class IC_MemoryFunctions_Class
         formationSavesSize := this.ReadFormationSavesSize()
         if(formationSavesSize <= 0 OR formationSavesSize > 500) ; sanity check, should be less than 51 as of 2023-09-03
             return ""
-        saveID := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.favoriteIDs[favorite - 1].Read()
+        favoriteIDsObj := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.favoriteIDs
+        favoriteIDsObj[favorite - 1,,,0x4] ; Create favoriteIDsObj[favorite - 1] object on first run - list items are size 0x4 instead of 0x8 so use byteSizeOverride
+        saveID := favoriteIDsObj[favorite - 1].Read()
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
         if(saveID > 0 AND this.FormationFavoriteSlots[favorite] != "" AND version == this.LastFormationSavesVersion[favorite])
             return this.FormationFavoriteSlots[favorite]
