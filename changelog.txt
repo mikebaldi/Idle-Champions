@@ -1,3 +1,28 @@
+September 12, 2025
+    Removed AutoCalc statcks functionality.
+        Note: As the game updates new features come out that affect how many stacks are needed. The AutoCalc of stacks has been removed since it has not kept up with these changes.
+    Created ServerCall script to run server calls separately from the gem farm script to reduce server connection delays.
+    Removed some unused imports.
+        Note: Imports were also re-arranged so the first diff after updating will be large.
+    Removed a number of unused settings.
+        Note: Some BrivGemFarm options may need to be reset, specifically chest purchasing/opening settings.
+    Updated Champion IDs to be read and stored at runtime instead of manually set.
+    Added last zone information to Stats addon when doing forced resets and in area time.
+    Changed how chest opening and purchasing is handled:
+        Updated GUI to reflect following changes.
+        Added option to only buy or open chests when it's possible to do a maxed request. (Buy 250 at once, open 1000 at once).
+        Added Gold/Silver chest ratio option for purchases. e.g. Silver .3, gold .7 would buy 1000 gold chests and 428 silver chests next maxed call.
+        Added options to save a reserve of gold or silver chests. 
+        Buy/Open Silver/Gold have been merged into Buy/Open chests.
+            Limit purchases of one or the other using the ratio slider and gem reserves
+            Limit opening of one or the other by setting reserves higher than you have.
+    Fixed bug where tab window box was not fulling displaying on load. (Right side and bottom edges were cut off).
+    Changed which control is set to focus after script loads (was: profile dropdown, now: stack zone edit box).
+    Added check for "legendary " in addition to "legendary.exe" to detect game location in about tab.
+    Changed window switching on stack restarts to no longer be based on window title.
+    Optimized how formations are read, especially favorites and modron formations.
+    Updated MemoryFunctions methods to be more concise and to be easier to browse when collapsing them in editor.
+
 September 2, 2025
     Updated VersionPicker to choose Steam Pointers when CNE client > 600.
     Fixed memory read/write critical error crash (hopefully!).
