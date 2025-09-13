@@ -497,7 +497,7 @@ class IC_MemoryFunctions_Class
     }
 
     GetActiveModronFormationSaveSlot(){
-        favorite := "M"
+        formation := "M" ; (M)odron
         ; Find the Campaign ID (e.g. 1 is Sword Cost, 2 is Tomb, 1400001 is Sword Coast with Zariel Patron, etc. )
         ; Find the SaveID associated to the Campaign ID 
         ; Find the  index (slot) of the formation with the correct SaveID
@@ -506,11 +506,11 @@ class IC_MemoryFunctions_Class
         if(formationSavesSize <= 0 OR formationSavesSize > 500) ; sanity check, should be < 51 saves per map.
             return ""
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
-        if(formationSaveID > 0 AND this.FormationFavoriteSlots[favorite] != "" AND version == this.LastFormationSavesVersion[favorite])
-            return this.FormationFavoriteSlots[favorite]
+        if(formationSaveID > 0 AND this.FormationFavoriteSlots[formationSaveID] != "" AND version == this.LastFormationSavesVersion[formation])
+            return this.FormationFavoriteSlots[formationSaveID]
         formationSaveSlot := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 1, formationSavesSize, formationSaveID)
-        this.FormationFavoriteSlots[favorite] := formationSaveSlot
-        this.LastFormationSavesVersion[favorite] := version
+        this.FormationFavoriteSlots[formationSaveID] := formationSaveSlot
+        this.LastFormationSavesVersion[formation] := version
         return formationSaveSlot
     }
 
@@ -678,22 +678,18 @@ class IC_MemoryFunctions_Class
         return Formation
     }
 
-    ; Looks for a saved formation matching a favorite. Returns "" on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E)
+    ; Looks for a saved formation matching a favorite. Returns "" on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E). O(n) for potentially large list, try to limit use.
     GetSavedFormationSlotByFavorite(favorite := 1){
         ;reads memory for the number of saved formations
         formationSavesSize := this.ReadFormationSavesSize()
         if(formationSavesSize <= 0 OR formationSavesSize > 500) ; sanity check, should be less than 51 as of 2023-09-03
             return ""
-        favoriteIDsObj := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.favoriteIDs
-        favoriteIDsObj[favorite - 1,,,0x4] ; Create favoriteIDsObj[favorite - 1] object on first run - list items are size 0x4 instead of 0x8 so use byteSizeOverride
-        saveID := favoriteIDsObj[favorite - 1].Read()
-        version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
-        if(saveID > 0 AND this.FormationFavoriteSlots[favorite] != "" AND version == this.LastFormationSavesVersion[favorite])
-            return this.FormationFavoriteSlots[favorite]
-        index := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 1, formationSavesSize, saveID)
-        this.FormationFavoriteSlots[favorite] := index
-        this.LastFormationSavesVersion[favorite] := version
-        return index
+        ;cycle through saved formations to find save slot of Favorite
+        formationSaveSlot := ""
+        loop, %formationSavesSize%
+            if (this.ReadFormationFavoriteIDBySlot(A_Index - 1) == favorite)
+                return A_Index - 1
+        return ""
     }
 
     ReadMostRecentFormationFavorite(){
@@ -717,12 +713,11 @@ class IC_MemoryFunctions_Class
     ;Returns the formation stored at the favorite value passed in.
     GetFormationByFavorite( favorite := 0 ){
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
-        if (this.FormationFavorites[favorite] != "" AND version == this.LastFormationSavesVersion[favorite])
-            return this.FormationFavorites[favorite] 
+        if (this.FormationFavorites[favorite] != "" AND  favorite == this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[this.FormationFavorites[favorite]].Favorite.Read())
+            return this.GetFormationSaveBySlot(this.FormationFavoriteSlots[favorite]) 
         slot := this.GetSavedFormationSlotByFavorite(favorite)
         formation := this.GetFormationSaveBySlot(slot)
-        this.FormationFavorites[favorite] := formation
-        this.LastFormationSavesVersion[favorite] := version
+        this.FormationFavoriteSlots[favorite] := slot
         return formation
     }
 
