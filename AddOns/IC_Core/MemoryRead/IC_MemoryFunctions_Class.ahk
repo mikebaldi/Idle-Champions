@@ -579,7 +579,6 @@ class IC_MemoryFunctions_Class
             if (x > 0)
                 gridJSON .= ","
             gridJSON .= "["
-            gridSave[x,,,0x8] ; create array using pointer size instead of item size (int32 = 0x4 byte)
             gridWidth := gridSave[x].size.Read()
             if !gridHeight
                 gridHeight := 16

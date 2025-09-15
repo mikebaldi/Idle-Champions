@@ -61,22 +61,25 @@ class GameObjectStructure
     {
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
+        if(key == "")
+            return ""
+        if(key == "_ArrayDimensions") ; Prevent infinite recursion.
+            return ""
         if(key == "size")
-        {
             return this.CreateSizeObject()
-        } 
-        else if (key == "__version")
-        {
+        if (key == "__version") 
             return this.CreateVersionObject()
-        }
+        ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
+        if(this.ValueType == "Dict")
+            return this.GetDictionaryObject(key, index, quickLookup)
         ; Special case for List/Stack/Queue collections in a gameobject.
-        else if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
+        if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
         {
             resultObject := this.HandleListStackQueue(key)
             if resultObject != ""
                 return resultObject
         }
-        else if(this.ValueType == "HashSet")
+        if(this.ValueType == "HashSet")
         {
             if key is not integer ; Don't try to create key objects when keys are invalid
                 return
@@ -84,21 +87,10 @@ class GameObjectStructure
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
         }
-        ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
-        else if(this.ValueType == "Dict")
-        {
-            return this.GetDictionaryObject(key, index, quickLookup)
-        }
+        else if key is number
+            this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
         else
-        { 
-            if key is number
-                if (this.ValueType == "Array")
-                    this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride ? byteSizeOverride : _ClassMemory.aTypeSize[GameObjectStructure.SystemTypes[this._CollectionValType]]) + 0))
-                else
-                    this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
-            else
-                return
-        }
+            return
         return this[key]
     }
 
@@ -124,6 +116,8 @@ class GameObjectStructure
         var.Offset := this.Offset
         var._CollectionKeyType := this._CollectionKeyType
         var._CollectionValType := this._CollectionValType
+        if (this._ArrayDimensions)
+            var._ArrayDimensions := this._ArrayDimensions
         return var
     }
 
@@ -312,6 +306,8 @@ class GameObjectStructure
     {
         this[key] := this.StableClone()
         this[key].IsAddedIndex := true
+        if (this._ArrayDimensions)
+            this[key]._ArrayDimensions := this._ArrayDimensions - 1
         location := this.FullOffsets.Count() == 0 ? this.FullOffsets.Count() : this.FullOffsets.Count() + 1
         if(collectionEntriesOffset == "") ; Array type, has no items 
         {
@@ -375,7 +371,10 @@ class GameObjectStructure
         }
         else if (valueType == "Array" )
         {
-            var := _MemoryManager.instance.read(baseAddress, GameObjectStructure.SystemTypes[this._CollectionValType], (this.GetOffsets())*)
+            valueType := GameObjectStructure.SystemTypes[this._CollectionValType]
+            if (this._ArrayDimensions > 0)
+                valueType := "Int64"
+            var := _MemoryManager.instance.read(baseAddress, , (this.GetOffsets())*)
         }
         else if (valueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
@@ -481,9 +480,8 @@ class GameObjectStructure
         
          if(_MemoryManager.Is64Bit)
          {
-            if(!byteSizeOverride) ; No way to know 
-                itemSize := 0x8
-                ; itemSize := GameObjectStructure.ValueTypeToBytes[this.ValueType] ? GameObjectStructure.ValueTypeToBytes[this.ValueType] : 0x8
+            if(!byteSizeOverride) ; _ArrayDimensions not decremented until after this function is called. 1 is effectively 0.
+                itemSize := (this._ArrayDimensions != "" AND  this._ArrayDimensions <= 1 AND _ClassMemory.aTypeSize[GameObjectStructure.SystemTypes[this._CollectionValType]]) ? _ClassMemory.aTypeSize[GameObjectStructure.SystemTypes[this._CollectionValType]] : 0x8
             else
                 itemSize := byteSizeOverride
             offset := 0x20 + ( indexLoc * itemSize )
