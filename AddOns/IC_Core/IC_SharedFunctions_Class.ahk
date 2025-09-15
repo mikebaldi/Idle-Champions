@@ -759,7 +759,22 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
     SafetyCheck()
     {
-        ; TODO: Base case check in case safety check never succeeds in opening the game.
+        static hasStartedSafetyCheck := False
+        static safetyCheckStartTime := 0
+        static safetyCheckTimeout := 900000 ; 15 minutes
+        
+        ; Base case check in case safety check never succeeds in opening the game.
+        if(!hasStartedSafetyCheck)
+        {
+            hasStartedSafetyCheck := True
+            safetyCheckStartTime := A_TickCount
+        }
+        else if (A_TickCount - safetyCheckStartTime > safetyCheckTimeout)
+        {
+            MsgBox, % "Still could not start game after " . safetyCheckOutTime / 1000 / 60 . "minutes. `nCheck game location settings. `nEnding run."
+            ExitApp
+        }
+
         if (Not WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
         {
             if(this.OpenIC() == -1)
@@ -771,6 +786,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.WorldMapRestart()
             this.RecoverFromGameClose(this.GameStartFormation)
             this.BadSaveTest()
+            hasStartedSafetyCheck := False
             return false
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
@@ -783,6 +799,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.Memory.OpenProcessReader()
             this.ResetServerCall()
         }
+        hasStartedSafetyCheck := False
         return true
     }
 

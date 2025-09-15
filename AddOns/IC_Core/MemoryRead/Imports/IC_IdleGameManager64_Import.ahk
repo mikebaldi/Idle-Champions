@@ -91,7 +91,8 @@ this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.targetArea
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.ExpTotal := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x50])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.CoreID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x48])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.InstanceID := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x4c])
-this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.GridSave := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Int", [0x10])
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.GridSave := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Array", [0x10])
+this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.GridSave._CollectionValType := "System.Int32"
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs := New GameObjectStructure(this.game.gameInstances.Controller.userData.ModronHandler.modronSaves,"Dict", [0x20])
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs._CollectionKeyType := "System.Int32"
 this.game.gameInstances.Controller.userData.ModronHandler.modronSaves.Buffs._CollectionValType := "System.Int32"
@@ -206,7 +207,8 @@ this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrow
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionKeyType := "System.Int32"
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionValType := "Engine.Numeric.Quad"
 this.game.gameInstances.FormationSaveHandler := New GameObjectStructure(this.game.gameInstances,"Int", [0x70])
-this.game.gameInstances.FormationSaveHandler.favoriteIDs := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"Int", [0x58])
+this.game.gameInstances.FormationSaveHandler.favoriteIDs := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"Array", [0x58])
+this.game.gameInstances.FormationSaveHandler.favoriteIDs._CollectionValType := "System.Int32"
 this.game.gameInstances.FormationSaveHandler.formationCampaignID := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"Int", [0x88])
 this.game.gameInstances.FormationSaveHandler.formationSavesV2 := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"List", [0x38])
 this.game.gameInstances.FormationSaveHandler.formationSavesV2._CollectionValType := "CrusadersGame.Defs.FormationSaveV2Def"

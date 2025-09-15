@@ -92,7 +92,10 @@ class GameObjectStructure
         else
         { 
             if key is number
-                this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
+                if (this.ValueType == "Array")
+                    this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride ? byteSizeOverride : _ClassMemory.aTypeSize[GameObjectStructure.SystemTypes[this._CollectionValType]]) + 0))
+                else
+                    this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
             else
                 return
         }
@@ -370,6 +373,10 @@ class GameObjectStructure
         {
             var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }
+        else if (valueType == "Array" )
+        {
+            var := _MemoryManager.instance.read(baseAddress, GameObjectStructure.SystemTypes[this._CollectionValType], (this.GetOffsets())*)
+        }
         else if (valueType == "Quad") ; custom ValueTypes not in classMemory.ahk
         {
             offsets := this.GetOffsets().Clone()
@@ -406,7 +413,7 @@ class GameObjectStructure
     CalculateOffset( listItem, indexStart := 0 )
     {
         if(indexStart) ; If list is not 0 based indexing
-            listItem--             ; AHK uses 0 based array indexing, switch to 0 based
+            listItem--             ; AHK uses 1 based array indexing, switch to 0 based
         
          if(_MemoryManager.Is64Bit)
          {
