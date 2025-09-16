@@ -69,6 +69,8 @@ class IC_About_Component
         GuiControl,ICScriptHub:Show, AboutComponentGameVersion
         GuiControl,ICScriptHub:Hide, AboutComponentRefreshLink
         GuiControl,ICScriptHub:Show, AboutComponentRefreshLink
+        GuiControl,ICScriptHub:Hide, AboutComponentImportsWarning
+        GuiControl,ICScriptHub:Show, AboutComponentImportsWarning
     }
 
     GetScriptVersions()
