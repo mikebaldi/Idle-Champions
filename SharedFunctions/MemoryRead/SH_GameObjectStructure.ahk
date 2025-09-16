@@ -59,30 +59,50 @@ class GameObjectStructure
     ; When a key is not found for objects which have collections, use this function. 
     __Get(key, index := 0, quickLookup := false, byteSizeOverride := 0x0)
     {
+        static debugRecursionDepth := 0
+        static notificationSet := False
+        debugRecursionDepth++
+        if (debugRecursionDepth > 6 and !notificationSet) ; Should be < 3
+        {
+            MsgBox, % "Infinite recursion detected on a gameObject using key = " . key . ". Crash likely incoming."
+            notificationSet := True
+        }
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
         if(key == "")
-            return ""
+            return debugRecursionDepth := 0 ? "" : "" ;reset recursion depth
         if(key == "_ArrayDimensions") ; Prevent infinite recursion.
-            return ""
+            return debugRecursionDepth := 0 ? "" : "" ;reset recursion depth
         if(key == "size")
+        {
+            debugRecursionDepth := 0
             return this.CreateSizeObject()
+        }
         if (key == "__version") 
+        {
+            debugRecursionDepth := 0
             return this.CreateVersionObject()
+        }
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
         if(this.ValueType == "Dict")
+        {
+            debugRecursionDepth := 0
             return this.GetDictionaryObject(key, index, quickLookup)
+        }
         ; Special case for List/Stack/Queue collections in a gameobject.
         if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
         {
             resultObject := this.HandleListStackQueue(key)
             if resultObject != ""
+            {
+                debugRecursionDepth := 0
                 return resultObject
+            }
         }
         if(this.ValueType == "HashSet")
         {
             if key is not integer ; Don't try to create key objects when keys are invalid
-                return
+                return debugRecursionDepth := 0 ? "" : "" ;reset recursion depth
             offset := this.CalculateHashSetOffset(key) + 0
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
@@ -90,7 +110,8 @@ class GameObjectStructure
         else if key is number
             this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
         else
-            return
+            return debugRecursionDepth := 0 ? "" : "" ;reset recursion depth
+        debugRecursionDepth := 0
         return this[key]
     }
 
@@ -268,19 +289,13 @@ class GameObjectStructure
                 continue
             if(!IsObject(v) OR k == "BasePtr") ; Keep BasePtr as a reference
             {
-                ; if(k == "_CollectionKeyType" OR k == "_CollectionValType")
-                ;     continue
                 var[k] := v
                 continue
             }
             if(ObjGetBase(v).__Class == "GameObjectStructure" AND !v.IsAddedIndex)
-            {   
                 var[k] := v.StableClone()
-            }
             else if(ObjGetBase(v).__Class != "GameObjectStructure")
-            {
                 var[k] := v.Clone()
-            }
         }
         return var
     }
@@ -569,9 +584,7 @@ class GameObjectStructure
         for k,v in this
         {
             if(!IsObject(v))
-            {
                 continue
-            }
             if(ObjGetBase(v).__Class == "GameObjectStructure" AND !v.IsAddedIndex)
             {   
                 this[k].GSOName := k
@@ -625,17 +638,11 @@ class GameObjectStructure
         for k,v in this
         {
             if(!IsObject(v) OR !ObjGetBase(v).__Class == "GameObjectStructure" OR k == "BasePtr")
-            {
                 continue
-            }
             if(v.IsAddedIndex)
-            {   
                 this.Delete(k)
-            }
             else
-            {
                 this[k].ResetCollections()
-            }
         }
     }
 
@@ -646,14 +653,8 @@ class GameObjectStructure
         for k,v in this
         {
             if(k == "DictionaryObject" AND v.Count() > 0)
-            {
                 for j,x in v
-                {
-                    ; if(IsObject(x) AND ObjGetBase(x).__Class == "GameObjectStructure")
-                    value := x.BuildNames(name . k . ".")   
-                }
-                    ; g_string := g_string . name . "`n"
-            }
+                    value := x.BuildNames(name . k . ".")
             if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
                 value := v.BuildNames(name . k . ".")  
         }
