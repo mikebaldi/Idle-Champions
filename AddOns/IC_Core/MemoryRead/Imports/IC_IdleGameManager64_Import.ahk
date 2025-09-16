@@ -208,9 +208,6 @@ this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrow
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionKeyType := "System.Int32"
 this.game.gameInstances.ActiveCampaignData.currentRules.monsterbaseStats.DPSGrowthRateCurve._CollectionValType := "Engine.Numeric.Quad"
 this.game.gameInstances.FormationSaveHandler := New GameObjectStructure(this.game.gameInstances,"Int", [0x70])
-this.game.gameInstances.FormationSaveHandler.favoriteIDs := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"Array", [0x58])
-this.game.gameInstances.FormationSaveHandler.favoriteIDs._CollectionValType := "System.Int32"
-this.game.gameInstances.FormationSaveHandler.favoriteIDs._ArrayDimensions := "1"
 this.game.gameInstances.FormationSaveHandler.formationCampaignID := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"Int", [0x88])
 this.game.gameInstances.FormationSaveHandler.formationSavesV2 := New GameObjectStructure(this.game.gameInstances.FormationSaveHandler,"List", [0x38])
 this.game.gameInstances.FormationSaveHandler.formationSavesV2._CollectionValType := "CrusadersGame.Defs.FormationSaveV2Def"
