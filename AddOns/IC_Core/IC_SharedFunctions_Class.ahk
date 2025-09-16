@@ -871,11 +871,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 Sleep, 20
         }
         g_SharedData.LoopString := "Waiting for formation swap..."
-        formationFavorite := this.Memory.GetFormationByFavorite( formationFavoriteNum )
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
-            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
+            isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
@@ -885,7 +884,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 Sleep, 20
         }
-        isCurrentFormation := this.IsCurrentFormation( formationFavorite )
+        isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
         ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
         g_SharedData.LoopString := "Under attack. Retreating to change formations..."
@@ -895,7 +894,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
-            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
+            isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
         g_SharedData.LoopString := "Loading game finished."
     }

@@ -448,9 +448,9 @@ class IC_BrivGemFarm_Class
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 1
-        sleepTime := 250
+        sleepTime := 100
         g_SharedData.LoopString := "Setting stack farm formation."
-        while ( !g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite( 2 )) AND ElapsedTime < 5000 )
+        while ( !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2) AND ElapsedTime < 5000 )
         {
             ElapsedTime := A_TickCount - StartTime
             if (ElapsedTime > (counter * sleepTime)) ; input limiter..
