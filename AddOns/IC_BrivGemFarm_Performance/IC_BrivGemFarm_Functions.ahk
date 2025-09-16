@@ -518,7 +518,7 @@ class IC_BrivGemFarm_Class
             chestsCompletedString := " " . this.DoChests(numSilverChests, numGoldChests, gems)
             while ( ElapsedTime < g_BrivUserSettings[ "RestartStackTime" ] )
             {
-                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime . chestsCompletedString
+                g_SharedData.LoopString := "Stack Sleep: " . g_BrivUserSettings[ "RestartStackTime" ] - ElapsedTime
                 Sleep, 124
                 ElapsedTime := A_TickCount - StartTime
             }
@@ -813,7 +813,6 @@ class IC_BrivGemFarm_Class
     ; Sends calls for buying or opening chests and tracks chest metrics.
     DoChests(numSilverChests := "", numGoldChests := "", gems:= "")
     {
-        g_SharedData.LoopString := "Stack Sleep: " . " Buying or Opening Chests"
         return this.DoChestsSetup(numSilverChests, numGoldChests, gems)
     }
 
