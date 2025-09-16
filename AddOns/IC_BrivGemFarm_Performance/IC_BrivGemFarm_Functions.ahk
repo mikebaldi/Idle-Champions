@@ -6,6 +6,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
+        this.StackNormal(30000) ; Give 30s max to try to gain some stacks before a forced reset.
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
         this.CloseIC( reason )
@@ -23,7 +24,7 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         base.WriteObjectToJSON(A_LineFile . "\..\ServerCall_Settings.json" , jsonObj)
         scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
         Run, %A_AhkPath% "%scriptLocation%"
-        ; this.WaitForCalls()
+        this.AlreadyOfflineStackedThisRun := False
     }
 
     WaitForCalls(GUID)
@@ -109,9 +110,8 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
             Sleep, 20
         }
         if (ElapsedTime >= timeout)
-        {
             return false
-        }
+        this.AlreadyOfflineStackedThisRun := False
         return true
     }
 
@@ -387,22 +387,19 @@ class IC_BrivGemFarm_Class
         runsMax := g_BrivUserSettings[ "ForceOfflineRunThreshold" ]
         ; hybrid stacking not used. Use default test for offline stacking. 
         if !( (gemsMax > 1) OR (runsMax > 0) )
-        {
             return ( g_BrivUserSettings [ "RestartStackTime" ] > 0 )
-        }
+        ; hybrid and already offline stacked
+        if (this.AlreadyOfflineStackedThisRun)
+            return 0
         ; hybrid stacking by number of gems.
         if (gemsMax > 0 AND g_SF.Memory.ReadGems() > (gemsMax + g_BrivUserSettings[ "MinGemCount" ]))
-        {
             return 1
-        }
         ; hybrid stacking by number of runs.
         if (runsMax > 1)
         {
             memRead := g_SF.Memory.ReadResetsCount()
             if (memRead > 0 AND Mod( memRead, runsMax ) = 0)
-            {
                 return 1
-            }
         }
         ; hybrid stacking enabled but conditions for offline stacking not met
         return 0
@@ -556,6 +553,7 @@ class IC_BrivGemFarm_Class
             this.LastStackSuccessArea := g_SF.CurrentZone
         }
         g_PreviousZoneStartTime := A_TickCount
+        this.AlreadyOfflineStackedThisRun := True
         return 
     }
 
