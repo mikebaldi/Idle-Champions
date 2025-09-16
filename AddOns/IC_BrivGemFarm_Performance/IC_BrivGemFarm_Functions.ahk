@@ -447,17 +447,19 @@ class IC_BrivGemFarm_Class
         g_SF.ToggleAutoProgress( 0 , false, true )
         StartTime := A_TickCount
         ElapsedTime := 0
-        counter := 1
+        counter := 0
         sleepTime := 100
         g_SharedData.LoopString := "Setting stack farm formation."
         while ( !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2) AND ElapsedTime < 5000 )
         {
             ElapsedTime := A_TickCount - StartTime
-            if (ElapsedTime > (counter * sleepTime)) ; input limiter..
-            {
+            if (ElapsedTime > (sleepTime * counter++))
                 g_SF.DirectedInput(,,inputValues)
-                counter++
-            }
+            ; Can't formation switch when under attack.
+            if (ElapsedTime > 1000 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
+                 ; not W formation or briv is benched
+                if (!(g_SF.Memory.ReadMostRecentFormationFavorite() == 2) OR g_SF.Memory.ReadChampBenchedByID(58))
+                    g_SF.FallBackFromZone()
         }
         return
     }
