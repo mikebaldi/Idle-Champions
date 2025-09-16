@@ -900,7 +900,8 @@ class IC_MemoryFunctions_Class
         ; IndexList build because:
         ; maxContiguousChestID := 283 ; (ordered and continuous)
         ; maxOrderedChestID := 419 ; then 482 comes before 420
-        if(this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].ID.Read() != chestID)
+        static preBuild := True
+        if(preBuild AND this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].ID.Read() != chestID)
             this.BuildChestIndexList()
         return this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].NamePlural.Read()
     }
@@ -1034,7 +1035,7 @@ class IC_MemoryFunctions_Class
     ; Builds this.ChestIndexByID from memory values.
     BuildChestIndexList(){
         size := this.ReadChestDefinesSize()
-        if(size <= 0 OR size > 10000) ; Sanity checks
+        if(size <= 0 OR size > 2000) ; Sanity checks
             return "" 
         loop, %size%
             this.ChestIndexByID[this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()] := A_Index - 1

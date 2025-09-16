@@ -921,6 +921,61 @@
 				"staticOffset":""
 			}
 		},
+		"633":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":7671840,
+				"moduleOffset":[
+					56,
+					64,
+					2720
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":7671840,
+				"moduleOffset":[
+					56,
+					64,
+					3040
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":7816472,
+				"moduleOffset":[
+					672
+				],
+				"staticOffset":3840
+			},
+			"GameSettings":{
+				"moduleAddress":10564936,
+				"moduleOffset":[
+					352,
+					2152,
+					160,
+					432
+				],
+				"staticOffset":592
+			},
+			"IdleGameManager":{
+				"moduleAddress":7655936,
+				"moduleOffset":[
+					3872
+				],
+				"staticOffset":""
+			},
+			"is64":1,
+			"UserData":{
+				"moduleAddress":"",
+				"moduleOffset":"",
+				"staticOffset":""
+			},
+			"UserStatHandler":{
+				"moduleAddress":"",
+				"moduleOffset":"",
+				"staticOffset":""
+			}
+		},
 		"474.1":{
 			"CrusadersGameDataSet":{
 				"moduleAddress":4862904,
@@ -2163,6 +2218,72 @@
 				"moduleAddress":7655936,
 				"moduleOffset":[
 					3848
+				],
+				"staticOffset":""
+			},
+			"is64":1,
+			"UserData":{
+				"moduleAddress":4835272,
+				"moduleOffset":[
+					64
+				],
+				"staticOffset":3376
+			},
+			"UserStatHandler":{
+				"moduleAddress":4816360,
+				"moduleOffset":[
+					1024,
+					2048,
+					184
+				],
+				"staticOffset":0
+			}
+		},
+		"633":{
+			"CrusadersGameDataSet":{
+				"moduleAddress":7671704,
+				"moduleOffset":[
+					56,
+					64,
+					2848
+				],
+				"staticOffset":""
+			},
+			"DialogManager":{
+				"moduleAddress":7671704,
+				"moduleOffset":[
+					56,
+					64,
+					3232
+				],
+				"staticOffset":""
+			},
+			"EngineSettings":{
+				"moduleAddress":7815920,
+				"moduleOffset":[
+					640,
+					224,
+					0,
+					120,
+					172,
+					104
+				],
+				"staticOffset":0
+			},
+			"GameSettings":{
+				"moduleAddress":10564936,
+				"moduleOffset":[
+					352,
+					2152,
+					160,
+					432
+				],
+				"staticOffset":592
+			},
+			"IdleGameManager":{
+				"moduleAddress":7655936,
+				"moduleOffset":[
+					3872
 				],
 				"staticOffset":""
 			},
