@@ -642,9 +642,13 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         {
             g_SharedData.LoopString := "Opening IC.."
             programLoc := g_UserSettings[ "InstallPath" ]
+            runHidden := g_UserSettings[ "RunHidden" ]
             try
             {
-                Run, %programLoc%
+                if (runHidden)
+                    Run, %programLoc%,, Hide
+                else
+                    Run, %programLoc%
             }
             catch
             {
