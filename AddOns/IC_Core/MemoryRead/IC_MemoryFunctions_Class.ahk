@@ -568,7 +568,7 @@ class IC_MemoryFunctions_Class
     ; Expecting modronSave from this location: this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[x]
     ; The int value for x is also acceptable.
     ReadModronGridArray(modronSave){
-        if (modronSave is number)
+        if modronSave is number
             modronSave := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ModronHandler.modronSaves[modronSave]
         gridSave := modronSave.GridSave.QuickClone()
         gridHeight := gridSave.size.Read()
