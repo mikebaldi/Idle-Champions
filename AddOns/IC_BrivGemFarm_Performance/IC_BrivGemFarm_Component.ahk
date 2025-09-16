@@ -22,8 +22,8 @@ Gui, ICScriptHub:Add, Checkbox, vFkeysCheck x15 y+5, Level Champions with Fkeys?
 Gui, ICScriptHub:Add, Checkbox, vStackFailRecoveryCheck x15 y+5, Enable manual resets to recover from failed Briv stacking?
 Gui, ICScriptHub:Add, Checkbox, vDisableDashWaitCheck x15 y+5, Disable Dash Wait?
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
-Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+5 w50, % g_BrivUserSettings[ "StackZone" ]
-Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+10 w50, % g_BrivUserSettings[ "MinStackZone" ]
+Gui, ICScriptHub:Add, Edit, vNewMinStackZone x15 y+5 w50, % g_BrivUserSettings[ "MinStackZone" ]
+Gui, ICScriptHub:Add, Edit, vNewStackZone x15 y+10 w50, % g_BrivUserSettings[ "StackZone" ]
 Gui, ICScriptHub:Add, Edit, vNewRestartStackTime x15 y+10 w50, % g_BrivUserSettings[ "RestartStackTime" ]
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
 Gui, ICScriptHub:Add, GroupBox, Section w400 h50 vBrivGemFarmTargetHasteGroupBox, Target haste stacks for next run
@@ -92,11 +92,11 @@ Gui, ICScriptHub:Add, Edit, vNewMinGemCount x25 y+10 w100, % g_BrivUserSettings[
 
 
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
-GuiControlGet, xyVal, ICScriptHub:Pos, NewStackZone
+GuiControlGet, xyVal, ICScriptHub:Pos, NewMinStackZone
 xyValX += 55
 xyValY += 5
-Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Farm SB stacks AFTER this zone
-Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Minimum zone Briv can farm SB stacks on
+Gui, ICScriptHub:Add, Text, x%xyValX% y%xyValY%+10, Minimum stack zone (the first area Briv (W) cannot kill.)
+Gui, ICScriptHub:Add, Text, x%xyValX% y+18, Farm Steelbones stacks AFTER this zone (typically 2 jumps before modron reset)
 GuiControlGet, xyVal, ICScriptHub:Pos, NewRestartStackTime
 xyValX += 55
 xyValY += 5
