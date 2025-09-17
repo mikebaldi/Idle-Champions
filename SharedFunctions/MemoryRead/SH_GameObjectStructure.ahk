@@ -93,7 +93,7 @@ class GameObjectStructure
         if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
         {
             resultObject := this.HandleListStackQueue(key)
-            if resultObject != ""
+            if (resultObject != "")
             {
                 debugRecursionDepth := 0
                 return resultObject
