@@ -137,7 +137,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 
         ; BUYCHESTS -  wait until can do a max server call of golds or max server call of silvers - then do both - if WaitToBuyChests set
         isMaxReady := ((Floor(gemsSilver / silverChestCost) > serverRateBuy OR Floor(gemsGold / goldChestCost) > serverRateBuy))
-        if ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ])
+        if (this.UserSettings[ "BuyChests" ] AND ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ]))
         {
             
             amount := Floor(gemsSilver / silverChestCost)
@@ -155,7 +155,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             response .= this.OpenChests( chestID := 2, amount )
 
         if (response / 1 > 0) ; AHK trickery to check if only numeric values were returned (all 1s) vs text/0 (incorrect if test for e.g. 1."".1.1)
-            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json" )
+            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json", response )
         else if (response != "") ; "" would also be a failure
             return doContinue := True
         return doContinue := False
