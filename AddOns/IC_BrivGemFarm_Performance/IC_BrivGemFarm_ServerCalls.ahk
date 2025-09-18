@@ -25,10 +25,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         this.LoadSettings()
         this.LoadServerCallSettings()
         this.LoadUserSettings()
-        this.LoadGemFarmGUID()
-        ; ComObjCreate("Scriptlet.TypeLib").GUID
-        if (this["GemFarmGUID"] != "")
-            ObjRegisterActive(this.SharedData, this["GemFarmGUID"])
+        this.LoadGemFarmConnection()
     }
 
     ; Load global server call Settings into this class.
@@ -58,9 +55,16 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     }
 
     ; Load gem farm com object GUID into this class.
-    LoadGemFarmGUID()
+    LoadGemFarmConnection()
     {
         this.GemFarmGUID := this.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
+        if (this.GemFarmGUID != "")
+        {
+            try
+            {
+                this.SharedData := ComObjActive(GemFarmGUID)
+            }
+        }
     }
 
     ; Execute any function calls passed to this class via arguments or saved in script defined server call settings file.
@@ -109,9 +113,9 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             ; < runTime * hybridCount (don't want to be double running purchase scripts) ; alternatively shared com flag?
             while(ElapsedTime < hybridStackTimeout)
             {
-                ElapsedTime := A_TickCount - StartTime
                 if !(this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
                     break
+                ElapsedTime := A_TickCount - StartTime
             }
         }
         else
@@ -130,7 +134,8 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         goldChestCost := 500
         silverChestCost := 50
 
-        response := ""
+        responses := {}
+        doContinue :=   True
         gems := totalGems - this.UserSettings[ "MinGemCount" ] ; gems left to buy with
         gemsSilver := gems * this.UserSettings[ "BuySilverChestRatio" ] ; portion to silver
         gemsGold := gems * this.UserSettings[ "BuyGoldChestRatio" ] ; portion to gold
@@ -141,24 +146,39 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         {
             
             amount := Floor(gemsSilver / silverChestCost)
-            response .= this.BuyChests( chestID := 1, amount )
+            responses.Push(this.BuyChests( chestID := 1, amount ))
             amount := Floor(gemsGold / goldChestCost) 
-            response .= this.BuyChests( chestID := 2, amount )
+            responses.Push(this.BuyChests( chestID := 2, amount ))
         }
-
         ; OPENCHESTS - only open if can do a maxed call if WaitToBuyChests set
         amount := Min(numSilverChests - this.UserSettings[ "MinSilverChestCount" ], serverRateOpen)
         if (this.UserSettings[ "OpenChests" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
-            response .= this.OpenChests( chestID := 1, amount )
+            responses.Push(this.OpenChests( chestID := 1, amount ))
         amount := Min(numGoldChests - this.UserSettings[ "MinGoldChestCount" ], serverRateOpen)
         if (this.UserSettings[ "OpenChests" ] AND (amount >= serverRateOpen OR !this.UserSettings[ "WaitToBuyChests" ]))
-            response .= this.OpenChests( chestID := 2, amount )
+            responses.Push(this.OpenChests( chestID := 2, amount ))
 
-        if (response / 1 > 0) ; AHK trickery to check if only numeric values were returned (all 1s) vs text/0 (incorrect if test for e.g. 1."".1.1)
-            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json", response )
-        else if (response != "") ; "" would also be a failure
-            return doContinue := True
-        return doContinue := False
+        responseCount := responses.Count()
+        if(responseCount) <= 0
+            return doContinue := False
+        lastErrResponse := ""
+        loop %responseCount%
+        {
+            if (responses[A_Index] == 0)
+            {
+                doContinue := False
+                lastErrResponse := "Invalid chestID or chest count."
+                continue
+            }
+            if (responses[A_Index] != 1)
+            {
+                lastErrResponse := responses[A_Index]
+                doContinue := False
+            }
+        }
+        if (!doContinue)
+            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json", lastErrResponse )
+        return doContinue
     }
 
     /*  BuyChests - A method to buy chests based on parameters passed.
@@ -176,7 +196,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     BuyChests( chestID := "", numChests := "")
     {
         if (numChests <= 0 or chestID <= 0)
-            return
+            return 0
         response := g_BrivServerCall.CallBuyChests( chestID, numChests )
         if !(response.okay AND response.success)
             return response
@@ -202,7 +222,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     OpenChests( chestID := "", numChests := "" )
     {
         if (numChests <= 0 or chestID <= 0)
-            return
+            return 0
         chestResults := g_BrivServerCall.CallOpenChests( chestID, numChests )
         if (!chestResults.success)
             return chestResults
