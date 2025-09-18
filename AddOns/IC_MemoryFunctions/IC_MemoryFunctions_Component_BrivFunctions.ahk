@@ -24,8 +24,6 @@ Gui, ICScriptHub:Add, Text, x15 y+5, CalculateBrivStacksConsumedToReachModronRes
 Gui, ICScriptHub:Add, Text, vCalculateBrivStacksConsumedToReachModronResetZoneID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, LeftoverStacksAtReset: 
 Gui, ICScriptHub:Add, Text, vLeftoverStacksAtResetID x+2 w300,
-Gui, ICScriptHub:Add, Text, x15 y+5, BrivCalculatedTargetStacks: 
-Gui, ICScriptHub:Add, Text, vBrivCalculatedTargetStacksID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, BrivCalculatedTargetStacks (1 time - Com): 
 Gui, ICScriptHub:Add, Text, vBrivCalculatedTargetStacks2ID x+2 w300,
 Gui, ICScriptHub:Add, Text, x15 y+5, CalculateMaxZone: 
@@ -70,7 +68,6 @@ class ReadMemoryFunctionsExtended
             {
                 SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
                 GuiControl, ICScriptHub:, PreviousStackingStacksID, % SharedRunData.PreviousStacksFromOffline
-                GuiControl, ICScriptHub:, BrivCalculatedTargetStacks2ID, % SharedRunData.TargetStacks
             }
             catch
             {
