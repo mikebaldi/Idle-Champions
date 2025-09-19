@@ -228,7 +228,9 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             return chestResults
         this.SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
         this.SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
-        this.SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
+        this.SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )\
+        if (chestResults.chests_remaining < numChests)
+            return "Not enough chests remaining to continue opening."
         return okToContinue := 1
     }
 
