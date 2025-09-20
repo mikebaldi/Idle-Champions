@@ -177,7 +177,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
             }
         }
         if (!doContinue)
-            this.WriteObjectToJSON( A_LineFile . "\..\LastBadChestCallResponse.json", lastErrResponse )
+            this.WriteObjectToJSON( A_LineFile . "\..\CurrentLastBadChestCallResponse.json", lastErrResponse )
         return doContinue
     }
 
