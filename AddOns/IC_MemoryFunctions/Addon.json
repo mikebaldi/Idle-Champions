@@ -1,5 +1,5 @@
 {
-	"Name":"Memory Functions",
+	"Name":"Memory Functions Testing (Continuous)",
 	"Version": "v0.2.4",
     "Includes" : "IC_MemoryFunctions_Component.ahk",
     "Author" : "Antilectual & mikebaldi1980",
