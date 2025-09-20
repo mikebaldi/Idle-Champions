@@ -12,17 +12,11 @@ class SH_UpdateClass
         {
             if(IsFunc(func))
             {
-                if(IC_UpdateClass_Class.UpdatedFunctions[classToUpdateName . "." . functionName] AND !ignoreWarnings)
-                    MsgBox, 48, CONFLICT NOTICE:, % func.Name . "() overwrites " . classToUpdateName . "." . functionName . "() which was previously overwritten by " IC_UpdateClass_Class.UpdatedFunctions[classToUpdateName . "." . functionName] . "." . functionName . "()."
+                if(SH_UpdateClass.UpdatedFunctions[classToUpdateName . "." . functionName] AND !ignoreWarnings)
+                    MsgBox, 48, CONFLICT NOTICE:, % func.Name . "() overwrites " . classToUpdateName . "." . functionName . "() which was previously overwritten by " SH_UpdateClass.UpdatedFunctions[classToUpdateName . "." . functionName] . "." . functionName . "()."
                 classToUpdate[functionName] := func
-                IC_UpdateClass_Class.UpdatedFunctions[classToUpdateName . "." . functionName] := classWithOverridesName
+                SH_UpdateClass.UpdatedFunctions[classToUpdateName . "." . functionName] := classWithOverridesName
             }
         }
     }
-}
-
-; For backwards compatibility
-class IC_UpdateClass_Class extends SH_UpdateClass
-{
-
 }
