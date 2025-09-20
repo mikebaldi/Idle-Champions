@@ -70,7 +70,7 @@ class IC_MemoryFunctions_Class
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion(){
-        return "v2.5.6, 2025-09-12"
+        return "v2.5.7, 2025-09-20"
     }
 
     GetPointersVersion(){
@@ -757,7 +757,7 @@ class IC_MemoryFunctions_Class
     }
 
     ReadHeroUpgradeRequiredLevelByIndex(champID := 1, upgradeIndex := 7){
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId["key", upgradeIndex].RequiredLevel.Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId["value", upgradeIndex].RequiredLevel.Read()
     }
 
     ; Checks for specialization graphic. No graphic means no spec.
@@ -885,7 +885,7 @@ class IC_MemoryFunctions_Class
     }
 
     ReadInventoryChestIDBySlot(slot){
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", slot, quickLookup := True].Read()
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ChestHandler.chestCounts["key", slot].Read()
     }
 
     ReadInventoryChestCountBySlot(slot){
@@ -901,17 +901,17 @@ class IC_MemoryFunctions_Class
         ; maxContiguousChestID := 283 ; (ordered and continuous)
         ; maxOrderedChestID := 419 ; then 482 comes before 420
         static preBuild := True
-        if(preBuild AND this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].ID.Read() != chestID)
+        if(preBuild AND this.CrusadersGameDataSet.ChestTypeDefines["value", this.ChestIndexByID[chestID]].ID.Read() != chestID)
             this.BuildChestIndexList()
-        return this.CrusadersGameDataSet.ChestTypeDefines[this.ChestIndexByID[chestID]].NamePlural.Read()
+        return this.CrusadersGameDataSet.ChestTypeDefines["value", this.ChestIndexByID[chestID]].NamePlural.Read()
     }
 
     GetChestNameBySlot(index){ 
-        return this.CrusadersGameDataSet.ChestTypeDefines[index - 1].Name.Read()
+        return this.CrusadersGameDataSet.ChestTypeDefines["value", index - 1].Name.Read()
     }
 
     GetChestIDBySlot(index){
-        return this.CrusadersGameDataSet.ChestTypeDefines[index - 1].ID.Read()
+        return this.CrusadersGameDataSet.ChestTypeDefines["value", index - 1].ID.Read()
     }
 
     ReadChestDefinesSize(){
@@ -1038,7 +1038,7 @@ class IC_MemoryFunctions_Class
         if(size <= 0 OR size > 2000) ; Sanity checks
             return "" 
         loop, %size%
-            this.ChestIndexByID[this.CrusadersGameDataSet.ChestTypeDefines[A_Index - 1].ID.Read()] := A_Index - 1
+            this.ChestIndexByID[this.CrusadersGameDataSet.ChestTypeDefines["value",A_Index - 1,True].ID.Read()] := A_Index - 1
     }
 
     ; Creates GameObjectSTructure indexes of all chests in chest defines.
@@ -1056,7 +1056,7 @@ class IC_MemoryFunctions_Class
         return !_MemoryManager.is64Bit ? ( (g_ImportsGameVersion32 == "" ? " ---- " : (g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32 )) . " (32 bit), " ) : ( (g_ImportsGameVersion64 == "" ? " ---- " : (g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64)) . " (64 bit)")
     }
     
-    HeroHasFeatSavedInFormation(heroID :=58, featID := 2131, formationSlot := 0){
+    HeroHasFeatSavedInFormation(heroID :=58, featID := 2131, formationSlot := 1){
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
         if(size == "")
             return ""
@@ -1068,7 +1068,7 @@ class IC_MemoryFunctions_Class
         return false
     }
     
-    HeroHasAnyFeatsSavedInFormation(heroID := 58, formationSlot := 0){
+    HeroHasAnyFeatsSavedInFormation(heroID := 58, formationSlot := 1){
         ; heroID :=58
         size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[formationSlot].Feats[heroID].List.size.Read()
         if(size == "")
