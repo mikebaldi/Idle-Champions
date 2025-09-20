@@ -318,7 +318,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if (this.IsDashActive())
             return
         this.ToggleAutoProgress( 0, false, true )
-        this.LevelChampByID(Shandie.HeroID, minDashLevel, 7000, "")
+        this.LevelChampByID(ActiveEffectKeySharedFunctions.Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
         this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.EffectKeyString)
