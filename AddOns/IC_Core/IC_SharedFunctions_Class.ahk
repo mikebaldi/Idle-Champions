@@ -60,7 +60,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v3.0.3, 2025-08-09"
+        return "v3.0.4, 2025-09-20"
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.
@@ -314,17 +314,20 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     */
     DoDashWait( DashWaitMaxZone := 2000 )
     {
+        static minDashLevel := 120
+        if (this.IsDashActive())
+            return
         this.ToggleAutoProgress( 0, false, true )
-        this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
+        this.LevelChampByID(Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
         this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.EffectKeyString)
-        StartTime := A_TickCount
-        ElapsedTime := 0
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
-        timeout := 30000 ; 60s seconds ( previously / timescale (6s at 10x) )
-        estimate := (timeout / timeScale) ; no buffer: 60s / timescale to show in LoopString
+        timeout := this.IsSecondWindActive() ? 10000 : 30000
+        estimate := (timeout / timeScale)
+        StartTime := A_TickCount
+        ElapsedTime := 0
         ; Loop escape conditions:
         ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
@@ -335,11 +338,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.SetFormation()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
-            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10), 15)
+			percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10 + 15), 15)
             Sleep, %percentageReducedSleep%
         }
         g_PreviousZoneStartTime := A_TickCount
-        return
     }
 
     ; Template function for whether determining if to Dash Wait. Default is Yes if shandie is in the formation.
@@ -403,6 +405,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     {
         static lastCheck := 0
         static fallBackTries := 0
+        global g_PreviousZoneStartTime
         ;TODO: add better code in case a modron reset happens without being detected. might mean updating other functions.
         dtCurrentZoneTime := Round((A_TickCount - g_PreviousZoneStartTime) / 1000, 2)
         if (isStuck)
@@ -486,9 +489,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     SetFormation(settings := "")
     {
         if(settings != "")
-        {
             this.Settings := settings
-        }
+        this.Settings[ "FeatSwapEnabled" ] := False
         ;only send input messages if necessary
         brivBenched := this.Memory.ReadChampBenchedByID(58)
         ;check to bench briv
@@ -505,7 +507,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             g_SharedData.SwapsMadeThisRun++
             return
         }
-        isFormation2 := this.Memory.ReadMostRecentFormationFavorite() == 2
+        isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
         isWalkZone := this.Settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
@@ -526,9 +528,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; True/False on whether Briv should be benched based on game conditions.
     BenchBrivConditions(settings)
     {
-        ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
-        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
-            return true
+        if(!settings[ "FeatSwapEnabled "])
+            ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
+            if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
+                return true
         ;bench briv not in a preferred briv jump zone
         if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
             return true
@@ -539,7 +542,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         maxSwapArea := this.ModronResetZone - settings[ "BrivJumpBuffer" ]
         if (this.Memory.ReadCurrentZone() >= maxSwapArea)
             return true
-
         return false
     }
 
@@ -950,6 +952,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     LevelChampByID(ChampID := 1, Lvl := 0, timeout := 5000, keys := "{q}")
     {
         Critical, On
+        if ((champLevel := this.Memory.ReadChampLvlByID(ChampID)) >= Lvl)
+            return
         g_SharedData.LoopString := "Leveling Champ " . ChampID . " to " . Lvl
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -965,7 +969,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         keys := !IsObject(keys) ? [keys] : keys
         this.DirectedInput(,, keys* )
         this.DirectedInput(,release := 0, var* ) ; keysdown
-        champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
