@@ -41,6 +41,8 @@ class _MemoryManager
 
     Refresh(moduleName := "mono-2.0-bdwgc.dll")
     {
+        moduleName1 := "mono-2.0-bdwgc.dll"
+        moduleName2 := "UnityPlayer.dll"
         this.isInstantiated := false
         ;Open a process with sufficient access to read and write memory addresses (this is required before you can use the other functions)
         ;You only need to do this once. But if the process closes/restarts, then you will need to perform this step again. Refer to the notes section below.
@@ -55,10 +57,12 @@ class _MemoryManager
         }
         else
         {
-            this.baseAddress[moduleName] := -1
+            this.baseAddress[moduleName1] := -1
+            this.baseAddress[moduleName2] := -1
             return False
         }
-        this.baseAddress[moduleName] := this.instance.getModuleBaseAddress(moduleName)
+        this.baseAddress[moduleName1] := this.instance.getModuleBaseAddress(moduleName1)
+        this.baseAddress[moduleName2] := this.instance.getModuleBaseAddress(moduleName2)
         return true
     }
 }
