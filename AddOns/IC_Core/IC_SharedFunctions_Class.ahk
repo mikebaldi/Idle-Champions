@@ -111,7 +111,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     KillCurrentBoss( maxLoopTime := 25000 )
     {
         CurrentZone := this.Memory.ReadCurrentZone()
-        if mod( CurrentZone, 5 )
+        if ( mod( CurrentZone, 5 ) )
             return 1
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -194,6 +194,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 CurrentZone := this.Memory.ReadCurrentZone()
                 counter++
             }
+            Sleep, 20
         }
         CurrentZone := this.Memory.ReadCurrentZone()
         StartTime := A_TickCount
@@ -207,6 +208,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.DirectedInput(,, "{Left}" )
                 counter++
             }
+            Sleep, 20
         }
         this.WaitForTransition()
         ElapsedTime := A_TickCount - StartTime
@@ -234,6 +236,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.DirectedInput(,, "{g}" )
                 keyCount++
             }
+            Sleep, 20
         }
         Critical, Off
     }
@@ -285,7 +288,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 75
+        sleepTime := 32
         g_SharedData.LoopString := "Waiting for Transition..."
         while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
         {
@@ -486,13 +489,12 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; a method to swap formations and cancel briv's jump animation.
-    SetFormation(settings := "")
+    SetFormation(settings := "", forceCheck := False)
     {
         if(settings != "")
             this.Settings := settings
-        this.Settings[ "FeatSwapEnabled" ] := False
         ;only send input messages if necessary
-        brivBenched := this.Memory.ReadChampBenchedByID(58)
+        brivBenched := this.Memory.ReadChampBenchedByID(ActiveEffectKeySharedFunctions.Briv.HeroID)
         ;check to bench briv
         if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
@@ -507,7 +509,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             g_SharedData.SwapsMadeThisRun++
             return
         }
-        isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        if(forceCheck)
+            isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        else
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
         isWalkZone := this.Settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
@@ -528,7 +533,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; True/False on whether Briv should be benched based on game conditions.
     BenchBrivConditions(settings)
     {
-        if(!settings[ "FeatSwapEnabled "])
+        if(!settings[ "FeatSwapEnabled" ])
             ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
             if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
                 return true
@@ -564,7 +569,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ;unbench briv if outside the 'Briv Jump Buffer' and a jump animation override isn't added to the list
         else if (this.Memory.ReadTransitionOverrideSize() != 1)
             return true
-
         return false
     }
 
@@ -891,9 +895,22 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 Sleep, 20
         }
-        isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
-        ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
-        ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
+        ElapsedTime := counter := 0
+        lastLoopTimedOut := ElapsedTime >= timeout ; Test in case party failed to switch and the game set the wrong MostRecentFormation
+        if (lastLoopTimedOut)
+            isCurrentFormation :=  this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        while(lastLoopTimedOut AND !isCurrentFormation AND ElapsedTime < (timeout / 2) AND !this.Memory.ReadNumAttackingMonstersReached())
+        {
+            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+            ElapsedTime := A_TickCount - StartTime
+            if(ElapsedTime > sleepTime * counter AND IsObject(spam))
+            {
+                this.DirectedInput(,, spam* )
+                counter++
+            }
+            else
+                Sleep, 20
+        }
         g_SharedData.LoopString := "Under attack. Retreating to change formations..."
         while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < (2 * timeout)))
         {
@@ -901,7 +918,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
-            isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            if (lastLoopTimedOut)
+                isCurrentFormation :=  this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+            else
+                isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
         g_SharedData.LoopString := "Loading game finished."
     }
@@ -917,10 +937,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if(currentFormation.Count() != testformation.Count())
             return false
         loop, % currentFormation.Count()
-        {
             if(testformation[A_Index] != currentFormation[A_Index])
                 return false
-        }
         return true
     }
 
