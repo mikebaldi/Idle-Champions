@@ -37,6 +37,21 @@ class SH_SharedFunctions
         return
     }
 
+    ; Removes any settings that are in loadedSettings that are not in expectedSettings.
+    DeleteExtraSettings(loadedSettings, expectedSettings)
+    {
+        for k, v in settings
+            if (!default.HasKey(k))
+                needSave := True, settings.Delete(k)
+        ; Add missing settings
+        for k, v in default
+            if (!settings.HasKey(k) || settings[k] == "")
+                needSave := true, settings[k] := default[k]
+        if(needSave)
+            return settings
+        else
+            return ""
+    }
     
     ; Helper function to add commas every 3 digits for display purposes.
     AddThousandsSeperator(val)
@@ -64,9 +79,11 @@ class SH_SharedFunctions
     ;Keyboard/Mouse input (and helper) functions
     ;====================================================
 
-    /*  DirectedInput - A function to send keyboard inputs to Idle Champions while in background.
+    /*  DirectedInput - A function to send keyboard inputs to a game that is in the background (if it supports it).
 
         Parameters:
+        hold - true for a key down, false to skip key down
+        release - true for a key up, false to skip key up
         s - The keyboard inputs to be sent to Idle Champions. Single Character string, or array of characters.
         Returns: Nothing
     */
@@ -99,83 +116,50 @@ class SH_SharedFunctions
         LRESULT SendMessage(in] HWND   hWnd, [in] UINT   Msg, [in] WPARAM wParam, [in] LPARAM lParam);
         HWND SetFocus([in, optional] HWND hWnd);
     */
-    DirectedInput(hold := 1, release := 1, s* )
+    DirectedInput(hold := 1, release := 1, values* )
     {
         Critical, On
-        ; TestVar := {}
-        ; for k,v in g_KeyPresses
-        ; {
-        ;     TestVar[k] := v
-        ; }
         timeout := 5000
-        directedInputStart := A_TickCount
         hwnd := this.Hwnd
         ControlFocus,, ahk_id %hwnd%
-        ;while (ErrorLevel AND A_TickCount - directedInputStart < timeout * 10)  ; testing reliability
-        ; if ErrorLevel
-        ;     ControlFocus,, ahk_id %hwnd%
-        values := s
         if(IsObject(values))
         {
-            if(hold)
+            for k, v in values
             {
-                for k, v in values
-                {
-                    g_InputsSent++
-                    ; if TestVar[v] == ""
-                    ;     TestVar[v] := 0
-                    ; TestVar[v] += 1
-                    key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v]
-                    sc := sc << 16
-                    lparam := Format("0x{:X}", 0x0 | sc)
+                key := g_KeyMap[v]
+                sc := g_SCKeyMap[v]
+                sc := sc << 16
+                lparam := Format("0x{:X}", 0x0 | sc)
+                if(hold)
                     SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                    if ErrorLevel
-                        this.ErrorKeyDown++
-                    ;     PostMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,
-                }
-            }
-            if(release)
-            {
-                for k, v in values
+                if(release)
                 {
-                    key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v]
-                    sc := sc << 16
+                    if(hold)
+                        Sleep, 16
                     lparam := Format("0x{:X}", 0xC0000001 | sc)
                     SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                    if ErrorLevel
-                        this.ErrorKeyUp++
-                    ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
                 }
+                Sleep, 16
             }
         }
         else
         {
             key := g_KeyMap[values]
-            sc := g_SCKeyMap[values] << 16
+            sc := g_SCKeyMap[values]
+            sc := sc << 16
             if(hold)
             {
-                g_InputsSent++
-                ; if TestVar[v] == ""
-                ;     TestVar[v] := 0
-                ; TestVar[v] += 1
-                
                 lparam := Format("0x{:X}", 0x0 | sc)
                 SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                if ErrorLevel
-                    this.ErrorKeyDown++
             }
             if(release)
             {
+                if(hold)
+                    Sleep, 16
                 lparam := Format("0x{:X}", 0xC0000001 | sc)
                 SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
             }
-            if ErrorLevel
-                this.ErrorKeyUp++
-            ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
         }
         Critical, Off
-        ; g_KeyPresses := TestVar
     }
 }
