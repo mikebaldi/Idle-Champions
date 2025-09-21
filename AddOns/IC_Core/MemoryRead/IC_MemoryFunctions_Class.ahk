@@ -23,7 +23,6 @@ if (_ClassMemory.__Class != "_ClassMemory")
 
 class IC_MemoryFunctions_Class
 {
-    
     ;Memory Structures
     GameManager := ""
     GameSettings := ""
@@ -631,6 +630,10 @@ class IC_MemoryFunctions_Class
         return handlerState == 0 AND stopReason != "" ; handlerstate is "inactive" and stopReason is not null
     }
 
+    ReadResetsTotal(){
+        return this.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.userData.StatHandler.Resets.Read()
+    }
+
     ReadResetsCount(){
         return this.GameManager.game.gameInstances[this.GameInstance].ResetsSinceLastManual.Read()
     }
@@ -745,6 +748,10 @@ class IC_MemoryFunctions_Class
         if (purchasedSize > 0 AND upgradeGroupsSize > 0)
             return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
         return True ; assume true to prevent upgrade spam on bad reads.
+    }
+
+    ReadLevelUpCostBySeat(seat := 1){ ; seats are ordered 1->12 in indexes 0-11
+        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat["value",seat-1,True].levelUpButtonDisplay.lastCostText.Read()
     }
 
     ;=========================
