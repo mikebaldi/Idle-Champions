@@ -156,51 +156,97 @@ class IC_BrivSharedFunctions_Class extends IC_SharedFunctions_Class
         return True
     }
 
+    IsSecondWindActive()
+    {
+        feats := this.Memory.GetHeroFeats(ActiveEffectKeySharedFunctions.Shandie.HeroID)
+        for k, v in feats
+            if (v == 1035)
+                return true
+        return false
+    }
+
     DoRushWait()
     {
-        this.ToggleAutoProgress( 0, false, true )
         this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.EffectKeyString)
+        if (!this.ShouldRushWait())
+            return
+        this.ToggleAutoProgress( 0, false, true )
         StartTime := A_TickCount
         ElapsedTime := 0
-        timeout := 8000 ; 7s seconds
-        estimate := (timeout / timeScale) ; no buffer: 60s / timescale to show in LoopString
-        
-        ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
+        timeout := 8000 ; 8s seconds
+        estimate := (timeout / timeScale)
         ; Loop escape conditions:
         ;   does full timeout duration
-        ;   past highest accepted dashwait triggering area
-        ;   dash is active, dash.GetScaleActive() toggles to true when dash is active and returns "" if fails to read.
+        ;   past highest accepted rushwait triggering area
+        ;   rush is active
         while ( ElapsedTime < timeout AND this.ShouldRushWait() )
         {
             this.ToggleAutoProgress(0)
             this.SetFormation()
             ElapsedTime := A_TickCount - StartTime
             g_SharedData.LoopString := "Rush Wait: " . ElapsedTime . " / " . estimate
-            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10), 15)
+            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10)+15, 15)
             Sleep, %percentageReducedSleep%
         }
         g_PreviousZoneStartTime := A_TickCount
-        return
     }
     
     BrivHasThunderStep() ;Thunder step 'Gain 20% More Sprint Stacks When Converted from Steelbones', feat 2131.
     {
-        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(58, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(58, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
+        static thunderStepID := 2131
+        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
         {
-            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
-            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(58, 2131, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
+            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
+            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
             return (thunderInQ OR thunderInE)
         }
-        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(58, 2131))
+        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID))
             return true
 		else
 		{
-			feats := g_SF.Memory.GetHeroFeats(58)
+			feats := g_SF.Memory.GetHeroFeats(ActiveEffectKeySharedFunctions.Briv.HeroID)
 			for k, v in feats
-				if (v == 2131)
+				if (v == thunderStepID)
 					return true
 		}
 		return false
+    }
+
+    ; Predicts the number of Briv haste stacks after the next reset.
+    ; After resetting, Briv's Steelborne stacks are added to the remaining Haste stacks.
+    PredictStacks(addSBStacks := true, refreshCache := false)
+    {
+        static skipQ
+        static skipE
+
+        preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
+        if (IsObject(IC_BrivGemFarm_LevelUp_Component) || IsObject(IC_BrivGemFarm_LevelUp_Class))
+        {
+            brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ]
+            brivMetalbornArea := brivMinlevelArea
+        }
+        else
+        {
+            brivMinlevelArea := brivMetalbornArea := 1
+        }
+        if (refreshCache || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
+        {
+            skipQ := this.GetBrivSkipValue(1)
+            skipE := this.GetBrivSkipValue(3)
+        }
+        modronReset := g_SF.Memory.GetModronResetArea()
+        sbStacks := g_SF.Memory.ReadSBStacks()
+        currentZone := g_SF.Memory.ReadCurrentZone()
+        highestZone := g_SF.Memory.ReadHighestZone()
+        sprintStacks := g_SF.Memory.ReadHasteStacks()
+        ; Party has not progressed to the next zone yet but Briv stacks were consumed.
+        if (highestZone - currentZone > 1)
+            currentZone := highestZone
+        ; This assumes Briv has gained more than 48 stacks ever.
+        stacksAtReset := Max(48, this.CalcStacksLeftAtReset(preferred, currentZone, modronReset, sprintStacks, skipQ, skipE, brivMinlevelArea, brivMetalbornArea))
+        if (addSBStacks)
+            stacksAtReset += sbStacks
+        return stacksAtReset
     }
 }
 
@@ -225,6 +271,9 @@ class IC_BrivGemFarm_Class
     MaxStackRestartFails := 3
     StackFailAreasThisRunTally := {}
     StackFailRetryAttempt := 0
+    DoKeySpam := True
+    keyspam := Array()
+    LastResetCount := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -232,60 +281,20 @@ class IC_BrivGemFarm_Class
     ;The primary loop for gem farming using Briv and modron.
     GemFarm()
     {
-        static lastResetCount := 0
-        g_SharedData.TriggerStart := true
-        g_SF.Hwnd := WinExist("ahk_exe " . g_UserSettings[ "ExeName"])
-        existingProcessID := g_UserSettings[ "ExeName"]
-        Process, Exist, %existingProcessID%
-        g_SF.PID := ErrorLevel
-        Process, Priority, % g_SF.PID, High
-        g_SF.Memory.OpenProcessReader()
-        if (g_SF.VerifyAdventureLoaded() < 0)
-            return
-        g_SF.CurrentAdventure := g_SF.Memory.ReadCurrentObjID()
-        g_ServerCall.UpdatePlayServer()
-        g_SF.ResetServerCall()
-        g_SF.PatronID := g_SF.Memory.ReadPatronID()
-        this.LastStackSuccessArea := g_BrivUserSettings [ "StackZone" ]
-        this.StackFailAreasThisRunTally := {}
-        g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
-        g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
+        errLevel := this.GemFarmPreLoopSetup()
+        if (errLevel < 0)
+            return errLevel
         formationModron := g_SF.Memory.GetActiveModronFormation()
-        if (this.PreFlightCheck() == -1) ; Did not pass pre flight check.
-            return -1
-        g_PreviousZoneStartTime := A_TickCount
-        g_SharedData.StackFail := 0
         loop
         {
             g_SharedData.LoopString := "Main Loop"
             CurrentZone := g_SF.Memory.ReadCurrentZone()
             if (CurrentZone == "" AND !g_SF.SafetyCheck() ) ; Check for game closed
                 g_SF.ToggleAutoProgress( 1, false, true ) ; Turn on autoprogress after a restart
-            g_SF.SetFormation(g_BrivUserSettings)
-            if (g_SF.Memory.ReadResetsCount() > lastResetCount OR g_SharedData.TriggerStart) ; first loop or Modron has reset
-            {
-                g_SharedData.BossesHitThisRun := 0
-                g_SF.ToggleAutoProgress( 0, false, true )
-                g_SharedData.StackFail := this.CheckForFailedConv()
-                g_SF.WaitForFirstGold()
-                keyspam := Array()
-                if g_BrivUserSettings[ "Fkeys" ]
-                    keyspam := g_SF.GetFormationFKeys(formationModron)
-                doKeySpam := true
-                keyspam.Push("{ClickDmg}")
-                this.DoPartySetup()
-                lastResetCount := g_SF.Memory.ReadResetsCount()
-                g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-                ; Don't reset last stack success area if 3 or more runs have failed to stack.
-                this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
-                this.StackFailAreasThisRunTally := {}
-                this.StackFailRetryAttempt := 0
-                StartTime := g_PreviousZoneStartTime := A_TickCount
-                PreviousZone := 1
-                g_SharedData.SwapsMadeThisRun := 0
-                g_SharedData.TriggerStart := false
-                g_SharedData.LoopString := "Main Loop"
-            }
+            if (this.GemFarmShouldSetFormation())
+                g_SF.SetFormation(g_BrivUserSettings)
+            if (g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
+                this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True, needsHandlerRefresh := True)
             if (g_SharedData.StackFail != 2)
                 g_SharedData.StackFail := Max(this.TestForSteelBonesStackFarming(), g_SharedData.StackFail)
             if (g_SharedData.StackFail == 2 OR g_SharedData.StackFail == 4 OR g_SharedData.StackFail == 6 ) ; OR g_SharedData.StackFail == 3
@@ -294,34 +303,117 @@ class IC_BrivGemFarm_Class
                 g_SF.ToggleAutoProgress( 1, true ) ; Toggle autoprogress to skip boss bag
             if (g_SF.Memory.ReadResetting())
                 this.ModronResetCheck()
-            if (CurrentZone > PreviousZone ) ; needs to be greater than because offline could stacking getting stuck in descending zones.
+            else
+                this.GemFarmDoNonModronActions()
+            if (CurrentZone > PreviousZone ) ; needs to be greater than because offline could get stuck stacking in descending zones.
             {
                 PreviousZone := CurrentZone
-                if ((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
-                {
-                    g_SharedData.TotalBossesHit++
-                    g_SharedData.BossesHitThisRun++
-                }
-                if (doKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron))
-                {
-                    g_SF.DirectedInput(hold:=0,release:=1, keyspam) ;keysup
-                    keyspam := ["{ClickDmg}"]
-                    doKeySpam := false
-                }
-                lastModronResetZone := g_SF.ModronResetZone
-                g_SF.InitZone( keyspam )
-                g_SF.ToggleAutoProgress( 1 )
+                this.GemFarmDoZone(formationModron)
                 continue
             }
             g_SF.ToggleAutoProgress( 1 )
             if (g_SF.CheckifStuck())
-            {
-                g_SharedData.TriggerStart := true
-                g_SharedData.StackFail := StackFailStates.FAILED_TO_PROGRESS ; 3
-                g_SharedData.StackFailStats.TALLY[g_SharedData.StackFail] += 1
-            }
+                this.GemFarmDoStuckCleanup()
             Sleep, 20 ; here to keep the script responsive.
         }
+    }
+   
+    ;=====================================================
+    ;Primary Gem Farm loop functions
+    ;=====================================================
+    ; setup steps to take to set up gem farm before starting the primary loop.
+    GemFarmPreLoopSetup(includeBrivFormation3 := False)
+    {
+        g_SharedData.TriggerStart := true
+        g_SF.Hwnd := WinExist("ahk_exe " . g_UserSettings[ "ExeName"])
+        existingProcessID := g_UserSettings[ "ExeName"]
+        Process, Exist, %existingProcessID%
+        g_SF.PID := ErrorLevel
+        Process, Priority, % g_SF.PID, High
+        g_SF.Memory.OpenProcessReader()
+        if ((g_SF.CurrentAdventure := g_SF.VerifyAdventureLoaded()) < 0)
+            return -2
+        g_ServerCall.UpdatePlayServer()
+        g_SF.ResetServerCall()
+        g_SF.PatronID := g_SF.Memory.ReadPatronID()
+        this.LastStackSuccessArea := g_BrivUserSettings [ "StackZone" ]
+        this.StackFailAreasThisRunTally := {}
+        g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
+        g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
+        if (this.PreFlightCheck(includeBrivFormation3) == -1) ; Did not pass pre flight check.
+            return -1
+        g_PreviousZoneStartTime := A_TickCount
+        g_SharedData.StackFail := 0
+        return 0
+    }
+
+    ; Steps to run when a modron reset occurs or the gem farm first starts.
+    GemFarmResetSetup(formationModron := "", doBasePartySetup := False)
+    {
+        g_SharedData.BossesHitThisRun := 0
+        g_SF.ToggleAutoProgress( 0, false, true )
+        g_SharedData.StackFail := this.CheckForFailedConv()
+        g_SF.WaitForFirstGold()
+        this.keyspam := Array()
+        if(doBasePartySetup)
+        {
+            if g_BrivUserSettings[ "Fkeys" ]
+                this.keyspam := g_SF.GetFormationFKeys(formationModron)
+            this.DoKeySpam := true
+            this.keyspam.Push("{ClickDmg}")
+            this.DoPartySetup()
+        }
+        g_SF.Memory.ActiveEffectKeyHandler.Refresh()
+        ; Don't reset last stack success area if 3 or more runs have failed to stack.
+        this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
+        this.StackFailAreasThisRunTally := {}
+        this.StackFailRetryAttempt := 0
+        g_PreviousZoneStartTime := A_TickCount
+        g_SharedData.SwapsMadeThisRun := 0
+        g_SharedData.TriggerStart := false
+        g_SharedData.LoopString := "Main Loop"
+        return g_SF.Memory.ReadResetsCount()
+    }
+
+    GemFarmDoZone(formationModron := "")
+    {
+        if ((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
+            this.GemFarmDoTouchedBoss()
+        if (this.DoKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron)) 
+        { ; leveling completed, remove champs from keyspam.
+            g_SF.DirectedInput(hold:=0,release:=1, this.keyspam) ;keysup
+            this.keyspam := ["{ClickDmg}"]
+            this.DoKeySpam := false
+        }
+        g_SF.InitZone( this.keyspam )
+        g_SF.ToggleAutoProgress( 1 )
+    }
+
+    ; If gem farm lands on a boss, do these steps.
+    GemFarmDoTouchedBoss()
+    {
+        g_SharedData.TotalBossesHit++
+        g_SharedData.BossesHitThisRun++
+    }
+
+    ; Do things that are needed after a game reset from being stuck
+    GemFarmDoStuckCleanup()
+    {
+        g_SharedData.TriggerStart := true
+        g_SharedData.StackFail := StackFailStates.FAILED_TO_PROGRESS ; 3
+        g_SharedData.StackFailStats.TALLY[g_SharedData.StackFail] += 1
+    }
+
+    ; Determins whether to use the default set formation each loop
+    GemFarmShouldSetFormation()
+    {
+        return true
+    }
+
+    ; Empty function that can be overridden for extra actions taken if no modron reset is occurring.
+    GemFarmDoNonModronActions()
+    {
+
     }
 
     ;=====================================================
@@ -352,7 +444,7 @@ class IC_BrivGemFarm_Class
             else if (this.LastStackSuccessArea == 0 AND !this.StackFailAreasThisRunTally[CurrentZone] AND this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails)
                 this.StackFarm()
             ; Safety - One more jump will be over modron reset and stacking has not been done.
-            else if (CurrentZone > this.Memory.GetModronResetArea() - (ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount() + 1))
+            else if (CurrentZone > g_SF.Memory.GetModronResetArea() - (ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount() + 1))
                 this.StackFarm()
             return 0
         }
@@ -425,6 +517,7 @@ class IC_BrivGemFarm_Class
             return g_SF.Memory.ReadSBStacks() + 47
         }
     }
+    
 
     /*  StackRestart - Stops progress and wwitches to appropriate party to prepare for stacking Briv's SteelBones.
                        Falls back from a boss zone if necessary.
@@ -437,7 +530,7 @@ class IC_BrivGemFarm_Class
     StackFarmSetup()
     {
         if (!g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
-            g_SF.FallBackFromBossZone()
+            g_SF.FallBackFromBossZone() ; Boss kill Timeout
         inputValues := "{w}" ; Stack farm formation hotkey
         g_SF.DirectedInput(,, inputValues )
         g_SF.WaitForTransition( inputValues )
@@ -447,7 +540,15 @@ class IC_BrivGemFarm_Class
         counter := 0
         sleepTime := 100
         g_SharedData.LoopString := "Setting stack farm formation."
-        while ( !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2) AND ElapsedTime < 5000 )
+        isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2))
+        if (!isFormation2)
+        {
+            g_SF.DirectedInput(,,inputValues)
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
+            if(!isFormation2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2)))
+                isFormation2 := True
+        }
+        while (!isFormation2 AND ElapsedTime < 5000 )
         {
             ElapsedTime := A_TickCount - StartTime
             if (ElapsedTime > (sleepTime * counter++))
@@ -455,8 +556,9 @@ class IC_BrivGemFarm_Class
             ; Can't formation switch when under attack.
             if (ElapsedTime > 1000 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
                  ; not W formation or briv is benched
-                if (!(g_SF.Memory.ReadMostRecentFormationFavorite() == 2) OR g_SF.Memory.ReadChampBenchedByID(58))
+                if (g_SF.Memory.ReadChampBenchedByID(ActiveEffectKeySharedFunctions.Briv.HeroID) OR !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2))
                     g_SF.FallBackFromZone()
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
         }
         return
     }
@@ -466,14 +568,14 @@ class IC_BrivGemFarm_Class
     {
         if (this.ShouldOfflineStack())
             this.StackRestart()
-        else
-            this.StackNormal()
-        ; SetFormation needs to occur before dashwait in case game erroneously placed party on boss zone after stack restart
-        g_SharedData.LoopString := "Switching to stack farm formation."
-        g_SF.SetFormation(g_BrivUserSettings) 
+        else if (this.StackNormal() == 0)
+            return
+        ;SetFormation needs to occur before dashwait in case game erroneously placed party on boss zone after stack restart
+        g_SF.SetFormation(g_BrivUserSettings)
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1 )
+        g_SharedData.LoopString := "Switching to stack farm formation."
     }
 
     /*  StackRestart - Stack Briv's SteelBones by switching to his formation and restarting the game.
@@ -565,7 +667,7 @@ class IC_BrivGemFarm_Class
     Returns:
     */
     ; Stack Briv's SteelBones by switching to his formation.
-    StackNormal(maxOnlineStackTime := 90000)
+    StackNormal(maxOnlineStackTime := 150000)
     {
         lastStacks := stacks := this.GetNumStacksFarmed()
         targetStacks := g_BrivUserSettings[ "TargetStacks" ]
@@ -652,13 +754,13 @@ class IC_BrivGemFarm_Class
     {
         g_SharedData.LoopString := "Leveling champions"
         formationFavorite1 := g_SF.Memory.GetFormationByFavorite( 1 )
-        isShandieInFormation := g_SF.IsChampInFormation( 47, formationFavorite1 )
-        g_SF.LevelChampByID( 58, 170, 7000, "{q}") ; level briv
+        isShandieInFormation := g_SF.IsChampInFormation( ActiveEffectKeySharedFunctions.Shandie.HeroID, formationFavorite1 )
+        g_SF.LevelChampByID( ActiveEffectKeySharedFunctions.Briv.HeroID, 170, 7000, "{q}") ; level briv
         if (isShandieInFormation)
-            g_SF.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
-        isHavilarInFormation := g_SF.IsChampInFormation( 56, formationFavorite1 )
+            g_SF.LevelChampByID( ActiveEffectKeySharedFunctions.Shandie.HeroID,, 230, 7000, "{q}") ; level shandie
+        isHavilarInFormation := g_SF.IsChampInFormation( ActiveEffectKeySharedFunctions.Havilar.HeroID, formationFavorite1 )
         if (isHavilarInFormation)
-            g_SF.LevelChampByID( 56, 15, 7000, "{q}") ; level havi
+            g_SF.LevelChampByID( ActiveEffectKeySharedFunctions.Havilar.HeroID, 15, 7000, "{q}") ; level havi
         if (g_BrivUserSettings[ "Fkeys" ])
         {
             keyspam := g_SF.GetFormationFKeys(g_SF.Memory.GetActiveModronFormation()) ; level other formation champions
@@ -673,6 +775,23 @@ class IC_BrivGemFarm_Class
         g_SF.ToggleAutoProgress( 1, false, true )
     }
 
+    DoZ1Setup()
+    {
+        this.LoadFormationForZ1()
+    }
+
+    LoadFormationForZ1()
+    {
+        if (g_SF.Memory.ReadCurrentZone() == 1)
+        {
+            formationKey := g_BrivUserSettings[ "FormationKeyForZ1" ] ? g_BrivUserSettings[ "FormationKeyForZ1" ] : "q"
+            g_SF.DirectedInput(,, "{" . formationKey . "}")
+        }
+        else ; Switch to E formation if necessary
+            g_SF.SetFormation(g_BrivUserSettings)
+        return formationKey
+    }
+
     ;Waits for modron to reset. Closes IC if it fails.
     ModronResetCheck()
     {
@@ -681,6 +800,7 @@ class IC_BrivGemFarm_Class
             g_SF.CheckifStuck(True)
             ;g_SF.CloseIC( "ModronReset, resetting exceeded " . Floor(modronResetTimeout/1000) . "s" )
         g_PreviousZoneStartTime := A_TickCount
+        g_SharedData.TriggerStart := True
     }
 
     ; Test that favorite exists
@@ -729,9 +849,7 @@ class IC_BrivGemFarm_Class
     ; Test Modron Reset Automation is enabled
     TestModronResetAutomationEnabled()
     {
-        testFunc := ObjBindMethod(g_SF.Memory, "ReadModronAutoReset")
-        foundModronResetStatus := g_SF.Memory.ReadModronAutoReset()
-        
+        testFunc := ObjBindMethod(g_SF.Memory, "ReadModronAutoReset")        
         errMsg := "Please confirm that Modron Reset Automation is enabled."
         modronAutomationStatus := g_SF.RetryTestOnError(errMsg, testFunc, expectedVal := True, shouldBeEqual := True)
         return modronAutomationStatus
@@ -751,34 +869,8 @@ class IC_BrivGemFarm_Class
             return -1
     }
 
-    ; Tests to make sure Gem Farm is properly set up before attempting to run.
-    PreFlightCheck()
+    FamiliarFormationsFieldCheck()
     {
-        memoryVersion := g_SF.Memory.GameManager.GetVersion()
-        ; Test Favorite Exists
-        txtCheck := "`n`nOther potential solutions:"
-        txtCheck .= "`n`n1. Be sure Imports are up to date. Current imports are for: v" . g_SF.Memory.GetImportsVersion()
-        txtCheck .= "`n`n2. Check the correct memory file is being used. Current version: " . memoryVersion
-        txtcheck .= "`n`n3. If IC is running with admin privileges, then the script will also require admin privileges."
-        if (_MemoryManager.is64bit)
-            txtcheck .= "`n4. Check AHK is 64-bit. (Currently " . (A_PtrSize = 4 ? 32 : 64) . "-bit)"
-
-        champion := 58   ; briv
-        formationQ := g_SF.FindChampIDinSavedFavorite( champion, favorite := 1, includeChampion := True )
-        if (formationQ == -1 AND this.RunChampionInFormationTests(champion, favorite := 1, includeChampion := True, txtCheck) == -1)
-            return -1
-
-        formationW := g_SF.FindChampIDinSavedFavorite( champion, favorite := 2, includeChampion := True  )
-        if (formationW == -1 AND this.RunChampionInFormationTests(champion, favorite := 2, includeChampion := True, txtCheck) == -1)
-            return -1
-
-        formationE := g_SF.FindChampIDinSavedFavorite( champion, favorite := 3, includeChampion := False  )
-        if (formationE == -1 AND this.RunChampionInFormationTests(champion, favorite := 3, includeChampion := False, txtCheck) == -1)
-            return -1
-            
-        if (this.TestModronResetAutomationEnabled() == -1)
-            return -1
-
         if ((ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 1, True)))
             MsgBox, %ErrorMsg%
         while (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 2, False))
@@ -797,13 +889,65 @@ class IC_BrivGemFarm_Class
         }
         if (ErrorMsg := g_SF.FormationFamiliarCheckByFavorite(favorite := 3, True))
             MsgBox, %ErrorMsg%
-
         return 0
     }
 
-    ;===========================================================
-    ;functions for speeding up progression through an adventure.
-    ;===========================================================
+    StackSettingsCheck()
+    {
+        if g_BrivUserSettings[ "TargetStacks" ] < 50
+        {
+            errMsg := "Target haste stacks settings incompatable with BrivGemFarm. Please set a value that would cause Briv to farm for stacks. Now ending Gem Farm."
+            MsgBox, % ErrMsg
+            return -1
+        }
+        return 0
+    }
+
+    ; Tests to make sure Gem Farm is properly set up before attempting to run.
+    PreFlightCheck(includeBrivFormation3 := False)
+    {
+        memoryVersion := g_SF.Memory.GameManager.GetVersion()
+        ; Test Favorite Exists
+        txtCheck := "`n`nOther potential solutions:"
+        txtCheck .= "`n`n1. Be sure Imports are up to date. Current imports are for: v" . g_SF.Memory.GetImportsVersion()
+        txtCheck .= "`n`n2. Check the correct memory file is being used. Current version: " . memoryVersion
+        txtcheck .= "`n`n3. If IC is running with admin privileges, then the script will also require admin privileges."
+        if (_MemoryManager.is64bit)
+            txtcheck .= "`n4. Check AHK is 64-bit. (Currently " . (A_PtrSize = 4 ? 32 : 64) . "-bit)"
+        if (this.StackSettingsCheck() < 0)
+            return -1
+        if (this.TestQFormation() < 0 OR this.TestWFormation() < 0 OR this.TestEFormation() < 0)
+            return -1
+        if (this.TestModronResetAutomationEnabled() == -1)
+            return -1
+        if(this.FamiliarFormationsFieldCheck() < 0)
+            return -1
+        return 0
+    }
+
+    TestQFormation()
+    {
+        formationQ := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 1, includeChampion := True )
+        if (formationQ == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 1, includeChampion := True, txtCheck) == -1)
+            return -1
+        return 0
+    }
+
+    TestWFormation()
+    {
+        formationW := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 2, includeChampion := True  )
+        if (formationW == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 2, includeChampion := True, txtCheck) == -1)
+            return -1
+        return 0
+    }
+
+    TestEFormation()
+    {
+        formationE := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 3, includeChampion := False )
+        if (formationE == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 3, includeChampion := False, txtCheck) == -1)
+            return -1
+        return 0
+    }
 
     ;=====================================================
     ;Functions for direct server calls between runs
