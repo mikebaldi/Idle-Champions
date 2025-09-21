@@ -19,7 +19,7 @@ class GameObjectStructure
     StartAtLastPos := False
     LastDictIndex := {}
     DictionaryObject := {}
-    static LastDictPos = 0
+    static LastDictPos := 0
 
     static ReadIsLocked := False
     static InvalidDictionaryKeyString := "<invalid key>"
@@ -264,7 +264,7 @@ class GameObjectStructure
         }
         else
         {
-            ; TODO: Look into feasibility of using same dictionary hash function to look up keys. (Requires DLL call?)
+            ; TODO: Look into feasibility of using same dictionary hash function to look up keys. (Requires DLL call?) Current method is O(n) instead of O(1)
             keyIndex := this.GetDictIndexOfKeyQuick(key)                                    ; Look up what index has the key entry equal to the key passed in.
             if(keyIndex < 0)                                                                ; Failed to find index, do not create an entry.
                 return ((GameObjectStructure.ReadIsLocked := False) ? "" : "")              ; Reset read lock before returning   
@@ -555,7 +555,6 @@ class GameObjectStructure
         return offset
     }
 
-    ; TODO: Convert to proper dictionary lookup.  Current method is O(n) instead of O(1)
     ; Iterates a dictionary collection looking for the matching key value
     GetDictIndexOfKeyQuick(key)
     {
