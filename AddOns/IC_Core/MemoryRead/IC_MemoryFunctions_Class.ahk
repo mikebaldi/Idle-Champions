@@ -1006,6 +1006,24 @@ class IC_MemoryFunctions_Class
     }
 
     ;==============
+    ;Shop Methods
+    ;==============
+    ReadALaCartRerollCost()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ShopHandler.ALaCarteHandler_k__BackingField.RerollCost_k__BackingField.Read()
+    }
+
+    ReadALaCarteRerollsRemaining()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ShopHandler.ALaCarteHandler_k__BackingField.RerollsRemaining_k__BackingField.Read()
+    }
+
+    ReadALaCarteOffersExpireTime()
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ShopHandler.ALaCarteHandler_k__BackingField.OffersTimeRemaining_k__BackingField.expireTimeMS.Read()
+    }
+
+    ;==============
     ;Helper Methods
     ;==============
 
