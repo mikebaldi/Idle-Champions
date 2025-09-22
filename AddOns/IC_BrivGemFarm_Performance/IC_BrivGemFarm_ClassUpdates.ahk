@@ -1,0 +1,3 @@
+SH_UpdateClass.UpdateClassFunctions(g_ServerCall, IC_BrivServerCall_Class)
+SH_UpdateClass.UpdateClassFunctions(g_SF, IC_BrivSharedFunctions_Class)
+SH_UpdateClass.AddClassFunctions(g_SF, IC_BrivSharedFunctions_Added_Class)

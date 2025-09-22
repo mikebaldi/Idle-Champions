@@ -33,7 +33,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
     settings := ""
     
 
-    __New( userID, userHash, instanceID := 0 )
+    __New( userID := 0, userHash := 0, instanceID := 0 )
     {
         this.userID := userID
         this.userHash := userHash

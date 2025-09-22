@@ -46,6 +46,8 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
     ; New
     if ( g_BrivUserSettings[ "FeatSwapEnabled" ] == "" )
         g_BrivUserSettings[ "FeatSwapEnabled" ] := False
+    if ( g_UserSettings[ "RunHidden" ] == "" )
+        g_UserSettings[ "RunHidden" ] := 0  
 
     ; Advanced BrivGemFarm Settings
     if ( g_BrivUserSettings[ "HiddenFarmWindow" ] == "" )
@@ -101,11 +103,11 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_SF.WriteObjectToJSON( A_LineFile . "\..\Profiles\LegacySettings_Settings.json" , userSettings )
     }
     ; strip unused settings from the settings file.
-    userSettings := g_SF.DeleteExtraSettings(userSettings, g_BrivUserSettings)
-    if(userSettings != "")
+    cleanedSettings := g_SF.DeleteExtraSettings(userSettings, g_BrivUserSettings)
+    if(cleanedSettings != "")
+        g_BrivUserSettings := cleanedSettings
+    else
         g_BrivUserSettings := userSettings
-    
-
     if (writeSettings == True)
         g_SF.WriteObjectToJSON( A_LineFile . "\..\BrivGemFarmSettings.json" , g_BrivUserSettings )
 }

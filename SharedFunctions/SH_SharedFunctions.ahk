@@ -40,15 +40,16 @@ class SH_SharedFunctions
     ; Removes any settings that are in loadedSettings that are not in expectedSettings.
     DeleteExtraSettings(loadedSettings, expectedSettings)
     {
-        for k, v in settings
-            if (!default.HasKey(k))
-                needSave := True, settings.Delete(k)
+        needSave := false
+        for k, v in loadedSettings
+            if (!expectedSettings.HasKey(k))
+                needSave := True, loadedSettings.Delete(k)
         ; Add missing settings
-        for k, v in default
-            if (!settings.HasKey(k) || settings[k] == "")
-                needSave := true, settings[k] := default[k]
+        for k, v in expectedSettings
+            if (!loadedSettings.HasKey(k) || loadedSettings[k] == "")
+                needSave := true, loadedSettings[k] := expectedSettings[k]
         if(needSave)
-            return settings
+            return loadedSettings
         else
             return ""
     }

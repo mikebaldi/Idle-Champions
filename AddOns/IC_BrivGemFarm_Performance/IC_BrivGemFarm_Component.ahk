@@ -1,4 +1,5 @@
-﻿;Load user settings
+﻿#include %A_LineFile%\..\IC_BrivGemFarm_Addon.ahk
+;Load user settings
 global g_BrivUserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
 global g_BrivFarm := new IC_BrivGemFarm_Class
 g_BrivFarm.GemFarmGUID := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
@@ -15,7 +16,6 @@ Gui, ICScriptHub:Add, Button, x+10 gBriv_Save_Profile_Clicked, Save Profile
 Gui, ICScriptHub:Add, Button, x+10 gBriv_Delete_Profile_Clicked, Delete Profile
 
 Gui, ICScriptHub:Add, Text, x15 y+10 w120, User Settings:
-#include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
 FileCreateDir, % A_LineFile . "\..\Profiles"
 ReloadBrivGemFarmSettings(True)
 Gui, ICScriptHub:Add, Checkbox, vFkeysCheck x15 y+5, Level Champions with Fkeys?
@@ -603,4 +603,4 @@ class IC_BrivGemFarm_Component
 }
 
 Gui, ICScriptHub:Submit, NoHide
-#include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
+#include %A_LineFile%\..\IC_BrivGemFarm_ClassUpdates.ahk
