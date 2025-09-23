@@ -62,7 +62,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         {
             try
             {
-                this.SharedData := ComObjActive(GemFarmGUID)
+                this.SharedData := ComObjActive(this.GemFarmGUID)
             }
         }
     }
