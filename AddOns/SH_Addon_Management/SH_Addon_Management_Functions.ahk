@@ -122,32 +122,25 @@ Class AddonManagement
     ;             0: Addon is not required by another enabled addon
     ;
     ; ------------------------------------------------------------
-    CheckIsDependedOn(Name,Version){
-        ; Test for exact match
-        for addonIndex,addonObject in this.Addons{
-            for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND dependencyObject.Version = Version) {
-                    ;We have a addon who depends on the name, now check it it's enabled
-                    if(this.Addons[addonIndex]["Enabled"]){
-                        return addonIndex
-                    }
-                    else{
-                        break
-                    }
-                }
-            }
-        }
-        ; test for higher version 
-        for addonIndex,addonObject in this.Addons{
-            for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND SH_VersionHelper.IsVersionSameOrNewer(Version, dependencyObject.Version)) {
-                    ;We have a addon who depends on the name, now check it it's enabled
-                    if(this.Addons[addonIndex]["Enabled"]){
-                        return addonIndex
-                    }
-                }
-            }
-        }
+    CheckIsDependedOn(Name,Version)
+    {
+        for addonIndex,addonObject in this.Addons
+            for dependencyIndex,dependencyObject in addonObject.Dependencies
+                ; Test for exact match or higher version
+                if (dependencyObject.Name == Name AND (dependencyObject.Version = Version OR SH_VersionHelper.IsVersionSameOrNewer(Version, dependencyObject.Version))) 
+                    if(this.Addons[addonIndex]["Enabled"]) ;We have a addon who depends on the name, now check it it's enabled
+                        return addonIndex ; do not break here in case multiple versions of the same addon exist.
+        return false
+    }
+
+    CheckShouldLoadAfter(Name,Version)
+    {
+        for addonIndex,addonObject in this.Addons
+            for dependencyIndex,loadAfterObject in addonObject.LoadAfter
+                ; Test for exact match or higher version
+                if (loadAfterObject.Name == Name) 
+                    if(this.Addons[addonIndex]["Enabled"]) ;We have a addon who depends on the name, now check it it's enabled
+                        return addonIndex ; do not break here in case multiple versions of the same addon exist.
         return false
     }
     ; ------------------------------------------------------------
@@ -161,10 +154,10 @@ Class AddonManagement
     ;             0: No problem
     ;
     ; ------------------------------------------------------------
-    CheckDependencyOrder(AddonNumber,PositionWanted)
+    CheckDependencyOrder(AddonNumber,PositionWanted,dependencyType := "Dependencies")
     {
         ; Check to make sure none of this addon's dependencies are before it
-        for k, v in this.Addons[AddonNumber]["Dependencies"]
+        for k, v in this.Addons[AddonNumber][dependencyType]
         {
             this.GetAddon(v.Name, v.Version, indexOfDependency)
             if(indexOfDependency >= PositionWanted)
@@ -173,7 +166,7 @@ Class AddonManagement
         ; Check to make sure this addon is not after any addons that depend on it 
         for k,v in this.AddonsEnabled
         {
-            for _, dependency in v.Dependencies 
+            for _, dependency in v[dependencyType]
             {
                 if(this.Addons[AddonNumber]["Name"] == dependency.Name AND SH_VersionHelper.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], dependency.Version))
                     if (k <= PositionWanted)
@@ -270,6 +263,9 @@ Class AddonManagement
         if(isNewer)
             Version := currAddon.Version
         lastSwap := 0
+        ; Make sure any "load after" addons load before the one that requires it.
+        while(IsObject(currAddon) AND indexOfSwap := this.CheckDependencyOrder(indexOfAddon,indexOfAddon, "LoadAfter"))
+            this.SwitchOrderAddons(indexOfSwap, indexOfAddon, true)
         ; Force enable dependency before enabling this addon.
         while(IsObject(currAddon) AND indexOfSwap := this.CheckDependencyOrder(indexOfAddon,indexOfAddon))
         {
@@ -426,6 +422,8 @@ Class AddonManagement
     {
         ; If can't rearrange due to dependencies, return false
         if (this.CheckDependencyOrder(AddonNumber,Position) AND !Force)
+            return false
+        if (this.CheckDependencyOrder(AddonNumber,Position, "LoadAfter") AND !Force)
             return false
         NumberOfAddons := this.Addons.Count()
         temp := this.Addons[Position]
@@ -612,6 +610,7 @@ Class Addon
             this.Url := SettingsObject["Url"]
             this.Info := SettingsObject["Info"]
             this.Dependencies := SettingsObject["Dependencies"]
+            this.LoadAfter := SettingsObject["LoadAfter"]
             this.Enabled := 0
         }
     }
