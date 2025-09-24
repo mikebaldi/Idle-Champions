@@ -754,6 +754,12 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat["value",seat-1,True].levelUpButtonDisplay.lastCostText.Read()
     }
 
+    ReadLevelUpAmount()
+    {
+        value := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.levelUpAmount.Read()
+        return value == "" ? 100 : value
+    }
+
     ;=========================
     ; Champion Specializations
     ;=========================
@@ -879,11 +885,6 @@ class IC_MemoryFunctions_Class
 
     ReadInventoryItemsCount(){
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.BuffHandler.InventoryBuffs.size.Read()
-    }
-
-    ; Depricated - Use ReadChestCountByID.
-    GetChestCountByID(chestID){
-        return this.ReadchestCountByID(chestID)
     }
 
     ; Chests are stored in a dictionary under the "entries". It functions like a 32-Bit list but the ID is every 4th value. Item[0] = ID, item[1] = MAX, Item[2] = ID, Item[3] = count. They are each 4 bytes, not a pointer.
