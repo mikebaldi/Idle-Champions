@@ -149,13 +149,11 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         fellBack := 0
         CurrentZone := this.Memory.ReadCurrentZone()
         if mod( CurrentZone, 5 )
-        {
             return fellBack
-        }
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 250
+        sleepTime := 32
         g_SharedData.LoopString := "Falling back from boss zone."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
@@ -163,9 +161,9 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 this.DirectedInput(,, "{Left}" )
+                fellBack := 1
                 counter++
             }
-            fellBack := 1
         }
         this.WaitForTransition( spam )
         return fellBack
@@ -255,15 +253,15 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 250
-        this.DirectedInput(,, "{q}")
+        sleepTime := 50
+        this.LoadFormationForZ1()
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
-                this.DirectedInput(,, "{q}" )
+                this.LoadFormationForZ1()
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
@@ -321,6 +319,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if (this.IsDashActive())
             return
         this.ToggleAutoProgress( 0, false, true )
+        this.LoadFormationForZ1()
         this.LevelChampByID(ActiveEffectKeySharedFunctions.Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
@@ -329,21 +328,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
         timeout := this.IsSecondWindActive() ? 10000 : 30000
         estimate := (timeout / timeScale)
-        StartTime := A_TickCount
+        startTime := A_TickCount
         ElapsedTime := 0
         ; Loop escape conditions:
         ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
         ;   dash is active, dash.GetScaleActive() toggles to true when dash is active and returns "" if fails to read.
         while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !this.IsDashActive() )
-        {
-            this.ToggleAutoProgress(0)
-            this.SetFormation()
-            ElapsedTime := A_TickCount - StartTime
-            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
-			percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10 + 15), 15)
-            Sleep, %percentageReducedSleep%
-        }
+            ElapsedTime := this.DoDashWaitingIdling(StartTime, estimate)
         g_PreviousZoneStartTime := A_TickCount
     }
 
@@ -351,6 +343,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ShouldDashWait()
     {
         return this.IsChampInFormation( ActiveEffectKeySharedFunctions.Shandie.HeroID, this.Memory.GetCurrentFormation() )
+    }
+
+    ; Things to do while waiting for dash to be ready.
+    DoDashWaitingIdling(startTime := 1, estimate := 1)
+    {
+        this.ToggleAutoProgress(0)
+        ElapsedTime := A_TickCount - startTime
+        g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
+        percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10 + 15), 15)
+        Sleep, %percentageReducedSleep%
+        return ElapsedTime
+    }
+
+    ; Loads formation to use in zone 1
+    LoadFormationForZ1()
+    {
+        this.DirectedInput(,, "{q}")
     }
 
     ; Returns count for how many TimeScale values equal the value passed to the function
@@ -637,11 +646,12 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; Runs the process and set this.PID once it is found running. 
-    OpenProcessAndSetPID(timeoutLeft := 32000)
+    OpenProcessAndSetPID(timeoutLeft := 35000, retried := 0)
     {
         this.PID := 0
         processWaitingTimeout := 10000 ;10s
         waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
+        existingProcessID := g_userSettings[ "ExeName"]
         ElapsedTime := 0
         StartTime := A_TickCount
         while (!this.PID AND ElapsedTime < timeoutLeft )
@@ -658,15 +668,28 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             }
             catch
             {
-                MsgBox, 48, Unable to launch game, `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
-                ExitApp
+                if(!retried)
+                {
+                    retried += 1
+                    sleep, 60000
+                    ElapsedTime := 0
+                    StartTime := A_TickCount
+                    Process, Exist, %existingProcessID% ; Give another minute and retest. If failed, retry one time.
+                    this.PID := ErrorLevel
+                    if (!this.PID)
+                        continue
+                }
+                if(!this.PID) ; Do not keep attempting to launch IC if a retry has also failed.
+                { 
+                    MsgBox, 48, ICScriptHub was unable to re-launch the game. `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
+                    ExitApp
+                }
             }
             Sleep, %waitForProcessTime%
             ; Add 10s (default) to ElapsedTime so each exe waiting loop will take at least 10s before trying to run a new instance of hte game
             timeoutForPID := ElapsedTime + processWaitingTimeout 
             while(!this.PID AND ElapsedTime < timeoutForPID AND ElapsedTime < timeoutLeft)
             {
-                existingProcessID := g_userSettings[ "ExeName"]
                 Process, Exist, %existingProcessID%
                 this.PID := ErrorLevel
                 Sleep, 62
@@ -1161,87 +1184,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; New Helper Functions
     ;======================
 
-    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
-    CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
-    {
-        g_SharedData.RedoStackCalc := False
-        jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() 
-        if (!skipChance)
-        {
-            skipChance := 1
-            g_SharedData.RedoStackCalc := True
-        }
-        skipChance := skipChance ? skipChance : 1
-        distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
-        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        ; average
-        if(skipAmount == 1) ; true worst case =  worstCase ? Ceil(distance / 2) : normalcalc
-            jumps := worstCase ? Ceil(((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)) * 1.15) : Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1))
-        else
-            jumps := Ceil(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
-        isEffectively100 := 1 - skipChance < .004
-        stacks := Ceil(49 / (1+consume)**jumps)
-        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1) 
-            stacks := Floor(stacks * 1.15) ; 15% more - guesstimate
-        return stacks
-    }
-
-    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached. Defaults: startZone=1, targetZone=1, worstCase=true.
-    CalculateBrivStacksLeftAtTargetZone(startZone := 1, targetZone := 1, worstCase := true)
-    {
-        jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        distance := targetZone - startZone
-        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        if(skipAmount == 1)
-            jumps := worstCase ? Max(Ceil(distance / 2),0) : Max(Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)),0)
-        else
-            jumps :=  Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
-        isEffectively100 := 1 - skipChance < .004
-        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1)
-            jumps := Floor(jumps * 1.05)
-        return Floor(stacks*(1+consume)**jumps)
-    }
-
-    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
-    CalculateBrivStacksConsumedToReachModronResetZone(worstCase := true)
-    {
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetModronResetArea() + 1, worstCase)
-    }
-
-    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
-    CalculateMaxZone(avgMinOrMax := 0)
-    {
-        ; 1 jump results will change based on the current zone depending on whether the previous zones had jumps and used stacks or not.
-        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        currentZone := this.Memory.ReadCurrentZone()
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
-        avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
-        maxJumpDistance := skipAmount+1
-        minJumpDistance := skipAmount
-        ;zones := jumps * avgJumpDistance
-        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
-        return currentZone + zones
-    }
+    #include %A_LineFile%\..\IC_SharedFunctions_StackCalcs.ahk
 
     ; Returns how many Rush stacks are available if Thellora is in the party. 
     ThelloraRushTest()
@@ -1259,6 +1202,27 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         specID := this.Memory.GetCoreSpecializationForHero(brivID)
         if (specID == 3455)
             return true
+        return false
+    }
+
+    BrivHasThunderStep() ;Thunder step 'Gain 20% More Sprint Stacks When Converted from Steelbones', feat 2131.
+    {
+        static thunderStepID := 2131
+        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
+        {
+            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
+            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
+            return (thunderInQ OR thunderInE)
+        }
+        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID))
+            return true
+        else
+        {
+            feats := g_SF.Memory.GetHeroFeats(ActiveEffectKeySharedFunctions.Briv.HeroID)
+            for k, v in feats
+                if (v == thunderStepID)
+                    return true
+        }
         return false
     }
 
