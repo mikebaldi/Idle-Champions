@@ -256,14 +256,6 @@ class IC_BrivGemFarm_Class
         }
     }
     
-
-    /*  StackRestart - Stops progress and wwitches to appropriate party to prepare for stacking Briv's SteelBones.
-                       Falls back from a boss zone if necessary.
-
-    Parameters:
-
-    Returns:
-    */
     ; Stops progress and switches to appropriate party to prepare for stacking Briv's SteelBones.
     StackFarmSetup()
     {
@@ -394,7 +386,6 @@ class IC_BrivGemFarm_Class
         }
         g_PreviousZoneStartTime := A_TickCount
         g_SF.AlreadyOfflineStackedThisRun := True
-        return 
     }
 
     /*  StackNormal - Stack Briv's SteelBones by switching to his formation and waiting for stacks to build.
@@ -734,7 +725,7 @@ class IC_BrivGemFarm_Class
         ; after chests buy/open
         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
 	    loopString := currentLoopString == "" ? loopString : currentLoopString
-        return loopString == "" ? "Chests ----" : loopString
+        g_SharedData.LoopString := loopString
     }
     
     #include *i %A_LineFile%\..\IC_BrivGemFarm_Chests_Deprecated.ahk
