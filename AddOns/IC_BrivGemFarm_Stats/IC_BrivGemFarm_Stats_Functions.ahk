@@ -28,6 +28,7 @@ class IC_BrivGemFarm_Stats_Component
     PreviousRunTime := 0
     GemsTotal := 0
     SbLastStacked := ""
+    PreviousLastGameCloseReason := ""
     
     SharedRunData[]
     {
@@ -288,6 +289,13 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, dtCurrentLevelTimeID, % dtCurrentLevelTime
         if(IsObject(this.SharedRunData))
             GuiControl, ICScriptHub:, LastCloseGameReasonID, % this.SharedRunData.LastCloseReason
+        if (InStr(this.SharedRunData.LastCloseReason, "Check Stack Settings") && this.PreviousLastGameCloseReason != this.SharedRunData.LastCloseReason)
+        {
+            this.PreviousLastGameCloseReason := this.SharedRunData.LastCloseReason
+            g_BrivUserSettings[ "RestartStackTime" ] += 10
+            GuiControl, ICScriptHub:, NewRestartStackTime, % g_BrivUserSettings[ "RestartStackTime" ]
+            IC_BrivGemFarm_Component.Briv_Save_Clicked()
+        }
         Critical, Off
     }
 
