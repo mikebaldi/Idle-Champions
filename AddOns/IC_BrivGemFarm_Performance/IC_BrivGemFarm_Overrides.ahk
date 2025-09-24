@@ -52,7 +52,7 @@ class IC_BrivSharedFunctions_Class
         jsonObj.TotalGoldChests := this.TotalGoldChests := (goldChests != "") ? goldChests : this.TotalGoldChests
         jsonObj.sprint := this.sprint := this.Memory.ReadHasteStacks()
         jsonObj.steelbones := this.steelbones := this.Memory.ReadSBStacks()
-        if (this.BrivHasThunderStep())
+        if (g_SF.BrivHasThunderStep())
             jsonObj.steelbones := this.steelbones := Floor(this.steelbones * 1.2)
         return jsonObj
     }
@@ -205,63 +205,5 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
             Sleep, %percentageReducedSleep%
         }
         g_PreviousZoneStartTime := A_TickCount
-    }
-    
-    BrivHasThunderStep() ;Thunder step 'Gain 20% More Sprint Stacks When Converted from Steelbones', feat 2131.
-    {
-        static thunderStepID := 2131
-        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
-        {
-            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
-            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
-            return (thunderInQ OR thunderInE)
-        }
-        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID))
-            return true
-		else
-		{
-			feats := g_SF.Memory.GetHeroFeats(ActiveEffectKeySharedFunctions.Briv.HeroID)
-			for k, v in feats
-				if (v == thunderStepID)
-					return true
-		}
-		return false
-    }
-
-    ; Predicts the number of Briv haste stacks after the next reset.
-    ; After resetting, Briv's Steelborne stacks are added to the remaining Haste stacks.
-    PredictStacks(addSBStacks := true, refreshCache := false)
-    {
-        static skipQ
-        static skipE
-
-        preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
-        if (IsObject(IC_BrivGemFarm_LevelUp_Component) || IsObject(IC_BrivGemFarm_LevelUp_Class))
-        {
-            brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ]
-            brivMetalbornArea := brivMinlevelArea
-        }
-        else
-        {
-            brivMinlevelArea := brivMetalbornArea := 1
-        }
-        if (refreshCache || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
-        {
-            skipQ := this.GetBrivSkipValue(1)
-            skipE := this.GetBrivSkipValue(3)
-        }
-        modronReset := g_SF.Memory.GetModronResetArea()
-        sbStacks := g_SF.Memory.ReadSBStacks()
-        currentZone := g_SF.Memory.ReadCurrentZone()
-        highestZone := g_SF.Memory.ReadHighestZone()
-        sprintStacks := g_SF.Memory.ReadHasteStacks()
-        ; Party has not progressed to the next zone yet but Briv stacks were consumed.
-        if (highestZone - currentZone > 1)
-            currentZone := highestZone
-        ; This assumes Briv has gained more than 48 stacks ever.
-        stacksAtReset := Max(48, this.CalcStacksLeftAtReset(preferred, currentZone, modronReset, sprintStacks, skipQ, skipE, brivMinlevelArea, brivMetalbornArea))
-        if (addSBStacks)
-            stacksAtReset += sbStacks
-        return stacksAtReset
     }
 }
