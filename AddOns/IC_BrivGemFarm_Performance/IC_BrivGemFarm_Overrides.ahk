@@ -14,10 +14,20 @@ class IC_BrivServerCall_Class extends IC_ServerCalls_Class
 
 class IC_BrivSharedFunctions_Class
 {
+    CloseIC( string := "")
+    {
+        base.CloseIC(string)
+        try
+        {
+            g_ScriptHubComs.RunTimersOnModronReset()
+        }
+    }
+
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
-        this.StackNormal(30000) ; Give 30s max to try to gain some stacks before a forced reset.
+        targetStackModifier := g_BrivGemFarm.StacksRequiredForMissingThelloraJumps()
+        this.StackNormal(30000, targetStackModifier) ; Give 30s max to try to gain some stacks before a forced reset.
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
         this.CloseIC( reason )
@@ -37,6 +47,7 @@ class IC_BrivSharedFunctions_Class
         Run, %A_AhkPath% "%scriptLocation%"
         this.AlreadyOfflineStackedThisRun := False
     }
+    
     ; Store important user data [UserID, Hash, InstanceID, Briv Stacks, Gems, Chests]
     SetUserCredentials()
     {

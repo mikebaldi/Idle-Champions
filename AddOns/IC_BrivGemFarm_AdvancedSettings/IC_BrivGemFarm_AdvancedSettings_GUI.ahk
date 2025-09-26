@@ -64,8 +64,14 @@ Gui, ICScriptHub:Font, w400
 IC_BrivGemFarm_AdvancedSettings_Functions.BuildModTables(xyValX+20, xyValY)
 IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
 
-Gui, ICScriptHub:Add, Text, x10 y+30, Save settings using main Briv Gem Farm tab.
-
+if(IsObject(IC_BrivGemFarm_Component))
+{
+    Gui, ICScriptHub:Add, Picture, x15 y+30 h50 w50 gBriv_Save_Clicked vBrivGemFarmAdvancedSaveButton, %g_SaveButton%
+}
+else
+{
+    Gui, ICScriptHub:Add, Text, x10 y+30, Save settings using main Briv Gem Farm tab.
+}
 ; ############################################################
 
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()

@@ -6,6 +6,7 @@ g_BrivFarm.GemFarmGUID := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Bri
 global g_BrivFarmModLoc := A_LineFile . "\..\IC_BrivGemFarm_Mods.ahk"
 global g_BrivFarmAddonStartFunctions := {}
 global g_BrivFarmAddonStopFunctions := {}
+global g_BrivFarmComsObj := new IC_BrivGemFarm_Coms
 global g_BrivFarmLastRunMiniscripts := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Miniscripts.json")
 GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
@@ -114,6 +115,7 @@ IC_BrivGemFarm_Component.Briv_Load_Profile_Clicked(g_BrivUserSettings["LastSetti
 IC_BrivGemFarm_Component.UpdateGUICheckBoxes()
 IC_BrivGemFarm_Component.BuildToolTips()
 IC_BrivGemFarm_Component.ResetModFile()
+IC_BrivGemFarm_Component.StartComs()
 Briv_Run_Clicked() {
     IC_BrivGemFarm_Component.Briv_Run_Clicked()
 }
@@ -266,13 +268,13 @@ class IC_BrivGemFarm_Component
                 Run, %A_AhkPath% "%v%" "%k%"
             }
         }
-        try
+        try ; Connect to current running if it exists
         {
             Briv_Connect_Clicked()
             SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedData.ShowGui()
         }
-        catch
+        catch ; otherwise start farm
         {
             ;g_BrivGemFarm.GemFarm()
             g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
@@ -332,6 +334,7 @@ class IC_BrivGemFarm_Component
                 SharedRunData.Close()
             }
         }
+        g_BrivFarmComsObj.StopAll()
         this.UpdateStatus("Closing Gem Farm")
         try
         {
@@ -354,12 +357,16 @@ class IC_BrivGemFarm_Component
         this.UpdateGUIDFromLast()
         Try 
         {
-            ComObjActive(g_BrivFarm.GemFarmGUID)
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
         }
         Catch
         {
             this.UpdateStatus("Gem Farm not running.") 
             return
+        }
+        try
+        {
+            IC_BrivGemFarm_Component.StartComs()
         }
         g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()
@@ -535,6 +542,19 @@ class IC_BrivGemFarm_Component
         SetTimer, ClearBrivGemFarmStatusMessage,-3000
     }
 
+    StartComs()
+    {
+        GuidCreate := ComObjCreate("Scriptlet.TypeLib")
+        guid := GuidCreate.Guid
+        ObjRegisterActive(g_BrivFarmComsObj, "")
+        ObjRegisterActive(g_BrivFarmComsObj, guid)
+        g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json", guid)
+        Try
+        {
+            SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
+            SharedData.ResetComs()
+        }
+    }
     
     Briv_Visit_Byteglow_Speed(speedType := "avg")
     {
@@ -600,6 +620,14 @@ class IC_BrivGemFarm_Component
             IC_BrivGemFarm_Component.UpdateStatus("Error retrieving stacks from byteglow.")
         }
     }
+}
+
+; Revoke coms on exit.
+OnExit("Briv_Com_Object_Revoke")
+; OnExit(Briv_Com_Object_Revoke())
+Briv_Com_Object_Revoke()
+{
+    ObjRegisterActive(g_BrivFarmComsObj, "")
 }
 
 Gui, ICScriptHub:Submit, NoHide

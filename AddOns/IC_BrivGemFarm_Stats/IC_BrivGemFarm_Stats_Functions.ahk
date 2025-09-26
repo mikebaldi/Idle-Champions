@@ -345,7 +345,10 @@ class IC_BrivGemFarm_Stats_Component
                 }
 
                 this.FastRunTime := 1000
-                this.ScriptStartTime := A_TickCount
+                this.ScriptStartTime := A_TickCount    
+                fncToCallOnTimer := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
+                SetTimer, %fncToCallOnTimer%, Off
+                SetTimer, %fncToCallOnTimer%, Delete
             }
             if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
             {
@@ -618,21 +621,51 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions := {}
         fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStatTimers")
         this.TimerFunctions[fncToCallOnTimer] := 200
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
-        this.TimerFunctions[fncToCallOnTimer] := 3000
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
-        fncToCallOnTimer := ObjBindMethod(g_SF, "MonitorIsGameClosed")
-        this.TimerFunctions[fncToCallOnTimer] := 200
+
+        this.UpdateStartLoopStats()
+        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
+        g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"] := fncToCallOnTimer
+        g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["UpdateStartLoopStats"] := -300
+        fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
+		g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
+		g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["MonitorIsGameClosed"] := 200
+    }
+
+    ; Reloads memory reads after game has closed. For updating GUI.
+    MonitorIsGameClosed()
+    {
+        static comDisabled := True
+
+        ; if (!comDisabled)
+        ; {
+        ;     updateGUIFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
+        ;     SetTimer, %updateGUIFnc%, Off
+        ;     SetTimer, %updateGUIFnc%, Delete
+        ;     comDisabled := True
+        ; }
+        ; else
+        if (WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
+        {
+            g_SF.Memory.OpenProcessReader()
+            ; if(comDisabled)    ; restart com after game open
+            ; {
+            updateGUIFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
+            repeatTimeMS := g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["UpdateStartLoopStats"]
+            SetTimer, %updateGUIFnc%, %repeatTimeMS%, 0
+            ;     comDisabled := False
+            ; }
+            gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"]
+            SetTimer, %gameMonFnc%, Off
+        }
     }
 
     ; Starts the saved timed functions (typically to be started when briv gem farm is started)
     StartTimedFunctions()
     {
         for k,v in this.TimerFunctions
-        {
             SetTimer, %k%, %v%, 0
-        }
     }
 
     ; Stops the saved timed functions (typically to be stopped when briv gem farm is stopped)

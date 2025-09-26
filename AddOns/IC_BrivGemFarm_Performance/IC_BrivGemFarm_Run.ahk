@@ -38,6 +38,7 @@ KeyHelper.BuildVirtualKeysMap(g_KeyMap, g_SCKeyMap)
 global g_ServerCall := new IC_ServerCalls_Class
 global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
+global g_ScriptHubComs := new IC_BrivGemFarm_Coms
 global g_BrivUserSettingsFromAddons := {}
 
 ; Includes that execute code
@@ -75,8 +76,21 @@ class IC_BrivGemFarmRun_SharedData_Class
         g_SF.ToggleAutoProgress(false, false, true)
         ExitApp
     }
+
+    ResetComs()
+    {
+        try
+        {
+            g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
+        }
+        catch
+        {
+            fail := "fail"
+        }
+    }
 }
 SH_UpdateClass.UpdateClassFunctions(g_SharedData, IC_BrivGemFarmRun_SharedData_Class)
+g_SharedData.ResetComs()
 
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
@@ -168,16 +182,21 @@ else
     ObjRegisterActive(g_SharedData, guid)
     g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", guid)
 }
-; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
+try
+{
+    g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
+}
+catch
+{
+    fail := "fail"
+}
 
 g_BrivGemFarm.GemFarm()
 
-OnExit(ComObjectRevoke())
-
+OnExit("ComObjectRevoke")
 ComObjectRevoke()
 {
     ObjRegisterActive(g_SharedData, "")
-    ExitApp
 }
 
 BrivPerformanceGemFarmGuiClose()
@@ -190,3 +209,4 @@ BrivPerformanceGemFarmGuiClose()
     IfMsgBox, Cancel
         return true
 }
+ExitApp

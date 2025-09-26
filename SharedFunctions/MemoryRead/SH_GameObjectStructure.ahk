@@ -581,8 +581,6 @@ class GameObjectStructure
                 currIndex[2] := position := Mod(A_Index + GameObjectStructure.LastDictPos, dictCount + 1)  ; Continue lookup from last location searched. Useful for ordered dictionaries.
             else
                 currIndex[2] := position := A_Index - 1
-            ; if (currIndex[2] == 0)
-            ;     test := reset
             indexReadObject.FullOffsets.Push(this.CalculateDictOffset(currIndex))               ; Index Offset
             wasLocked := GameObjectStructure.ReadIsLocked
             GameObjectStructure.ReadIsLocked := False                                           ; Disable lock before read

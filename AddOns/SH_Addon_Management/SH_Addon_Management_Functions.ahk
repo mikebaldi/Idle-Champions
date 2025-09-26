@@ -482,7 +482,7 @@ Class AddonManagement
         oldGUI := A_DefaultGui
         Gui, %GuiWindowName%:Default
         Gui, %GuiWindowName%:ListView, ahk_id %ListViewName%
-        test := LV_Delete()
+        doDelete := LV_Delete()
         for k,v in this.Addons 
         {
             IsEnabled := v["Enabled"] ? "yes" : "no"

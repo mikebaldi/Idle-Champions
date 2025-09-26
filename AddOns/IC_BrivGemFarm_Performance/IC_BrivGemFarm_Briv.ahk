@@ -87,7 +87,7 @@ class BrivFunctions
         {
             skipValues := this.GetBrivSkipValues(favorite)
             feats := this.GetHeroFeatsInFormationFavorite(favorite, this.BrivId)
-            config := new IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig.BrivSkipConfig(skipValues[1], skipValues[2], feats)
+            config := new IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig(skipValues[1], skipValues[2], feats)
             this.BrivSkipConfigByFavorite[favorite] := config
         }
         return this.BrivSkipConfigByFavorite[favorite]
@@ -208,7 +208,7 @@ class BrivFunctions
 
     ; Predicts the number of Briv haste stacks after the next reset.
     ; After resetting, Briv's Steelborne stacks are added to the remaining Haste stacks.
-    PredictStacks(addSBStacks := true, refreshCache := false)
+    PredictStacks(addSBStacks := true, refreshCache := false, forcedReset := False )
     {
         static skipQ
         static skipE
@@ -220,7 +220,7 @@ class BrivFunctions
         else
             brivMinlevelArea := 1
         if (refreshCache || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
-            skipQ := this.GetBrivSkipValue(1), skipE := this.GetBrivSkipValue(3)
+            skipQ := (this.GetBrivSkipValues(1))[1], skipE := (this.GetBrivSkipValues(3))[1]
         modronReset := g_SF.Memory.GetModronResetArea()
         sbStacks := g_SF.Memory.ReadSBStacks()
         currentZone := g_SF.Memory.ReadCurrentZone()

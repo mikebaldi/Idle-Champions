@@ -55,7 +55,7 @@ class IC_BrivGemFarm_Class
             Sleep, 20 ; here to keep the script responsive.
         }
     }
-   
+
     ;=====================================================
     ;Primary Gem Farm loop functions
     ;=====================================================
@@ -256,6 +256,21 @@ class IC_BrivGemFarm_Class
         }
     }
     
+    ; Assumes current jump value, does not account for featswapping.
+    StacksRequiredForMissingThelloraJumps()
+    {
+        maxRushArea := ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadMaxRushArea()
+        currentRushStacks := g_SF.ThelloraRushTest()
+        ; Party has not progressed to the next zone yet but Briv stacks were consumed.
+        if (maxRushArea - currentRushStacks > 0)
+            distance += (maxRushArea - currentRushStacks)       
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        jumps := Ceil(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
+        consume := g_SF.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
+        stacks := Ceil(this.GetNumStacksFarmed() / (1+consume)**jumps) - this.GetNumStacksFarmed()
+    }
+
     ; Stops progress and switches to appropriate party to prepare for stacking Briv's SteelBones.
     StackFarmSetup()
     {
@@ -296,6 +311,7 @@ class IC_BrivGemFarm_Class
     ;Starts stacking SteelBones based on settings (Restart or Normal).
     StackFarm()
     {
+        g_SharedData.LoopString := "Switching to stack farm formation."
         if (this.ShouldOfflineStack())
             this.StackRestart()
         else if (this.StackNormal() == 0)
@@ -305,7 +321,6 @@ class IC_BrivGemFarm_Class
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1 )
-        g_SharedData.LoopString := "Switching to stack farm formation."
     }
 
     /*  StackRestart - Stack Briv's SteelBones by switching to his formation and restarting the game.
@@ -524,10 +539,14 @@ class IC_BrivGemFarm_Class
     ;Waits for modron to reset. Closes IC if it fails.
     ModronResetCheck()
     {
+        global g_ScriptHubComs
         modronResetTimeout := 75000
         if (!g_SF.WaitForModronReset(modronResetTimeout))
             g_SF.CheckifStuck(True)
-            ;g_SF.CloseIC( "ModronReset, resetting exceeded " . Floor(modronResetTimeout/1000) . "s" )
+        try ; set off any timers in SH that need to run on a reset.
+        {
+            g_ScriptHubComs.RunTimersOnModronReset()
+        }
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.TriggerStart := True
     }
@@ -730,4 +749,54 @@ class IC_BrivGemFarm_Class
     
     #include *i %A_LineFile%\..\IC_BrivGemFarm_Chests_Deprecated.ahk
     #include %A_LineFile%\..\IC_BrivGemFarm_Briv.ahk
+}
+
+; Shared com object
+class IC_BrivGemFarm_Coms
+{
+    OneTimeRunAtResetFunctions := {}
+    OneTimeRunAtStartFunctions := {}
+    OneTimeRunAtEndFunctions := {}
+    OneTimeRunAtResetFunctionsTimes := {}
+    
+    RunTimersOnModronReset()
+    {
+        ; set off timers so gem farm does not have to wait for functions to run before continuing.
+		for k,v in this.OneTimeRunAtResetFunctions
+        {
+            repeatTimeMS := this.OneTimeRunAtResetFunctionsTimes[k]
+			SetTimer, %v%, %repeatTimeMS%, 0
+        }
+    }
+
+    RunTimersOnGemFarmStart()
+    {
+		for k,v in this.OneTimeRunAtStartFunctions
+			SetTimer, %k%, %v%, 0
+    }
+
+    RunTimersOnGemFarmEnd()
+    {
+        for k,v in this.OneTimeRunAtEndFunctions
+			SetTimer, %k%, %v%, 0
+    }
+
+    StopAll()
+    {
+        for k,v in this.OneTimeRunAtEndFunctions
+        {
+			SetTimer, %k%, Off
+            SetTimer, %k%, Delete
+        }
+        for k,v in this.OneTimeRunAtStartFunctions
+        {
+			SetTimer, %k%, Off
+            SetTimer, %k%, Delete
+        }
+        for k,v in this.OneTimeRunAtEndFunctions
+        {
+			SetTimer, %k%, Off
+            SetTimer, %k%, Delete
+        }
+    }
 }

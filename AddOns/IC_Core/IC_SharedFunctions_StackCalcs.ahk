@@ -1,4 +1,6 @@
 
+    ; SharedFunctions Extension
+    
     ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
     CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
     {

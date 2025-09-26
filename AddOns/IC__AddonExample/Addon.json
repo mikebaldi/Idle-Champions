@@ -1,5 +1,5 @@
 {
-	"Name":"Addon Example",
+	"Name":"Example of an Addon (NOT FOR USE!)",
 	"Version": "v0.1.1",
     "Includes" : "Example_Includes.ahk",
     "Author" : "<your name here>",
