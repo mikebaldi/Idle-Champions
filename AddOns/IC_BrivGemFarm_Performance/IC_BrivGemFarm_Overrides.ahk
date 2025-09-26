@@ -47,7 +47,7 @@ class IC_BrivSharedFunctions_Class
         Run, %A_AhkPath% "%scriptLocation%"
         this.AlreadyOfflineStackedThisRun := False
     }
-    
+
     ; Store important user data [UserID, Hash, InstanceID, Briv Stacks, Gems, Chests]
     SetUserCredentials()
     {
@@ -146,6 +146,18 @@ class IC_BrivSharedFunctions_Class
 
         return True
     }
+
+    DoRushWaitIdling(StartTime, estimate)
+    {
+        this.ToggleAutoProgress(0)
+        this.SetFormation()
+        ElapsedTime := A_TickCount - StartTime
+        g_SharedData.LoopString := "Rush Wait: " . ElapsedTime . " / " . estimate
+        percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10)+15, 15)
+        Sleep, %percentageReducedSleep%
+        return ElapsedTime
+    }
+
 }
 
 class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
@@ -207,14 +219,7 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
         ;   past highest accepted rushwait triggering area
         ;   rush is active
         while ( ElapsedTime < timeout AND this.ShouldRushWait() )
-        {
-            this.ToggleAutoProgress(0)
-            this.SetFormation()
-            ElapsedTime := A_TickCount - StartTime
-            g_SharedData.LoopString := "Rush Wait: " . ElapsedTime . " / " . estimate
-            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10)+15, 15)
-            Sleep, %percentageReducedSleep%
-        }
+            ElapsedTime := this.DoRushWaitIdling(StartTime, estimate)
         g_PreviousZoneStartTime := A_TickCount
     }
 }

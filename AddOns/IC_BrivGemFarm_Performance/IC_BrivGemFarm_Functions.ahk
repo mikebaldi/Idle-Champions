@@ -110,6 +110,8 @@ class IC_BrivGemFarm_Class
         g_SharedData.SwapsMadeThisRun := 0
         g_SharedData.TriggerStart := false
         g_SharedData.LoopString := "Main Loop"
+        ; Do Chests after Reset
+        g_SharedData.LoopString  := " " . g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
         return g_SF.Memory.ReadResetsCount()
     }
 
@@ -758,7 +760,7 @@ class IC_BrivGemFarm_Coms
     OneTimeRunAtStartFunctions := {}
     OneTimeRunAtEndFunctions := {}
     OneTimeRunAtResetFunctionsTimes := {}
-    
+
     RunTimersOnModronReset()
     {
         ; set off timers so gem farm does not have to wait for functions to run before continuing.

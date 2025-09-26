@@ -108,18 +108,18 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         ElapsedTime := 0
         doHybridStacking := ( this.UserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( this.UserSettings[ "ForceOfflineRunThreshold" ] > 1 )
 
-        if (doHybridStacking) ; buy/open at until user's min chests + serverRate >= chests left
-        {
-            ; < runTime * hybridCount (don't want to be double running purchase scripts) ; alternatively shared com flag?
-            while(ElapsedTime < hybridStackTimeout)
-            {
-                if !(this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
-                    break
-                ElapsedTime := A_TickCount - StartTime
-            }
-        }
-        else
-            this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
+        ; if (doHybridStacking) ; buy/open at until user's min chests + serverRate >= chests left
+        ; {
+        ;     ; < runTime * hybridCount (don't want to be double running purchase scripts) ; alternatively shared com flag?
+        ;     while(ElapsedTime < hybridStackTimeout)
+        ;     {
+        ;         if !(this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
+        ;             break
+        ;         ElapsedTime := A_TickCount - StartTime
+        ;     }
+        ; }
+        ; else
+        this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
                
         return loopString
     }

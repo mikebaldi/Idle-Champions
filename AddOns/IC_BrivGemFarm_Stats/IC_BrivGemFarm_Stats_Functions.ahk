@@ -347,8 +347,11 @@ class IC_BrivGemFarm_Stats_Component
                 this.FastRunTime := 1000
                 this.ScriptStartTime := A_TickCount    
                 fncToCallOnTimer := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
-                SetTimer, %fncToCallOnTimer%, Off
-                SetTimer, %fncToCallOnTimer%, Delete
+                if(fncToCallOnTimer != "")
+                {
+                    SetTimer, %fncToCallOnTimer%, Off
+                    SetTimer, %fncToCallOnTimer%, Delete
+                }
             }
             if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
             {
