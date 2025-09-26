@@ -66,12 +66,24 @@ IC_BrivGemFarm_AdvancedSettings_Component.LoadAdvancedSettings()
 
 if(IsObject(IC_BrivGemFarm_Component))
 {
-    Gui, ICScriptHub:Add, Picture, x15 y+30 h50 w50 gBriv_Save_Clicked vBrivGemFarmAdvancedSaveButton, %g_SaveButton%
+    Gui, ICScriptHub:Add, Picture, x15 y+30 h50 w50 gBrivGemFarmAdvancedUpdateStatusAndClick vBrivGemFarmAdvancedSaveButton, %g_SaveButton%
+    Gui, ICScriptHub:Add, Text, x+10 y+-33 w250 vBrivGemFarmAdvancedStatusText,
 }
 else
 {
-    Gui, ICScriptHub:Add, Text, x10 y+30, Save settings using main Briv Gem Farm tab.
+    Gui, ICScriptHub:Add, Text, x10 y+30 w250 vBrivGemFarmAdvancedStatusText, Save settings using main Briv Gem Farm tab.
 }
+
+; if(IsObject(IC_BrivGemFarm_Component))
+;     GuiControl, ICScriptHub:, BrivGemFarmAdvancedStatusText, % ""
+
+BrivGemFarmAdvancedUpdateStatusAndClick()
+{
+    global BrivGemFarmAdvancedStatusText
+    Briv_Save_Clicked()
+    GUIFunctions.UpdateStatusTextWithClear(BrivGemFarmAdvancedStatusText, "Saved...", timer := 3000)
+}
+
 ; ############################################################
 
 IC_BrivGemFarm_AdvancedSettings_Component.AddToolTips()

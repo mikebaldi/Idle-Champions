@@ -186,6 +186,24 @@ class GUIFunctions
         this.isDarkMode := this.currentTheme["UseDarkThemeGraphics"]
     }
 
+    ; Will update the ByRef control passed in and then clear it after timer (ms) has expired (should not be negative number).
+    UpdateStatusTextWithClear(byref controlVal, msg, timer)
+    {
+        GuiControlGet, hwnd, ICScriptHub:Hwnd, controlVal
+        GuiControl, ICScriptHub:, %hwnd%, % msg
+        if(timer) ; != 0, != ""
+        {
+            clearFnc := ObjBindMethod(GUIFunctions, "ClearValueOfControl", hwnd)
+            SetTimer, %clearFnc%, -%timer%
+        }
+    }
+
+    ; Clears value from hwnd passed.
+    ClearValueOfControl(hwnd)
+    {
+         GuiControl, ICScriptHub:, %hwnd%, % ""
+    }
+
     ; Sets the color/weight for subsequent text based on the theme.
     UseThemeTextColor(textType := "default", weight := 400)
     {  

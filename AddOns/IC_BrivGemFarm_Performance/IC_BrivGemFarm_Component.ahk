@@ -538,8 +538,8 @@ class IC_BrivGemFarm_Component
 
     UpdateStatus(msg)
     {
-        GuiControl, ICScriptHub:, gBriv_Button_Status, % msg
-        SetTimer, ClearBrivGemFarmStatusMessage,-3000
+        global gBriv_Button_Status
+        GUIFunctions.UpdateStatusTextWithClear(gBriv_Button_Status, msg, 3000)
     }
 
     StartComs()
