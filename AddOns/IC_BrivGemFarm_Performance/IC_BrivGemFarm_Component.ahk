@@ -371,9 +371,7 @@ class IC_BrivGemFarm_Component
         g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()
         for k,v in g_BrivFarmAddonStartFunctions
-        {
             v.Call()
-        }
         GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
     }
 
