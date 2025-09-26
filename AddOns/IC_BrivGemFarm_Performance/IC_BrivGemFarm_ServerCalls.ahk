@@ -201,8 +201,11 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         if !(response.okay AND response.success)
             return response
         ; g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
-        this.SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
-        this.SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
+        try
+        {
+            this.SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
+            this.SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
+        }
         this.CurrencyRemaining := response.currency_remaining
         return okToContinue := 1
     }
@@ -226,9 +229,12 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         chestResults := g_BrivServerCall.CallOpenChests( chestID, numChests )
         if (!chestResults.success)
             return chestResults
-        this.SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
-        this.SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
-        this.SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
+        try
+        {
+            this.SharedData.OpenedSilverChests += (chestID == 1) ? numChests : 0
+            this.SharedData.OpenedGoldChests += (chestID == 2) ? numChests : 0
+            this.SharedData.ShinyCount += g_SF.ParseChestResults( chestResults )
+        }
         if (chestResults.chests_remaining < numChests)
             return "Not enough chests remaining to continue opening."
         return okToContinue := 1
@@ -272,7 +278,13 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     }
 }
 
-g_BrivServerCall.SharedData.ServerCallsAreComplete := False
+try
+{
+    g_BrivServerCall.SharedData.ServerCallsAreComplete := False
+}
 g_BrivServerCall.LaunchCalls()
-g_BrivServerCall.SharedData.ServerCallsAreComplete := True
+try
+{
+    g_BrivServerCall.SharedData.ServerCallsAreComplete := True
+}
 ExitApp
