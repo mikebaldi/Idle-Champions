@@ -69,7 +69,7 @@ class IC_MemoryFunctions_Class
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion(){
-        return "v2.5.7, 2025-09-20"
+        return "v2.5.8, 2025-09-27"
     }
 
     GetPointersVersion(){
@@ -83,6 +83,7 @@ class IC_MemoryFunctions_Class
     OpenProcessReader(){
         global g_UserSettings
         _MemoryManager.exeName := g_UserSettings[ "ExeName" ]
+        Critical, On
         isExeRead := _MemoryManager.Refresh()
         if(isExeRead == -1)
             return
@@ -97,6 +98,7 @@ class IC_MemoryFunctions_Class
         ; this.UserStatHandler.Refresh()
         ; this.UserData.Refresh()
         this.ActiveEffectKeyHandler.Refresh()
+        Critical, Off
     }
 
     ;=====================

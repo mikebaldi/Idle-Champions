@@ -3,7 +3,7 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.4, 2025-09-20"
+        return "v2.1.5, 2025-09-27"
     }
 
     Refresh()
