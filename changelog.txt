@@ -1,5 +1,56 @@
+September 27, 2025
+    Chest opening/buying fixes.
+        Fixed bugs in new ServerCalls Script that prevented buying in certain circumstances, not showing in stats, and other things.
+    Removed remaining CalculatedTargetStacks elements.
+    Added multi-dimensional array lookups.
+    Added some protections against reading while the dictionary is building (not foolproof). (Fix for random getting not reading zone Error on startup).
+    Added optimizations to dictionary lookups.
+    Updated chest lookups to use to new dictionary optimizations.
+    Added option to do memory lookups from UnityPlayer.dll on top of the base "mono-2.0-bdwgc.dll".
+    Updated Imports to Steam v633.2.
+    Added Imports that are related to shops.
+    Added a FeatSwapEnabled option for addon use to simplify some code.
+    Updated the error log filename to be one excluded by .gitignore.
+    Renamed MemoryFunctions addon to be more obvious of its intended non-use.
+    Renamed ExampleAddon addon to be more obvious of its intended non-use.
+    Removed IC_UpdateClass_Class references.
+    Converted many hard coded hero IDs to use the ID set in their handler.
+    Removed extraneous code from DirectInput function.
+    Added memory reads for total resets (ReadResetsTotal), level up cost (ReadLevelUpCostBySeat) and the level up amount setting (ReadLevelUpAmount).
+    Added Memory reads for the shop (ReadALaCartRerollCost), (ReadALaCarteRerollsRemaining), (ReadALaCarteOffersExpireTime).
+    Added backup tests for the correct formation being loaded since the memory read used can be wrong when the game tries and fails to swap parties.
+    Fixed cases of if statements not using the proper parenthesis notation. (Cases where some ifs require parenthesis, some ifs require NO parenthesis.)
+    Moved a number of useful functions from ImpEGamer addons to the base script.
+    Refactored GemFarm function to be split into more functions for overrides.
+    Added a number of new functions that addons may override in BrivGemFarm: 
+        GemFarmPreLoopSetup, GemFarmResetSetup, GemFarmDoZone, GemFarmDoTouchedBoss, GemFarmDoStuckCleanup, GemFarmShouldSetFormation, GemFarmDoNonModronActions, DoZ1Setup.
+    Added a number of new functions to SharedFunctions (Either in IC or Briv): 
+        LoadFormationForZ1, FamiliarFormationsFieldCheck, StackSettingsCheck, TestQFormation, TestEFormation, TestWFormation, PreFlightCheck, DoDashWaitingIdling, DoRushWaitIdling, GetInitialFormation.
+    Added extension functionality for addon use.
+        Instead of using extends, can now use SH_UpdateClass.UpdateClassFunctions to create extends-like functionality on another class (which can be extended again if needed).
+        Added AddClassFunctions method for when methods don't need to override/extend other methods. 
+    Added settings cleaning to script. Will remove unused options from settings file.
+    Refactored BrivGemFormPerformance to be split into smaller files for different groupings.
+    Added Emmote's edit incremental increasing of offline time.
+    Added a LoadOrder setting to addon.json files that can require an addon be loaded before it if it is enabled, but not require the addon to be enabled.
+        (Useful for setting load order such as RNGWaiting -> HybridTurboStacking -> Levelup -> base GemFarm.)
+    Added Save button to Advanced Settings.
+    Added Start/Stop buttons to the stats tab.
+    Added reverse coms for restart GemFarm notifications.
+    Updated stats tab to utilize reset com timers.
+    Updated stack prediction to account for partial Thellora jumps and Thunderstep.
+    Fixed some bugs in skip prediction.
+    Removed some test code.
+    Updated a number of timers to only run until they have completed their task instead of constantly.
+    Added new functions to SH_GuiFunctions: 
+        UpdateStatusTextWithClear, ClearValueOfControl
+    Added DoChests call to every reset rather than just stack resets.
+    Added a Stack and Stop addon which when enabled that will make gem farming end after the next stacking step instead of being continuous.
+    Fixed BPH not showing appropriately when gems spent stat is capped.
+        Note: GPH will be artificially high when buying chests since chest purchases will happen and start logging gems spent before the stats will start being collected. (Should average back out over time). BPH should remain unaffected by this.
+
 September 12, 2025
-    Removed AutoCalc statcks functionality.
+    Removed AutoCalc stacks functionality.
         Note: As the game updates new features come out that affect how many stacks are needed. The AutoCalc of stacks has been removed since it has not kept up with these changes.
     Created ServerCall script to run server calls separately from the gem farm script to reduce server connection delays.
     Removed some unused imports.
