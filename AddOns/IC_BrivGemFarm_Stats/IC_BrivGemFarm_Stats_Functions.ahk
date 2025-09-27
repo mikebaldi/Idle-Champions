@@ -120,7 +120,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         g_DownAlign := posY + posH -5
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h350 vOnceRunGroupID, Updated Once Per Full Run:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Previous Run Time (min):
         Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w50,
@@ -136,21 +136,21 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Avg. Run Time (min):
         Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w50,
 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Fail Run Time (min):
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time (min):
         Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w50,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Fail Run Time Total (min):
         Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w50,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
         Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Silvers Gained:
-        Gui, ICScriptHub:Add, Text, vSilversGainedID x+2 w200, 0
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silvers Opened:
-        Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w200, 0
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Gained:
-        Gui, ICScriptHub:Add, Text, vGoldsGainedID x+2 w200, 0
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Opened:
-        Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w200, 0
+        Gui, ICScriptHub:Font, w700
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Chest Counts (Opened / Bought / Dropped):
+        Gui, ICScriptHub:Font, w400
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+4 w250 h1 0x10 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silver Chests:
+        Gui, ICScriptHub:Add, Text, vSilversGainedID x+2 w200, % 0 . " / " . 0 . " / " . 0
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Chests:
+        Gui, ICScriptHub:Add, Text, vGoldsGainedID x+2 w200, % 0 . " / " . 0 . " / " . 0
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
         Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
         ShiniesClassNN := GUIFunctions.GetToolTipTarget("ShiniesID")
@@ -413,11 +413,9 @@ class IC_BrivGemFarm_Stats_Component
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
             if (IsObject(this.SharedRunData))
-            {
-                GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
-                GuiControl, ICScriptHub:, GoldsGainedID, % currentGoldChests - this.GoldChestCountStart + this.SharedRunData.OpenedGoldChests
-                GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
-                GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+            { ; (Opened / Bought / Dropped)
+                GuiControl, ICScriptHub:, SilversGainedID, %  this.SharedRunData.OpenedSilverChests . " / " . this.SharedRunData.PurchasedSilverChests . " / " . this.CalculateDroppedChests(currentSilverChests, 1)
+                GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.OpenedGoldChests . " / " . this.SharedRunData.PurchasedGoldChests . " / " . this.CalculateDroppedChests(currentGoldChests, 2)
                 global ShiniesClassNN
                 g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
                 GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
@@ -436,6 +434,25 @@ class IC_BrivGemFarm_Stats_Component
         if (IsObject(this.SharedRunData))
             this.LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
+    }
+
+    ; Calculate dropped chests according to chest ID (1 or 2) and current number held . dropped := current - starting - purchased + opened
+    CalculateDroppedChests(currentNumber, chestID := 1)
+    {
+        ; id 1 == silver, id 2 == gold. Should not accept any other number
+        if (chestID > 2 OR chestID < 1)
+            return ""
+        startingNum := chestID == 1 ? this.SilverChestCountStart : this.GoldChestCountStart
+        if (IsObject(this.SharedRunData))
+        {
+            Try
+            {
+                purchasedNum := chestID == 1 ? this.SharedRunData.PurchasedSilverChests : this.SharedRunData.PurchasedGoldChests
+                openedNum := chestID == 1 ? this.SharedRunData.OpenedSilverChests : this.SharedRunData.OpenedGoldChests
+            }
+        }
+        dropped := currentNumber - startingNum - purchasedNum + openedNum
+        return dropped
     }
 
     ; Returns a string listing shinies found by champion.
@@ -557,10 +574,8 @@ class IC_BrivGemFarm_Stats_Component
         if(IsObject(this.SharedRunData))
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
-            GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.PurchasedSilverChests
-            GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.PurchasedGoldChests
-            GuiControl, ICScriptHub:, SilversOpenedID, % this.SharedRunData.OpenedSilverChests
-            GuiControl, ICScriptHub:, GoldsOpenedID, % this.SharedRunData.OpenedGoldChests
+            GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.OpenedSilverChests . " / " . this.SharedRunData.PurchasedSilverChests . " / " . this.CalculateDroppedChests(currentSilverChests, 1)
+            GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.OpenedGoldChests . " / " . this.SharedRunData.PurchasedGoldChests . " / " . this.CalculateDroppedChests(currentGoldChests, 2)
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % this.SharedRunData.SwapsMadeThisRun
             GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
@@ -571,10 +586,8 @@ class IC_BrivGemFarm_Stats_Component
         else
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString("")
-            GuiControl, ICScriptHub:, SilversGainedID, % 0
-            GuiControl, ICScriptHub:, GoldsGainedID, % 0
-            GuiControl, ICScriptHub:, SilversOpenedID, % 0
-            GuiControl, ICScriptHub:, GoldsOpenedID, % 0
+            GuiControl, ICScriptHub:, SilversGainedID, % 0 . " / " . 0 . " / " . 0
+            GuiControl, ICScriptHub:, GoldsGainedID, % 0 . " / " . 0 . " / " . 0
             GuiControl, ICScriptHub:, ShiniesID, % 0
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % 0
             GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
