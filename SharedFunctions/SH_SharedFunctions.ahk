@@ -119,6 +119,10 @@ class SH_SharedFunctions
     */
     DirectedInput(hold := 1, release := 1, values* )
     {
+        if (values == "") ; no input
+            return
+        else if (IsObject(values) AND values[1] == "" AND values.Count() == 1) ; no input
+            return
         Critical, On
         timeout := 5000
         hwnd := this.Hwnd

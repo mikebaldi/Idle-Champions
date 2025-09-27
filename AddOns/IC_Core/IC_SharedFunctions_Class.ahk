@@ -299,6 +299,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                     this.DirectedInput(,, spam )
                 counter++
             }
+            Sleep, 16
         }
         return
     }

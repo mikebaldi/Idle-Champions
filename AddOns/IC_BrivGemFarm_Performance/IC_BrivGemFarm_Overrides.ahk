@@ -177,6 +177,11 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
         }
     }
 
+    GetInitialFormation()
+    {
+        return g_SF.Memory.GetActiveModronFormation()
+    }
+
     GetWebRoot()
     {
         tempWebRoot := this.Memory.ReadWebRoot()
