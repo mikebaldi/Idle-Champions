@@ -640,24 +640,12 @@ class IC_BrivGemFarm_Stats_Component
     {
         static comDisabled := True
 
-        ; if (!comDisabled)
-        ; {
-        ;     updateGUIFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
-        ;     SetTimer, %updateGUIFnc%, Off
-        ;     SetTimer, %updateGUIFnc%, Delete
-        ;     comDisabled := True
-        ; }
-        ; else
         if (WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
         {
             g_SF.Memory.OpenProcessReader()
-            ; if(comDisabled)    ; restart com after game open
-            ; {
             updateGUIFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
             repeatTimeMS := g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["UpdateStartLoopStats"]
             SetTimer, %updateGUIFnc%, %repeatTimeMS%, 0
-            ;     comDisabled := False
-            ; }
             gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"]
             SetTimer, %gameMonFnc%, Off
         }
