@@ -288,6 +288,7 @@ class IC_BrivGemFarm_Component
             GuidCreate := ComObjCreate("Scriptlet.TypeLib")
             g_BrivFarm.GemFarmGUID := guid := GuidCreate.Guid
             Run, %A_AhkPath% "%scriptLocation%" "%guid%"
+            IC_BrivGemFarm_Component.StartComs()
         }
         this.TestGameVersion()
     }
