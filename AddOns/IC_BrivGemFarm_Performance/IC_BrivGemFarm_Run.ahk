@@ -186,10 +186,6 @@ try
 {
     g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
 }
-catch
-{
-    fail := "fail"
-}
 
 g_BrivGemFarm.GemFarm()
 

@@ -42,7 +42,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     {
         this.ServerSettings := this.LoadObjectFromJSON( A_LineFile . "\..\ServerCall_Settings.json" )
         ; test saved parameters on following line.
-        ; this.ServerSettings["Calls"] := {"CallLoadAdventure" : [this.CurrentAdventure]}
+        ; this.ServerSettings["Calls"] := {"DoChests" : [999999,999999,999999999]}
         for k, v in this.ServerSettings
             if (k != "Calls")
                 this[k] := v
@@ -99,29 +99,9 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         if (!this.UserSettings[ "BuyChests" ] AND (numSilverChests <= this.UserSettings["MinSilverChestCount"] AND numGoldChests <= this.UserSettings["MinGoldChestCount"]))
             return
         ; no chests to do (not opening and not enough gems to buy)
-        if (!this.UserSettings[ "OpenChests" ] AND (totalGems -  g_BrivUserSettings[ "MinGemCount" ] < 50))
+        if (!this.UserSettings[ "OpenChests" ] AND (totalGems -  this.UserSettings[ "MinGemCount" ] < 50))
             return
-
-        hybridStackTimeout := Min(this.UserSettings[ "ForceOfflineRunThreshold" ] * 15000, 300000)  ; 5 minute timeout (20 hybrid runs), or 15s per run if < 20
-
-        StartTime := A_TickCount
-        ElapsedTime := 0
-        doHybridStacking := ( this.UserSettings[ "ForceOfflineGemThreshold" ] > 0 ) OR ( this.UserSettings[ "ForceOfflineRunThreshold" ] > 1 )
-
-        ; if (doHybridStacking) ; buy/open at until user's min chests + serverRate >= chests left
-        ; {
-        ;     ; < runTime * hybridCount (don't want to be double running purchase scripts) ; alternatively shared com flag?
-        ;     while(ElapsedTime < hybridStackTimeout)
-        ;     {
-        ;         if !(this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)) ; Until Error or no chests opened/closed.
-        ;             break
-        ;         ElapsedTime := A_TickCount - StartTime
-        ;     }
-        ; }
-        ; else
         this.DoChestsAndContinue(numSilverChests, numGoldChests, totalGems)     
-               
-        return loopString
     }
 
     ; Tests for if chests should be bought or opened before doing so.
@@ -195,18 +175,23 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     */
     BuyChests( chestID := "", numChests := "")
     {
+        gemsSpent := 0
         if (numChests <= 0 or chestID <= 0)
             return 0
         response := g_BrivServerCall.CallBuyChests( chestID, numChests )
         if !(response.okay AND response.success)
             return response
-        ; g_SF.TotalSilverChests := (chestID == 1) ? response.chest_count : g_SF.TotalSilverChests
+        if(response.currency_remaining != "")
+        {
+            gemsSpent += (chestID == 1) ? numchests * 50 : 0 ; Purchased silver chests
+            gemsSpent += (chestID == 2) ? numchests * 500 : 0 ; Purchased gold chests
+        }
         try
         {
+            this.SharedData.GemsSpent += gemsSpent
             this.SharedData.PurchasedSilverChests += chestID == 1 ? numChests : 0
             this.SharedData.PurchasedGoldChests += chestID == 2 ? numChests : 0
         }
-        this.CurrencyRemaining := response.currency_remaining
         return okToContinue := 1
     }
 

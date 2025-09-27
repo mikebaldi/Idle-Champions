@@ -21,6 +21,7 @@ class IC_SharedData_Class
     ShiniesByChamp := {}
     ShiniesByChampJson := ""
     ServerCallsAreComplete := True
+    GemsSpent := 0
 
     Close()
     {

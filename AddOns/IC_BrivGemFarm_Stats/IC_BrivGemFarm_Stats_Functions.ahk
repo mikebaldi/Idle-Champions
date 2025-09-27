@@ -410,14 +410,8 @@ class IC_BrivGemFarm_Stats_Component
             if(currentCoreXP)
                 this.bossesPerHour := Round( (xpGain / 5) / dtTotalTime, 2)
             GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
-
-            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + ( g_SF.Memory.ReadGemsSpent() - this.GemSpentStart )
-            GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
-            GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
-
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
-
             if (IsObject(this.SharedRunData))
             {
                 GuiControl, ICScriptHub:, SilversGainedID, % currentSilverChests - this.SilverChestCountStart + this.SharedRunData.OpenedSilverChests ; current - Start + Opened = Purchased + Dropped
@@ -427,7 +421,12 @@ class IC_BrivGemFarm_Stats_Component
                 global ShiniesClassNN
                 g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
                 GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
+                gemsSpent := this.SharedRunData.GemsSpent
             }
+            gemtest := g_SF.Memory.ReadGems()
+            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + gemsSpent
+            GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
+            GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
             ++this.TotalRunCount
             this.StackFail := 0
             this.SharedRunData.StackFail := false
