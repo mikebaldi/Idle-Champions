@@ -354,6 +354,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
         percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10 + 15), 15)
         Sleep, %percentageReducedSleep%
+        ElapsedTime := A_TickCount - StartTime
         return ElapsedTime
     }
 

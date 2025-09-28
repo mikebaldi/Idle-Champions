@@ -155,6 +155,7 @@ class IC_BrivSharedFunctions_Class
         g_SharedData.LoopString := "Rush Wait: " . ElapsedTime . " / " . estimate
         percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10)+15, 15)
         Sleep, %percentageReducedSleep%
+        ElapsedTime := A_TickCount - StartTime
         return ElapsedTime
     }
 
