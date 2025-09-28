@@ -174,7 +174,7 @@ class IC_BrivGemFarm_Class
         ; passed stack zone, start stack farm. Normal operation.
         if (stacks < targetStacks AND CurrentZone > g_BrivUserSettings[ "StackZone" ])
         {
-            ; normal-success / adjusted-sucess behavior. Use settings zone or adjusted zone if good zone has been found. (Resets to StackZone for 3 runs before sticking)
+            ; normal-success / adjusted-success behavior. Use settings zone or adjusted zone if good zone has been found. (Resets to StackZone for 3 runs before sticking)
             if (this.LastStackSuccessArea == CurrentZone ) 
                 this.StackFarm()
             ; abnormal stacking - Normal zone failed, current zone is later and has 0 or "" failures on this zone. Try it.
