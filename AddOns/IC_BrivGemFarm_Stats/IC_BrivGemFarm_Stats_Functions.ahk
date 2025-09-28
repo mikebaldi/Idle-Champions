@@ -300,10 +300,10 @@ class IC_BrivGemFarm_Stats_Component
     }
 
     ;Updates the stats tab's once per run stats
-    UpdateStartLoopStats()
+    UpdateStartLoopStats(isContinuous := True)
     {
         ; Do not calculate stacks if game/script do not appear to be in a normal state.
-        if(!IsObject(this.SharedRunData) OR this.SharedRunData.LoopString != "Main Loop") 
+        if(!IsObject(this.SharedRunData) OR (isContinuous AND this.SharedRunData.LoopString != "Main Loop"))
             return
         Critical, On
         if !this.isStarted
@@ -345,13 +345,7 @@ class IC_BrivGemFarm_Stats_Component
                 }
 
                 this.FastRunTime := 1000
-                this.ScriptStartTime := A_TickCount    
-                fncToCallOnTimer := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
-                if(fncToCallOnTimer != "")
-                {
-                    SetTimer, %fncToCallOnTimer%, Off
-                    SetTimer, %fncToCallOnTimer%, Delete
-                }
+                this.ScriptStartTime := A_TickCount
             }
             if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
             {
@@ -436,12 +430,148 @@ class IC_BrivGemFarm_Stats_Component
         Critical, Off
     }
 
+    ;Updates the stats tab's once per run stats
+    UpdateStartLoopStats2()
+    {
+        Critical, On
+        if !this.isStarted
+        {
+            this.LastResetCount := g_SF.Memory.ReadResetsCount()
+            this.isStarted := true
+        }
+        this.StackFail := Max(this.StackFail, IsObject(this.SharedRunData) ? this.SharedRunData.StackFail : 0)
+        if ( g_SF.Memory.ReadResetsCount() > this.LastResetCount )
+        {
+            while(!g_SF.Memory.ReadOfflineDone() AND IsObject(this.SharedRunData))
+            {
+                Critical, Off
+                Sleep, 50
+                Critical, On
+            }
+            ; CoreXP starting on FRESH run.
+            if(!this.TotalRunCount OR (this.TotalRunCount AND this.TotalRunCountRetry < 2 AND (!this.CoreXPStart OR !this.GemStart)))
+            {
+                if(this.TotalRunCount)
+                    this.TotalRunCountRetry++
+                this.ActiveGameInstance := g_SF.Memory.ReadActiveGameInstance()
+                this.CoreXPStart := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
+                this.NordomXPStart := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
+                this.GemStart := g_SF.Memory.ReadGems()
+                this.GemSpentStart := g_SF.Memory.ReadGemsSpent()
+                this.LastResetCount := g_SF.Memory.ReadResetsCount()
+                silverChests := g_SF.Memory.ReadChestCountByID(1)
+                goldChests := g_SF.Memory.ReadChestCountByID(2)
+                this.SilverChestCountStart := (silverChests != "") ? silverChests : 0
+                this.GoldChestCountStart := (goldChests != "") ? goldChests : 0
+
+                ; start count after first run since total chest count is counted after first run
+                if(IsObject(this.SharedRunData))
+                {
+                    this.SharedRunData.PurchasedGoldChests := 0
+                    this.SharedRunData.PurchasedSilverChests := 0
+                }
+                this.FastRunTime := 1000
+                this.ScriptStartTime := A_TickCount
+            }
+            if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
+            {
+                InventoryViewRead := ObjBindMethod(g_InventoryView, "ReadCombinedInventory")
+                InventoryViewRead.Call(this.TotalRunCount)
+            }
+            this.LastResetCount := g_SF.Memory.ReadResetsCount()
+            this.PreviousRunTime := round( ( A_TickCount - this.RunStartTime ) / 60000, 2 )
+            this.SbLastStacked := g_SF.Memory.ReadHasteStacks()
+            GuiControl, ICScriptHub:, PrevRunTimeID, % this.PreviousRunTime
+
+            if (this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
+            {
+                if (this.SlowRunTime < this.PreviousRunTime)
+                    GuiControl, ICScriptHub:, SlowRunTimeID, % this.SlowRunTime := this.PreviousRunTime
+                if (this.FastRunTime > this.PreviousRunTime)
+                    GuiControl, ICScriptHub:, FastRunTimeID, % this.FastRunTime := this.PreviousRunTime
+            }
+            if ( this.StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
+            {
+                GuiControl, ICScriptHub:, FailRunTimeID, % this.PreviousRunTime
+                this.FailRunTime += this.PreviousRunTime
+                GuiControl, ICScriptHub:, TotalFailRunTimeID, % round( this.FailRunTime, 2 )
+                if(IsObject(this.SharedRunData))
+                    GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
+            }
+
+            GuiControl, ICScriptHub:, TotalRunCountID, % this.TotalRunCount
+            dtTotalTime := (A_TickCount - this.ScriptStartTime) / 3600000
+            GuiControl, ICScriptHub:, dtTotalTimeID, % Round( dtTotalTime, 2 )
+            GuiControl, ICScriptHub:, AvgRunTimeID, % Round( ( dtTotalTime / this.TotalRunCount ) * 60, 2 )
+
+            ; ====================
+            ; XP checks
+
+            ; Check if Nordom is in formation
+            formation := g_SF.Memory.GetFormationByFavorite(1)
+            foundNordom := g_SF.IsChampInFormation(100, formation)
+            formation := g_SF.Memory.GetFormationByFavorite(3)
+            foundNordom := foundNordom OR g_SF.IsChampInFormation(100, formation)
+            ; Check if Mechanus (+10% core xp) bonus exists
+            foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot()
+            preStrValue := ""
+            preStrValue := foundMechanusBlessing ? "Mechanus" : ""
+            preStrValue := (foundMechanusBlessing AND foundNordom) ? "Mechanus/Nordom" : ""
+            preStrValue := foundNordom ? "Nordom" : ""
+            GuiControl, ICScriptHub:, NordomWarningID, % (foundXPMod ? preStrValue . " found." : "")
+            currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
+            currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
+            xpGain := currentCoreXP - this.CoreXPStart 
+            if(foundXPMod AND foundNordom AND currentCoreXP AND currentCoreXP)
+                ; xpGain := ( xpGain / 1.1 ) + ( this.NordomXPStart - currentNordomXP ) ; Other possible calculation
+                xpGain := ( xpGain + (this.NordomXPStart - currentNordomXP ) ) / 1.1
+            else if(foundNordom AND currentCoreXP AND currentCoreXP)
+                xpGain := xpGain + ( this.NordomXPStart - currentNordomXP )
+            else if (foundXPMod AND currentCoreXP AND currentCoreXP)
+                xpGain := xpGain / 1.1
+            else if(currentCoreXP)
+                xpGain := currentCoreXP - this.CoreXPStart  
+            ; unmodified levels completed / 5 = boss levels completed
+            if(currentCoreXP)
+                this.bossesPerHour := Round( (xpGain / 5) / dtTotalTime, 2)
+
+            ; /XP checks
+            ; ====================
+
+            GuiControl, ICScriptHub:, bossesPhrID, % this.BossesPerHour
+            currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
+            currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
+            if (IsObject(this.SharedRunData))
+            { ; (Opened / Bought / Dropped)
+                GuiControl, ICScriptHub:, SilversGainedID, %  this.SharedRunData.OpenedSilverChests . " / " . this.SharedRunData.PurchasedSilverChests . " / " . this.CalculateDroppedChests(currentSilverChests, 1)
+                GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.OpenedGoldChests . " / " . this.SharedRunData.PurchasedGoldChests . " / " . this.CalculateDroppedChests(currentGoldChests, 2)
+                global ShiniesClassNN
+                g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
+                GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
+                gemsSpent := this.SharedRunData.GemsSpent
+            }
+            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + gemsSpent
+            GuiControl, ICScriptHub:, GemsTotalID, % this.GemsTotal
+            GuiControl, ICScriptHub:, GemsPhrID, % Round( this.GemsTotal / dtTotalTime, 2 )
+            ++this.TotalRunCount
+            this.StackFail := 0
+            this.SharedRunData.StackFail := false
+            this.SharedRunData.TriggerStart := false
+            this.RunStartTime := A_TickCount
+        }
+        if (IsObject(this.SharedRunData))
+            this.LastTriggerStart := this.SharedRunData.TriggerStart
+        Critical, Off
+    }
+
     ; Calculate dropped chests according to chest ID (1 or 2) and current number held . dropped := current - starting - purchased + opened
     CalculateDroppedChests(currentNumber, chestID := 1)
     {
         ; id 1 == silver, id 2 == gold. Should not accept any other number
         if (chestID > 2 OR chestID < 1)
             return ""
+        if (currentNumber == "")
+            return 0
         startingNum := chestID == 1 ? this.SilverChestCountStart : this.GoldChestCountStart
         if (IsObject(this.SharedRunData))
         {
@@ -586,8 +716,8 @@ class IC_BrivGemFarm_Stats_Component
         else
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString("")
-            GuiControl, ICScriptHub:, SilversGainedID, % 0 . " / " . 0 . " / " . 0
-            GuiControl, ICScriptHub:, GoldsGainedID, % 0 . " / " . 0 . " / " . 0
+            GuiControl, ICScriptHub:, SilversGainedID, % "0 / 0 / 0"
+            GuiControl, ICScriptHub:, GoldsGainedID, % "0 / 0 / 0"
             GuiControl, ICScriptHub:, ShiniesID, % 0
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % 0
             GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
@@ -639,10 +769,9 @@ class IC_BrivGemFarm_Stats_Component
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
 
-        this.UpdateStartLoopStats()
-        fncToCallOnTimer :=  ObjBindMethod(this, "UpdateStartLoopStats")
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"] := fncToCallOnTimer
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["UpdateStartLoopStats"] := -300
+        this.UpdateStartLoopStats2()
+        this.UpdateLoopStatsFnc :=  ObjBindMethod(this, "UpdateStartLoopStats2", False)
+        this.UpdateLoopStatsFncRepeatTime := -300
         fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
 		g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
 		g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["MonitorIsGameClosed"] := 200
@@ -652,13 +781,13 @@ class IC_BrivGemFarm_Stats_Component
     MonitorIsGameClosed()
     {
         static comDisabled := True
-
-        if (WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
+        ; Make sure game is running before updating stats
+        if (WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) 
         {
             g_SF.Memory.OpenProcessReader()
-            updateGUIFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["UpdateStartLoopStats"]
-            repeatTimeMS := g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["UpdateStartLoopStats"]
-            SetTimer, %updateGUIFnc%, %repeatTimeMS%, 0
+            updateGUIFnc := this.UpdateLoopStatsFnc
+            repeatTimeMS := this.UpdateLoopStatsFncRepeatTime
+            SetTimer, %updateGUIFnc%, %repeatTimeMS%, 5
             gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"]
             SetTimer, %gameMonFnc%, Off
         }
