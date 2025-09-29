@@ -822,7 +822,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             }
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
-            this.RecoverFromGameClose(this.GameStartFormation)
+            this.RecoverFromGameClose(this.GetRecoveryFormation())
             this.BadSaveTest()
             hasStartedSafetyCheck := False
             return false
@@ -839,6 +839,11 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         }
         hasStartedSafetyCheck := False
         return true
+    }
+
+    GetRecoveryFormation()
+    {
+        return this.GameStartFormation
     }
 
     ; Checks for rollbacks after a stack restart.
@@ -876,7 +881,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     fall back and switch to Q if being attacked
     */
     ; falls back zone until switching to Q formation can be done.
-    RecoverFromGameClose(formationFavoriteNum := 1)
+    RecoverFromGameClose(formationFavoriteNum := 2)
     {
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -919,7 +924,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 Sleep, 20
             ; reverted for now. swaps fail more at game restart and restarts don't happen often so stick with old method until (if) CNE fixes their bug.
-            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(formationFavoriteNum)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
 
         ; Backup in case of CNE bug above happening.
