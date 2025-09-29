@@ -109,6 +109,7 @@ class IC_BrivGemFarm_Class
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.SwapsMadeThisRun := 0
         g_SharedData.TriggerStart := false
+        g_SF.AlreadyOfflineStackedThisRun := false
         g_SharedData.LoopString := "Main Loop"
         ; Do Chests after Reset
         g_SharedData.LoopString  := " " . g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
@@ -746,7 +747,7 @@ class IC_BrivGemFarm_Class
         ; after chests buy/open
         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
 	    loopString := currentLoopString == "" ? loopString : currentLoopString
-        g_SharedData.LoopString := loopString
+        ; g_SharedData.LoopString := loopString
     }
     
     #include *i %A_LineFile%\..\IC_BrivGemFarm_Chests_Deprecated.ahk

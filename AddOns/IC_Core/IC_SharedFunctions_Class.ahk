@@ -910,7 +910,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
-            isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
@@ -919,23 +918,28 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             }
             else
                 Sleep, 20
+            ; reverted for now. swaps fail more at game restart and restarts don't happen often so stick with old method until (if) CNE fixes their bug.
+            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
-        ElapsedTime := counter := 0
-        lastLoopTimedOut := ElapsedTime >= timeout ; Test in case party failed to switch and the game set the wrong MostRecentFormation
-        if (lastLoopTimedOut)
-            isCurrentFormation :=  this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
-        while(lastLoopTimedOut AND !isCurrentFormation AND ElapsedTime < (timeout / 2) AND !this.Memory.ReadNumAttackingMonstersReached())
-        {
-            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
-            ElapsedTime := A_TickCount - StartTime
-            if(ElapsedTime > sleepTime * counter AND IsObject(spam))
-            {
-                this.DirectedInput(,, spam* )
-                counter++
-            }
-            else
-                Sleep, 20
-        }
+
+        ; Backup in case of CNE bug above happening.
+        ; =========
+        ; ElapsedTime := counter := 0
+        ; lastLoopTimedOut := ElapsedTime >= timeout ; Test in case party failed to switch and the game set the wrong MostRecentFormation
+        ; if (lastLoopTimedOut)
+        ;     isCurrentFormation :=  this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        ; while(lastLoopTimedOut AND !isCurrentFormation AND ElapsedTime < (timeout / 2) AND !this.Memory.ReadNumAttackingMonstersReached())
+        ; {
+        ;     isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        ;     ElapsedTime := A_TickCount - StartTime
+        ;     if(ElapsedTime > sleepTime * counter AND IsObject(spam))
+        ;     {
+        ;         this.DirectedInput(,, spam* )
+        ;         counter++
+        ;     }
+        ;     else
+        ;         Sleep, 20
+        ; }
         g_SharedData.LoopString := "Under attack. Retreating to change formations..."
         while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < (2 * timeout)))
         {
@@ -944,9 +948,9 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
             if (lastLoopTimedOut)
-                isCurrentFormation :=  this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
             else
-                isCurrentFormation := this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
         g_SharedData.LoopString := "Loading game finished."
     }
