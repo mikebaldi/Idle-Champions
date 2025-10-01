@@ -121,7 +121,7 @@ class SH_SharedFunctions
     {
         if (values == "") ; no input
             return
-        else if (IsObject(values) AND values[1] == "" AND values.Count() == 1) ; no input
+        else if (IsObject(values) AND (values.Count() == 0 OR (values[1] == "" AND values.Count() == 1))) ; no input
             return
         Critical, On
         timeout := 5000

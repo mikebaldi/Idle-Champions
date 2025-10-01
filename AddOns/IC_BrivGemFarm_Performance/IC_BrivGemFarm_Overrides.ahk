@@ -159,6 +159,17 @@ class IC_BrivSharedFunctions_Class
         return ElapsedTime
     }
 
+    SetFormationForZ1()
+    {
+        if (g_SF.Memory.ReadCurrentZone() == 1)
+        {
+            formationKey := g_BrivUserSettings[ "FormationKeyForZ1" ] ? g_BrivUserSettings[ "FormationKeyForZ1" ] : "q"
+            g_SF.DirectedInput(,, "{" . formationKey . "}")
+        }
+        else ; Switch to E formation if necessary
+            g_SF.SetFormation(g_BrivUserSettings)
+        return formationKey
+    }
 }
 
 class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class

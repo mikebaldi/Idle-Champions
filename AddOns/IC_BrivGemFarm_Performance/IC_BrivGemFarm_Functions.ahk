@@ -22,7 +22,7 @@ class IC_BrivGemFarm_Class
         errLevel := this.GemFarmPreLoopSetup()
         if (errLevel < 0)
             return errLevel
-        formationModron := g_SF.Memory.GetActiveModronFormation()
+        this.FormationModron := formationModron := g_SF.Memory.GetActiveModronFormation()
         loop
         {
             g_SharedData.LoopString := "Main Loop"
@@ -525,18 +525,6 @@ class IC_BrivGemFarm_Class
     DoZ1Setup()
     {
         this.SetFormationForZ1()
-    }
-
-    SetFormationForZ1()
-    {
-        if (g_SF.Memory.ReadCurrentZone() == 1)
-        {
-            formationKey := g_BrivUserSettings[ "FormationKeyForZ1" ] ? g_BrivUserSettings[ "FormationKeyForZ1" ] : "q"
-            g_SF.DirectedInput(,, "{" . formationKey . "}")
-        }
-        else ; Switch to E formation if necessary
-            g_SF.SetFormation(g_BrivUserSettings)
-        return formationKey
     }
 
     ;Waits for modron to reset. Closes IC if it fails.
