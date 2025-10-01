@@ -509,7 +509,15 @@ class IC_MemoryFunctions_Class
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
         if(formationSaveID > 0 AND this.FormationFavoriteSlots[formationSaveID] != "" AND version == this.LastFormationSavesVersion[formation])
             return this.FormationFavoriteSlots[formationSaveID]
-        formationSaveSlot := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 0, formationSavesSize-1, formationSaveID)
+        formationSaveSlot := -1
+        loop, %formationSavesSize%
+        {
+            if (this.ReadFormationSaveIDBySlot(A_Index - 1) == formationSaveID)
+            {
+                formationSaveSlot := A_Index - 1
+                Break
+            }
+        }
         this.FormationFavoriteSlots[formationSaveID] := formationSaveSlot
         this.LastFormationSavesVersion[formation] := version
         return formationSaveSlot
