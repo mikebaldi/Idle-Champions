@@ -667,7 +667,7 @@ class IC_BrivGemFarm_Class
             txtcheck .= "`n4. Check AHK is 64-bit. (Currently " . (A_PtrSize = 4 ? 32 : 64) . "-bit)"
         if (this.StackSettingsCheck() < 0)
             return -1
-        if (this.TestQFormation() < 0 OR this.TestWFormation() < 0 OR this.TestEFormation() < 0)
+        if (this.TestQFormation(txtCheck) < 0 OR this.TestWFormation(txtCheck) < 0 OR this.TestEFormation(txtCheck) < 0)
             return -1
         if (this.TestModronResetAutomationEnabled() == -1)
             return -1
@@ -676,7 +676,7 @@ class IC_BrivGemFarm_Class
         return 0
     }
 
-    TestQFormation()
+    TestQFormation(txtCheck := "")
     {
         formationQ := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 1, includeChampion := True )
         if (formationQ == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 1, includeChampion := True, txtCheck) == -1)
@@ -684,7 +684,7 @@ class IC_BrivGemFarm_Class
         return 0
     }
 
-    TestWFormation()
+    TestWFormation(txtCheck := "")
     {
         formationW := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 2, includeChampion := True  )
         if (formationW == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 2, includeChampion := True, txtCheck) == -1)
@@ -692,7 +692,7 @@ class IC_BrivGemFarm_Class
         return 0
     }
 
-    TestEFormation()
+    TestEFormation(txtCheck := "")
     {
         formationE := g_SF.FindChampIDinSavedFavorite( ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 3, includeChampion := False )
         if (formationE == -1 AND this.RunChampionInFormationTests(ActiveEffectKeySharedFunctions.Briv.HeroID, favorite := 3, includeChampion := False, txtCheck) == -1)

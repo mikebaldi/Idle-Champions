@@ -69,7 +69,7 @@ class IC_MemoryFunctions_Class
 
     ;Updates installed after the date of this script may result in the pointer addresses no longer being accurate.
     GetVersion(){
-        return "v2.5.8, 2025-09-27"
+        return "v2.5.8, 2025-10-01"
     }
 
     GetPointersVersion(){
@@ -509,7 +509,7 @@ class IC_MemoryFunctions_Class
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
         if(formationSaveID > 0 AND this.FormationFavoriteSlots[formationSaveID] != "" AND version == this.LastFormationSavesVersion[formation])
             return this.FormationFavoriteSlots[formationSaveID]
-        formationSaveSlot := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 1, formationSavesSize, formationSaveID)
+        formationSaveSlot := this.BinarySearchList(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2, ["SaveID"], 0, formationSavesSize-1, formationSaveID)
         this.FormationFavoriteSlots[formationSaveID] := formationSaveSlot
         this.LastFormationSavesVersion[formation] := version
         return formationSaveSlot

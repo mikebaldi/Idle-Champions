@@ -60,7 +60,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v3.0.5, 2025-09-27"
+        return "v3.0.6, 2025-09-01"
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.
@@ -800,6 +800,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         static hasStartedSafetyCheck := False
         static safetyCheckStartTime := 0
         static safetyCheckTimeout := 900000 ; 15 minutes
+        static hasCorrectPatron := True
         
         ; Base case check in case safety check never succeeds in opening the game.
         if(!hasStartedSafetyCheck)
@@ -824,6 +825,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.WorldMapRestart()
             this.RecoverFromGameClose(this.GetRecoveryFormation())
             this.BadSaveTest()
+            if (hasCorrectPatron)
+                hasCorrectPatron := this.PatronTest() ; if needs restart, only do one time.
+            else
+                hasCorrectPatron := True
             hasStartedSafetyCheck := False
             return false
         }
@@ -841,6 +846,28 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         return true
     }
 
+    PatronTest()
+    {
+        readPatron := g_SF.Memory.ReadPatronID()
+        ElapsedTime := 0
+        StartTime := A_TickCount
+        timeout := 5000
+        while (readPatron == "" AND ElapsedTime < timeout) ;wait for good patron read.
+        {
+            readPatron := g_SF.Memory.ReadPatronID()
+            sleep, 96
+            ElapsedTime := A_TickCount - StartTime
+        }
+
+        If (readPatron AND this.PatronID AND this.PatronID != readPatron AND ElapsedTime <= timeout)
+        {
+            this.CloseIC("Patron does not match expected patron upon restart.")
+            this.SafetyCheck()
+            return false
+        }
+        return True
+    }
+    
     GetRecoveryFormation()
     {
         return this.GameStartFormation
@@ -1176,7 +1203,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ResetServerCall()
     {
         this.SetUserCredentials()
-        previousPatron := g_ServerCall.activePatronID ? g_ServerCall.activePatronID : 0 
+        previousPatron := g_ServerCall.activePatronID != "" ? g_ServerCall.activePatronID : 0 
         g_ServerCall := new IC_ServerCalls_Class( this.UserID, this.UserHash, this.InstanceID ) ; Note: resets patronID to 0
         version := this.Memory.ReadBaseGameVersion()
         if(version != "")
