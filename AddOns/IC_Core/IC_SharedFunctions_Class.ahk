@@ -254,14 +254,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ElapsedTime := 0
         counter := 0
         sleepTime := 50
-        this.LoadFormationForZ1()
+        this.SetFormationForZ1()
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
-                this.LoadFormationForZ1()
+                this.SetFormationForZ1()
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
@@ -320,7 +320,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if (this.IsDashActive())
             return
         this.ToggleAutoProgress( 0, false, true )
-        this.LoadFormationForZ1()
+        this.SetFormationForZ1()
         this.LevelChampByID(ActiveEffectKeySharedFunctions.Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
@@ -359,7 +359,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; Loads formation to use in zone 1
-    LoadFormationForZ1()
+    SetFormationForZ1()
     {
         this.DirectedInput(,, "{q}")
     }

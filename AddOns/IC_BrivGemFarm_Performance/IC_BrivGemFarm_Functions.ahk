@@ -524,10 +524,10 @@ class IC_BrivGemFarm_Class
 
     DoZ1Setup()
     {
-        this.LoadFormationForZ1()
+        this.SetFormationForZ1()
     }
 
-    LoadFormationForZ1()
+    SetFormationForZ1()
     {
         if (g_SF.Memory.ReadCurrentZone() == 1)
         {
