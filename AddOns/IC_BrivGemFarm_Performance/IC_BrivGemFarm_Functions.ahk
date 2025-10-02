@@ -80,6 +80,10 @@ class IC_BrivGemFarm_Class
         g_SaveHelper.Init() ; slow call, loads briv dictionary (3+s)
         if (this.PreFlightCheck(includeBrivFormation3) == -1) ; Did not pass pre flight check.
             return -1
+        ;Pre-load formations
+        loop, 3
+            g_SF.Memory.GetFormationByFavorite([A_Index])
+        g_SF.Memory.GetActiveModronFormationSaveSlot()
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
         return 0
