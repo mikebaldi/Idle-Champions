@@ -12,10 +12,6 @@ The settings file that is saved when you edit the entries using the GUI can be f
 
 ![Gem Farm Advanced Settings screen](../docimages/gem-farm-advanced-settings.png)
 
-## "DoChestsContinuous"
-
-By default, the script buys or opens a maximum of 99 chests during stack restart. Enabling this setting will tell the script to Buy or Open as many as it can within the sleep time. It will loop doing 99 of each ``Buy Silver -> Buy Gold -> Open Silver -> Open Gold -> Repeat``. Note that opening chests expects to take several seconds (Silver 3s, Gold 7s) and if the script does not have that much time left, but does have remaining time, it will skip the ``Open Gold/Silver`` steps above.
-
 ## "HiddenFarmWindow"
 
 This can be enabled or disabled. When Enabled IC Script Hub will hide the window that appears when you click the Start Gem Farm button on the GUI.
@@ -23,6 +19,10 @@ This can be enabled or disabled. When Enabled IC Script Hub will hide the window
 ## "RestoreLastWindowOnGameOpen"
 
 This setting will tell the script to try and switch back from the game window to whatever window was open before the game window opened after a stack restart. 
+
+## "IgnoreBrivHaste" (Not shown)
+
+This setting will make the script not take into account any haste settings on Briv when deciding how many stacks to farm.
 
 ## "ForceOfflineGemThreshold" (Not shown)
 The gem farm script is designed to restart the game each run to build stacks for Briv and to keep game performance optimal. This setting allows the the briv stack restart to be postponed until the number of gems reaches what is set here.
@@ -37,14 +37,6 @@ Occasionally, depending on game build, there can be issues with how the game han
 ## "DashWaitBuffer"
 
 This is how far before the modron's reset zone the script will no longer attempt to wait for Shandie's Dash to activate. This allows you to effectively disable dash waiting after a stack restart. For more fine tuned control of dash wait, try the ``Shandie Dash Wait after Stacking`` link found on the [Addons page](../Addons.md).
-
-## "ResetZoneBuffer"
-
-This is how far past your Modron Core reset point the game will allow you to travel before the game resets for you
-
-This is useful for running a Gem Farm in a variant where the Modron core will not reset for you. This is a very niche situation though.
-
-You will also need to modify this if you early stack to maximise how many steelbones stacks you get. The value needs to be greater than the difference between your Modron reset area and your stack area.
 
 ## "WindowXPosition" and "WindowYPosition"
 

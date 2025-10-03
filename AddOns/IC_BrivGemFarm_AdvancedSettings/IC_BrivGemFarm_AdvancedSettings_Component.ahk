@@ -12,7 +12,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         g_BrivUserSettings[ "DashWaitBuffer" ] := OptionSettingEdit_DashWaitBuffer
         g_BrivUserSettings[ "WindowXPosition" ] := OptionSettingEdit_WindowXPosition
         g_BrivUserSettings[ "WindowYPosition" ] := OptionSettingEdit_WindowYPosition
-        g_BrivUserSettings[ "ManualBrivJumpValue" ] := OptionSettingEdit_ManualBrivJumpValue
         g_BrivUserSettings[ "IgnoreBrivHaste" ] := OptionSettingEdit_IgnoreBrivHaste
         IC_BrivGemFarm_AdvancedSettings_Functions.UpdateJumpSettings()
         g_SF.WriteObjectToJSON( A_LineFile . "\..\..\IC_BrivGemFarm_Performance\BrivGemFarmSettings.json" , g_BrivUserSettings )
@@ -36,7 +35,6 @@ class IC_BrivGemFarm_AdvancedSettings_Component
             GuiControl, ICScriptHub:, OptionSettingEdit_DashWaitBuffer, % g_BrivUserSettings[ "DashWaitBuffer" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowXPosition, % g_BrivUserSettings[ "WindowXPosition" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_WindowYPosition, % g_BrivUserSettings[ "WindowYPosition" ]
-            GuiControl, ICScriptHub:, OptionSettingEdit_ManualBrivJumpValue, % g_BrivUserSettings[ "ManualBrivJumpValue" ]
             GuiControl, ICScriptHub:, OptionSettingEdit_IgnoreBrivHaste, % g_BrivUserSettings[ "IgnoreBrivHaste" ]
             IC_BrivGemFarm_AdvancedSettings_Functions.LoadPreferredBrivJumpSettings()
         }
@@ -54,6 +52,5 @@ class IC_BrivGemFarm_AdvancedSettings_Component
         GUIFunctions.AddToolTip( "OptionSettingText_DashWaitBuffer", "The distance from your modron's reset zone where dashwait will stop being activated.")
         GUIFunctions.AddToolTip( "OptionSettingText_WindowXPosition", "Where the gem farm script will appear horizontally across your screen")
         GUIFunctions.AddToolTip( "OptionSettingText_WindowYPosition", "Where the gem farm script will appear vertically on your screen")            
-        GUIFunctions.AddToolTip( "OptionSettingText_ManualBrivJumpValue", "Set Briv's jump level for stack calculations. Useful for feat swapping setups. 0 is the default value which will ignore this setting.")
     }
 }

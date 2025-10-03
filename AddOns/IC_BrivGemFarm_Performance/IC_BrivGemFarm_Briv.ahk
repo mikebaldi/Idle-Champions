@@ -213,7 +213,6 @@ class BrivFunctions
         static skipQ
         static skipE
 
-        ; TODO: Check if preferred for hybrid or turbo is necessary.
         preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
         if (IsObject(IC_BrivGemFarm_LevelUp_Component) || IsObject(IC_BrivGemFarm_LevelUp_Class)) ; levelup addon controls briv leveling.
             brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] ; min zone for metalborn

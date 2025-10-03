@@ -66,8 +66,6 @@ ReloadBrivGemFarmSettings(loadFromFile := True)
         g_BrivUserSettings[ "WindowXPosition" ] := 0
     if ( g_BrivUserSettings[ "WindowYPosition" ] == "" )
         g_BrivUserSettings[ "WindowYPosition" ] := 0
-    if ( g_BrivUserSettings[ "ManualBrivJumpValue" ] == "" )
-        g_BrivUserSettings[ "ManualBrivJumpValue" ] := 0
     if (g_BrivUserSettings[ "IgnoreBrivHaste" ] == "" )
         g_BrivUserSettings[ "IgnoreBrivHaste" ] := 0   
     if ( g_BrivUserSettings[ "PreferredBrivJumpZones" ] == "")
