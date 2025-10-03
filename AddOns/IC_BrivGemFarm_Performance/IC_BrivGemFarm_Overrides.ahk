@@ -26,7 +26,7 @@ class IC_BrivSharedFunctions_Class
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
-        targetStackModifier := g_BrivGemFarm.StacksRequiredForMissingThelloraJumps()
+        targetStackModifier := g_BrivGemFarm.CalculateBrivStacksToReachNextModronResetZone()
         this.StackNormal(30000, targetStackModifier) ; Give 30s max to try to gain some stacks before a forced reset.
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")

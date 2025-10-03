@@ -418,10 +418,10 @@ class IC_BrivGemFarm_Class
     Returns:
     */
     ; Stack Briv's SteelBones by switching to his formation.
-    StackNormal(maxOnlineStackTime := 150000)
+    StackNormal(maxOnlineStackTime := 150000, targetStacks := 0)
     {
         lastStacks := stacks := this.GetNumStacksFarmed()
-        targetStacks := g_BrivUserSettings[ "TargetStacks" ]
+        targetStacks := targetStacks ? targetStacks : g_BrivUserSettings[ "TargetStacks" ]
         if (this.ShouldAvoidRestack(stacks, targetStacks))
             return
         this.StackFarmSetup()

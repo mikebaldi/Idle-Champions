@@ -1,48 +1,14 @@
 
     ; SharedFunctions Extension
     
-    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
-    CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
-    {
-        g_SharedData.RedoStackCalc := False
-        jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() 
-        if (!skipChance)
-        {
-            skipChance := 1
-            g_SharedData.RedoStackCalc := True
-        }
-        skipChance := skipChance ? skipChance : 1
-        distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
-        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        ; average
-        if(skipAmount == 1) ; true worst case =  worstCase ? Ceil(distance / 2) : normalcalc
-            jumps := worstCase ? Ceil(((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)) * 1.15) : Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1))
-        else
-            jumps := Ceil(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
-        isEffectively100 := 1 - skipChance < .004
-        stacks := Ceil(49 / (1+consume)**jumps)
-        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1) 
-            stacks := Floor(stacks * 1.15) ; 15% more - guesstimate
-        return stacks
-    }
-
-    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached. Defaults: startZone=1, targetZone=1, worstCase=true.
-    CalculateBrivStacksLeftAtTargetZone(startZone := 1, targetZone := 1, worstCase := true)
+    ; Left here for reference calculations.
+    CalculateBrivStacksLeftAtTargetZone_Depricated(startZone := 1, targetZone := 1, worstCase := true)
     {
         jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
+        reductionFactor := this.IsBrivMetalborn() ? 1 -.032 : 1 -.04 ;Default := 4%, MetalBorn := 3.2%
+        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks() ; doesn't work without briv on field
+        skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount() ; doesn't work without briv on field
+        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() ; doesn't work without briv on field
         distance := targetZone - startZone
         ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
         if(skipAmount == 1)
@@ -52,7 +18,7 @@
         isEffectively100 := 1 - skipChance < .004
         if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1)
             jumps := Floor(jumps * 1.05)
-        return Floor(stacks*(1+consume)**jumps)
+        return Max(Floor(stacks*reductionFactor**jumps), 48)
     }
 
     ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
@@ -81,4 +47,33 @@
         ;zones := jumps * avgJumpDistance
         zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
         return currentZone + zones
+    }
+
+    CalculateBrivStacksToReachNextModronResetZone()
+    {
+        static skipQ := ""
+        static skipE := ""
+
+        ; if (refreshCache || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
+        skipE := (IC_BrivGemFarm_Class.BrivFunctions.GetBrivSkipValues(3))[1], skipQ := (IC_BrivGemFarm_Class.BrivFunctions.GetBrivSkipValues(1))[1]
+        qVal := skipQ != "" ? Max(skipQ + 1, 1) : 1
+        eVal := skipE != "" ? Max(skipE + 1, 1) : 1
+        reductionFactor := this.IsBrivMetalborn() ? 1-.032 : 1-.04 ;Default := 4%, MetalBorn := 3.2%
+        preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
+        currentArea := startArea := 296 ; Min((this.Memory.ReadCurrentZone() / 5), g_SF.Memory.GetFavorExponentFor("Corellon")) + 1 ; total Thellora jump accumulated thus far.
+        modronResetZone := g_SF.Memory.GetModronResetArea()
+        jumps := 0
+        thunderStepMod := g_SF.BrivHasThunderStep() ? 1.2 : 1
+        brivMinMetalbornArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] ? g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] : 1
+        while (currentArea < modronResetZone) ; skip using preferred jump zones.
+        {
+            mod50Index := Mod(currentArea, 50) == 0 ? 50 : Mod(currentArea, 50)
+            mod50Value := preferred[mod50Index]
+            move := mod50Value ? qVal : eVal
+            if (move > 1)
+                jumps += 1
+            currentArea += move
+        }
+        stacks := Ceil(49 / reductionFactor**(jumps+1))
+        return stacks
     }
