@@ -727,12 +727,12 @@ class IC_MemoryFunctions_Class
     ;Returns the formation stored at the favorite value passed in.
     GetFormationByFavorite( favorite := 0 ){
         version := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2.__version.Read()
-        if(this.FavoriteFormations[formation] != "" AND version == this.LastFormationSavesVersion[formation])
-            return this.FavoriteFormations[formation]
+        if(this.FavoriteFormations[favorite] != "" AND version == this.LastFormationSavesVersion[favorite])
+            return this.FavoriteFormations[favorite]
         slot := this.GetSavedFormationSlotByFavorite(favorite)
         formation := this.GetFormationSaveBySlot(slot)
         this.FavoriteFormations[favorite] := formation.Clone()
-        this.LastFormationSavesVersion[formation] := version
+        this.LastFormationSavesVersion[favorite] := version
         return formation
     }
 
@@ -1174,6 +1174,11 @@ class IC_MemoryFunctions_Class
         Loop, %size%
             featList.Push(this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.FeatHandler.heroFeatSlots[heroID].List[A_Index - 1].ID.Read())
         return featList
+    }
+
+    ReadStacksToNext()
+    {
+        return g_SF.CalculateBrivStacksToReachNextModronResetZone()
     }
 
     #include *i %A_LineFile%\..\IC_MemoryFunctions_Extended.ahk
