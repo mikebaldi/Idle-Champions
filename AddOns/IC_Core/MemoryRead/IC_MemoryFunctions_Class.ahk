@@ -1008,6 +1008,9 @@ class IC_MemoryFunctions_Class
     }
 
     ReadPatronID(){
+        patronIDDef := this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.Read()
+        if (patronIDDef == 0 OR patronIDDef == "")
+            return patronIDDef
         patronID := this.GameManager.game.gameInstances[this.GameInstance].PatronHandler.ActivePatron_k__BackingField.ID.Read()
         if(patronID < 0 OR patronID > 100) ; Ignore clearly bad memory reads.
             patronID := ""
