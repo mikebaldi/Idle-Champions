@@ -998,6 +998,50 @@ class IC_MemoryFunctions_Class
         return ""
     }
 
+    ReadBlessingCurrencyNameBySlot(slot := 1)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetCurrencyHandler.ResetCurrencyDefs[slot].Name.Read()
+    }
+
+    ReadBlessingCurrencyShortNameBySlot(slot := 1)
+    {
+        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetCurrencyHandler.ResetCurrencyDefs[slot].ShortName.Read()
+    }
+
+    ReadBlessingCurrencyEarned(slot := 1)
+    {
+        SetFormat, FloatFast, 3.2e ; avoids 255 character limit for large doubles which effectively makes max double e254.
+        var := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetCurrencyHandler.ResetCurrencyDefs[slot].AmountEarned.Read()
+        SetFormat, FloatFast, 0.6
+        return var
+    }
+
+    GetFavorFor(name := "Corellon")
+    {
+        if (name == 1) ; test for fullmemreads 
+            name := "Corellon"
+        ; first def is garbage data so we skip it.
+        size := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetCurrencyHandler.ResetCurrencyDefs.size.Read() - 1
+        if (size < 1 or size > 100)
+            return ""
+        loop, %size%
+        {
+            val := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.ResetCurrencyHandler.ResetCurrencyDefs[A_Index].ShortName.Read()
+            if (val == name)
+                return this.ReadBlessingCurrencyEarned(A_Index)
+        }
+        return ""
+    }
+
+    GetFavorExponentFor(name := "Corellon")
+    {
+        if (name == 1)
+            name := "Corellon"
+        var := this.GetFavorFor(name)
+        var := SubStr(var, 7)
+        return var
+    }
+
     GetBlessingsCurrency(){
         return this.ReadConversionCurrencyBySlot(this.GetBlessingsDialogSlot())
     }
