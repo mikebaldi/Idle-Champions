@@ -344,7 +344,7 @@ class GameObjectStructure
         this[key].IsAddedIndex := true
         if (this._ArrayDimensions)
             this[key]._ArrayDimensions := this._ArrayDimensions - 1
-        location := this.FullOffsets.Count() == 0 ? this.FullOffsets.Count() : this.FullOffsets.Count() + 1
+        location := this.FullOffsets.Count() + 1
         if(collectionEntriesOffset == "") ; Array type, has no items 
         {
             this[key].FullOffsets.Push( offset)
@@ -365,7 +365,7 @@ class GameObjectStructure
     }
 
     ; Starting at currentObj, updates the fulloffsets variable in key and all children of key recursively.
-    UpdateChildrenWithFullOffsets(currentObj, insertLoc := 0, offset := "")
+    UpdateChildrenWithFullOffsets(currentObj, insertLoc := 1, offset := "")
     {
         for k,v in currentObj
         {
