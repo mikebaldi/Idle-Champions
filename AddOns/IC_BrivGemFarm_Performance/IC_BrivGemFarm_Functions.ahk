@@ -31,6 +31,10 @@ class IC_BrivGemFarm_Class
                 g_SF.ToggleAutoProgress( 1, false, true ) ; Turn on autoprogress after a restart
             if (this.GemFarmShouldSetFormation())
                 g_SF.SetFormation(g_BrivUserSettings)
+            if (g_SF.Memory.ReadResetting())
+                this.ModronResetCheck()
+            else
+                this.GemFarmDoNonModronActions()
             if (g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
                 this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True)
             if (g_SharedData.StackFail != 2)
@@ -39,10 +43,6 @@ class IC_BrivGemFarm_Class
                 g_SharedData.TriggerStart := true
             if (!Mod( g_SF.Memory.ReadCurrentZone(), 5 ) AND Mod( g_SF.Memory.ReadHighestZone(), 5 ) AND !g_SF.Memory.ReadTransitioning())
                 g_SF.ToggleAutoProgress( 1, true ) ; Toggle autoprogress to skip boss bag
-            if (g_SF.Memory.ReadResetting())
-                this.ModronResetCheck()
-            else
-                this.GemFarmDoNonModronActions()
             if (CurrentZone > PreviousZone ) ; needs to be greater than because offline could get stuck stacking in descending zones.
             {
                 PreviousZone := CurrentZone
@@ -281,6 +281,7 @@ class IC_BrivGemFarm_Class
     ; Stops progress and switches to appropriate party to prepare for stacking Briv's SteelBones.
     StackFarmSetup()
     {
+        g_SharedData.LoopString := "Switching to stack farm formation."
         if (!g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
             g_SF.FallBackFromBossZone() ; Boss kill Timeout
         inputValues := "{w}" ; Stack farm formation hotkey
@@ -318,7 +319,6 @@ class IC_BrivGemFarm_Class
     ;Starts stacking SteelBones based on settings (Restart or Normal).
     StackFarm()
     {
-        g_SharedData.LoopString := "Switching to stack farm formation."
         if (this.ShouldOfflineStack())
             this.StackRestart()
         else if (this.StackNormal() == 0)
@@ -418,7 +418,7 @@ class IC_BrivGemFarm_Class
     Returns:
     */
     ; Stack Briv's SteelBones by switching to his formation.
-    StackNormal(maxOnlineStackTime := 150000, targetStacks := 0)
+    StackNormal(maxOnlineStackTime := 150000, targetStacks := 0, forceStack := False)
     {
         lastStacks := stacks := this.GetNumStacksFarmed()
         targetStacks := targetStacks ? targetStacks : g_BrivUserSettings[ "TargetStacks" ]
@@ -435,7 +435,7 @@ class IC_BrivGemFarm_Class
             Sleep, 62
             ElapsedTime := A_TickCount - StartTime
         }
-        if ( ElapsedTime >= maxOnlineStackTime)
+        if ( ElapsedTime >= maxOnlineStackTime AND !forceStack)
         {
             this.RestartAdventure( "Online stacking took too long (> " . (maxOnlineStackTime / 1000) . "s) - z[" . g_SF.Memory.ReadCurrentZone() . "].")
             this.SafetyCheck()
@@ -528,7 +528,7 @@ class IC_BrivGemFarm_Class
 
     DoZ1Setup()
     {
-        this.SetFormationForZ1()
+        this.SetFormationForStart()
     }
 
     ;Waits for modron to reset. Closes IC if it fails.
@@ -538,10 +538,6 @@ class IC_BrivGemFarm_Class
         modronResetTimeout := 75000
         if (!g_SF.WaitForModronReset(modronResetTimeout))
             g_SF.CheckifStuck(True)
-        try ; set off any timers in SH that need to run on a reset.
-        {
-            g_ScriptHubComs.RunTimersOnModronReset()
-        }
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.TriggerStart := True
     }
