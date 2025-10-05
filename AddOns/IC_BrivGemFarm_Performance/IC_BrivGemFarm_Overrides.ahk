@@ -26,12 +26,13 @@ class IC_BrivSharedFunctions_Class
     ; Force adventure reset rather than relying on modron to reset.
     RestartAdventure( reason := "" )
     {
-        targetStackModifier := g_BrivGemFarm.CalculateBrivStacksToReachNextModronResetZone()
-        this.StackNormal(30000, targetStackModifier) ; Give 30s max to try to gain some stacks before a forced reset.
+        targetStackModifier := g_SF.CalculateBrivStacksToReachNextModronResetZone()
+        g_BrivGemFarm.StackNormal(30000, targetStackModifier, forceStack := True) ; Give 30s max to try to gain some stacks before a forced reset.
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
+        thunderStepMod := g_SF.BrivHasThunderStep() ? 1.2 : 1
         this.CloseIC( reason )
-        stacks := (this.sprint?this.sprint:0) + (this.steelbones?this.steelbones:0)
+        stacks := Floor(((this.sprint?this.sprint:0) + (this.steelbones?this.steelbones:0)) * thunderStepMod)
         if (stacks >= 190000)
             g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
         ; Save stacks
@@ -99,6 +100,11 @@ class IC_BrivSharedFunctions_Class
         this.SetUserCredentials()
         if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones, true)
+        try ; set off any timers in SH that need to run on a reset.
+        {
+            ; e.g. buy/open chests
+            g_ScriptHubComs.RunTimersOnModronReset()
+        }
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
@@ -140,7 +146,7 @@ class IC_BrivSharedFunctions_Class
         hasHasteStacks := this.Memory.ReadHasteStacks() > 50
         if (!hasHasteStacks)
             Return False
-        isShandieInFormation := this.IsChampInFormation( 47, this.Memory.GetCurrentFormation() )            
+        isShandieInFormation := this.IsChampInFormation( ActiveEffectKeySharedFunctions.Shandie, this.Memory.GetCurrentFormation() )            
         if (!isShandieInFormation)
             return False
 
@@ -159,7 +165,7 @@ class IC_BrivSharedFunctions_Class
         return ElapsedTime
     }
 
-    SetFormationForZ1()
+    SetFormationForStart()
     {
         if (g_SF.Memory.ReadCurrentZone() == 1)
         {
@@ -226,6 +232,7 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
         this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.EffectKeyString)
         if (!this.ShouldRushWait())
             return
+        g_SharedData.LoopString := "Rush Wait: "
         this.ToggleAutoProgress( 0, false, true )
         StartTime := A_TickCount
         ElapsedTime := 0

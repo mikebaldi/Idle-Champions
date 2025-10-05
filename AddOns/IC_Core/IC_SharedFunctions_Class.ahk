@@ -254,14 +254,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ElapsedTime := 0
         counter := 0
         sleepTime := 50
-        this.SetFormationForZ1()
+        this.SetFormationForStart()
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
-                this.SetFormationForZ1()
+                this.SetFormationForStart()
                 counter++
             }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
@@ -320,7 +320,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if (this.IsDashActive())
             return
         this.ToggleAutoProgress( 0, false, true )
-        this.SetFormationForZ1()
+        this.SetFormationForStart()
         this.LevelChampByID(ActiveEffectKeySharedFunctions.Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
@@ -359,7 +359,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; Loads formation to use in zone 1
-    SetFormationForZ1()
+    SetFormationForStart()
     {
         this.DirectedInput(,, "{q}")
     }
@@ -465,6 +465,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ;Uses server calls to test for being on world map, and if so, start an adventure (CurrentObjID). If force is declared, will use server calls to stop/start adventure.
     RestartAdventure( reason := "" )
     {
+            targetStackModifier := g_SF.CalculateBrivStacksToReachNextModronResetZone()
+            this.StackNormal(30000, targetStackModifier, forceStack := True) ; Give 30s max to try to gain some stacks before a forced reset.
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
             g_ServerCall.CallEndAdventure()
