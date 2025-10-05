@@ -60,7 +60,7 @@
         eVal := skipE != "" ? Max(skipE + 1, 1) : 1
         reductionFactor := this.IsBrivMetalborn() ? 1-.032 : 1-.04 ;Default := 4%, MetalBorn := 3.2%
         preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
-        currentArea := startArea := 296 ; Min((this.Memory.ReadCurrentZone() / 5), g_SF.Memory.GetFavorExponentFor("Corellon")) + 1 ; total Thellora jump accumulated thus far.
+        currentArea := startArea := Min((this.Memory.ReadCurrentZone() / 5), g_SF.Memory.GetFavorExponentFor("Corellon")) + 1 ; total Thellora jump accumulated thus far.
         modronResetZone := g_SF.Memory.GetModronResetArea()
         jumps := 0
         thunderStepMod := g_SF.BrivHasThunderStep() ? 1.2 : 1
@@ -74,6 +74,6 @@
                 jumps += 1
             currentArea += move
         }
-        stacks := Ceil(49 / reductionFactor**(jumps+1))
+        stacks := Ceil(49 / reductionFactor**(jumps))
         return stacks
     }
