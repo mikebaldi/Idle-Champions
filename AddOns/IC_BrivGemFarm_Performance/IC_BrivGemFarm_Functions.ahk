@@ -541,9 +541,18 @@ class IC_BrivGemFarm_Class
     ;Waits for modron to reset. Closes IC if it fails.
     ModronResetCheck()
     {
+        global g_ScriptHubComs
         modronResetTimeout := 75000
         if (!g_SF.WaitForModronReset(modronResetTimeout))
             g_SF.CheckifStuck(True)
+        else
+        {
+            try ; set off any timers in SH that need to run on a reset.
+            {
+                ; e.g. buy/open chests
+                g_ScriptHubComs.RunTimersOnModronReset()
+            }
+        }
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.TriggerStart := True
     }

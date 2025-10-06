@@ -100,11 +100,6 @@ class IC_BrivSharedFunctions_Class
         this.SetUserCredentials()
         if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones, true)
-        try ; set off any timers in SH that need to run on a reset.
-        {
-            ; e.g. buy/open chests
-            g_ScriptHubComs.RunTimersOnModronReset()
-        }
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
