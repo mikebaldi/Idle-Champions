@@ -34,7 +34,7 @@ class IC_BrivGemFarm_Class
             if (g_SF.Memory.ReadResetting())
                 this.ModronResetCheck()
             else
-                this.GemFarmDoNonModronActions()
+                this.GemFarmDoNonModronActions(CurrentZone)
             if (g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
                 this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True)
             if (g_SharedData.StackFail != 2)
@@ -82,7 +82,7 @@ class IC_BrivGemFarm_Class
             return -1
         ;Pre-load formations
         loop, 3
-            g_SF.Memory.GetFormationByFavorite([A_Index])
+            g_SF.Memory.GetFormationByFavorite(A_Index)
         g_SF.Memory.GetActiveModronFormationSaveSlot()
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
@@ -92,31 +92,36 @@ class IC_BrivGemFarm_Class
     ; Steps to run when a modron reset occurs or the gem farm first starts.
     GemFarmResetSetup(formationModron := "", doBasePartySetup := False)
     {
-        g_SharedData.BossesHitThisRun := 0
+        g_PreviousZoneStartTime := A_TickCount
         g_SF.ToggleAutoProgress( 0, false, true )
         g_SharedData.StackFail := this.CheckForFailedConv()
-        g_SF.WaitForFirstGold()
         this.keyspam := Array()
+        g_SF.Memory.ActiveEffectKeyHandler.Refresh()
+        ; Don't reset last stack success area if 3 or more runs have failed to stack.
+        this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
+        this.StackFailAreasThisRunTally := {}
+        this.StackFailRetryAttempt := 0
+        g_SF.AlreadyOfflineStackedThisRun := false
+        g_SharedData.BossesHitThisRun := 0
+        g_SharedData.SwapsMadeThisRun := 0
+        g_SharedData.TriggerStart := false
+        g_SharedData.LoopString := "Main Loop"
+        ; Do Chests after Reset
+        g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
         if(doBasePartySetup)
         {
+            g_SF.WaitForFirstGoldSetup()
             if g_BrivUserSettings[ "Fkeys" ]
                 this.keyspam := g_SF.GetFormationFKeys(formationModron)
             this.DoKeySpam := true
             this.keyspam.Push("{ClickDmg}")
             this.DoPartySetup()
         }
-        g_SF.Memory.ActiveEffectKeyHandler.Refresh()
-        ; Don't reset last stack success area if 3 or more runs have failed to stack.
-        this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
-        this.StackFailAreasThisRunTally := {}
-        this.StackFailRetryAttempt := 0
-        g_PreviousZoneStartTime := A_TickCount
-        g_SharedData.SwapsMadeThisRun := 0
-        g_SharedData.TriggerStart := false
-        g_SF.AlreadyOfflineStackedThisRun := false
+        else
+            g_SF.WaitForFirstGold()
         g_SharedData.LoopString := "Main Loop"
-        ; Do Chests after Reset
-        g_SharedData.LoopString  := " " . g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
+        if(this.GemFarmShouldSetFormation())
+            g_SF.SetFormationForStart()
         return g_SF.Memory.ReadResetsCount()
     }
 
@@ -307,11 +312,13 @@ class IC_BrivGemFarm_Class
             if (ElapsedTime > (sleepTime * counter++))
                 g_SF.DirectedInput(,,inputValues)
             ; Can't formation switch when under attack.
-            if (ElapsedTime > 1000 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
+            if (ElapsedTime > 1000 AND !isFormation2 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
                  ; not W formation or briv is benched
                 if (g_SF.Memory.ReadChampBenchedByID(ActiveEffectKeySharedFunctions.Briv.HeroID) OR !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2))
                     g_SF.FallBackFromZone()
-            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
+            if(!isFormation2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2))) ; can get stuck trying to swap and failing.
+                isFormation2 := True
         }
         return
     }
@@ -534,7 +541,6 @@ class IC_BrivGemFarm_Class
     ;Waits for modron to reset. Closes IC if it fails.
     ModronResetCheck()
     {
-        global g_ScriptHubComs
         modronResetTimeout := 75000
         if (!g_SF.WaitForModronReset(modronResetTimeout))
             g_SF.CheckifStuck(True)

@@ -131,6 +131,8 @@ class SH_SharedFunctions
         {
             for k, v in values
             {
+                if (v == "")
+                    continue
                 key := g_KeyMap[v]
                 sc := g_SCKeyMap[v]
                 sc := sc << 16

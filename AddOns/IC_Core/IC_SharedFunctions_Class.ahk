@@ -253,21 +253,20 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 50
-        this.SetFormationForStart()
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
-            {
-                this.SetFormationForStart()
-                counter++
-            }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
-            Sleep, 20
+            Sleep, 16
         }
         return gold
+    }
+
+    WaitForFirstGoldSetup( maxLoopTime := 30000 )
+    {
+        this.SetFormationForStart()
+        return this.WaitForFirstGold(maxLoopTime)
     }
 
     /*  WaitForTransition - A function that will spam inputs, update a GUI timer, and wait for a transition to complete.
@@ -522,7 +521,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             g_SharedData.SwapsMadeThisRun++
             return
         }
-        if(forceCheck)
+        if(forceCheck OR g_SharedData.TriggerStart)
             isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
         else
             isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
@@ -543,7 +542,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         }
     }
 
-    ; True/False on whether Briv should be benched based on game conditions.
+    ; True/False on whether Briv should be benched based on game conditions. (typically swap to E formation)
     BenchBrivConditions(settings)
     {
         if(!settings[ "FeatSwapEnabled" ])
@@ -563,10 +562,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         return false
     }
 
-    ; True/False on whether Briv should be unbenched based on game conditions.
+    ; True/False on whether Briv should be unbenched based on game conditions. (typically swap to Q formation)
     UnBenchBrivConditions(settings)
     {
-        ; do not unbench briv if party is not on a perferred briv jump zone.
+        ;do not unbench briv if party is not on a perferred briv jump zone.
         if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
