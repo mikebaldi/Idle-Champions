@@ -84,6 +84,7 @@ class IC_BrivGemFarm_Class
         loop, 3
             g_SF.Memory.GetFormationByFavorite(A_Index)
         g_SF.Memory.GetActiveModronFormationSaveSlot()
+        this.ThelloraRushZone := g_SF.Memory.GetFavorExponentFor("Corellon") + 1
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
         return 0

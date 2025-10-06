@@ -53,9 +53,9 @@ class IC_BrivGemFarm_StackAndStop_Class extends IC_BrivGemFarm_Class
     }
 
     ; Tests to make sure Gem Farm is properly set up before attempting to run and Briv is in E formation.
-    StackOffline()
+    StackRestart()
     {
-        base.StackOffline()
+        base.StackRestart()
         ExitApp
     }
 }
