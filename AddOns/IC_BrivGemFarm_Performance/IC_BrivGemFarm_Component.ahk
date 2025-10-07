@@ -86,7 +86,7 @@ Gui, ICScriptHub:Add, Edit, x+5 yp-5 w50 vMinimumSilverChestCount, % g_BrivUserS
 
 Gui,  ICScriptHub:Add, Text, x26 y+5 w370 h1 0x10 
 GUIFunctions.UseThemeTextColor("DefaultTextColor")
-Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck x26 y+10, Only buy/open max chests (250 buy/1000 open)
+Gui, ICScriptHub:Add, Checkbox, vBuyAllChestsCheck gBriv_MaxChests_Check_Clicked x26 y+10, Only buy/open max chests (250 buy/1000 open)
 GUIFunctions.UseThemeTextColor("InputBoxTextColor")
 Gui, ICScriptHub:Add, Edit, vNewMinGemCount x25 y+10 w100, % g_BrivUserSettings[ "MinGemCount" ]
 ; ------- ------------------- --------------
@@ -116,6 +116,24 @@ IC_BrivGemFarm_Component.UpdateGUICheckBoxes()
 IC_BrivGemFarm_Component.BuildToolTips()
 IC_BrivGemFarm_Component.ResetModFile()
 IC_BrivGemFarm_Component.StartComs()
+
+Briv_MaxChests_Check_Clicked()
+{
+    global BuyAllChestsCheck
+    Gui, ICScriptHub:Submit, NoHide
+    if(BuyAllChestsCheck)
+    {
+        GuiControl, ICScriptHub:Enable, BuySilverChestRatioSlider
+        GuiControl, ICScriptHub:Enable, BuyGoldChestRatioSlider
+    }
+    else
+    {
+        GuiControl, ICScriptHub:Disable, BuySilverChestRatioSlider
+        GuiControl, ICScriptHub:Disable, BuyGoldChestRatioSlider
+    }
+    Gui, ICScriptHub:Submit, NoHide
+}
+
 Briv_Run_Clicked() {
     IC_BrivGemFarm_Component.Briv_Run_Clicked()
 }
@@ -630,4 +648,5 @@ Briv_Com_Object_Revoke()
 }
 
 Gui, ICScriptHub:Submit, NoHide
+Briv_MaxChests_Check_Clicked()
 #include %A_LineFile%\..\IC_BrivGemFarm_ClassUpdates.ahk

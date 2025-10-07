@@ -124,7 +124,6 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         isMaxReady := gemSilver + gemsGold > gems  ; ((Floor(gemsSilver / silverChestCost) >= serverRateBuy OR Floor(gemsGold / goldChestCost) >= serverRateBuy))
         if (this.UserSettings[ "BuyChests" ] AND ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ]))
         {
-            
             amount := Floor(gemsSilver / silverChestCost)
             responses.Push(this.BuyChests( chestID := 1, amount ))
             amount := Floor(gemsGold / goldChestCost) 
