@@ -117,11 +117,11 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         responses := {}
         doContinue :=   True
         gems := totalGems - this.UserSettings[ "MinGemCount" ] ; gems left to buy with
-        gemsSilver := gems * this.UserSettings[ "BuySilverChestRatio" ] ; portion to silver
-        gemsGold := gems * this.UserSettings[ "BuyGoldChestRatio" ] ; portion to gold
+        gemsSilver := goldChestCost * this.UserSettings[ "BuySilverChestRatio" ] * serverRateBuy ; portion to silver
+        gemsGold := silverChestCost * this.UserSettings[ "BuyGoldChestRatio" ] * serverRateBuy ; portion to gold
 
         ; BUYCHESTS -  wait until can do a max server call of golds or max server call of silvers - then do both - if WaitToBuyChests set
-        isMaxReady := ((Floor(gemsSilver / silverChestCost) > serverRateBuy OR Floor(gemsGold / goldChestCost) > serverRateBuy))
+        isMaxReady := gemSilver + gemsGold > gems  ; ((Floor(gemsSilver / silverChestCost) >= serverRateBuy OR Floor(gemsGold / goldChestCost) >= serverRateBuy))
         if (this.UserSettings[ "BuyChests" ] AND ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ]))
         {
             
