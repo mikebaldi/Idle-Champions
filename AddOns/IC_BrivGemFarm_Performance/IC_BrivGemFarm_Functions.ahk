@@ -93,6 +93,8 @@ class IC_BrivGemFarm_Class
     ; Steps to run when a modron reset occurs or the gem farm first starts.
     GemFarmResetSetup(formationModron := "", doBasePartySetup := False)
     {
+        static lowestHasteStacks := 9999999
+        static firstRun := True
         g_PreviousZoneStartTime := A_TickCount
         g_SF.ToggleAutoProgress( 0, false, true )
         g_SharedData.StackFail := this.CheckForFailedConv()
@@ -107,6 +109,9 @@ class IC_BrivGemFarm_Class
         g_SharedData.SwapsMadeThisRun := 0
         g_SharedData.TriggerStart := false
         g_SharedData.LoopString := "Main Loop"
+        g_SharedData.LowestHasteStacks := lowestHasteStacks := firstRun ? "" : g_SF.Memory.ReadHasteStacks() 
+        firstRun := False
+        g_SharedData.PlayServer := StrSplit(StrSplit(g_ServerCall.webroot,".")[1], "/")[3]
         ; Do Chests after Reset
         g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
         if(doBasePartySetup)

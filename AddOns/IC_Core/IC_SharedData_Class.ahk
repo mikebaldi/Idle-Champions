@@ -22,6 +22,7 @@ class IC_SharedData_Class
     ShiniesByChampJson := ""
     ServerCallsAreComplete := True
     GemsSpent := 0
+    LowestHasteStacks := 9999999
 
     Close()
     {
