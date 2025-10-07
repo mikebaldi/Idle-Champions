@@ -18,6 +18,10 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 {
     ServerSettings := ""
     FncsToCall := {}
+    ServerRateBuy := 250
+    ServerRateOpen := 1000
+    GoldChestCost := 500
+    SilverChestCost := 50
 
     __New()
     {
@@ -109,10 +113,10 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     {
         ; not in defs, needs to be tested to know if the max has changed
         ; maxes accurate as of 9/9/2025
-        serverRateBuy := 250
-        serverRateOpen := 1000
-        goldChestCost := 500
-        silverChestCost := 50
+        serverRateBuy := this.ServerRateBuy
+        serverRateOpen := this.ServerRateOpen
+        goldChestCost := this.GgoldChestCost
+        silverChestCost := this.SilverChestCost
 
         responses := {}
         doContinue :=   True
@@ -177,6 +181,8 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         gemsSpent := 0
         if (numChests <= 0 or chestID <= 0)
             return 0
+        if (numChests > this.ServerRateBuy)
+            numChests := this.ServerRateBuy
         response := g_BrivServerCall.CallBuyChests( chestID, numChests )
         if !(response.okay AND response.success)
             return response
@@ -210,6 +216,8 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     {
         if (numChests <= 0 or chestID <= 0)
             return 0
+        if (numChests > this.ServerRateOpen)
+            numChests := this.ServerRateOpen
         chestResults := g_BrivServerCall.CallOpenChests( chestID, numChests )
         if (!chestResults.success)
             return chestResults
