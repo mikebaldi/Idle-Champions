@@ -805,10 +805,6 @@ class IC_BrivGemFarm_Coms
 			SetTimer, %k%, Off
             SetTimer, %k%, Delete
         }
-        for k,v in this.OneTimeRunAtEndFunctions
-        {
-			SetTimer, %k%, Off
-            SetTimer, %k%, Delete
-        }
+        ; for k,v in this.OneTimeRunAtResetFunctions
     }
 }
