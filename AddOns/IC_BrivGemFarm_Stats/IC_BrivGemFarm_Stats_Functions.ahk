@@ -29,6 +29,8 @@ class IC_BrivGemFarm_Stats_Component
     GemsTotal := 0
     SbLastStacked := ""
     PreviousLastGameCloseReason := ""
+    LastLowestHasteRun := ""
+    LastLowestHasteStacks := 9999999
     
     SharedRunData[]
     {
@@ -182,9 +184,13 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Tab, Stats
         GuiControlGet, pos, ICScriptHub:Pos, CurrentRunGroupID
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h125 vBrivGemFarmStatsID, BrivGemFarm Stats:
+        Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h140 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Boss Levels Hit `This `Run:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, PlayServer:
+        Gui, ICScriptHub:Add, Text, vStatsPlayServerID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Lowest Haste after Reset:
+        Gui, ICScriptHub:Add, Text, vStatsLowestHasteID x+2 w200, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit `This `Run:
         Gui, ICScriptHub:Add, Text, vBossesHitThisRunID x+2 w200, 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Boss Levels Hit Since Start:
         Gui, ICScriptHub:Add, Text, vTotalBossesHitID x+2 w200,
@@ -627,6 +633,15 @@ class IC_BrivGemFarm_Stats_Component
             textColor := Format("{:#x}", GUIFunctions.CurrentTheme["HeaderTextColor"])
             GuiControl, ICScriptHub: +c%textColor%, LoopID,
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
+            GuiControl, ICScriptHub:, StatsPlayServerID, % SharedRunData.PlayServer
+            if (SharedRunData.LowestHasteStacks < this.LastLowestHasteSTacks)
+            {
+                this.LastLowestHasteStacks := SharedRunData.LowestHasteStacks
+                this.LastLowestHasteRun := this.TotalRunCount
+            }
+            lowestHasteStr := (this.LastLowestHasteStacks == 9999999 ? "" : this.LastLowestHasteStacks) 
+            lowestHasteStr .= this.LastLowestHasteRun ? "[" . this.LastLowestHasteRun . "]" : ""
+            GuiControl, ICScriptHub:, StatsLowestHasteID, % lowestHasteStr
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % SharedRunData.TotalRollBacks
@@ -707,7 +722,8 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.OpenedSilverChests . " / " . this.SharedRunData.PurchasedSilverChests . " / " . this.CalculateDroppedChests(currentSilverChests, 1)
             GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.OpenedGoldChests . " / " . this.SharedRunData.PurchasedGoldChests . " / " . this.CalculateDroppedChests(currentGoldChests, 2)
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
-            GuiControl, ICScriptHub:, SwapsMadeThisRunID, % this.SharedRunData.SwapsMadeThisRun
+            GuiControl, ICScriptHub:, StatsPlayServerID, % this.SharedRunData.PlayServer
+            GuiControl, ICScriptHub:, StatsLowestHasteID, % this.SharedRunData.LowestHasteStacks == 9999999 ? "" : this.SharedRunData.LowestHasteStacks
             GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % this.SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % this.SharedRunData.TotalRollBacks
@@ -719,6 +735,8 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, SilversGainedID, % "0 / 0 / 0"
             GuiControl, ICScriptHub:, GoldsGainedID, % "0 / 0 / 0"
             GuiControl, ICScriptHub:, ShiniesID, % 0
+            GuiControl, ICScriptHub:, StatsPlayServerID, % ""
+            GuiControl, ICScriptHub:, StatsLowestHasteID, % ""
             GuiControl, ICScriptHub:, SwapsMadeThisRunID, % 0
             GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
             GuiControl, ICScriptHub:, TotalBossesHitID, % 0
