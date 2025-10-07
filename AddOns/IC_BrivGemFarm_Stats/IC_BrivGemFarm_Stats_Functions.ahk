@@ -634,13 +634,13 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub: +c%textColor%, LoopID,
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
             GuiControl, ICScriptHub:, StatsPlayServerID, % SharedRunData.PlayServer
-            if (SharedRunData.LowestHasteStacks < this.LastLowestHasteSTacks)
+            if (SharedRunData.LowestHasteStacks  AND SharedRunData.LowestHasteStacks < this.LastLowestHasteStacks)
             {
                 this.LastLowestHasteStacks := SharedRunData.LowestHasteStacks
                 this.LastLowestHasteRun := this.TotalRunCount
             }
             lowestHasteStr := (this.LastLowestHasteStacks == 9999999 ? "" : this.LastLowestHasteStacks) 
-            lowestHasteStr .= this.LastLowestHasteRun ? "[" . this.LastLowestHasteRun . "]" : ""
+            lowestHasteStr .= this.LastLowestHasteRun != "" ? " [" . this.LastLowestHasteRun . "]" : ""
             GuiControl, ICScriptHub:, StatsLowestHasteID, % lowestHasteStr
             GuiControl, ICScriptHub:, BossesHitThisRunID, % SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % SharedRunData.TotalBossesHit
