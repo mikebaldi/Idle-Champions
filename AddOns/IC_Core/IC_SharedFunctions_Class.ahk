@@ -811,7 +811,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         }
         else if (A_TickCount - safetyCheckStartTime > safetyCheckTimeout)
         {
-            MsgBox, % "Still could not start game after " . safetyCheckOutTime / 1000 / 60 . "minutes. `nCheck game location settings. `nEnding run."
+            MsgBox, % "Still could not start game after " . safetyCheckTimeout / 1000 / 60 . "minutes. `nCheck game location settings. `nEnding run."
             ExitApp
         }
 
