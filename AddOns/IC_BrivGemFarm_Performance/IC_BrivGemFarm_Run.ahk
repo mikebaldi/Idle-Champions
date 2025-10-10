@@ -83,10 +83,6 @@ class IC_BrivGemFarmRun_SharedData_Class
         {
             g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
         }
-        catch
-        {
-            fail := "fail"
-        }
     }
 }
 SH_UpdateClass.UpdateClassFunctions(g_SharedData, IC_BrivGemFarmRun_SharedData_Class)

@@ -680,9 +680,9 @@ class IC_MemoryFunctions_Class
         currentVersion := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.__version.Read()
         if(currentVersion != "" AND currentVersion == this.LastFormationSavesVersion["slot" . slot] AND this.SlotFormations["slot" . slot] != "")
             return this.SlotFormations["slot" . slot]
-        Formation := Array()
+        Formation := {}
         _size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size.Read()
-        if(_size <= 0 OR _size > 500) ; sanity check, should be less than 51 as of 2023-09-03
+        if(_size <= 0 OR _size > 20) ; sanity check
             return ""
         loop, %_size%
         {

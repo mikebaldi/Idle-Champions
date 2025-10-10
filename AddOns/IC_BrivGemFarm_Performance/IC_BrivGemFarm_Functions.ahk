@@ -12,6 +12,7 @@ class IC_BrivGemFarm_Class
     DoKeySpam := True
     keyspam := Array()
     LastResetCount := 0
+    ThisRunStart := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -559,7 +560,14 @@ class IC_BrivGemFarm_Class
                 g_ScriptHubComs.RunTimersOnModronReset()
             }
         }
-        g_PreviousZoneStartTime := A_TickCount
+
+        g_PreviousZoneStartTime := A_TickCount ; modron reset - prev zone now 1 and new run starting.
+        if (g_SharedData.ScriptStartTime == 0) ; ignore first run - will almost always be incomplete run. start on 2nd.
+            g_SharedData.ScriptStartTime := this.ThisRunStart := g_PreviousZoneStartTime
+        else
+            g_SharedData.LastRunTime := g_PreviousZoneStartTime - This.ThisRunStart
+            , g_SharedData.TotalRunsCount += 1
+        This.ThisRunStart := g_PreviousZoneStartTime
         g_SharedData.TriggerStart := True
     }
 
@@ -784,7 +792,7 @@ class IC_BrivGemFarm_Coms
     RunTimersOnGemFarmStart()
     {
 		for k,v in this.OneTimeRunAtStartFunctions
-			SetTimer, %k%, %v%, 0
+			SetTimer, %k%, %v%, 3
     }
 
     RunTimersOnGemFarmEnd()

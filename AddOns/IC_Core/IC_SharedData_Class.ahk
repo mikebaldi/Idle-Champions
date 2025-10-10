@@ -23,6 +23,9 @@ class IC_SharedData_Class
     ServerCallsAreComplete := True
     GemsSpent := 0
     LowestHasteStacks := 9999999
+    TotalRunsCount := 0
+    LastRunTime := 0
+    ScriptStartTime := 0
 
     Close()
     {
