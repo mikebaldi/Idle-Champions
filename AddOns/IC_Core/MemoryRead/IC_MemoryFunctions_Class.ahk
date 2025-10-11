@@ -679,7 +679,7 @@ class IC_MemoryFunctions_Class
     GetFormationSaveBySlot(slot := 0, ignoreEmptySlots := 0){
         currentVersion := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.__version.Read()
         if(currentVersion != "" AND currentVersion == this.LastFormationSavesVersion["slot" . slot] AND this.SlotFormations["slot" . slot] != "")
-            return this.SlotFormations["slot" . slot]
+            return this.SlotFormations["slot" . slot].Clone()
         Formation := {}
         _size := this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Formation.size.Read()
         if(_size <= 0 OR _size > 20) ; sanity check
