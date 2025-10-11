@@ -251,8 +251,8 @@ class IC_MemoryFunctions_Class
                 continue
             champMap[A_Index] := name
         }
-        this.HeroIDToNameMap := champMap
-        return champMap
+        this.HeroIDToNameMap := champMap.Clone()
+        return champMap.Clone()
     }
 
     GetChampIDToIndexMap(){
@@ -265,8 +265,8 @@ class IC_MemoryFunctions_Class
             heroID := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[A_Index - 1].def.id.Read()
             champMap[heroID] := A_Index - 1
         }
-        this.HeroIDToIndexMap := champMap
-        return champMap
+        this.HeroIDToIndexMap := champMap.Clone()
+        return champMap.Clone()
     }
 
     ReadChampHealthByID(ChampID := 0 ){
@@ -441,7 +441,7 @@ class IC_MemoryFunctions_Class
         familiarList := {}
         Loop, %size%
             familiarList.Push(this.GameManager.game.gameInstances[this.GameInstance].FormationSaveHandler.formationSavesV2[slot].Familiars["Clicks"].List[A_Index - 1].Read())
-        return familiarList
+        return familiarList.Clone()
     }
 
     GetFormationFamiliarsByFavorite(favorite := 1){
@@ -691,8 +691,8 @@ class IC_MemoryFunctions_Class
                 Formation.Push( champID )
         }
         this.LastFormationSavesVersion["slot" . slot] := currentVersion
-        this.SlotFormations["slot" . slot] := Formation.clone()
-        return Formation
+        this.SlotFormations["slot" . slot] := Formation.Clone()
+        return Formation.Clone()
     }
 
     ; Looks for a saved formation matching a favorite. Returns "" on failure. Favorite, 0 = not a favorite, 1 = save slot 1 (Q), 2 = save slot 2 (W), 3 = save slot 3 (E). O(n) for potentially large list, try to limit use.
