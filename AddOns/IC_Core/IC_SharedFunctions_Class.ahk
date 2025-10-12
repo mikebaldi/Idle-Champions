@@ -849,13 +849,13 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
 
     PatronTest()
     {
-        readPatron := g_SF.Memory.ReadPatronID()
+        readPatron := this.Memory.ReadPatronID()
         ElapsedTime := 0
         StartTime := A_TickCount
         timeout := 5000
         while (readPatron == "" AND ElapsedTime < timeout) ;wait for good patron read.
         {
-            readPatron := g_SF.Memory.ReadPatronID()
+            readPatron := this.Memory.ReadPatronID()
             sleep, 96
             ElapsedTime := A_TickCount - StartTime
         }

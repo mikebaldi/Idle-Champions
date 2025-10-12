@@ -73,8 +73,8 @@ class IC_BrivGemFarm_Class
         if ((g_SF.CurrentAdventure := g_SF.VerifyAdventureLoaded()) < 0)
             return -2
         g_ServerCall.UpdatePlayServer()
-        g_SF.ResetServerCall()
         g_SF.PatronID := g_SF.Memory.ReadPatronID()
+        g_SF.ResetServerCall()
         this.LastStackSuccessArea := g_BrivUserSettings [ "StackZone" ]
         this.StackFailAreasThisRunTally := {}
         g_SF.GameStartFormation := g_BrivUserSettings[ "BrivJumpBuffer" ] > 0 ? 3 : 1
