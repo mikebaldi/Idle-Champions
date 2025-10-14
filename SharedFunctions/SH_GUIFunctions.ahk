@@ -15,14 +15,14 @@ class GUIFunctions
         StrReplace(g_TabList,"|",,tabCount)
         g_TabControlWidth := Min(Max(Max(g_TabControlWidth,475), tabCount * 75), 550)
         GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-        Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+        Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight . " NA"
     }
 
     ; Updates the tab control's size based on global width/height settings
     RefreshTabControlSize()
     {
         GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
-        Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+        Gui, ICScriptHub:show, % "w" . g_TabControlWidth . " h" . g_TabControlHeight . " NA"
     }
 
     ; Add a Button across the top of the GUI.
