@@ -41,7 +41,10 @@ class IC_BrivSharedFunctions_Class
         else
             g_SharedData.LoopString := "ServerCall: Restarting adventure (no manual stack conv.)"
         ; Restart adventure
-        jsonObj["Calls"] := {"CallEndAdventure" : [], "CallLoadAdventure" : [this.CurrentAdventure]}
+        if (!IsObject(jsonObj["Calls"]))
+			jsonObj["Calls"] := []
+        jsonObj["Calls"].Push({"CallCheckClaimable" : [CDP_key]})
+        jsonObj["Calls"] := [{"CallEndAdventure" : []}, {"CallLoadAdventure" : [this.CurrentAdventure]}]
         jsonObj["ServerCallGUID"] := ComObjCreate("Scriptlet.TypeLib").GUID
         base.WriteObjectToJSON(A_LineFile . "\..\ServerCall_Settings.json" , jsonObj)
         scriptLocation := A_LineFile . "\..\IC_BrivGemFarm_ServerCalls.ahk"
@@ -81,6 +84,8 @@ class IC_BrivSharedFunctions_Class
         jsonObj.webroot := g_ServerCall.webroot
         jsonObj.networkID := g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID
         jsonObj.activeModronID := g_ServerCall.activeModronID := this.Memory.ReadActiveGameInstance() ? this.Memory.ReadActiveGameInstance() : 1 ; 1, 2, 3 for modron cores 1, 2, 3
+        this.PatronID := this.PatronID == "" ?  g_SF.Memory.ReadPatronID() : this.PatronID ; no patron set, try to set it.
+        this.PatronID := this.PatronID == "" ?  0 : this.PatronID ; still no patron set? default to 0
         jsonObj.activePatronID := g_ServerCall.activePatronID := this.PatronID ;this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
         g_ServerCall.UpdateDummyData()
         jsonObj.dummyData := g_ServerCall.dummyData
@@ -178,17 +183,6 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
     steelbones := ""
     sprint := ""
     PatronID := 0
-
-    WaitForCalls(GUID)
-    {
-        startTime := A_TickCount
-        ElapsedTime := 0
-        while (!g_SharedData.CallsAreComplete[GUID] and ElapsedTime < 30000)
-        {
-            ElapsedTime := A_TickCount - startTime
-            Sleep, 1000
-        }
-    }
 
     GetInitialFormation()
     {

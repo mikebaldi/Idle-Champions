@@ -4,15 +4,18 @@
 #NoEnv ; Avoids checking empty variables to see if they are environment variables.
 ListLines Off
 
-
 #include %A_LineFile%\..\..\IC_Core\IC_SharedData_Class.ahk
 #include %A_LineFile%\..\..\IC_Core\IC_SaveHelper_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_UpdateClass.ahk
 #include %A_LineFile%\..\..\..\ServerCalls\SH_ServerCalls_Includes.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\ObjRegisterActive.ahk
+#include %A_LineFile%\..\IC_BrivGemFarm_Coms.ahk
 
 global g_BrivServerCall := new IC_BrivGemFarm_ServerCalls_Class
 global g_SaveHelper := new IC_SaveHelper_Class
+
+#include %A_LineFile%\..\IC_BrivGemFarm_Extra_ServerCall_Mods.ahk
 
 class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 {
@@ -22,6 +25,9 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ServerRateOpen := 1000
     GoldChestCost := 500
     SilverChestCost := 50
+    GemFarmGUID := ""
+    SHGUID := ""
+    OverridesFile := A_LineFile . "\..\ServerCallLocationOverride_Settings.json"
 
     __New()
     {
@@ -35,7 +41,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ; Load global server call Settings into this class.
     LoadSettings(settingsLoc := "")
     {
-        settingsLoc := settingsLoc ? settingsLoc : A_LineFile . "\..\..\..\ServerCalls\Settings.json"
+        settingsLoc := settingsLoc ? settingsLoc : A_LineFile . "\..\..\..\ServerCalls\Settings.json" ; main hub server settings.
         this.Settings := this.LoadObjectFromJSON( settingsLoc )
         if(IsObject(this.Settings))
             this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
@@ -44,7 +50,11 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     ; Load script defined server call Settings into this class.
     LoadServerCallSettings()
     {
-        this.ServerSettings := this.LoadObjectFromJSON( A_LineFile . "\..\ServerCall_Settings.json" )
+        if(FileExist(this.OverridesFile))
+            this.SettingsFileLocation := (this.LoadObjectFromJSON(this.OverridesFile)).loc
+        else
+            this.SettingsFileLocation := A_LineFile . "\..\ServerCall_Settings.json"             
+        this.ServerSettings := this.LoadObjectFromJSON(this.SettingsFileLocation)
         ; test saved parameters on following line.
         ; this.ServerSettings["Calls"] := {"DoChests" : [999999,999999,999999999]}
         for k, v in this.ServerSettings
@@ -56,6 +66,37 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
     LoadUserSettings()
     {
         this.UserSettings := this.LoadObjectFromJSON( A_LineFile . "\..\BrivGemFarmSettings.json" )
+    }
+
+    SaveServerSettings()
+    {
+        this.WriteObjectToJSON( this.SettingsFileLocation, this.ServerSettings )
+    }
+    
+    ; Execute any function calls passed to this class via arguments or saved in script defined server call settings file.
+    LaunchCalls()
+    {
+        if (A_Args[1] != "") ; Launch a single command from params
+        {
+            fnc := A_Args[1] 
+            args := A_Args.Clone()
+            args.RemoveAt(1)
+            fnc := ObjBindMethod(this, fnc, args*)
+            fnc.Call()
+            return
+        }
+        size := this.ServerSettings.Calls.Length()
+        if(size <= 50) ; Small Sanity check - hard limit of 50 calls. Don't do calls if greater than this many. Just delete them and start over.
+        {
+            loop, %size%
+                for fnc, args in this.ServerSettings["Calls"][A_Index]
+                    this.FncsToCall.Push(ObjBindMethod(this, fnc, args*))
+            for name, fnc in this.FncsToCall
+                fnc.Call()
+        }
+        this.ServerSettings.Delete("Calls") ; clear calls
+        this.SaveServerSettings()
+        this.RemoveOverride()
     }
 
     ; Load gem farm com object GUID into this class.
@@ -71,22 +112,11 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         }
     }
 
-    ; Execute any function calls passed to this class via arguments or saved in script defined server call settings file.
-    LaunchCalls()
+    RemoveOverride()
     {
-        if (A_Args[1] != "") ; Launch a single command from params
-        {
-            fnc := A_Args[1] 
-            args := A_Args.Clone()
-            args.RemoveAt(1)
-            fnc := ObjBindMethod(this, fnc, args*)
-            fnc.Call()
-            return
-        }
-        for fnc, args in this.ServerSettings.Calls
-            g_BrivServerCall.FncsToCall[fnc] := ObjBindMethod(this, fnc, args*)
-        for name, fnc in this.FncsToCall
-            fnc.Call()
+        filename := this.OverridesFile
+        if(FileExist(filename))
+            FileDelete, %filename%
     }
 
     ; Sends calls for buying or opening chests and tracks chest metrics.
@@ -115,7 +145,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         ; maxes accurate as of 9/9/2025
         serverRateBuy := this.ServerRateBuy
         serverRateOpen := this.ServerRateOpen
-        goldChestCost := this.GgoldChestCost
+        goldChestCost := this.GoldChestCost
         silverChestCost := this.SilverChestCost
 
         responses := {}
@@ -125,7 +155,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         gemsGold := silverChestCost * this.UserSettings[ "BuyGoldChestRatio" ] * serverRateBuy ; portion to gold
 
         ; BUYCHESTS -  wait until can do a max server call of golds or max server call of silvers - then do both - if WaitToBuyChests set
-        isMaxReady := gemSilver + gemsGold > gems  ; ((Floor(gemsSilver / silverChestCost) >= serverRateBuy OR Floor(gemsGold / goldChestCost) >= serverRateBuy))
+        isMaxReady := gems >= gemsSilver + gemsGold ; ((Floor(gemsSilver / silverChestCost) >= serverRateBuy OR Floor(gemsGold / goldChestCost) >= serverRateBuy))
         if (this.UserSettings[ "BuyChests" ] AND ((this.UserSettings[ "WaitToBuyChests" ] AND isMaxReady) OR !this.UserSettings[ "WaitToBuyChests" ]))
         {
             amount := Floor(gemsSilver / silverChestCost)
@@ -264,19 +294,12 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         if (!objectJSON)
             return
         objectJSON := JSON.Beautify( objectJSON )
-        FileDelete, %FileName%
+        if(FileExist(FileName))
+            FileDelete, %FileName%
         FileAppend, %objectJSON%, %FileName%
         return
     }
 }
 
-try
-{
-    g_BrivServerCall.SharedData.ServerCallsAreComplete := False
-}
 g_BrivServerCall.LaunchCalls()
-try
-{
-    g_BrivServerCall.SharedData.ServerCallsAreComplete := True
-}
 ExitApp
