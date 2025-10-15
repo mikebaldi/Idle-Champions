@@ -38,6 +38,14 @@ class SH_SharedFunctions
         return
     }
 
+    ComObjectCopy(comObj)
+    {
+        convertedObj := {}
+        for k,v in comObj
+            convertedObj[k] := comObj[k]
+        return convertedObj
+    }
+
     ; Removes any settings that are in loadedSettings that are not in expectedSettings.
     DeleteExtraSettings(loadedSettings, expectedSettings)
     {
@@ -169,12 +177,5 @@ class SH_SharedFunctions
             }
         }
         Critical, Off
-    }
-
-    ComObjectCopy(comObj)
-    {
-        for k,v in comObj
-            convertedObj[k] := comObj[k]
-        return 
     }
 }

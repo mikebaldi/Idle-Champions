@@ -15,8 +15,6 @@ ListLines Off
 global g_BrivServerCall := new IC_BrivGemFarm_ServerCalls_Class
 global g_SaveHelper := new IC_SaveHelper_Class
 
-#include %A_LineFile%\..\IC_BrivGemFarm_Extra_ServerCall_Mods.ahk
-
 class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
 {
     ServerSettings := ""
@@ -300,6 +298,8 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         return
     }
 }
+
+#include %A_LineFile%\..\IC_BrivGemFarm_Extra_ServerCall_Mods.ahk
 
 g_BrivServerCall.LaunchCalls()
 ExitApp
