@@ -20,7 +20,6 @@ class IC_SharedData_Class
     TargetStacks := 0
     ShiniesByChamp := {}
     ShiniesByChampJson := ""
-    ServerCallsAreComplete := True
     GemsSpent := 0
     LowestHasteStacks := 9999999
     TotalRunsCount := 0
@@ -40,6 +39,6 @@ class IC_SharedData_Class
 
     ShowGUI()
     {
-        Gui, show
+        Gui, show, NA
     }
 }

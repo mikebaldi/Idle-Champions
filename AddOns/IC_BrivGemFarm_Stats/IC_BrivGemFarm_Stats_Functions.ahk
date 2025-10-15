@@ -30,6 +30,7 @@ class IC_BrivGemFarm_Stats_Component
     PreviousLastGameCloseReason := ""
     LastLowestHasteRun := ""
     LastLowestHasteStacks := 9999999
+    IsFirstRun := True ; reset stats toggle
     
     SharedRunData[]
     {
@@ -301,6 +302,8 @@ class IC_BrivGemFarm_Stats_Component
     ;Updates the stats tab's once per run stats
     UpdateStartLoopStats()
     {
+        if(this.IsFirstRun)
+            this.ResetBrivFarmStats()
         Critical, On
         if !this.isStarted
         {
@@ -311,8 +314,8 @@ class IC_BrivGemFarm_Stats_Component
         if (IsObject(this.SharedRunData))
             this.TotalRunCount := this.SharedRunData.TotalRunsCount
         ; CoreXP starting on FRESH run.
-        if(this.TotalRunCount == 0)
-            this.StoreStartingValues()
+        if(this.IsFirstRun)
+            this.IsFirstRun := False, this.StoreStartingValues()
         resetsCount := g_SF.Memory.ReadResetsCount()
         if ( resetsCount > this.LastResetCount )
         {
@@ -547,7 +550,8 @@ class IC_BrivGemFarm_Stats_Component
     ; Connects to Briv Gem Farm script and resets its saved stats variables.
     ResetComObjectStats()
     {
-        g_BrivFarm.StartComs()
+        if(!IsObject(g_BrivFarmComsObj))
+            IC_BrivGemFarm_Component.StartComs()
         try ; avoid thrown errors when comobject is not available.
         {
             SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)

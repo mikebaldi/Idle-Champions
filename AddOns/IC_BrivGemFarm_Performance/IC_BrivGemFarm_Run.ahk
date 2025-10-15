@@ -40,10 +40,12 @@ global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
 global g_ScriptHubComs := new IC_BrivGemFarm_Coms
 global g_BrivUserSettingsFromAddons := {}
+global g_globalTempSettingsFiles := {}
 
 ; Includes that execute code
 #include %A_LineFile%\..\IC_BrivGemFarm_ClassUpdates.ahk
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
+g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCallLocationOverride_Settings.json")
 
 ;check if first run
 If !IsObject( g_UserSettings )
@@ -185,10 +187,24 @@ try
 
 g_BrivGemFarm.GemFarm()
 
-OnExit("ComObjectRevoke")
+OnExit("CleanUpOperations")
+
+CleanUpOperations()
+{
+    ComObjectRevoke()
+    CleanSettingsFiles()
+}
+
 ComObjectRevoke()
 {
     ObjRegisterActive(g_SharedData, "")
+}
+
+CleanSettingsFiles()
+{
+    for k,v in g_globalTempSettingsFiles
+        if (FileExist(v))
+            FileDelete, %v%
 }
 
 BrivPerformanceGemFarmGuiClose()

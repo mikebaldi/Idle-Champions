@@ -22,7 +22,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
-    return "v4.4.1, 2025-10-06" ; Must be line 25 for version checking to work.
+    return "v4.4.2, 2025-10-15" ; Must be line 25 for version checking to work.
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -50,6 +50,7 @@ global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MacroButton := A_LineFile . "\..\Images\macro-100x100.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
+global g_globalTempSettingsFiles := {}
 
 ;Load themes
 GUIFunctions.LoadTheme()
@@ -159,6 +160,7 @@ Launch_Macro_Clicked()
 ICScriptHubGuiClose()
 {
     MsgBox 4,, Are you sure you want to `exit?
+    ICScriptHubCleanGlobalSettingsFiles()
     IfMsgBox Yes
     {
         MiniScriptWarning()
@@ -166,6 +168,13 @@ ICScriptHubGuiClose()
     }
     IfMsgBox No
         return True
+}
+
+ICScriptHubCleanGlobalSettingsFiles()
+{
+    for k,v in g_globalTempSettingsFiles
+        if (FileExist(v))
+            FileDelete, %v%
 }
 
 ICScriptHubGuiSize(GuiHwnd, EventInfo, Width, Height)

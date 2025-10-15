@@ -34,11 +34,5 @@ Reset_Briv_Farm_Stats()
 g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "CreateTimedFunctions"))
 g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "StartTimedFunctions"))
 g_BrivFarmAddonStopFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "StopTimedFunctions"))
-; Update Com Object and restart it.
-; SH_UpdateClass.AddClassFunctions(IC_BrivGemFarm_Coms, IC_BrivGemFarm_Coms_Added)
-; g_BrivGemFarmComsObj := new IC_BrivGemFarm_Coms
-ObjRegisterActive(g_BrivFarmComsObj, "")
-try
-{
-    ObjRegisterActive(g_BrivFarmComsObj, g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
-}
+
+#include %A_LineFile%\..\IC_BrivGemFarm_Stats_Overrides.ahk

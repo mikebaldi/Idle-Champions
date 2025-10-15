@@ -32,7 +32,8 @@ class SH_SharedFunctions
         if (!objectJSON)
             return
         objectJSON := JSON.Beautify( objectJSON )
-        FileDelete, %FileName%
+        if(FileExist(FileName))
+            FileDelete, %FileName%
         FileAppend, %objectJSON%, %FileName%
         return
     }
@@ -168,5 +169,12 @@ class SH_SharedFunctions
             }
         }
         Critical, Off
+    }
+
+    ComObjectCopy(comObj)
+    {
+        for k,v in comObj
+            convertedObj[k] := comObj[k]
+        return 
     }
 }
