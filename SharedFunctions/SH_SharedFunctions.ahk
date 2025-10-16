@@ -38,12 +38,22 @@ class SH_SharedFunctions
         return
     }
 
+    ; Copies top level items in com object to new AHK object.
     ComObjectCopy(comObj)
     {
         convertedObj := {}
         for k,v in comObj
             convertedObj[k] := comObj[k]
         return convertedObj
+    }
+
+    ; Copies AHK object into COM object.
+    CopyToComObject(byref comObj, AHKObject)
+    {
+        size := AHKObject.Length()
+        loop %size%
+            comObj[A_Index] := AHKObject[A_Index]
+        return comObj
     }
 
     ; Removes any settings that are in loadedSettings that are not in expectedSettings.
@@ -85,6 +95,17 @@ class SH_SharedFunctions
         return SubStr(sciNote, 1, ePos) . (signExp=="+" ? "" : signExp) . postExp
     }
 
+    ArrSize(arr)
+    {
+        if (IsObject(arr))
+        {
+            currArrSize := arr.MaxIndex()
+            if (currArrSize == "")
+                return 0
+            return currArrSize
+        }
+        return 0
+    }
     ;====================================================
     ;Keyboard/Mouse input (and helper) functions
     ;====================================================
