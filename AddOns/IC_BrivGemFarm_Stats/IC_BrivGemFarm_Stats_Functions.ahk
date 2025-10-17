@@ -16,7 +16,6 @@ class IC_BrivGemFarm_Stats_Component
     GemSpentStart := 0
     BossesPerHour := 0
     LastResetCount := 0
-    IsStarted := false ; Skip recording of first run
     StackFail := ""
     SilverChestCountStart := 0
     GoldChestCountStart := 0
@@ -30,7 +29,7 @@ class IC_BrivGemFarm_Stats_Component
     PreviousLastGameCloseReason := ""
     LastLowestHasteRun := ""
     LastLowestHasteStacks := 9999999
-    IsFirstRun := True ; reset stats toggle
+    StatsRunsCount := 0
     
     SharedRunData[]
     {
@@ -302,20 +301,18 @@ class IC_BrivGemFarm_Stats_Component
     ;Updates the stats tab's once per run stats
     UpdateStartLoopStats()
     {
-        if(this.IsFirstRun)
-            this.ResetBrivFarmStats()
         Critical, On
-        if !this.isStarted
+        this.StatsRunsCount += 1
+        if(this.StatsRunsCount == 2) ; CoreXP / Gems starting on FRESH run.
+            this.StoreStartingValues()
+        if(this.StatsRunsCount == 1)
         {
+            this.ResetBrivFarmStats()
             this.LastResetCount := g_SF.Memory.ReadResetsCount()
-            this.isStarted := true
         }
         this.StackFail := Max(this.StackFail, IsObject(this.SharedRunData) ? this.SharedRunData.StackFail : 0)
         if (IsObject(this.SharedRunData))
             this.TotalRunCount := this.SharedRunData.TotalRunsCount
-        ; CoreXP starting on FRESH run.
-        if(this.IsFirstRun)
-            this.IsFirstRun := False, this.StoreStartingValues()
         resetsCount := g_SF.Memory.ReadResetsCount()
         if ( resetsCount > this.LastResetCount )
         {
@@ -634,7 +631,6 @@ class IC_BrivGemFarm_Stats_Component
         this.GemSpentStart := 0
         this.BossesPerHour := 0
         this.LastResetCount := 0
-        this.IsStarted := false ; Skip recording of first run
         this.StackFail := ""
         this.SilverChestCountStart := 0
         this.GoldChestCountStart := 0
@@ -660,8 +656,7 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
-
-        this.UpdateStartLoopStats()
+        
         this.UpdateLoopStatsFnc :=  ObjBindMethod(this, "UpdateStartLoopStats", False)
         this.UpdateLoopStatsFncRepeatTime := -300
         fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
@@ -688,6 +683,7 @@ class IC_BrivGemFarm_Stats_Component
     ; Starts the saved timed functions (typically to be started when briv gem farm is started)
     StartTimedFunctions()
     {
+        this.StatsRunsCount := 0 ; reset count
         for k,v in this.TimerFunctions
             SetTimer, %k%, %v%, 0
     }
