@@ -544,6 +544,8 @@ class IC_BrivGemFarm_Stats_Component
         this.ResetComObjectStats()
         this.ResetStatsGUI()
         this.UpdateGUIFromCom()
+        if(fullReset)
+            this.UpdateStartLoopStats()
     }
 
     ; Connects to Briv Gem Farm script and resets its saved stats variables.
