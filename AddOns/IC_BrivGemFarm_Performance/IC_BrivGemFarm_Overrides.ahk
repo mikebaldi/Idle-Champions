@@ -79,7 +79,7 @@ class IC_BrivSharedFunctions_Class
         g_ServerCall := new IC_BrivServerCall_Class( this.UserID, this.UserHash, this.InstanceID )
         version := this.Memory.ReadBaseGameVersion()
         if (version != "")
-            g_ServerCall.clientVersion := version
+            jsonObj.clientVersion := g_ServerCall.clientVersion := version
         this.GetWebRoot()            
         jsonObj.webroot := g_ServerCall.webroot
         jsonObj.networkID := g_ServerCall.networkID := this.Memory.ReadPlatform() ? this.Memory.ReadPlatform() : g_ServerCall.networkID

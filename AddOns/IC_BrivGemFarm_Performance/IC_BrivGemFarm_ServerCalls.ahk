@@ -269,7 +269,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         stacks := g_SaveHelper.GetEstimatedStackValue(stacks)
         userData := g_SaveHelper.GetCompressedDataFromBrivStacks(stacks)
         checksum := g_SaveHelper.GetSaveCheckSumFromBrivStacks(stacks)
-        save :=  g_SaveHelper.GetSave(userData, checksum, this.userID, this.userHash, this.networkID, this.clientVersion, this.instanceID)
+        save :=  g_SaveHelper.GetSave(userData, checksum, this.ServerSettings.UserID, this.ServerSettings.UserHash, this.ServerSettings.networkID, this.ServerSettings.clientVersion, this.ServerSettings.InstanceID)
         this.ServerCallSave(save)
     }
 
