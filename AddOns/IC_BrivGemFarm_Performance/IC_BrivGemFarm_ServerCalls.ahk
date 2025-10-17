@@ -94,7 +94,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         }
         this.ServerSettings.Delete("Calls") ; clear calls
         this.SaveServerSettings()
-        this.RemoveOverride()
+        this.RemoveOverrides()
     }
 
     ; Load gem farm com object GUID into this class.
@@ -110,7 +110,7 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         }
     }
 
-    RemoveOverride()
+    RemoveOverrides()
     {
         filename := this.OverridesFile
         if(FileExist(filename))
