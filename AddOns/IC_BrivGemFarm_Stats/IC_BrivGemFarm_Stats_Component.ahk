@@ -28,7 +28,7 @@ g_BrivGemFarmStats.BuildToolTips()
 
 Reset_Briv_Farm_Stats()
 {
-    g_BrivGemFarmStats.ResetBrivFarmStats()
+    g_BrivGemFarmStats.ResetBrivFarmStats(true)
 }
 
 g_BrivFarmAddonStartFunctions.Push(ObjBindMethod(g_BrivGemFarmStats, "CreateTimedFunctions"))

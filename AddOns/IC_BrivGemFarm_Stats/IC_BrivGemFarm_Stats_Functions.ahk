@@ -536,8 +536,10 @@ class IC_BrivGemFarm_Stats_Component
     ;==========================
 
     ; Resets stats shown on the stats tab
-    ResetBrivFarmStats()
+    ResetBrivFarmStats(fullReset := false)
     {
+        if(fullReset)
+            this.StatsRunsCount := 0
         this.ResetUpdateStats()
         this.ResetComObjectStats()
         this.ResetStatsGUI()
@@ -656,7 +658,7 @@ class IC_BrivGemFarm_Stats_Component
         this.TimerFunctions[fncToCallOnTimer] := 200
         fncToCallOnTimer := ObjBindMethod(this, "UpdateGUIFromCom")
         this.TimerFunctions[fncToCallOnTimer] := 100
-        
+
         this.UpdateLoopStatsFnc :=  ObjBindMethod(this, "UpdateStartLoopStats", False)
         this.UpdateLoopStatsFncRepeatTime := -300
         fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
@@ -683,7 +685,6 @@ class IC_BrivGemFarm_Stats_Component
     ; Starts the saved timed functions (typically to be started when briv gem farm is started)
     StartTimedFunctions()
     {
-        this.StatsRunsCount := 0 ; reset count
         for k,v in this.TimerFunctions
             SetTimer, %k%, %v%, 0
     }
