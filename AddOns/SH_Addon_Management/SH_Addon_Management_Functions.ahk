@@ -42,8 +42,8 @@ Class AddonManagement
     ; ------------------------------------------------------------
     Add(AddonSettings)
     {
-        Addon := new Addon(AddonSettings)
-        this.Addons.Push(Addon)
+        addonToAdd := new Addon(AddonSettings)
+        this.Addons.Push(addonToAdd)
     }
     ; ------------------------------------------------------------
     ;   
