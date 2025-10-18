@@ -98,7 +98,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vLoopAlignID xp+15 yp+25 , `Loop:
         GuiControlGet, pos, ICScriptHub:Pos, LoopAlignID
         g_LeftAlign := posX
-        Gui, ICScriptHub:Add, Text, vLoopID x+2 w400, Not Started
+        Gui, ICScriptHub:Add, Text, vLoopID x+2 w395, Not Started
         Gui, ICScriptHub:Font, w400
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Current Area Time (s)
         Gui, ICScriptHub:Add, Text, vdtCurrentLevelTimeID x+2 w200, ; % dtCurrentLevelTime
