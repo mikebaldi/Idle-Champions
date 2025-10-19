@@ -77,9 +77,9 @@ class GameObjectStructure
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
         if(key == "")
-            return debugRecursionDepth := 0 ? "" : "" ; reset recursion depth and ReadIsLocked
+            return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
         if(key == "_ArrayDimensions") ; Prevent infinite recursion.
-            return debugRecursionDepth := 0 ? "" : "" ; reset recursion depth and ReadIsLocked
+            return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
         if(key == "size")
         {
             debugRecursionDepth := 0
@@ -109,7 +109,7 @@ class GameObjectStructure
         if(this.ValueType == "HashSet")
         {
             if key is not integer ; Don't try to create key objects when keys are invalid
-                return debugRecursionDepth := 0 ? "" : "" ; reset recursion depth and ReadIsLocked
+                return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
             offset := this.CalculateHashSetOffset(key) + 0
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
@@ -117,7 +117,7 @@ class GameObjectStructure
         else if key is number
             this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
         else
-            return debugRecursionDepth := 0 ? "" : "" ;reset recursion depth
+            return debugRecursionDepth := "" ;reset recursion depth
         debugRecursionDepth := 0
         GameObjectStructure.ReadIsLocked := False
         return this[key]
@@ -267,7 +267,7 @@ class GameObjectStructure
             ; TODO: Look into feasibility of using same dictionary hash function to look up keys. (Requires DLL call?) Current method is O(n) instead of O(1)
             keyIndex := this.GetDictIndexOfKeyQuick(key)                                    ; Look up what index has the key entry equal to the key passed in.
             if(keyIndex < 0)                                                                ; Failed to find index, do not create an entry.
-                return ((GameObjectStructure.ReadIsLocked := False) ? "" : "")              ; Reset read lock before returning   
+                return ((GameObjectStructure.ReadIsLocked := False) ? "" : "")              ; Reset read lock before returning nothing
             if(keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
             {
                 GameObjectStructure.ReadIsLocked := False                                   ; Reset read lock before returning   
