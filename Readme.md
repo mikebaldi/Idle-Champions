@@ -1,5 +1,8 @@
 # IC Script Hub
-## ``New:``
+## ``New: v4.4.3 - 2025-10-19:``
+**Important**: This update requires updated addons for them to function properly. I have converted ImpEGamer's and Emmote's to function with the new version and they can be found at [https://github.com/antilectual/IC_Addons-1/tree/Anti-Changes](https://github.com/antilectual/IC_Addons-1/tree/Anti-Changes) (for ImpEGamer's like Levelup) and [https://github.com/antilectual/IC_Addons-2/tree/Anti-Changes](https://github.com/antilectual/IC_Addons-2/tree/Anti-Changes) for Emmote's (until I complete a pull request).
+
+##
 2025-08-02:  
 
 Added important [imports](#imports) section. Please read it before running IC Script Hub.
