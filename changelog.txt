@@ -55,13 +55,13 @@ September 27, 2025
             - Added a read lock for when a GameObject is building a dictionary so timer functions are less likely to interfere with creation.
             - Added an optional parameter used to read dictionaries more sequentially when looping to speed up lookups for large dictionaries with sequential or mostly sequential keys.
             - Removed mostly useless quickLookup optional parameter.
-        Settings that are no longer read/expected by script get removed to reduce settings files polution.
+        Settings that are no longer read/expected by script get removed to reduce settings files pollution.
         Added new memory reads that were being used in addons so other addons can easily use them. 
             - ReadResetsTotal, ReadLevelUpCostBySeat, ReadALaCartRerollCost, ReadALaCarteRerollsRemaining, ReadALaCarteOffersExpireTime,  ReadLevelUpAmount
         Moved some general utility functions from LevelUp addon to main BrivGemFarm/SH.
         Updated file structure of some addons to split functions that fit together categorically into their own files so as to make finding functions easier.
         Added more sleeps to while loops to prevent busywaiting.
-        Added a number of function prototypes, particularily to split large functions into smaller ones for addon use.
+        Added a number of function prototypes, particularly to split large functions into smaller ones for addon use.
         Added extension functionality for addon use.
             - Instead of using extends, can now use SH_UpdateClass.UpdateClassFunctions to create extends-like functionality on another class (which can now be extended again if needed without knowing the class it is extending).
                 Note: This is one of the main reasons addons needed to be updated, along with the new function prototypes.
