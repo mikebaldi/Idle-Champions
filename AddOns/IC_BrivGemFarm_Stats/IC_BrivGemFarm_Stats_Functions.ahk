@@ -355,9 +355,9 @@ class IC_BrivGemFarm_Stats_Component
                 this.ScriptStartTime := this.SharedRunData.ScriptStartTime
             else if (IsObject(this.SharedRunData))
                 this.TotalFarmTime := (A_TickCount - this.ScriptStartTime)
-            dtTotalTimeHrs := this.TotalFarmTime / 3600000
+            this.TotalFarmTimeHrs := this.TotalFarmTime / 3600000
             if(this.TotalRunCount > 0)
-                this.BossesPerHour := Round( ((xpGain := this.DoXPChecks()) / 5) / dtTotalTimeHrs, 3) ; unmodified levels completed / 5 = boss levels completed
+                this.BossesPerHour := Round( ((xpGain := this.DoXPChecks()) / 5) / this.TotalFarmTimeHrs, 3) ; unmodified levels completed / 5 = boss levels completed
             if (IsObject(this.SharedRunData))
             { ; (Opened / Bought / Dropped)
                 global ShiniesClassNN
@@ -399,7 +399,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, AvgRunTimeID, % this.FormatMsec(this.TotalFarmTime / this.TotalRunCount)
         GuiControl, ICScriptHub:, bossesPhrID, % this.DecideScientific(this.BossesPerHour)
         GuiControl, ICScriptHub:, GemsTotalID, % this.DecideScientific(this.GemsTotal)
-        GuiControl, ICScriptHub:, GemsPhrID, % this.DecideScientific(Round( this.GemsTotal / this.TotalFarmTime, 3 ))
+        GuiControl, ICScriptHub:, GemsPhrID, % this.DecideScientific(Round( this.GemsTotal / this.TotalFarmTimeHrs, 3 ))
         if (IsObject(this.SharedRunData))
         {
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
@@ -781,6 +781,7 @@ class IC_BrivGemFarm_Stats_Component
         
         g_SF.WriteObjectToJSON(this.SettingsPath, this.Settings)
         Gui, Submit, NoHide
+        this.UpdateStartLoopStatsGUI()
     }
     
     SetDefaultSettings()
