@@ -1,18 +1,49 @@
 ; Shared com object
 class IC_BrivGemFarm_Coms
 {
-    OneTimeRunAtResetFunctions := {}
+    OneTimeRunAtResetStartFunctions := {}
+    OneTimeRunAtResetEndFunctions := {}
     OneTimeRunAtStartFunctions := {}
     OneTimeRunAtEndFunctions := {}
-    OneTimeRunAtResetFunctionsTimes := {}
+    OneTimeRunAtResetStartFunctionsTimes := {}
+    OneTimeRunAtResetEndFunctionsTimes := {}
 
-    RunTimersOnModronReset()
+    Init()
+    {
+        this.ModronResetStartFnc := ObjBindMethod(this, "RunTimersOnModronResetStartInternal")
+        this.ModronResetEndFnc := ObjBindMethod(this, "RunTimersOnModronResetEndInternal")
+    }
+
+    RunTimersOnModronResetStart()
     {
         ; set off timers so gem farm does not have to wait for functions to run before continuing.
-		for k,v in this.OneTimeRunAtResetFunctions
+        timerFnc := this.ModronResetStartFnc
+        SetTimer, %timerFnc%, -50, 5
+    }
+
+    RunTimersOnModronResetStartInternal()
+    {
+		for k,v in this.OneTimeRunAtResetStartFunctions
         {
-            repeatTimeMS := this.OneTimeRunAtResetFunctionsTimes[k]
-			SetTimer, %v%, %repeatTimeMS%, 0
+            repeatTimeMS := this.OneTimeRunAtResetStartFunctionsTimes[k]
+			SetTimer, %v%, %repeatTimeMS%, 5
+        }
+    }
+
+    RunTimersOnModronResetEnd()
+    {
+        ; set off timers so gem farm does not have to wait for functions to run before continuing.
+        timerFnc := this.ModronResetEndFnc
+        SetTimer, %timerFnc%, -50, 3
+    }
+
+    RunTimersOnModronResetEndInternal()
+    {
+        ; set off timers so gem farm does not have to wait for functions to run before continuing.
+		for k,v in this.OneTimeRunAtResetEndFunctions
+        {
+            repeatTimeMS := this.OneTimeRunAtResetEndFunctionsTimes[k]
+			SetTimer, %v%, %repeatTimeMS%, 3
         }
     }
 

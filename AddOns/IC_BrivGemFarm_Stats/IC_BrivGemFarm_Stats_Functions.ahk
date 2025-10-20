@@ -183,8 +183,8 @@ class IC_BrivGemFarm_Stats_Component
         
         GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
-        posX += 70
-        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w265,
+        posX += 100
+        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w235,
                
         GUIFunctions.UseThemeTextColor("DefaultTextColor")
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
@@ -434,14 +434,11 @@ class IC_BrivGemFarm_Stats_Component
 
     DoXPChecks()
     {
-        foundNordom := g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(1))
-        foundNordom := foundNordom OR g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(3)) ; Check if Nordom is in formations
-        foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot() ; Check if Mechanus (+10% core xp) bonus exists
-        preStrValue := ""
-        preStrValue := foundMechanusBlessing ? "Mechanus" : ""
-        preStrValue := (foundMechanusBlessing AND foundNordom) ? "Mechanus/Nordom" : ""
-        preStrValue := foundNordom ? "Nordom" : ""
-        GuiControl, ICScriptHub:, NordomWarningID, % (foundMechanusBlessing OR foundNordom ? preStrValue . " found." : "")
+        ; Check if Nordom is in formations
+        foundNordom := g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(1)) OR g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(3)) 
+        ; Check if Mechanus (+10% core xp) bonus exists
+        foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot() 
+        this.DisplayXPWarning(foundNordom, foundMechanusBlessing)
         currentNordomXP := ActiveEffectKeySharedFunctions.Nordom.NordomModronCoreToolboxHandler.ReadAwardedXPStat()
         currentCoreXP := g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance)
         xpGain := currentCoreXP - this.CoreXPStart 
@@ -454,6 +451,16 @@ class IC_BrivGemFarm_Stats_Component
             xpGain := xpGain / 1.1
         return xpGain
     }
+
+    DisplayXPWarning(isNordomFound, isMechanusFound)
+    {
+        preStrValue := ""
+        preStrValue := isMechanusFound ? "Mechanus" : ""
+        preStrValue := (isMechanusFound AND isNordomFound) ? "Mechanus/Nordom" : ""
+        preStrValue := isNordomFound ? "Nordom" : ""
+        GuiControl, ICScriptHub:, NordomWarningID, % (isMechanusFound OR isNordomFound ? preStrValue . " found." : "")
+    }
+
     ; Calculate dropped chests according to chest ID (1 or 2) and current number held . dropped := current - starting - purchased + opened
     CalculateDroppedChests(currentNumber, chestID := 1)
     {
@@ -566,6 +573,11 @@ class IC_BrivGemFarm_Stats_Component
         this.ResetComObjectStats()
         this.ResetStatsGUI()
         this.UpdateGUIFromCom()
+        ; Show XP warning from start.
+        foundNordom := g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(1)) OR g_SF.IsChampInFormation(100, g_SF.Memory.GetFormationByFavorite(3)) 
+        foundMechanusBlessing := g_SF.Memory.GetXPBlessingSlot() 
+        this.DisplayXPWarning(foundNordom, foundMechanusBlessing)
+
         if(fullReset)
             this.UpdateStartLoopStats()
     }
@@ -686,8 +698,8 @@ class IC_BrivGemFarm_Stats_Component
         this.UpdateLoopStatsFnc :=  ObjBindMethod(this, "UpdateStartLoopStats", False)
         this.UpdateLoopStatsFncRepeatTime := -300
         fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["MonitorIsGameClosed"] := 200
+        g_BrivFarmComsObj.OneTimeRunAtResetEndFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
+        g_BrivFarmComsObj.OneTimeRunAtResetEndFunctionsTimes["MonitorIsGameClosed"] := 200
     }
 
     ; Reloads memory reads after game has closed. For updating GUI.
@@ -701,7 +713,7 @@ class IC_BrivGemFarm_Stats_Component
             updateGUIFnc := this.UpdateLoopStatsFnc
             repeatTimeMS := this.UpdateLoopStatsFncRepeatTime
             SetTimer, %updateGUIFnc%, %repeatTimeMS%, 5
-            gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"]
+            gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetEndFunctions["MonitorIsGameClosed"]
             SetTimer, %gameMonFnc%, Off
         }
     }
