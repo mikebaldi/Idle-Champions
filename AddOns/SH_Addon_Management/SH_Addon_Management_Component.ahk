@@ -15,17 +15,24 @@ AddonManagement.GetAddonManagementSettings()
 ; ############################################################
 
 AddonLinkToPicture := ""
-if(GUIFunctions.isDarkMode)
-	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBarDark.png"
-else
-	AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
+AddonManagementSetButtonImage()
 GUIFunctions.AddButton(AddonLinkToPicture,"AddonOpenGuiClicked","AddonOpenGUIClickedButton")
 GUIFunctions.UseThemeBackgroundColor()
 
-AddonOpenGuiClicked(){
+AddonOpenGuiClicked()
+{
 	AddonManagement.NeedSave := 0
 	Gui, AddonManagement:Show
     AddonManagement.GenerateListViewContent("AddonManagement", "AddonsAvailableID")
 	GUIFunctions.UseThemeTitleBar("AddonManagement")
 }
 
+AddonManagementSetButtonImage()
+{
+	global AddonLinkToPicture
+	if(GUIFunctions.isDarkMode)
+		AddonLinkToPicture := A_LineFile . "\..\Images\MenuBarDark.png"
+	else
+		AddonLinkToPicture := A_LineFile . "\..\Images\MenuBar.png"
+	GuiControl,ICScriptHub:, AddonOpenGUIClickedButton, %AddonLinkToPicture%
+}

@@ -1,7 +1,133 @@
+October 19, 2025
+    For Users:
+        Updated stats window layout.
+        Added more security against failed patron reading.
+        Removed ManualBrivJumpValue advanced settings.
+        Updated gem-farm-advanced-settings.md to reflect removed settings.
+        More buy/open chest fixes. 
+        Fixed (most) instances where Script Hub would steal focus when a tab was created on start-up.
+            It should now be safe to click away while SH loads after BrivGemFarm tab loads without focus being stolen from other apps.
+                BrivGemFarm still needs to steal focus because of how the sliders are displayed. :(
+
+    For Developers:
+        Many unremarkable small tweaks. Lots of code clean-up since last update.
+        Added a number of caching cases to memory reads that require loops.
+        Added a number of favor related memory reads:
+            - ReadBlessingCurrencyNameBySlot, ReadBlessingCurrencyShortNameBySlot, ReadBlessingCurrencyEarned, GetFavorFor, GetFavorExponentFor
+        More updates to stack prediction calculations.
+        Fixed bug where FormationSaves could keep growing. (small memory leak)
+        Separated some more classes into their own files.
+        Added option to clean up temporary settings files on exit.
+        Added safety checks to prevent errors (such as on file deletion).
+        Added coms between main script and servercall scripts.
+        Added ability to mod the server call file when it launches.
+        Fixed addon variables being nested using up memory unnecessarily.
+            Not a memory "leak", just extra declared memory that was not used.
+    
+    Thanks Emmote and James for helping so much in finding bugs for this update before its release.
+
+September 27, 2025
+    For Users:
+        Many many small tweaks.
+        Added online stacking to occur for 30s max before a forced reset. Ideally to make up for Thellora's missing areas on her jump.
+        Added RunHidden user setting to allow launching the game with the Hide modifier. (Hides cmd windows that pop up for legendary).
+        Fixed a number of bugs with buying/opening chests using updates server calls.
+        Updated addon names to make some more clear that they are not for average use.
+        Added many of Emmote's edits to the main gem farm script.
+            -Added Emmote's increment 5ms code to Stats (uses 10 instead of 5).
+        Added optional addon ordering separate from required addons.
+            Note, these addons should load in this order now but may be in the wrong order on first load: BrivGemFarm -> LevelUp -> HybridTurboStacking -> RNGwaiting
+        Added Save button to Advanced Settings.
+        Added start/stop buttons to Stats tab. (start can be used as a "connect" button.)
+        Updated a number of timers to run once per run instead of continuously. e.g. Stats tab's once per run updates.
+        Fixed some bugs in skip prediction.
+        Added DoChests to each reset rather than each restart. Should work better for hybrid.
+        Added an addon that is BrivGemFarm except it stops directly after stacking. - may be useful in some cases to farm stacks without having to manually do it.
+        Fixed BPH not showing appropriately when gems spent stat is capped.        
+        
+    For Developers:
+        Many many small tweaks.
+        Added option to use "UnityPlayer.dll" for pointers instead of just "mono-2.0-bdwgc.dll".
+        Moved some tracking of some stats from stats addon to gem farm addon. 
+        Fixed a number of small bugs with memory reads that were used but not commonly.
+        Removed old CalculatedTargetStacks from BrivFunctions in MemoryFunctios.
+        Updates GameObjectStructure
+            - Added a read lock for when a GameObject is building a dictionary so timer functions are less likely to interfere with creation.
+            - Added an optional parameter used to read dictionaries more sequentially when looping to speed up lookups for large dictionaries with sequential or mostly sequential keys.
+            - Removed mostly useless quickLookup optional parameter.
+        Settings that are no longer read/expected by script get removed to reduce settings files pollution.
+        Added new memory reads that were being used in addons so other addons can easily use them. 
+            - ReadResetsTotal, ReadLevelUpCostBySeat, ReadALaCartRerollCost, ReadALaCarteRerollsRemaining, ReadALaCarteOffersExpireTime,  ReadLevelUpAmount
+        Moved some general utility functions from LevelUp addon to main BrivGemFarm/SH.
+        Updated file structure of some addons to split functions that fit together categorically into their own files so as to make finding functions easier.
+        Added more sleeps to while loops to prevent busywaiting.
+        Added a number of function prototypes, particularly to split large functions into smaller ones for addon use.
+        Added extension functionality for addon use.
+            - Instead of using extends, can now use SH_UpdateClass.UpdateClassFunctions to create extends-like functionality on another class (which can now be extended again if needed without knowing the class it is extending).
+                Note: This is one of the main reasons addons needed to be updated, along with the new function prototypes.
+                    These allow more addons to play together nicely before conflictts occur.
+            - Added AddClassFunctions method for when methods don't need to override/extend other methods, just be added to the class.
+        Added test for Briv's Thunderstep feat.
+        Added a "LoadAfter" option that may be added to the addon.json that tells the script when your addon must be loaded after a different one.
+            e.g. BrivGemFarm -> LevelUp -> HybridTurboStacking -> RNGwaiting
+        Added function to check how many extra briv stacks will be needed if Thellora resets at current rush stacks instead of max rush stacks.
+        Added more GUI functions. e.g. UpdateStatusTextWithClear
+        Added DoRushWaitIdling method.
+        Added tests for DirectedInput to return early if bad parameters are passed.
+        Added multi-dimensional array lookups.
+        Added a FeatSwapEnabled option for addon use to simplify some code.
+        Converted many hard coded hero IDs to use the ID set in their handler.
+
+September 12, 2025
+    Removed AutoCalc stacks functionality.
+        Note: As the game updates new features come out that affect how many stacks are needed. The AutoCalc of stacks has been removed since it has not kept up with these changes.
+    Created ServerCall script to run server calls separately from the gem farm script to reduce server connection delays.
+    Removed some unused imports.
+        Note: Imports were also re-arranged so the first diff after updating will be large.
+    Removed a number of unused settings.
+        Note: Some BrivGemFarm options may need to be reset, specifically chest purchasing/opening settings.
+    Updated Champion IDs to be read and stored at runtime instead of manually set.
+    Added last zone information to Stats addon when doing forced resets and in area time.
+    Changed how chest opening and purchasing is handled:
+        Updated GUI to reflect following changes.
+        Added option to only buy or open chests when it's possible to do a maxed request. (Buy 250 at once, open 1000 at once).
+        Added Gold/Silver chest ratio option for purchases. e.g. Silver .3, gold .7 would buy 1000 gold chests and 428 silver chests next maxed call.
+        Added options to save a reserve of gold or silver chests. 
+        Buy/Open Silver/Gold have been merged into Buy/Open chests.
+            Limit purchases of one or the other using the ratio slider and gem reserves
+            Limit opening of one or the other by setting reserves higher than you have.
+    Fixed bug where tab window box was not fulling displaying on load. (Right side and bottom edges were cut off).
+    Changed which control is set to focus after script loads (was: profile dropdown, now: stack zone edit box).
+    Added check for "legendary " in addition to "legendary.exe" to detect game location in about tab.
+    Changed window switching on stack restarts to no longer be based on window title.
+    Optimized how formations are read, especially favorites and modron formations.
+    Updated MemoryFunctions methods to be more concise and to be easier to browse when collapsing them in editor.
+
+September 2, 2025
+    Updated VersionPicker to choose Steam Pointers when CNE client > 600.
+    Fixed memory read/write critical error crash (hopefully!).
+    Updated about addon to show if ICScriptHub needs an update.
+
+August 24, 2025
+    Updated about addon to warn about mismatched imports.
+    Updated about addon to have more coverage on location settings.
+    Added a refresh link on the About tab to refresh game version and imports warning without reloading the script.
+    Added requested memory functions for modrons.
+    Moved version checking functionality to the About tab.
+    Added a toggle to turn off version checking on startup.
+
+August 15, 2025
+    Updated HeroHasFeats memory functions to properly error when reads fail.
+    Added an Add function to ActiveEffectKeyHandlers so addon creators can more easily add their own champions.
+    Added ReadClickLevel, ReadSplashVideoActive, and ReadHeroUpgradeRequiredLevelByIndex to memory functions.
+    Fixed a bug with how user settings are loaded.
+    Added feature to automatically open Addon Management window if no addons are loaded.
+
 August 14, 2025
     Added latest version check to the Addons window.
         Edit Settings.json in the main SH folder and change/add "CheckForUpdates":0 to disable.
     Added option to add a proxy server in Settings.json for server calls.
+    Added an outdated addons check on the About tab.
 
 August 11, 2025
     Fixed new bug with dictionary objects that made it into the last update.

@@ -9,47 +9,10 @@ global g_KeyPresses := {}
 global g_SharedData := new IC_SharedData_Class
 g_SF := new IC_SharedFunctions_Class
 
+#include %A_LineFile%\..\IC_SharedData_Class.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_LineFile%\..\MemoryRead\IC_MemoryFunctions_Class.ahk
 
-class IC_SharedData_Class
-{
-    ; Note stats vs States. Confusing, but intended.
-    StackFailStats := new StackFailStates
-    LoopString := ""
-    TotalBossesHit := 0
-    BossesHitThisRun := 0
-    SwapsMadeThisRun := 0
-    StackFail := 0
-    OpenedSilverChests := 0
-    OpenedGoldChests := 0
-    PurchasedGoldChests := 0
-    PurchasedSilverChests := 0
-    ShinyCount := 0
-    TriggerStart := false
-    TotalRollBacks := 0
-    BadAutoProgress := 0
-    PreviousStacksFromOffline := 0
-    TargetStacks := 0
-    ShiniesByChamp := {}
-    ShiniesByChampJson := ""
-
-    Close()
-    {
-        ExitApp
-    }
-
-    ReloadSettings(ReloadSettingsFunc)
-    {
-        reloadFunc := Func(ReloadSettingsFunc)
-        reloadFunc.Call()
-    }
-
-    ShowGUI()
-    {
-        Gui, show
-    }
-}
 
 class StackFailStates
 {
@@ -97,7 +60,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v3.0.3, 2025-08-09"
+        return "v3.0.6, 2025-09-01"
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.
@@ -110,12 +73,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     IsChampInFormation(champID, formation)
     {
         for k, v in formation
-        {
             if ( v == champID )
-            {
                 return true
-            }
-        }
         return false
     }
 
@@ -152,20 +111,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     KillCurrentBoss( maxLoopTime := 25000 )
     {
         CurrentZone := this.Memory.ReadCurrentZone()
-        if mod( CurrentZone, 5 )
+        if ( mod( CurrentZone, 5 ) )
             return 1
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 67
+        sleepTime := 60
         g_SharedData.LoopString := "Killing boss before stacking."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            this.DirectedInput(,,"{e}")
-            if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
-                this.ToggleAutoProgress(1,0,false)
-            Sleep, %sleepTime%
+            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
+            {
+                this.DirectedInput(,,"{e}")
+                if(!this.Memory.ReadQuestRemaining()) ; Quest complete, still on boss zone. Skip boss bag.
+                    this.ToggleAutoProgress(1,0,false)
+            }
+            Sleep, 20
         }
         if(ElapsedTime >= maxLoopTime)
             return 0
@@ -187,13 +149,11 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         fellBack := 0
         CurrentZone := this.Memory.ReadCurrentZone()
         if mod( CurrentZone, 5 )
-        {
             return fellBack
-        }
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 67
+        sleepTime := 32
         g_SharedData.LoopString := "Falling back from boss zone."
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
@@ -201,9 +161,9 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             if( ElapsedTime > (counter * sleepTime)) ; input limiter..
             {
                 this.DirectedInput(,, "{Left}" )
+                fellBack := 1
                 counter++
             }
-            fellBack := 1
         }
         this.WaitForTransition( spam )
         return fellBack
@@ -232,6 +192,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 CurrentZone := this.Memory.ReadCurrentZone()
                 counter++
             }
+            Sleep, 20
         }
         CurrentZone := this.Memory.ReadCurrentZone()
         StartTime := A_TickCount
@@ -245,6 +206,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.DirectedInput(,, "{Left}" )
                 counter++
             }
+            Sleep, 20
         }
         this.WaitForTransition()
         ElapsedTime := A_TickCount - StartTime
@@ -272,6 +234,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.DirectedInput(,, "{g}" )
                 keyCount++
             }
+            Sleep, 20
         }
         Critical, Off
     }
@@ -290,21 +253,20 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 250
-        this.DirectedInput(,, "{q}")
         gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
         while ( gold == 0 AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
-            {
-                this.DirectedInput(,, "{q}" )
-                counter++
-            }
             gold := this.ConvQuadToDouble( this.Memory.ReadGoldFirst8Bytes(), this.Memory.ReadGoldSecond8Bytes() )
-            Sleep, 20
+            Sleep, 16
         }
         return gold
+    }
+
+    WaitForFirstGoldSetup( maxLoopTime := 30000 )
+    {
+        this.SetFormationForStart()
+        return this.WaitForFirstGold(maxLoopTime)
     }
 
     /*  WaitForTransition - A function that will spam inputs, update a GUI timer, and wait for a transition to complete.
@@ -323,7 +285,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 20
+        sleepTime := 32
         g_SharedData.LoopString := "Waiting for Transition..."
         while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
         {
@@ -336,6 +298,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                     this.DirectedInput(,, spam )
                 counter++
             }
+            Sleep, 16
         }
         return
     }
@@ -352,38 +315,52 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     */
     DoDashWait( DashWaitMaxZone := 2000 )
     {
+        static minDashLevel := 120
+        if (this.IsDashActive())
+            return
         this.ToggleAutoProgress( 0, false, true )
-        this.LevelChampByID( 47, 230, 7000, "{q}") ; level shandie
+        this.SetFormationForStart()
+        this.LevelChampByID(ActiveEffectKeySharedFunctions.Shandie.HeroID, minDashLevel, 7000, "")
         ; Make sure the ability handler has the correct base address.
         ; It can change on game restarts or modron resets.
         this.Memory.ActiveEffectKeyHandler.Refresh(ActiveEffectKeySharedFunctions.Shandie.TimeScaleWhenNotAttackedHandler.EffectKeyString)
-        StartTime := A_TickCount
-        ElapsedTime := 0
         timeScale := this.Memory.ReadTimeScaleMultiplier()
         timeScale := timeScale < 1 ? 1 : timeScale ; time scale should never be less than 1
-        timeout := 30000 ; 60s seconds ( previously / timescale (6s at 10x) )
-        estimate := (timeout / timeScale) ; no buffer: 60s / timescale to show in LoopString
+        timeout := this.IsSecondWindActive() ? 10000 : 30000
+        estimate := (timeout / timeScale)
+        startTime := A_TickCount
+        ElapsedTime := 0
         ; Loop escape conditions:
         ;   does full timeout duration
         ;   past highest accepted dashwait triggering area
         ;   dash is active, dash.GetScaleActive() toggles to true when dash is active and returns "" if fails to read.
         while ( ElapsedTime < timeout AND this.Memory.ReadCurrentZone() < DashWaitMaxZone AND !this.IsDashActive() )
-        {
-            this.ToggleAutoProgress(0)
-            this.SetFormation()
-            ElapsedTime := A_TickCount - StartTime
-            g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
-            percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10), 15)
-            Sleep, %percentageReducedSleep%
-        }
+            ElapsedTime := this.DoDashWaitingIdling(StartTime, estimate)
         g_PreviousZoneStartTime := A_TickCount
-        return
     }
 
     ; Template function for whether determining if to Dash Wait. Default is Yes if shandie is in the formation.
     ShouldDashWait()
     {
         return this.IsChampInFormation( ActiveEffectKeySharedFunctions.Shandie.HeroID, this.Memory.GetCurrentFormation() )
+    }
+
+    ; Things to do while waiting for dash to be ready.
+    DoDashWaitingIdling(startTime := 1, estimate := 1)
+    {
+        this.ToggleAutoProgress(0)
+        ElapsedTime := A_TickCount - startTime
+        g_SharedData.LoopString := "Dash Wait: " . ElapsedTime . " / " . estimate
+        percentageReducedSleep := Max(Floor((1-(ElapsedTime/estimate))*estimate/10 + 15), 15)
+        Sleep, %percentageReducedSleep%
+        ElapsedTime := A_TickCount - StartTime
+        return ElapsedTime
+    }
+
+    ; Loads formation to use in zone 1
+    SetFormationForStart()
+    {
+        this.DirectedInput(,, "{q}")
     }
 
     ; Returns count for how many TimeScale values equal the value passed to the function
@@ -441,6 +418,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     {
         static lastCheck := 0
         static fallBackTries := 0
+        global g_PreviousZoneStartTime
         ;TODO: add better code in case a modron reset happens without being detected. might mean updating other functions.
         dtCurrentZoneTime := Round((A_TickCount - g_PreviousZoneStartTime) / 1000, 2)
         if (isStuck)
@@ -486,6 +464,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ;Uses server calls to test for being on world map, and if so, start an adventure (CurrentObjID). If force is declared, will use server calls to stop/start adventure.
     RestartAdventure( reason := "" )
     {
+            targetStackModifier := g_SF.CalculateBrivStacksToReachNextModronResetZone()
+            this.StackNormal(30000, targetStackModifier, forceStack := True) ; Give 30s max to try to gain some stacks before a forced reset.
             g_SharedData.LoopString := "ServerCall: Restarting adventure"
             this.CloseIC( reason )
             g_ServerCall.CallEndAdventure()
@@ -505,29 +485,28 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
+            Sleep, 20
         }
         g_SharedData.LoopString := "Loading z1..."
         Sleep, 50
         while(!this.Memory.ReadUserIsInited() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
+            Sleep, 20
         }
         if (ElapsedTime >= timeout)
-        {
             return false
-        }
+        this.AlreadyOfflineStackedThisRun := False
         return true
     }
 
     ; a method to swap formations and cancel briv's jump animation.
-    SetFormation(settings := "")
+    SetFormation(settings := "", forceCheck := False)
     {
         if(settings != "")
-        {
             this.Settings := settings
-        }
         ;only send input messages if necessary
-        brivBenched := this.Memory.ReadChampBenchedByID(58)
+        brivBenched := this.Memory.ReadChampBenchedByID(ActiveEffectKeySharedFunctions.Briv.HeroID)
         ;check to bench briv
         if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
@@ -542,8 +521,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             g_SharedData.SwapsMadeThisRun++
             return
         }
-        ; TODO: Fix check to not fail when the formation hasn't finished deploying (out of gold to purchase champs etc.)
-        isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        if(forceCheck OR g_SharedData.TriggerStart)
+            isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+        else
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
         isWalkZone := this.Settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
@@ -561,12 +542,13 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         }
     }
 
-    ; True/False on whether Briv should be benched based on game conditions.
+    ; True/False on whether Briv should be benched based on game conditions. (typically swap to E formation)
     BenchBrivConditions(settings)
     {
-        ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
-        if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
-            return true
+        if(!settings[ "FeatSwapEnabled" ])
+            ;bench briv if jump animation override is added to list and it isn't a quick transition (reading ReadFormationTransitionDir makes sure QT isn't read too early)
+            if (this.Memory.ReadTransitionOverrideSize() == 1 AND this.Memory.ReadTransitionDirection() != 2 AND this.Memory.ReadFormationTransitionDir() >= 3 )
+                return true
         ;bench briv not in a preferred briv jump zone
         if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50) ] == 0)
             return true
@@ -577,14 +559,13 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         maxSwapArea := this.ModronResetZone - settings[ "BrivJumpBuffer" ]
         if (this.Memory.ReadCurrentZone() >= maxSwapArea)
             return true
-
         return false
     }
 
-    ; True/False on whether Briv should be unbenched based on game conditions.
+    ; True/False on whether Briv should be unbenched based on game conditions. (typically swap to Q formation)
     UnBenchBrivConditions(settings)
     {
-        ; do not unbench briv if party is not on a perferred briv jump zone.
+        ;do not unbench briv if party is not on a perferred briv jump zone.
         if (settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
             return false
         ;unbench briv if 'Briv Jump Buffer' setting is disabled and transition direction is "OnFromLeft"
@@ -600,7 +581,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ;unbench briv if outside the 'Briv Jump Buffer' and a jump animation override isn't added to the list
         else if (this.Memory.ReadTransitionOverrideSize() != 1)
             return true
-
         return false
     }
 
@@ -632,13 +612,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         return
     }
 
-    ; Attemps to open IC. Game should be closed before running this function or multiple copies could open.
+    ; Attempts to open IC. Game should be closed before running this function or multiple copies could open.
     OpenIC()
     {
         timeoutVal := 32000 + 90000 ; 32s + waitforgameready timeout
         loadingDone := false
         g_SharedData.LoopString := "Starting Game"
-        WinGetActiveTitle, savedActive
+        ; WinGetActiveTitle, savedActive
+        WinGet, savedActive, ID, A
         this.SavedActiveWindow := savedActive
         StartTime := A_TickCount
         while ( !loadingZone AND ElapsedTime < timeoutVal )
@@ -668,32 +649,50 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; Runs the process and set this.PID once it is found running. 
-    OpenProcessAndSetPID(timeoutLeft := 32000)
+    OpenProcessAndSetPID(timeoutLeft := 35000, retried := 0)
     {
         this.PID := 0
         processWaitingTimeout := 10000 ;10s
         waitForProcessTime := g_UserSettings[ "WaitForProcessTime" ]
+        existingProcessID := g_userSettings[ "ExeName"]
         ElapsedTime := 0
         StartTime := A_TickCount
         while (!this.PID AND ElapsedTime < timeoutLeft )
         {
             g_SharedData.LoopString := "Opening IC.."
             programLoc := g_UserSettings[ "InstallPath" ]
+            runHidden := g_UserSettings[ "RunHidden" ]
             try
             {
-                Run, %programLoc%
+                if (runHidden)
+                    Run, %programLoc%,, Hide
+                else
+                    Run, %programLoc%
             }
             catch
             {
-                MsgBox, 48, Unable to launch game, `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
-                ExitApp
+                if(!retried)
+                {
+                    retried += 1
+                    sleep, 60000
+                    ElapsedTime := 0
+                    StartTime := A_TickCount
+                    Process, Exist, %existingProcessID% ; Give another minute and retest. If failed, retry one time.
+                    this.PID := ErrorLevel
+                    if (!this.PID)
+                        continue
+                }
+                if(!this.PID) ; Do not keep attempting to launch IC if a retry has also failed.
+                { 
+                    MsgBox, 48, ICScriptHub was unable to re-launch the game. `nVerify the game location is set properly by enabling the Game Location Settings addon, clicking Change Game Location on the Briv Gem Farm tab, and ensuring the launch command is set properly.
+                    ExitApp
+                }
             }
             Sleep, %waitForProcessTime%
             ; Add 10s (default) to ElapsedTime so each exe waiting loop will take at least 10s before trying to run a new instance of hte game
             timeoutForPID := ElapsedTime + processWaitingTimeout 
             while(!this.PID AND ElapsedTime < timeoutForPID AND ElapsedTime < timeoutLeft)
             {
-                existingProcessID := g_userSettings[ "ExeName"]
                 Process, Exist, %existingProcessID%
                 this.PID := ErrorLevel
                 Sleep, 62
@@ -711,7 +710,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ; Process exists, wait for the window:
         while(!(this.Hwnd := WinExist( "ahk_exe " . g_userSettings[ "ExeName"] )) AND ElapsedTime < timeoutLeft)
         {
-            WinGetActiveTitle, savedActive
+            
+            WinGet, savedActive, ID, A
             this.SavedActiveWindow := savedActive
             ElapsedTime := A_TickCount - StartTime
             Sleep, 62
@@ -740,6 +740,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         while( ElapsedTime < timeout AND !gameStarted)
         {
             gameStarted := this.Memory.ReadGameStarted()
+            if (this.Memory.ReadIsSplashVideoActive() == 1)
+                this.DirectedInput(,,"{Esc}")
             ; If the popup warning message about failed offline progress, restart the game.
             ; if(this.Memory.ReadDialogActiveBySlot(this.Memory.GetDialogSlotByName("DontShowAgainDialog")) == 1)
             ; {
@@ -796,7 +798,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
     SafetyCheck()
     {
-        ; TODO: Base case check in case safety check never succeeds in opening the game.
+        static hasStartedSafetyCheck := False
+        static safetyCheckStartTime := 0
+        static safetyCheckTimeout := 900000 ; 15 minutes
+        static hasCorrectPatron := True
+        
+        ; Base case check in case safety check never succeeds in opening the game.
+        if(!hasStartedSafetyCheck)
+        {
+            hasStartedSafetyCheck := True
+            safetyCheckStartTime := A_TickCount
+        }
+        else if (A_TickCount - safetyCheckStartTime > safetyCheckTimeout)
+        {
+            MsgBox, % "Still could not start game after " . safetyCheckTimeout / 1000 / 60 . "minutes. `nCheck game location settings. `nEnding run."
+            ExitApp
+        }
+
         if (Not WinExist( "ahk_exe " . g_userSettings[ "ExeName"] ))
         {
             if(this.OpenIC() == -1)
@@ -806,8 +824,13 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             }
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
-            this.RecoverFromGameClose(this.GameStartFormation)
+            this.RecoverFromGameClose(this.GetRecoveryFormation())
             this.BadSaveTest()
+            if (hasCorrectPatron)
+                hasCorrectPatron := this.PatronTest() ; if needs restart, only do one time.
+            else
+                hasCorrectPatron := True
+            hasStartedSafetyCheck := False
             return false
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
@@ -820,7 +843,35 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.Memory.OpenProcessReader()
             this.ResetServerCall()
         }
+        hasStartedSafetyCheck := False
         return true
+    }
+
+    PatronTest()
+    {
+        readPatron := this.Memory.ReadPatronID()
+        ElapsedTime := 0
+        StartTime := A_TickCount
+        timeout := 5000
+        while (readPatron == "" AND ElapsedTime < timeout) ;wait for good patron read.
+        {
+            readPatron := this.Memory.ReadPatronID()
+            sleep, 96
+            ElapsedTime := A_TickCount - StartTime
+        }
+
+        If (readPatron AND this.PatronID AND this.PatronID != readPatron AND ElapsedTime <= timeout)
+        {
+            this.CloseIC("Patron does not match expected patron upon restart.")
+            this.SafetyCheck()
+            return false
+        }
+        return True
+    }
+    
+    GetRecoveryFormation()
+    {
+        return this.GameStartFormation
     }
 
     ; Checks for rollbacks after a stack restart.
@@ -858,7 +909,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     fall back and switch to Q if being attacked
     */
     ; falls back zone until switching to Q formation can be done.
-    RecoverFromGameClose(formationFavoriteNum := 1)
+    RecoverFromGameClose(formationFavoriteNum := 2)
     {
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -889,11 +940,9 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 Sleep, 20
         }
         g_SharedData.LoopString := "Waiting for formation swap..."
-        formationFavorite := this.Memory.GetFormationByFavorite( formationFavoriteNum )
         ElapsedTime := counter := 0
         while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
         {
-            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
@@ -902,10 +951,9 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             }
             else
                 Sleep, 20
+            ; reverted for now. swaps fail more at game restart and restarts don't happen often so stick with old method until (if) CNE fixes their bug.
+            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(formationFavoriteNum)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
-        isCurrentFormation := this.IsCurrentFormation( formationFavorite )
-        ;spam.Push(this.GetFormationFKeys(formationFavorite1)*) ; make sure champions are leveled
-        ;;;if ( this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters() )
         g_SharedData.LoopString := "Under attack. Retreating to change formations..."
         while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < (2 * timeout)))
         {
@@ -913,7 +961,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
             this.ToggleAutoProgress(1, true)
-            isCurrentFormation := this.IsCurrentFormation( formationFavorite )
+            if (lastLoopTimedOut)
+                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+            else
+                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
         g_SharedData.LoopString := "Loading game finished."
     }
@@ -929,10 +980,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         if(currentFormation.Count() != testformation.Count())
             return false
         loop, % currentFormation.Count()
-        {
             if(testformation[A_Index] != currentFormation[A_Index])
                 return false
-        }
         return true
     }
 
@@ -964,6 +1013,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     LevelChampByID(ChampID := 1, Lvl := 0, timeout := 5000, keys := "{q}")
     {
         Critical, On
+        if ((champLevel := this.Memory.ReadChampLvlByID(ChampID)) >= Lvl)
+            return
         g_SharedData.LoopString := "Leveling Champ " . ChampID . " to " . Lvl
         StartTime := A_TickCount
         ElapsedTime := 0
@@ -979,7 +1030,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         keys := !IsObject(keys) ? [keys] : keys
         this.DirectedInput(,, keys* )
         this.DirectedInput(,release := 0, var* ) ; keysdown
-        champLevel := this.Memory.ReadChampLvlByID( ChampID )
         while ( champLevel < Lvl AND ElapsedTime < timeout )
         {
             ElapsedTime := A_TickCount - StartTime
@@ -1135,7 +1185,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ResetServerCall()
     {
         this.SetUserCredentials()
-        previousPatron := g_ServerCall.activePatronID ? g_ServerCall.activePatronID : 0 
+        previousPatron := g_ServerCall.activePatronID != "" ? g_ServerCall.activePatronID : 0 
         g_ServerCall := new IC_ServerCalls_Class( this.UserID, this.UserHash, this.InstanceID ) ; Note: resets patronID to 0
         version := this.Memory.ReadBaseGameVersion()
         if(version != "")
@@ -1154,97 +1204,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; New Helper Functions
     ;======================
 
-    ; Calculates the number of Haste stacks are required to jump from area 1 to the modron's reset area. worstCase default is true.
-    CalculateBrivStacksToReachNextModronResetZone(worstCase := true)
-    {
-        g_SharedData.RedoStackCalc := False
-        jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04  ;Default := 4%, SteelBorn := 3.2%
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance() 
-        if (!skipChance)
-        {
-            skipChance := 1
-            g_SharedData.RedoStackCalc := True
-        }
-        skipChance := skipChance ? skipChance : 1
-        distance := this.Memory.GetModronResetArea() - this.ThelloraRushTest()
-        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        ; average
-        if(skipAmount == 1) ; true worst case =  worstCase ? Ceil(distance / 2) : normalcalc
-            jumps := worstCase ? Ceil(((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)) * 1.15) : Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1))
-        else
-            jumps := Ceil(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance)))
-        isEffectively100 := 1 - skipChance < .004
-        stacks := Ceil(49 / (1+consume)**jumps)
-        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1) 
-            stacks := Floor(stacks * 1.15) ; 15% more - guesstimate
-        return stacks
-    }
-
-    ; Calculates the number of Haste stacks that will be left over once when the target zone has been reached. Defaults: startZone=1, targetZone=1, worstCase=true.
-    CalculateBrivStacksLeftAtTargetZone(startZone := 1, targetZone := 1, worstCase := true)
-    {
-        jumps := 0
-        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        distance := targetZone - startZone
-        ; skipAmount == 1 is a special case where Briv won't use stacks when he skips 0 areas.
-        if(skipAmount == 1)
-            jumps := worstCase ? Max(Ceil(distance / 2),0) : Max(Ceil((distance - (distance/((skipAmount*(1-skipChance))+(skipAmount+1)*skipChance))*(1-skipChance)) / (skipAmount + 1)),0)
-        else
-            jumps :=  Max(Floor(distance / ((skipAmount * (1-skipChance)) + ((skipAmount+1) * skipChance))), 0)
-        isEffectively100 := 1 - skipChance < .004
-        if (worstCase AND skipChance < 1 AND !isEffectively100 AND skipAmount != 1)
-            jumps := Floor(jumps * 1.05)
-        return Floor(stacks*(1+consume)**jumps)
-    }
-
-    ; Calculates the number of Haste stacks will be used to progress from the current zone to the modron reset area.
-    CalculateBrivStacksConsumedToReachModronResetZone(worstCase := true)
-    {
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        return stacks - this.CalculateBrivStacksLeftAtTargetZone(this.Memory.ReadCurrentZone(), this.Memory.GetModronResetArea() + 1, worstCase)
-    }
-
-    ; Calculates the farthest zone Briv expects to jump to with his current stacks on his current zone.  avgMinOrMax: avg = 0, min = 1, max = 2.
-    CalculateMaxZone(avgMinOrMax := 0)
-    {
-        ; 1 jump results will change based on the current zone depending on whether the previous zones had jumps and used stacks or not.
-        consume := this.IsBrivMetalborn() ? -.032 : -.04 ;Default := 4%, MetalBorn := 3.2%
-        stacks := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadHasteStacks()
-        currentZone := this.Memory.ReadCurrentZone()
-        if g_BrivUserSettings[ "ManualBrivJumpValue" ] is integer
-            skipAmount := g_BrivUserSettings[ "ManualBrivJumpValue" ] ? g_BrivUserSettings[ "ManualBrivJumpValue" ] : ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        else
-            skipAmount := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipAmount()
-        skipChance := ActiveEffectKeySharedFunctions.Briv.BrivUnnaturalHasteHandler.ReadSkipChance()
-        jumps := Floor(Log(49 / Max(stacks,49)) / Log(1+consume))
-        avgJumpDistance := skipAmount * (1-skipChance) + (skipAmount+1) * skipChance
-        maxJumpDistance := skipAmount+1
-        minJumpDistance := skipAmount
-        ;zones := jumps * avgJumpDistance
-        zones := avgMinOrMax == 0 ? jumps * avgJumpDistance : (avgMinOrMax == 1 ? jumps * minJumpDistance : jumps * maxJumpDistance)
-        return currentZone + zones
-    }
+    #include %A_LineFile%\..\IC_SharedFunctions_StackCalcs.ahk
 
     ; Returns how many Rush stacks are available if Thellora is in the party. 
     ThelloraRushTest()
     {
         isInParty := this.IsChampInFormation( ActiveEffectKeySharedFunctions.Thellora.HeroID, this.Memory.GetCurrentFormation() )
         if (isInParty)
-        {
-            rushStacks := ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
-            return rushStacks
-        }
+            return ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
         return 0
     }
 
@@ -1255,6 +1222,27 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         specID := this.Memory.GetCoreSpecializationForHero(brivID)
         if (specID == 3455)
             return true
+        return false
+    }
+
+    BrivHasThunderStep() ;Thunder step 'Gain 20% More Sprint Stacks When Converted from Steelbones', feat 2131.
+    {
+        static thunderStepID := 2131
+        If (g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(1)) OR g_SF.Memory.HeroHasAnyFeatsSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))) ;If there are feats saved in Q or E (which would overwrite any others in M)
+        {
+            thunderInQ := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(1))
+            thunderInE := g_SF.Memory.HeroHasFeatSavedInFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID, g_SF.Memory.GetSavedFormationSlotByFavorite(3))
+            return (thunderInQ OR thunderInE)
+        }
+        else if (g_SF.Memory.HeroHasFeatSavedInModronFormation(ActiveEffectKeySharedFunctions.Briv.HeroID, thunderStepID))
+            return true
+        else
+        {
+            feats := g_SF.Memory.GetHeroFeats(ActiveEffectKeySharedFunctions.Briv.HeroID)
+            for k, v in feats
+                if (v == thunderStepID)
+                    return true
+        }
         return false
     }
 

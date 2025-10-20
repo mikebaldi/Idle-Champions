@@ -71,7 +71,7 @@ AddonManagementMoveUpClicked(){
 				LV_Modify(WantedRow, "Select")
 			}
 			else{
-				msgbox Can't move above a dependency.
+				msgbox Can't move up because the addon above is either required or should be loaded before this one.
 			}			
 		}
 	}
@@ -108,3 +108,6 @@ AddonManagementSaveClicked(){
 	IfMsgBox, Yes
 		Reload
 }
+
+If (AddonManagement.ShowAddonGUI)
+	AddonOpenGuiClicked()

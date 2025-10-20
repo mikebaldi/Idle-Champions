@@ -1,6 +1,6 @@
 {
 	"Name":"BrivGemFarm Advanced Settings",
-	"Version": "v0.2.3",
+	"Version": "v0.2.5",
     "Includes" : "IC_BrivGemFarm_AdvancedSettings_Includes.ahk",
     "Author" : "Antilectual",
     "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_BrivGemFarm_AdvancedSettings",
@@ -12,7 +12,7 @@
         },
         {
             "Name":"Briv Gem Farm",
-            "Version":"v1.4.6"
+            "Version":"v1.5.5"
         }
     ]
 }

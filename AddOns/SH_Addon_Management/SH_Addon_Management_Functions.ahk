@@ -25,6 +25,7 @@ Class AddonManagement
     NeedSave := 0
     AddonManagementConfigFile := A_LineFile . "\..\AddonManagement.json"
     GeneratedAddonIncludeFile := A_LineFile . "\..\..\GeneratedAddonInclude.ahk"
+    ShowAddonGUI := False
 
     ; ############################################################
     ;                        Functions
@@ -41,8 +42,8 @@ Class AddonManagement
     ; ------------------------------------------------------------
     Add(AddonSettings)
     {
-        Addon := new Addon(AddonSettings)
-        this.Addons.Push(Addon)
+        addonToAdd := new Addon(AddonSettings)
+        this.Addons.Push(addonToAdd)
     }
     ; ------------------------------------------------------------
     ;   
@@ -121,32 +122,25 @@ Class AddonManagement
     ;             0: Addon is not required by another enabled addon
     ;
     ; ------------------------------------------------------------
-    CheckIsDependedOn(Name,Version){
-        ; Test for exact match
-        for addonIndex,addonObject in this.Addons{
-            for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND dependencyObject.Version = Version) {
-                    ;We have a addon who depends on the name, now check it it's enabled
-                    if(this.Addons[addonIndex]["Enabled"]){
-                        return addonIndex
-                    }
-                    else{
-                        break
-                    }
-                }
-            }
-        }
-        ; test for higher version 
-        for addonIndex,addonObject in this.Addons{
-            for dependencyIndex,dependencyObject in addonObject.Dependencies{
-                if (dependencyObject.Name == Name AND SH_VersionHelper.IsVersionSameOrNewer(Version, dependencyObject.Version)) {
-                    ;We have a addon who depends on the name, now check it it's enabled
-                    if(this.Addons[addonIndex]["Enabled"]){
-                        return addonIndex
-                    }
-                }
-            }
-        }
+    CheckIsDependedOn(Name,Version)
+    {
+        for addonIndex,addonObject in this.Addons
+            for dependencyIndex,dependencyObject in addonObject.Dependencies
+                ; Test for exact match or higher version
+                if (dependencyObject.Name == Name AND (dependencyObject.Version = Version OR SH_VersionHelper.IsVersionSameOrNewer(Version, dependencyObject.Version))) 
+                    if(this.Addons[addonIndex]["Enabled"]) ;We have a addon who depends on the name, now check it it's enabled
+                        return addonIndex ; do not break here in case multiple versions of the same addon exist.
+        return false
+    }
+
+    CheckShouldLoadAfter(Name,Version)
+    {
+        for addonIndex,addonObject in this.Addons
+            for dependencyIndex,loadAfterObject in addonObject.LoadAfter
+                ; Test for exact match or higher version
+                if (loadAfterObject.Name == Name) 
+                    if(this.Addons[addonIndex]["Enabled"]) ;We have a addon who depends on the name, now check it it's enabled
+                        return addonIndex ; do not break here in case multiple versions of the same addon exist.
         return false
     }
     ; ------------------------------------------------------------
@@ -160,10 +154,10 @@ Class AddonManagement
     ;             0: No problem
     ;
     ; ------------------------------------------------------------
-    CheckDependencyOrder(AddonNumber,PositionWanted)
+    CheckDependencyOrder(AddonNumber,PositionWanted,dependencyType := "Dependencies")
     {
         ; Check to make sure none of this addon's dependencies are before it
-        for k, v in this.Addons[AddonNumber]["Dependencies"]
+        for k, v in this.Addons[AddonNumber][dependencyType]
         {
             this.GetAddon(v.Name, v.Version, indexOfDependency)
             if(indexOfDependency >= PositionWanted)
@@ -172,7 +166,7 @@ Class AddonManagement
         ; Check to make sure this addon is not after any addons that depend on it 
         for k,v in this.AddonsEnabled
         {
-            for _, dependency in v.Dependencies 
+            for _, dependency in v[dependencyType]
             {
                 if(this.Addons[AddonNumber]["Name"] == dependency.Name AND SH_VersionHelper.IsVersionSameOrNewer(this.Addons[AddonNumber]["Version"], dependency.Version))
                     if (k <= PositionWanted)
@@ -255,7 +249,7 @@ Class AddonManagement
     EnableAddon(Name, byref Version)
     {
         isNewer := false
-        ; Check if another version is allready enabled
+        ; Check if another version is already enabled
         for k,v in this.Addons 
         {
             if(v.Name = Name AND v.Version != Version AND v.Enabled)
@@ -269,6 +263,9 @@ Class AddonManagement
         if(isNewer)
             Version := currAddon.Version
         lastSwap := 0
+        ; Make sure any "load after" addons load before the one that requires it.
+        while(IsObject(currAddon) AND indexOfSwap := this.CheckDependencyOrder(indexOfAddon,indexOfAddon, "LoadAfter"))
+            this.SwitchOrderAddons(indexOfSwap, indexOfAddon, true)
         ; Force enable dependency before enabling this addon.
         while(IsObject(currAddon) AND indexOfSwap := this.CheckDependencyOrder(indexOfAddon,indexOfAddon))
         {
@@ -300,12 +297,10 @@ Class AddonManagement
         ; If the file does not exist we should create it with the default settings
         if(!FileExist(this.AddonManagementConfigFile)) 
         {
-            ; Here we load the Addons that are required on first startup
-            startupAddons := []
-            startupAddons.Push(Object("Name","Addon Management","Version","v1.0."))
-            startupAddons.Push(Object("Name","IC Core","Version","v.1."))
-            this.EnabledAddons := startupAddons 
-            ; this.EnabledAddons := [Object("Name","Addon Management","Version","v1.0."),Object("Name","Briv Gem Farm","Version","v1.0."),Object("Name","Game Location Settings","Version","v0.1.")]
+            ; Here we used load the Addons that are required on first startup
+            ; startupAddons := []
+            ; startupAddons.Push(Object("Name","IC Core","Version","v.1."))
+            this.EnabledAddons := []
             forceType := 2
         }
         ; enable all addons that needed to be added
@@ -328,6 +323,9 @@ Class AddonManagement
         this.OrderAddons()
         ; Enable addons
         this.EnabledAddons := IsObject(AddonSettings["Enabled Addons"]) ? AddonSettings["Enabled Addons"] : this.EnabledAddons
+        ; Show Addon GUI if no addons loaded
+        if((this.EnabledAddons).Count() <= 0)
+            this.ShowAddonGUI := True
         for k, v in this.EnabledAddons
         {
             versionValue := v.Version
@@ -355,15 +353,10 @@ Class AddonManagement
                 updatedAddonsString .= "`n" . v.Name . " " . v.Version 
             }
             MsgBox, % updatedAddonsString
+            return
         }
         if(forceType == 2)
-        {
             this.ForceWriteSettings()
-            MsgBox, 36, Restart, Your settings file has been updated. `nIC Script Hub may need to reload. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
-        
     }
 
     ForceWriteSettings()
@@ -430,6 +423,8 @@ Class AddonManagement
         ; If can't rearrange due to dependencies, return false
         if (this.CheckDependencyOrder(AddonNumber,Position) AND !Force)
             return false
+        if (this.CheckDependencyOrder(AddonNumber,Position, "LoadAfter") AND !Force)
+            return false
         NumberOfAddons := this.Addons.Count()
         temp := this.Addons[Position]
         this.Addons[Position] := this.Addons[AddonNumber]
@@ -469,18 +464,9 @@ Class AddonManagement
             if (v.Enabled)
                 generatedText .= "#include *i %A_LineFile%\..\" . v.Dir . "\" . v.Includes . "`n"
         IncludeFile := this.GeneratedAddonIncludeFile
-        if(!FileExist(IncludeFile))
-        {
-            FileAppend, %generatedText%, %IncludeFile%
-            MsgBox, 36, Restart, This looks like your first time running Script Hub. `nSettings have been updated. `nDo you wish to reload now?
-            IfMsgBox, Yes
-                Reload
-        }
-        else
-        {
+        if(FileExist(IncludeFile))
             FileDelete, %IncludeFile%
-            FileAppend, %generatedText%, %IncludeFile%
-        }
+        FileAppend, %generatedText%, %IncludeFile%
     }
     ; ------------------------------------------------------------
     ;
@@ -496,11 +482,11 @@ Class AddonManagement
         oldGUI := A_DefaultGui
         Gui, %GuiWindowName%:Default
         Gui, %GuiWindowName%:ListView, ahk_id %ListViewName%
-        test := LV_Delete()
+        doDelete := LV_Delete()
         for k,v in this.Addons 
         {
             IsEnabled := v["Enabled"] ? "yes" : "no"
-            LV_Add( , IsEnabled, v.Name, v.Version, v.MostRecentVer, v.Dir)
+            LV_Add( , IsEnabled, v.Name, v.Version, v.Dir)
         }
         loop, 4
         {
@@ -556,7 +542,7 @@ Class AddonManagement
         EnabledAddons := []
         for k,v in this.Addons
             if (v.Enabled)
-                EnabledAddons.Push(Object("Name", v.Name, "Version",v.Version))
+                EnabledAddons.Push(Object("Name", v.Name, "Version", v.Version, "Url", v.Url))
         ThingsToWrite := {}
         ThingsToWrite["Enabled Addons"] := EnabledAddons
         ThingsToWrite["Addon Order"] := Order
@@ -612,6 +598,7 @@ Class Addon
     Info :=
     Dependencies := []
     Enabled := 
+    serverCaller := new SH_ServerCalls()
 
     __New(SettingsObject) {
         If IsObject( SettingsObject ){
@@ -623,29 +610,9 @@ Class Addon
             this.Url := SettingsObject["Url"]
             this.Info := SettingsObject["Info"]
             this.Dependencies := SettingsObject["Dependencies"]
+            this.LoadAfter := SettingsObject["LoadAfter"]
             this.Enabled := 0
-            if( g_UserSettings[ "CheckForUpdates" ] )
-                this.MostRecentVer := this.GetMostRecentVersion()
         }
-    }
-
-    ; Requires a github.com url.
-    GetMostRecentVersion()
-    {
-        
-        splitString := StrSplit(currentControl, "_")
-        remoteUrl := this.Url
-        if(InStr(remoteUrl, "https://github.com"))
-        {
-            remoteUrl := StrReplace(remoteUrl, "https://github.com", "https://raw.githubusercontent.com")
-            remoteUrl := StrReplace(remoteUrl, "/tree/", "/refs/heads/")
-            remoteUrl := remoteUrl . "/Addon.json"
-            serverCaller := new SH_ServerCalls()
-            addonInfo := serverCaller.BasicServerCall(remoteURL) 
-            return addonInfo["Version"]
-        }
-        else
-            return ""
     }
 
     enable(){

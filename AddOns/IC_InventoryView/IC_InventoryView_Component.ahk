@@ -109,21 +109,12 @@ class IC_InventoryView_Component
             this.Settings := {}
             writeSettings := True
         }
-        ; TODO check if is integer is working properly here
-        if(!(this.Settings["LoadChests"] is integer))
-        {
-            this.Settings["LoadChests"] := True
-            writeSettings := True
-        }
-        if(!(this.Settings["LoadBuffs"] is integer))
-        {
-            this.Settings["LoadBuffs"] := True
-            writeSettings := True
-        }
+        if this.Settings["LoadChests"] is not integer
+            writeSettings := this.Settings["LoadChests"] := True
+        if this.Settings["LoadBuffs"] is not integer
+            writeSettings := this.Settings["LoadBuffs"] := True
         if(writeSettings)
-        {
             g_SF.WriteObjectToJSON( A_LineFile . "\..\Settings.json", this.Settings )
-        }
         GuiControl,ICScriptHub:, g_InventoryViewChestsCheckbox, % this.Settings["LoadChests"]
         GuiControl,ICScriptHub:, g_InventoryViewBuffsCheckbox, % this.Settings["LoadBuffs"]
         Gui, Submit, NoHide

@@ -1,3 +1,4 @@
+#Requires AutoHotkey 1.1.33+ <1.2
 #SingleInstance force
 ;put together with the help from many different people. thanks for all the help.
 
@@ -17,30 +18,35 @@ ListLines Off
 Process, Priority,, High
 CoordMode, Mouse, Client
 
+; Class Libraries
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\IC_Core\IC_SharedFunctions_Class.ahk
-#include %A_LineFile%\..\IC_BrivGemFarm_Functions.ahk
-;server call functions and variables Included after GUI so chest tabs maybe non optimal way of doing it
-#include %A_LineFile%\..\..\..\ServerCalls\SH_ServerCalls_Includes.ahk
 #include %A_LineFile%\..\..\IC_Core\IC_SaveHelper_Class.ahk
-#include %A_LineFile%\..\IC_BrivGemFarm_Settings.ahk
+#include %A_LineFile%\..\IC_BrivGemFarm_Addon.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_UpdateClass.ahk
+#include %A_LineFile%\..\..\..\ServerCalls\SH_ServerCalls_Includes.ahk
 
 ;Load user settings
-global g_SF := new IC_BrivSharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
+global g_SF := new IC_SharedFunctions_Class ; includes MemoryFunctions in g_SF.Memory
 global g_BrivUserSettings 
 global g_UserSettings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\..\..\Settings.json" )
 global g_BrivGemFarm := new IC_BrivGemFarm_Class
 global g_KeyMap:= {}
 global g_SCKeyMap:= {}
 KeyHelper.BuildVirtualKeysMap(g_KeyMap, g_SCKeyMap)
-global g_ServerCall
+global g_ServerCall := new IC_ServerCalls_Class
 global g_InputsSent := 0
 global g_SaveHelper := new IC_SaveHelper_Class
+global g_ScriptHubComs := new IC_BrivGemFarm_Coms
 global g_BrivUserSettingsFromAddons := {}
+global g_globalTempSettingsFiles := {}
 
+; Includes that execute code
+#include %A_LineFile%\..\IC_BrivGemFarm_ClassUpdates.ahk
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
+g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCallLocationOverride_Settings.json")
+g_globalTempSettingsFiles.Push(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
 
 ;check if first run
 If !IsObject( g_UserSettings )
@@ -73,8 +79,17 @@ class IC_BrivGemFarmRun_SharedData_Class
         g_SF.ToggleAutoProgress(false, false, true)
         ExitApp
     }
+
+    ResetComs()
+    {
+        try
+        {
+            g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
+        }
+    }
 }
 SH_UpdateClass.UpdateClassFunctions(g_SharedData, IC_BrivGemFarmRun_SharedData_Class)
+g_SharedData.ResetComs()
 
 ;Gui, BrivPerformanceGemFarm:New, -LabelMain +hWndhMainWnd -Resize
 Gui, BrivPerformanceGemFarm:New, -Resize
@@ -103,14 +118,15 @@ ReloadBrivGemFarmSettingsDisplay()
     LV_Add(, "Disable Dash Wait ", g_BrivUserSettings[ "DisableDashWait" ] ? "Yes" : "No")
     LV_Add(, "Stack Zone: ", g_BrivUserSettings[ "StackZone" ])
     LV_Add(, "Min Stack Zone w/ can't reach Stack Zone: ", g_BrivUserSettings[ "MinStackZone" ])
-    if(!g_BrivUserSettings[ "AutoCalculateBrivStacks" ])
-        LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
+    LV_Add(, "Target Haste stacks: ", g_BrivUserSettings[ "TargetStacks" ])
     LV_Add(, "Stacking Restart wait time: ", g_BrivUserSettings[ "RestartStackTime" ])
-    LV_Add(, "Auto Calculate Briv Stacks? ", g_BrivUserSettings[ "AutoCalculateBrivStacks" ] ? "Yes" : "No")
-    LV_Add(, "Buy Silver? ", g_BrivUserSettings[ "BuySilvers" ] ? "Yes" : "No")
-    LV_Add(, "Buy Gold? ", g_BrivUserSettings[ "BuyGolds" ] ? "Yes" : "No")
-    LV_Add(, "Open Silver? ", g_BrivUserSettings[ "OpenSilvers" ] ? "Yes" : "No")
-    LV_Add(, "Open Gold? ", g_BrivUserSettings[ "OpenGolds" ] ? "Yes" : "No")
+    LV_Add(, "Wait for full call before Buying chests? ", g_BrivUserSettings[ "WaitToBuyChests" ] ? "Yes" : "No")
+    LV_Add(, "Buy Chests? ", g_BrivUserSettings[ "BuyChests" ] ? "Yes" : "No")
+    LV_Add(, "Open Chests? ", g_BrivUserSettings[ "OpenChests" ] ? "Yes" : "No")
+    LV_Add(, "Buy Silver Chest Ratio: ", Round(g_BrivUserSettings[ "BuySilverChestRatio" ] * 100, 2))
+    LV_Add(, "Buy Gold Chest Ratio: ", Round(g_BrivUserSettings[ "BuyGoldChestRatio" ] * 100, 2))
+    LV_Add(, "Maintain _ Silver Chests: ", g_BrivUserSettings[ "MinSilverChestCount" ])
+    LV_Add(, "Maintain _ Gold Chests: ", g_BrivUserSettings[ "MinGoldChestCount" ])
     LV_Add(, "Required Gems to Buy: ", g_BrivUserSettings[ "MinGemCount" ])
     LV_ModifyCol()
 }
@@ -165,16 +181,31 @@ else
     ObjRegisterActive(g_SharedData, guid)
     g_SF.WriteObjectToJSON(A_LineFile . "\..\LastGUID_BrivGemFarm.json", guid)
 }
-; g_SharedData.ReloadSettingsFunc := Func("LoadBrivGemFarmSettings")
+try
+{
+    g_ScriptHubComs := ComObjActive(g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json"))
+}
 
 g_BrivGemFarm.GemFarm()
 
-OnExit(ComObjectRevoke())
+OnExit("CleanUpOperations")
+
+CleanUpOperations()
+{
+    ComObjectRevoke()
+    CleanSettingsFiles()
+}
 
 ComObjectRevoke()
 {
     ObjRegisterActive(g_SharedData, "")
-    ExitApp
+}
+
+CleanSettingsFiles()
+{
+    for k,v in g_globalTempSettingsFiles
+        if (FileExist(v))
+            FileDelete, %v%
 }
 
 BrivPerformanceGemFarmGuiClose()
@@ -187,3 +218,4 @@ BrivPerformanceGemFarmGuiClose()
     IfMsgBox, Cancel
         return true
 }
+ExitApp

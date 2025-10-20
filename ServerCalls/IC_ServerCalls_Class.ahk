@@ -9,8 +9,7 @@
         userHash - your unique userHash
 
     Changes:
-    IC_ServerCalls_Class: v2.0, 12/06/21
-    1. Added current time and processing time as data to pull from user details
+    See commit History
 */
 
 ; json library must be included if this file is used outside of Script Hub
@@ -33,7 +32,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
     settings := ""
     
 
-    __New( userID, userHash, instanceID := 0 )
+    __New( userID := 0, userHash := 0, instanceID := 0 )
     {
         this.userID := userID
         this.userHash := userHash
@@ -45,7 +44,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
 
     GetVersion()
     {
-        return "v2.4.3, 2025-08-13"
+        return "v2.4.4, 2025-10-15"
     }
 
     UpdateDummyData()
@@ -143,7 +142,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
             chests := 250
         else if ( chests < 1 )
             return
-        if(chestTYpe == "eventV2")
+        if(chestType == "eventV2")
         {
             chestParams := this.dummyData "&user_id=" this.userID "&hash=" this.userHash "&instance_id=" this.instanceID "&chest_type_id=" chestID "&count=" chests "&spend_event_v2_tokens=1"
             return this.ServerCall( "buysoftcurrencychest", chestParams )

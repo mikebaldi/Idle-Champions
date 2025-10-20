@@ -21,6 +21,22 @@ class ActiveEffectKeySharedFunctions
     #include *i %A_LineFile%\..\IC_Thellora.ahk
     #include *i %A_LineFile%\..\IC_Nrakk.ahk
     #include *i %A_LineFile%\..\IC_Ellywick.ahk
+
+    Add(heroObject, heroName)
+    {
+        if(!IsObject(heroObject))
+            return
+        if(this[heroName] == "")
+            this[heroName] := heroObject
+        for k,v in this[heroName]
+            if(IsObject(v))
+            {
+                g_SF.Memory.ActiveEffectKeyHandler.HeroHandlerIDs[k] := heroObject.HeroID
+                g_SF.Memory.ActiveEffectKeyHandler.HeroEffectNames[k] := v.EffectKeyString
+                g_SF.Memory.ActiveEffectKeyHandler.HeroEffectKeys[v.EffectKeyString] := k
+                g_SF.Memory.ActiveEffectKeyHandler.Refresh(v.EffectKeyString)
+            }
+    }
 }
 
 

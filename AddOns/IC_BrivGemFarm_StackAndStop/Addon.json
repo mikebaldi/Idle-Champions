@@ -1,0 +1,14 @@
+{
+	"Name":"BrivGemFarm Stack and Stop",
+	"Version": "v0.0.1",
+    "Includes" : "IC_BrivGemFarm_StackAndStop_GUI.ahk",
+    "Author" : "Antilectual",
+    "Url" : "https://github.com/mikebaldi/Idle-Champions/tree/main/AddOns/IC_BrivGemFarm_StackAndStop",
+    "Info" : "This Addon stop the gem farm after the next stacking instead of doing continual farming.",
+    "Dependencies" : [
+        {
+            "Name":"Briv Gem Farm",
+            "Version":"v1.5.5"
+        }
+    ]
+}

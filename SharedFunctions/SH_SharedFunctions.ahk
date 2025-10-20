@@ -32,18 +32,89 @@ class SH_SharedFunctions
         if (!objectJSON)
             return
         objectJSON := JSON.Beautify( objectJSON )
-        FileDelete, %FileName%
+        if(FileExist(FileName))
+            FileDelete, %FileName%
         FileAppend, %objectJSON%, %FileName%
         return
     }
 
+    ; Copies top level items in com object to new AHK object.
+    ComObjectCopy(comObj)
+    {
+        convertedObj := {}
+        for k,v in comObj
+            convertedObj[k] := comObj[k]
+        return convertedObj
+    }
+
+    ; Copies AHK object into COM object.
+    CopyToComObject(byref comObj, AHKObject)
+    {
+        size := AHKObject.Length()
+        loop %size%
+            comObj[A_Index] := AHKObject[A_Index]
+        return comObj
+    }
+
+    ; Removes any settings that are in loadedSettings that are not in expectedSettings.
+    DeleteExtraSettings(loadedSettings, expectedSettings)
+    {
+        needSave := false
+        for k, v in loadedSettings
+            if (!expectedSettings.HasKey(k))
+                needSave := True, loadedSettings.Delete(k)
+        ; Add missing settings
+        for k, v in expectedSettings
+            if (!loadedSettings.HasKey(k) || loadedSettings[k] == "")
+                needSave := true, loadedSettings[k] := expectedSettings[k]
+        if(needSave)
+            return loadedSettings
+        else
+            return ""
+    }
+    
+    ; Helper function to add commas every 3 digits for display purposes.
+    AddThousandsSeperator(val)
+    {
+        if (!(val is number) || Abs(val) < 1000)
+            return val
+        return RegExReplace(val, "(\G|[^\d,.])\d{1,3}(?=(\d{3})+(\D|$))", "$0,")
+    }
+    
+    ; Convert val to scientific notation
+    GetScientificNotation(val, minExponents := 7, thousandsSeparate := true)
+    {
+        if !(val is number)
+            return val
+        sciNote := Format("{:2.2e}", val)
+        ePos := InStr(sciNote, "e")
+        postExp := Format("{:02d}", SubStr(sciNote, ePos+2))
+        if (postExp < minExponents)
+            return thousandsSeparate ? this.AddThousandsSeperator(val) : val
+        signExp := SubStr(sciNote, ePos+1, 1)
+        return SubStr(sciNote, 1, ePos) . (signExp=="+" ? "" : signExp) . postExp
+    }
+
+    ArrSize(arr)
+    {
+        if (IsObject(arr))
+        {
+            currArrSize := arr.MaxIndex()
+            if (currArrSize == "")
+                return 0
+            return currArrSize
+        }
+        return 0
+    }
     ;====================================================
     ;Keyboard/Mouse input (and helper) functions
     ;====================================================
 
-    /*  DirectedInput - A function to send keyboard inputs to Idle Champions while in background.
+    /*  DirectedInput - A function to send keyboard inputs to a game that is in the background (if it supports it).
 
         Parameters:
+        hold - true for a key down, false to skip key down
+        release - true for a key up, false to skip key up
         s - The keyboard inputs to be sent to Idle Champions. Single Character string, or array of characters.
         Returns: Nothing
     */
@@ -76,83 +147,56 @@ class SH_SharedFunctions
         LRESULT SendMessage(in] HWND   hWnd, [in] UINT   Msg, [in] WPARAM wParam, [in] LPARAM lParam);
         HWND SetFocus([in, optional] HWND hWnd);
     */
-    DirectedInput(hold := 1, release := 1, s* )
+    DirectedInput(hold := 1, release := 1, values* )
     {
+        if (values == "") ; no input
+            return
+        else if (IsObject(values) AND (values.Count() == 0 OR (values[1] == "" AND values.Count() == 1))) ; no input
+            return
         Critical, On
-        ; TestVar := {}
-        ; for k,v in g_KeyPresses
-        ; {
-        ;     TestVar[k] := v
-        ; }
         timeout := 5000
-        directedInputStart := A_TickCount
         hwnd := this.Hwnd
         ControlFocus,, ahk_id %hwnd%
-        ;while (ErrorLevel AND A_TickCount - directedInputStart < timeout * 10)  ; testing reliability
-        ; if ErrorLevel
-        ;     ControlFocus,, ahk_id %hwnd%
-        values := s
         if(IsObject(values))
         {
-            if(hold)
+            for k, v in values
             {
-                for k, v in values
-                {
-                    g_InputsSent++
-                    ; if TestVar[v] == ""
-                    ;     TestVar[v] := 0
-                    ; TestVar[v] += 1
-                    key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v]
-                    sc := sc << 16
-                    lparam := Format("0x{:X}", 0x0 | sc)
+                if (v == "")
+                    continue
+                key := g_KeyMap[v]
+                sc := g_SCKeyMap[v]
+                sc := sc << 16
+                lparam := Format("0x{:X}", 0x0 | sc)
+                if(hold)
                     SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                    if ErrorLevel
-                        this.ErrorKeyDown++
-                    ;     PostMessage, 0x0100, %key%, 0,, ahk_id %hwnd%,
-                }
-            }
-            if(release)
-            {
-                for k, v in values
+                if(release)
                 {
-                    key := g_KeyMap[v]
-                    sc := g_SCKeyMap[v]
-                    sc := sc << 16
+                    if(hold)
+                        Sleep, 16
                     lparam := Format("0x{:X}", 0xC0000001 | sc)
                     SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                    if ErrorLevel
-                        this.ErrorKeyUp++
-                    ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
                 }
+                Sleep, 16
             }
         }
         else
         {
             key := g_KeyMap[values]
-            sc := g_SCKeyMap[values] << 16
+            sc := g_SCKeyMap[values]
+            sc := sc << 16
             if(hold)
             {
-                g_InputsSent++
-                ; if TestVar[v] == ""
-                ;     TestVar[v] := 0
-                ; TestVar[v] += 1
-                
                 lparam := Format("0x{:X}", 0x0 | sc)
                 SendMessage, 0x0100, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
-                if ErrorLevel
-                    this.ErrorKeyDown++
             }
             if(release)
             {
+                if(hold)
+                    Sleep, 16
                 lparam := Format("0x{:X}", 0xC0000001 | sc)
                 SendMessage, 0x0101, %key%, %lparam%,, ahk_id %hwnd%,,,,%timeout%
             }
-            if ErrorLevel
-                this.ErrorKeyUp++
-            ;     PostMessage, 0x0101, %key%, 0xC0000001,, ahk_id %hwnd%,
         }
         Critical, Off
-        ; g_KeyPresses := TestVar
     }
 }

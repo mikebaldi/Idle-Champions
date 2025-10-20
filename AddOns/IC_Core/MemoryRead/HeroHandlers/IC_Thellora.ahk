@@ -13,7 +13,6 @@ class Thellora
         ReadRushStacks()
         {
             return g_SF.Memory.ActiveEffectKeyHandler.ThelloraPlateausOfUnicornRunHandler.controller.userData.StatHandler.ServerStats["thellora_plateaus_of_unicorn_run_areas"].Read()
-            ; return g_SF.Memory.UserData._instance.StatHandler.ServerStats["thellora_plateaus_of_unicorn_run_areas"].Read() ; Requires alternate pointer
         }
 
         ; ReadRushArea()

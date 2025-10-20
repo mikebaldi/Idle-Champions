@@ -3,8 +3,8 @@
 #include %A_LineFile%\..\..\..\SharedFunctions\json.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\MemoryRead\classMemory.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\CLR.ahk
+#include %A_LineFile%\..\..\..\SharedFunctions\SH_VersionHelper.ahk
 #include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion64_Import.ahk
-#include *i %A_LineFile%\..\MemoryRead\Imports\IC_GameVersion32_Import.ahk
 #include %A_LineFile%\..\..\..\SharedFunctions\SH_GUIFunctions.ahk
 
 Gui, ICSHVersionPicker:New
@@ -174,9 +174,16 @@ ChooseRecommendation()
         version := CheckVersionByPath(gamePath)
     }
 
-    recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Uknown") . ")" ; CheckVersionByExePath()
+
+
+
+    recommended := "Script Hub Detected: Platform (" . (platform ? platform : "Unknown") . "), Version (" . (version ? version : "Unknown") . ")" ; CheckVersionByExePath()
     GuiControl,ICSHVersionPicker:, VersionPickerDetectionText, % recommended
 
+    ; CNE pointers have been same as Steam for a while but no longer get updated so use Steam instead. 
+    if (platform == "CNE" AND SH_VersionHelper.IsVersionSameOrNewer(version, 600))
+        platform := "Steam"
+        
     if(platform)
         GuiControl, choosestring, VersionPickerPlatformDropdown, %platform%
     VersionPickerUpdateVersions()

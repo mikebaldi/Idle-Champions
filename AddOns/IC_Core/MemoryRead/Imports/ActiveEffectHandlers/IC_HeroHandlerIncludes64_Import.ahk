@@ -3,6 +3,10 @@ BuildBrivUnnaturalHasteHandler()
 {
 	#include %A_LineFile%\..\IC_BrivUnnaturalHasteHandler64_Import.ahk
 }
+BuildCazrinLibraryOfLoreHandler()
+{
+	#include %A_LineFile%\..\IC_CazrinLibraryOfLoreHandler64_Import.ahk
+}
 BuildEllywickCallOfTheFeywildHandler()
 {
 	#include %A_LineFile%\..\IC_EllywickCallOfTheFeywildHandler64_Import.ahk

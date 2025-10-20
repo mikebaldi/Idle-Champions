@@ -22,7 +22,7 @@ CoordMode, Mouse, Client
 ;Modron Automation Gem Farming Script
 GetScriptHubVersion()
 {
-    return "v4.0.5, 2025-08-14"
+    return "v4.4.3, 2025-10-19" ; Must be line 25 for version checking to work.
 }
 
 ;class and methods for parsing JSON (User details sent back from a server call)
@@ -37,7 +37,7 @@ global g_SCKeyMap:= {}
 KeyHelper.BuildVirtualKeysMap(g_KeyMap, g_SCKeyMap)
 global g_ServerCall
 global g_UserSettings := {}
-global g_TabControlHeight := 630
+global g_TabControlHeight := 700
 global g_TabControlWidth := 430
 global g_InputsSent := 0
 global g_TabList := ""
@@ -50,6 +50,7 @@ global g_GameButton := A_LineFile . "\..\Images\idledragons-25x25.png"
 global g_MacroButton := A_LineFile . "\..\Images\macro-100x100.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
+global g_globalTempSettingsFiles := {}
 
 ;Load themes
 GUIFunctions.LoadTheme()
@@ -59,7 +60,7 @@ if (GUIfunctions.isDarkMode)
     g_MacroButton := A_LineFile . "\..\Images\macro-dark-100x100.png"
 }
 ;Load user settings
-g_UserSettings := IC_SharedFunctions_Class.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
+g_UserSettings := SH_SharedFunctions.LoadObjectFromJSON( A_LineFile . "\..\Settings.json" )
 ;check if first run
 If !IsObject( g_UserSettings )
 {
@@ -79,13 +80,15 @@ if ( g_UserSettings[ "NoCtrlKeypress" ] == "" )
 if ( g_UserSettings[ "WaitForProcessTime" ] == "" )
     g_UserSettings[ "WaitForProcessTime" ] := 0
 if ( g_UserSettings[ "CheckForUpdates" ] == "" )
+{
     g_UserSettings[ "CheckForUpdates" ] := 1
+    g_UserSettings[ "WriteSettings" ] := true
+}
 if(g_UserSettings[ "WriteSettings" ] == true)
 {
     g_UserSettings.Delete("WriteSettings")
-    IC_SharedFunctions_Class.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+    SaveUserSettings()
 }
-
 
 global g_SF := new SH_SharedFunctions ; includes MemoryFunctions in g_SF.Memory
 
@@ -107,9 +110,14 @@ Gui, ICScriptHub:Add, Tab3, x5 y32 w%g_TabControlWidth%+40 h%g_TabControlHeight%
 
 GuiControl, Move, ICScriptHub:ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 GUIFunctions.UseThemeBackgroundColor()
-Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPosition" ] " y" . g_UserSettings[ "WindowYPosition" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)"
+Gui, ICScriptHub:Show, %  "x" . g_UserSettings[ "WindowXPosition" ] " y" . g_UserSettings[ "WindowYPosition" ] . " w" . g_TabControlWidth+5 . " h" . g_TabControlHeight  . " NA", % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "") . "  (Loading...)" 
 GUIFunctions.UseThemeTitleBar("ICScriptHub")
 ;WinSet, Style, -0xC00000, A  ; Remove the active window's title bar (WS_CAPTION).
+
+SaveUserSettings()
+{
+    SH_SharedFunctions.WriteObjectToJSON( A_LineFile . "\..\Settings.json" , g_UserSettings )
+}
 
 Reload_Clicked()
 {
@@ -120,9 +128,13 @@ Reload_Clicked()
 Launch_Clicked()
 {
     programLoc := g_UserSettings[ "InstallPath" ]
+    runHidden := g_UserSettings[ "RunHidden" ]
     try
     {
-        Run, %programLoc%
+        if (runHidden)
+            Run, %programLoc%,, Hide
+        else
+            Run, %programLoc%
     }
     catch
     {
@@ -148,6 +160,7 @@ Launch_Macro_Clicked()
 ICScriptHubGuiClose()
 {
     MsgBox 4,, Are you sure you want to `exit?
+    ICScriptHubCleanGlobalSettingsFiles()
     IfMsgBox Yes
     {
         MiniScriptWarning()
@@ -155,6 +168,13 @@ ICScriptHubGuiClose()
     }
     IfMsgBox No
         return True
+}
+
+ICScriptHubCleanGlobalSettingsFiles()
+{
+    for k,v in g_globalTempSettingsFiles
+        if (FileExist(v))
+            FileDelete, %v%
 }
 
 ICScriptHubGuiSize(GuiHwnd, EventInfo, Width, Height)
@@ -207,7 +227,7 @@ BuildToolTips()
 if(IsObject(AddonManagement))
     AddonManagement.BuildToolTips()
 
-Gui, ICScriptHub:Show,, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
+Gui, ICScriptHub:Show, NA, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
 
 StopMiniscripts()
 {
@@ -249,3 +269,7 @@ MiniScriptWarning()
             return True
     }
 }
+
+; Refresh GUI after all addons loaded.
+GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
+Gui, ICScriptHub:show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight . " NA"

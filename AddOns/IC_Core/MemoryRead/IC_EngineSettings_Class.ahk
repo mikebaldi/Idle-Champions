@@ -3,14 +3,18 @@ class IC_EngineSettings_Class extends SH_StaticMemoryPointer
 {
     GetVersion()
     {
-        return "v2.1.3, 2025-08-11"
+        return "v2.1.5, 2025-09-27"
     }
 
     Refresh()
     {        
         if (_MemoryManager.is64bit == "") ; Don't build offsets if no client is available to check variable types.
             return
-        baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        ;baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
+        if (g_ImportsGameVersionPlatform64 != "EGS")
+            baseAddress := _MemoryManager.baseAddress["UnityPlayer.dll"]+this.ModuleOffset
+        else
+            baseAddress := _MemoryManager.baseAddress["mono-2.0-bdwgc.dll"]+this.ModuleOffset
         if (this.BasePtr.BaseAddress != baseAddress)
         {
             this.BasePtr.BaseAddress := baseAddress

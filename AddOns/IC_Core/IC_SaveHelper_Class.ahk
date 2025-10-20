@@ -26,7 +26,18 @@ class IC_SaveHelper_Class
     Init()
     {
         if(!isObject(this.brivStackDic))
-            this.brivStackDic := g_SF.LoadObjectFromJSON(A_LineFile . "\..\BrivStackDictionary.json")
+            this.brivStackDic := this.LoadObjectFromJSON(A_LineFile . "\..\BrivStackDictionary.json")
+    }
+
+    LoadObjectFromJSON( FileName )
+    {
+        FileRead, oData, %FileName%
+        data := "" 
+        try
+        {
+            data := JSON.parse( oData )
+        }
+        return data
     }
 
     ; Modified from https://www.autohotkey.com/boards/viewtopic.php?f=6&t=21
