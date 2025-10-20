@@ -137,7 +137,13 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Font, w700
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
         Gui, ICScriptHub:Font, w400
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%labelWidth%, Previous Run Time:
+        
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%labelWidth%, Total Run `Count:
+        Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w150,
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Total Run Time (hr):
+        Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w150,
+
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Previous Run Time:
         Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Fastest Run Time:
         Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w150,
@@ -145,12 +151,6 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Avg. Run Time:
         Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w150,
-
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Total Run `Count:
-        Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Total Run Time (hr):
-        Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w150,
-
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Fail Run Time:
         Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Fail Run Time Total:
