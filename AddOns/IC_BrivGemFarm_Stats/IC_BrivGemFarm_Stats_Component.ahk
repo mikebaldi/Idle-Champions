@@ -25,6 +25,7 @@ g_BrivGemFarmStats.AddStatsTabMod("AddBrivGemFarmStatsGroup", "g_BrivGemFarmStat
 
 g_BrivGemFarmStats.UpdateStatsTabWithMods()
 g_BrivGemFarmStats.BuildToolTips()
+g_BrivGemFarmStats.LoadSettings()
 
 Reset_Briv_Farm_Stats()
 {

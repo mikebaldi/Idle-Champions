@@ -562,7 +562,7 @@ class IC_BrivGemFarm_Class
         }
 
         g_PreviousZoneStartTime := A_TickCount ; modron reset - prev zone now 1 and new run starting.
-        if (g_SharedData.ScriptStartTime == 0) ; ignore first run - will almost always be incomplete run. start on 2nd.
+        if (g_SharedData.ScriptStartTime <= 0) ; ignore first run - will almost always be incomplete run. start on 2nd.
             g_SharedData.ScriptStartTime := this.ThisRunStart := g_PreviousZoneStartTime
         else
             g_SharedData.LastRunTime := g_PreviousZoneStartTime - This.ThisRunStart
