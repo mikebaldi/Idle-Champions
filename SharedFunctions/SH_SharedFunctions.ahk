@@ -199,4 +199,40 @@ class SH_SharedFunctions
         }
         Critical, Off
     }
+
+    ; ======================================================================================================================
+    ; GetCallStack([Report := 0]) - retrieves the current callstack.
+    ;
+    ; Returns an array of objects with the following keys:
+    ;     Called   -  the name of the called function/label
+    ;     Caller   -  the name of the function/label which called the function/label
+    ;     Line     -  the number of the line Called was called from
+    ;     File     -  the name of the file containing the line
+    ; The properties of the first object contain the currently executed line and file.
+    ;
+    ; The parameter Report may be set to one of the following values:
+    ;     0  -  return the stack array silently
+    ;     1  -  additionally show the values by MsgBox
+    ;     2  -  additionally send the values to the debugger by OutputDebug
+    ;     3  -  use both of the report options
+    ; ======================================================================================================================
+    GetCallStack(Report := 0) {
+    Local Stack := [], StackIndex := 0, E, M
+    While (E := Exception("", --StackIndex)).What <> StackIndex {
+        Stack[A_Index] := {Called: E.What, Caller: "Auto-Exec/Event", Line: E.Line, File: E.File}
+        If (A_Index > 1)
+            Stack[A_Index - 1].Caller := E.What
+    }
+    If (Report & 1) { ; MsgBox
+        M := ""
+        For Each, E In Stack
+            M .= E.Called . "  <<  called by " . E.Caller . " at line " . E.Line . " of " . E.File . "`r`n"
+        MsgBox, 0, Callstack, % M
+    }
+    If (Report & 2) ; OutputDebug
+        For Each, E In Stack
+            OutputDebug, %  "`r`n" . E.Called . " called by " . E.Caller . " at line " . E.Line . " of " . E.File
+    Return Stack
+    }
+
 }
