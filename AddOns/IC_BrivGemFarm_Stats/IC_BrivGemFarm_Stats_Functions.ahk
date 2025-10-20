@@ -351,9 +351,9 @@ class IC_BrivGemFarm_Stats_Component
             this.SbLastStacked := g_SF.Memory.ReadHasteStacks()
             if ( this.StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
                 this.FailRunTime += this.PreviousRunTime
-            if (this.TotalRunCount < 2)
+            if (!this.ScriptStartTime)
                 this.ScriptStartTime := this.SharedRunData.ScriptStartTime
-            else if (IsObject(this.SharedRunData))
+            if (IsObject(this.SharedRunData))
                 this.TotalFarmTime := (A_TickCount - this.ScriptStartTime)
             this.TotalFarmTimeHrs := this.TotalFarmTime / 3600000
             if(this.TotalRunCount > 0)
@@ -384,8 +384,6 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, FastRunTimeID, % this.FormatMsec(this.FastRunTime)
             GuiControl, ICScriptHub:, SlowRunTimeID, % this.FormatMsec(this.SlowRunTime)
         }
-        if(this.TotalFarmTime == "")
-            return
         GuiControl, ICScriptHub:, PrevRunTimeID, % this.FormatMsec(this.PreviousRunTime)
         if ( this.StackFail )
         {
@@ -395,19 +393,22 @@ class IC_BrivGemFarm_Stats_Component
                 GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
         }
         GuiControl, ICScriptHub:, TotalRunCountID, % this.DecideScientific(this.TotalRunCount)
-        GuiControl, ICScriptHub:, dtTotalTimeID, % this.FormatMsec(this.TotalFarmTime)
-        GuiControl, ICScriptHub:, AvgRunTimeID, % this.FormatMsec(this.TotalFarmTime / this.TotalRunCount)
-        GuiControl, ICScriptHub:, bossesPhrID, % this.DecideScientific(this.BossesPerHour)
         GuiControl, ICScriptHub:, GemsTotalID, % this.DecideScientific(this.GemsTotal)
-        GuiControl, ICScriptHub:, GemsPhrID, % this.DecideScientific(Round( this.GemsTotal / this.TotalFarmTimeHrs, 3 ))
+
         if (IsObject(this.SharedRunData))
         {
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
-            GuiControl, ICScriptHub:, SilversGainedID, %  this.DecideScientific(this.SharedRunData.OpenedSilverChests) . " / " . this.DecideScientific(this.SharedRunData.PurchasedSilverChests) . " / " . this.DecideScientific(his.CalculateDroppedChests(currentSilverChests, 1))
+            GuiControl, ICScriptHub:, SilversGainedID, %  this.DecideScientific(this.SharedRunData.OpenedSilverChests) . " / " . this.DecideScientific(this.SharedRunData.PurchasedSilverChests) . " / " . this.DecideScientific(this.CalculateDroppedChests(currentSilverChests, 1))
             GuiControl, ICScriptHub:, GoldsGainedID, % this.DecideScientific(this.SharedRunData.OpenedGoldChests) . " / " . this.DecideScientific(this.SharedRunData.PurchasedGoldChests) . " / " . this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
         }
+        if(this.TotalFarmTime == "")
+            return
+        GuiControl, ICScriptHub:, AvgRunTimeID, % this.FormatMsec(this.TotalFarmTime / this.TotalRunCount)
+        GuiControl, ICScriptHub:, dtTotalTimeID, % this.FormatMsec(this.TotalFarmTime)
+        GuiControl, ICScriptHub:, bossesPhrID, % this.DecideScientific(this.BossesPerHour)
+        GuiControl, ICScriptHub:, GemsPhrID, % this.DecideScientific(Round( this.GemsTotal / this.TotalFarmTimeHrs, 3 ))
     }
 
     StoreStartingValues()
