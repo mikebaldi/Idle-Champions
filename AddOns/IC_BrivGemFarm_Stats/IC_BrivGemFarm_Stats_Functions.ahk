@@ -698,8 +698,8 @@ class IC_BrivGemFarm_Stats_Component
         this.UpdateLoopStatsFnc :=  ObjBindMethod(this, "UpdateStartLoopStats", False)
         this.UpdateLoopStatsFncRepeatTime := -300
         fncToCallOnTimer := ObjBindMethod(this, "MonitorIsGameClosed")
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
-        g_BrivFarmComsObj.OneTimeRunAtResetFunctionsTimes["MonitorIsGameClosed"] := 200
+        g_BrivFarmComsObj.OneTimeRunAtResetEndFunctions["MonitorIsGameClosed"] := fncToCallOnTimer
+        g_BrivFarmComsObj.OneTimeRunAtResetEndFunctionsTimes["MonitorIsGameClosed"] := 200
     }
 
     ; Reloads memory reads after game has closed. For updating GUI.
@@ -713,7 +713,7 @@ class IC_BrivGemFarm_Stats_Component
             updateGUIFnc := this.UpdateLoopStatsFnc
             repeatTimeMS := this.UpdateLoopStatsFncRepeatTime
             SetTimer, %updateGUIFnc%, %repeatTimeMS%, 5
-            gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetFunctions["MonitorIsGameClosed"]
+            gameMonFnc := g_BrivFarmComsObj.OneTimeRunAtResetEndFunctions["MonitorIsGameClosed"]
             SetTimer, %gameMonFnc%, Off
         }
     }

@@ -557,7 +557,7 @@ class IC_BrivGemFarm_Class
             try ; set off any timers in SH that need to run on a reset.
             {
                 ; e.g. buy/open chests
-                g_ScriptHubComs.RunTimersOnModronReset()
+                g_ScriptHubComs.RunTimersOnModronResetEnd()
             }
         }
 

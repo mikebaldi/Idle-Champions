@@ -8,9 +8,11 @@ global g_BrivFarmServerCallModLoc := A_LineFile . "\..\IC_BrivGemFarm_Extra_Serv
 global g_BrivFarmAddonStartFunctions := {}
 global g_BrivFarmAddonStopFunctions := {}
 global g_BrivFarmComsObj := new IC_BrivGemFarm_Coms
+g_BrivFarmComsObj.Init()
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.json")
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCallLocationOverride_Settings.json") ; may break a server call on exit before normal function
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCall_Settings.json")
+
 
 global g_BrivFarmLastRunMiniscripts := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Miniscripts.json")
 GUIFunctions.AddTab("Briv Gem Farm")

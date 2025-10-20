@@ -19,7 +19,7 @@ class IC_BrivSharedFunctions_Class
         base.CloseIC(string)
         try
         {
-            g_ScriptHubComs.RunTimersOnModronReset()
+            g_ScriptHubComs.RunTimersOnModronResetEnd()
         }
     }
 
@@ -104,6 +104,7 @@ class IC_BrivSharedFunctions_Class
         this.SetUserCredentials()
         if (this.sprint != "" AND this.steelbones != "" AND (this.sprint + this.steelbones) < 190000)
             response := g_serverCall.CallPreventStackFail( this.sprint + this.steelbones, true)
+        g_ScriptHubComs.RunTimersOnModronResetStart()
         while (this.Memory.ReadResetting() AND ElapsedTime < timeout)
         {
             ElapsedTime := A_TickCount - StartTime
