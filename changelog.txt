@@ -1,4 +1,5 @@
 October 21, 2025
+    Note: BrivFeatSwap and GamesettingsFix will need to be updated to be compatible with this version.
     Stats Addon:
         Added a display for total committed memory usage of the script. (Not current use, but a good indication of when it is getting high.)
         Added a button that clears current memory use (not reflected in display, check task manager.)
