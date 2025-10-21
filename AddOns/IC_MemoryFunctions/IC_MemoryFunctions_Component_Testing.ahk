@@ -66,8 +66,6 @@ class ReadMemoryFunctionsExtended
 
     ReadContinuous()
     {
-      
-        GuiControl, ICScriptHub:, KeyErrorStringID, % "KeyDown: " . g_SF.ErrorKeyDown . " - KeyUp: " . g_SF.ErrorKeyUp
         GuiControl, ICScriptHub:, MultipliersStringID, % this.GetMultipliersString()
         ; GuiControl, ICScriptHub:, FormationCurrentID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetCurrentFormation())
         ; GuiControl, ICScriptHub:, FormationFavorite1ID, % ArrFnc.GetDecFormattedArrayString(g_SF.Memory.GetFormationByFavorite( favorite := 1))

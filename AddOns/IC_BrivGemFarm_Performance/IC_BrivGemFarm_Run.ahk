@@ -1,4 +1,4 @@
-#Requires AutoHotkey 1.1.33+ <1.2
+#Requires AutoHotkey 1.1.37+ <1.2
 #SingleInstance force
 ;put together with the help from many different people. thanks for all the help.
 
@@ -9,7 +9,7 @@
 #MaxHotkeysPerInterval 70 ; The default value is 70
 #NoEnv ; Avoids checking empty variables to see if they are environment variables (recommended for all new scripts). Default behavior for AutoHotkey v2.
 SetWorkingDir %A_ScriptDir%
-SetWinDelay, 33 ; Sets the delay that will occur after each windowing command, such as WinActivate. (Default is 100)
+SetWinDelay, 16 ; Sets the delay that will occur after each windowing command, such as WinActivate. (Default is 100)
 SetControlDelay, 0 ; Sets the delay that will occur after each control-modifying command. -1 for no delay, 0 for smallest possible delay. The default delay is 20.
 ;SetKeyDelay, 0 ; Sets the delay that will occur after each keystroke sent by Send or ControlSend. [SetKeyDelay , Delay, PressDuration, Play]
 SetBatchLines, -1 ; How fast a script will run (affects CPU utilization).(Default setting is 10ms - prevent the script from using any more than 50% of an idle CPU's time.
@@ -77,6 +77,8 @@ class IC_BrivGemFarmRun_SharedData_Class
         g_SF.WaitForTransition()
         g_SF.FallBackFromZone()
         g_SF.ToggleAutoProgress(false, false, true)
+        try
+            g_ScriptHubComs.RunTimersOnGemFarmEnd()
         ExitApp
     }
 

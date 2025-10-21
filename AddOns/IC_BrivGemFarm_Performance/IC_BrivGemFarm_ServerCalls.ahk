@@ -1,4 +1,4 @@
-#Requires AutoHotkey 1.1.33+ <1.2
+#Requires AutoHotkey 1.1.37+ <1.2
 #SingleInstance, Off
 #NoTrayIcon
 #NoEnv ; Avoids checking empty variables to see if they are environment variables.
