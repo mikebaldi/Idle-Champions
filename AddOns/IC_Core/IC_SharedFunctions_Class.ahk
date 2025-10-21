@@ -534,12 +534,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             return
         }
         ; check to swap briv from favorite 2 to favorite 1 (W to Q)
-        if (!brivBenched AND isFormation2 AND !isWalkZone)
+        else if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
             this.DirectedInput(,,["{q}"]*)
             g_SharedData.SwapsMadeThisRun++
             return
         }
+        ; Switch if still in modron formation.
+        else if (!g_SF.FormationLock AND g_BrivGemFarm.IsInModronFormation){
+        
+              ; Q OR E depending on route.
+            if (this.UnBenchBrivConditions(this.Settings))
+                this.DoSwitchFormation(1) 
+            else if (this.BenchBrivConditions(this.Settings))
+                this.DoSwitchFormation(3)
+        }
+        if(g_BrivGemFarm.IsInModronFormation AND !this.IsCurrentFormation(g_SF.Memory.GetActiveModronFormation()))
+            g_BrivGemFarm.IsInModronFormation := False
     }
 
     ; True/False on whether Briv should be benched based on game conditions. (typically swap to E formation)

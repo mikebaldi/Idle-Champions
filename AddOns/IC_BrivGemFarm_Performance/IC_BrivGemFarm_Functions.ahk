@@ -13,6 +13,7 @@ class IC_BrivGemFarm_Class
     keyspam := Array()
     LastResetCount := 0
     ThisRunStart := 0
+    IsInModronFormation := True
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -568,7 +569,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.LastRunTime := g_PreviousZoneStartTime - This.ThisRunStart
             , g_SharedData.TotalRunsCount += 1
         This.ThisRunStart := g_PreviousZoneStartTime
-        g_SharedData.TriggerStart := True
+        this.IsInModronFormation := g_SharedData.TriggerStart := True
     }
 
     ; Test that favorite exists

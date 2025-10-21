@@ -298,7 +298,7 @@ class IC_BrivGemFarm_Component
             SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedData.ShowGui()
         }
-        catch ; otherwise start farm
+        catch err ; otherwise start farm
         {
             ;g_BrivGemFarm.GemFarm()
             g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
@@ -329,9 +329,9 @@ class IC_BrivGemFarm_Component
         importsVersion := _MemoryManager.is64bit ? g_ImportsGameVersion64 . g_ImportsGameVersionPostFix64 : g_ImportsGameVersion32 . g_ImportsGameVersionPostFix32
         GuiControl, ICScriptHub: +cF18500, Warning_Imports_Bad, 
         if (gameVersion == "")
-            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Memory Read Failure. Check for updated Imports."
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Memory Read Failure. Check for updated Imports."
         else if( gameVersion > 100 AND gameVersion <= 999 AND gameVersion != importsVersion )
-            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Warning: Game version (" . gameVersion . ") does not match Imports version (" . importsVersion . ")."
+            GuiControl, ICScriptHub:, Warning_Imports_Bad, % "⚠ Game version (" . gameVersion . ") does not match Imports (" . importsVersion . ")."
         else
             GuiControl, ICScriptHub:, Warning_Imports_Bad, % ""
     }

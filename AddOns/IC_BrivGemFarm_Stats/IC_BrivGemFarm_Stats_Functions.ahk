@@ -93,8 +93,11 @@ class IC_BrivGemFarm_Stats_Component
     AddCurrentRunGroup()
     {
         global
-        GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
-        posY := posY + 25
+        if(IsObject(IC_BrivGemFarm_Component))
+            GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsPlayButton
+        else
+            GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
+        posY := posY + 30
         Gui, ICScriptHub:Font, w700
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h140 vCurrentRunGroupID, Current `Run:
         Gui, ICScriptHub:Font, w400
@@ -122,7 +125,7 @@ class IC_BrivGemFarm_Stats_Component
         posX += 240
         Gui, ICScriptHub:Add, Text, x%posX% y%posY% w160, 
         posX += 10
-        Gui, ICScriptHub:Add, Checkbox, x%posX% y%posY% vStatsCompactTimestamps, Use Compact Timestamps
+        Gui, ICScriptHub:Add, Checkbox, x%posX% y%posY% vStatsCompactTimestamps hHwndTimestamps, Use Compact Timestamps
         buttonFunc := ObjBindMethod(this, "SaveSettings")
         GuiControl,ICScriptHub: +g, StatsCompactTimestamps, % buttonFunc
     }
@@ -321,6 +324,7 @@ class IC_BrivGemFarm_Stats_Component
             IC_BrivGemFarm_Component.Briv_Save_Clicked()
         }
         Critical, Off
+        this.UpdateMemoryUsage()
     }
 
     ;Updates the stats tab's once per run stats
@@ -375,6 +379,11 @@ class IC_BrivGemFarm_Stats_Component
         if (IsObject(this.SharedRunData))
             this.LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
+    }
+
+    UpdateMemoryUsage()
+    {
+        GuiControl, ICScriptHub:, SH_Memory_In_Use, % g_SF.GetProcessMemoryUsage() . "MB"
     }
     
     UpdateStartLoopStatsGUI()
@@ -635,7 +644,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % this.SharedRunData.TotalBossesHit
             GuiControl, ICScriptHub:, TotalRollBacksID, % this.SharedRunData.TotalRollBacks
-            GuiControl, ICScriptHub:, BadAutoProgressID, % this.SharedRunData.BadAutoProgress
+            ; GuiControl, ICScriptHub:, BadAutoProgressID, % this.SharedRunData.BadAutoProgress
         }
         else
         {
@@ -649,7 +658,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, BossesHitThisRunID, % 0
             GuiControl, ICScriptHub:, TotalBossesHitID, % 0
             GuiControl, ICScriptHub:, TotalRollBacksID, % 0
-            GuiControl, ICScriptHub:, BadAutoProgressID, % 0
+            ; GuiControl, ICScriptHub:, BadAutoProgressID, % 0
         }
         GuiControl, ICScriptHub:, NordomWarningID, % ""
     }
