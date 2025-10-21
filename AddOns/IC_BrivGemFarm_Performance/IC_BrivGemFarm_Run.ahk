@@ -77,6 +77,8 @@ class IC_BrivGemFarmRun_SharedData_Class
         g_SF.WaitForTransition()
         g_SF.FallBackFromZone()
         g_SF.ToggleAutoProgress(false, false, true)
+        try
+            g_ScriptHubComs.RunTimersOnGemFarmEnd()
         ExitApp
     }
 

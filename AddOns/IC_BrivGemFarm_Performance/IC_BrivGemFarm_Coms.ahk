@@ -50,7 +50,7 @@ class IC_BrivGemFarm_Coms
     RunTimersOnGemFarmStart()
     {
 		for k,v in this.OneTimeRunAtStartFunctions
-			SetTimer, %k%, %v%, 3
+			SetTimer, %k%, %v%, 2
     }
 
     RunTimersOnGemFarmEnd()

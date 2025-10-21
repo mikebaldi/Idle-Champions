@@ -22,6 +22,8 @@ class IC_BrivGemFarm_Class
     GemFarm()
     {
         errLevel := this.GemFarmPreLoopSetup()
+        try
+            g_ScriptHubComs.RunTimersOnGemFarmStart()
         if (errLevel < 0)
             return errLevel
         this.FormationModron := formationModron := g_SF.Memory.GetActiveModronFormation()
