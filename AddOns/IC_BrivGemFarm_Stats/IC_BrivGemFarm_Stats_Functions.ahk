@@ -341,7 +341,7 @@ class IC_BrivGemFarm_Stats_Component
         this.StackFail := Max(this.StackFail, foundComs ? this.SharedRunData.StackFail : 0)
         resetsCount := g_SF.Memory.ReadResetsCount()
         if ( resetsCount > this.LastResetCount )
-            this.UpdateStartLoopStatsReset(foundComs)            
+            this.UpdateStartLoopStatsReset(foundComs, resetsCount)            
         if (foundComs)
             this.LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
@@ -352,7 +352,7 @@ class IC_BrivGemFarm_Stats_Component
         GuiControl, ICScriptHub:, SH_Memory_In_Use, % g_SF.GetProcessMemoryUsage() . "MB"
     }
 
-    UpdateStartLoopStatsReset(foundComs)
+    UpdateStartLoopStatsReset(foundComs, resetsCount)
     {
         if (foundComs)
         {
