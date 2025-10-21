@@ -1,4 +1,4 @@
-#Requires AutoHotkey 1.1.33+ <1.2
+#Requires AutoHotkey 1.1.37+ <1.2
 #SingleInstance force
 ;put together with the help from many different people. thanks for all the help.
 #HotkeyInterval 1000  ; The default value is 2000 (milliseconds).
@@ -9,7 +9,7 @@
 ;Script Optimization
 ;=======================
 SetWorkingDir %A_ScriptDir%
-SetWinDelay, 33 ; Sets the delay that will occur after each windowing command, such as WinActivate. (Default is 100)
+SetWinDelay, 32 ; Sets the delay that will occur after each windowing command, such as WinActivate. (Default is 100)
 SetControlDelay, 0 ; Sets the delay that will occur after each control-modifying command. -1 for no delay, 0 for smallest possible delay. The default delay is 20.
 ;SetKeyDelay, 0 ; Sets the delay that will occur after each keystroke sent by Send or ControlSend. [SetKeyDelay , Delay, PressDuration, Play]
 SetBatchLines, -1 ; How fast a script will run (affects CPU utilization).(Default setting is 10ms - prevent the script from using any more than 50% of an idle CPU's time.
@@ -210,7 +210,6 @@ HideToolTip()
     ToolTip
 }
 
-;#include %A_ScriptDir%\SharedFunctions\Windrag.ahk
 ; Shared Functions
 #include %A_ScriptDir%\SharedFunctions\SH_SharedFunctions.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_ArrFnc.ahk
@@ -218,10 +217,6 @@ HideToolTip()
 #include %A_ScriptDir%\SharedFunctions\SH_GUIFunctions.ahk
 #include %A_ScriptDir%\SharedFunctions\SH_UpdateClass.ahk
 #include *i %A_ScriptDir%\AddOns\AddOnsIncluded.ahk
-
-;#IfWinActive ahk_exe AutoHotkeyU64.exe
-;!LButton::WindowMouseDragMove()
-;^LButton::WindowMouseDragMove()
 
 BuildToolTips()
 if(IsObject(AddonManagement))
