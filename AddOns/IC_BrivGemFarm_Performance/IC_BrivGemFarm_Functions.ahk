@@ -209,7 +209,7 @@ class IC_BrivGemFarm_Class
             return 0
         }
         ; stack briv between min zone and stack zone if briv is out of jumps (if stack fail recovery is on)
-        if (g_SF.Memory.ReadHasteStacks() < 50 AND stacks < targetStacks AND CurrentZone >= g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone < g_BrivUserSettings[ "StackZone" ] )
+        if (g_SF.Memory.ReadHasteStacks() < 50 AND stacks < targetStacks AND CurrentZone >= g_BrivUserSettings[ "MinStackZone" ] AND g_BrivUserSettings[ "StackFailRecovery" ] AND CurrentZone <= g_BrivUserSettings[ "StackZone" ] )
         {
             ; only use current zone if there's been no/non-excess issues with it.
             if (!this.StackFailAreasThisRunTally[CurrentZone] AND (!this.StackFailAreasTally[CurrentZone] OR this.StackFailAreasTally[CurrentZone] < this.MaxStackRestartFails))
