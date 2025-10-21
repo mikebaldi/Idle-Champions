@@ -5,8 +5,6 @@ class SH_SharedFunctions
 {
     Hwnd := 0
     PID := 0
-    ErrorKeyDown := 0
-    ErrorKeyUp := 0
 
     ;Gets data from JSON file
     LoadObjectFromJSON( FileName )
@@ -233,6 +231,31 @@ class SH_SharedFunctions
         For Each, E In Stack
             OutputDebug, %  "`r`n" . E.Called . " called by " . E.Caller . " at line " . E.Line . " of " . E.File
     Return Stack
+    }
+
+    ; https://www.autohotkey.com/board/topic/30042-run-ahk-scripts-with-less-half-or-even-less-memory-usage/
+    EmptyMem(PID:="")
+    {
+        pid:=(pid="") ? DllCall("GetCurrentProcessId") : pid
+        h:=DllCall("OpenProcess", "UInt", 0x001F0FFF, "Int", 0, "Int", pid)
+        DllCall("SetProcessWorkingSetSize", "UInt", h, "Int", -1, "Int", -1)
+        DllCall("CloseHandle", "Int", h)
+    }
+
+    GetProcessMemoryUsage(ProcessID := "")
+    {
+        if(ProcessID == "")
+            ProcessID := DllCall("GetCurrentProcessId")
+        static PMC_EX, size := NumPut(VarSetCapacity(PMC_EX, 8 + A_PtrSize * 9, 0), PMC_EX, "uint")
+
+        if (hProcess := DllCall("OpenProcess", "uint", 0x1000, "int", 0, "uint", ProcessID)) {
+            if !(DllCall("GetProcessMemoryInfo", "ptr", hProcess, "ptr", &PMC_EX, "uint", size))
+                if !(DllCall("psapi\GetProcessMemoryInfo", "ptr", hProcess, "ptr", &PMC_EX, "uint", size))
+                    return (ErrorLevel := 2) & 0, DllCall("CloseHandle", "ptr", hProcess)
+            DllCall("CloseHandle", "ptr", hProcess)
+            return Round(NumGet(PMC_EX, 8 + A_PtrSize * 8, "uptr") / 1024**2, 2)
+        }
+        return (ErrorLevel := 1) & 0
     }
 
 }
