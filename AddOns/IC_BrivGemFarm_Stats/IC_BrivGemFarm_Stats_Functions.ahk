@@ -341,39 +341,7 @@ class IC_BrivGemFarm_Stats_Component
         this.StackFail := Max(this.StackFail, foundComs ? this.SharedRunData.StackFail : 0)
         resetsCount := g_SF.Memory.ReadResetsCount()
         if ( resetsCount > this.LastResetCount )
-        {
-            if (foundComs)
-            {
-                if (!this.ScriptStartTime)
-                    this.ScriptStartTime := this.SharedRunData.ScriptStartTime
-                this.PreviousRunTime := this.SharedRunData.LastRunTime
-                gemsSpent := this.SharedRunData.GemsSpent
-                this.SharedRunData.TriggerStart := false
-                this.SharedRunData.StackFail := false
-                this.TotalRunCount := this.SharedRunData.TotalRunsCount
-            }
-            if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
-                g_InventoryView.ReadCombinedInventory(this.TotalRunCount)
-            this.LastResetCount := resetsCount
-            if (this.SlowRunTime < this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
-                this.SlowRunTime := this.PreviousRunTime
-            if (this.FastRunTime > this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
-                this.FastRunTime := this.PreviousRunTime
-            this.SbLastStacked := g_SF.Memory.ReadHasteStacks()
-            if ( this.StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
-                this.FailRunTime += this.PreviousRunTime
-            this.TotalFarmTime := (A_TickCount - this.ScriptStartTime)
-            this.TotalFarmTimeHrs := this.TotalFarmTime / 3600000
-            if(this.TotalRunCount > 0)
-                this.BossesPerHour := Round( ((xpGain := this.DoXPChecks()) / 5) / this.TotalFarmTimeHrs, 3) ; unmodified levels completed / 5 = boss levels completed
-            { ; (Opened / Bought / Dropped)
-                global ShiniesClassNN
-                g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
-            }
-            this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + gemsSpent
-            this.UpdateStartLoopStatsGUI(this.TotalFarmTime)
-            this.StackFail := 0
-        }
+            this.UpdateStartLoopStatsReset(foundComs)            
         if (foundComs)
             this.LastTriggerStart := this.SharedRunData.TriggerStart
         Critical, Off
@@ -382,6 +350,41 @@ class IC_BrivGemFarm_Stats_Component
     UpdateMemoryUsage()
     {
         GuiControl, ICScriptHub:, SH_Memory_In_Use, % g_SF.GetProcessMemoryUsage() . "MB"
+    }
+
+    UpdateStartLoopStatsReset(foundComs)
+    {
+        if (foundComs)
+        {
+            if (!this.ScriptStartTime)
+                this.ScriptStartTime := this.SharedRunData.ScriptStartTime
+            this.PreviousRunTime := this.SharedRunData.LastRunTime
+            gemsSpent := this.SharedRunData.GemsSpent
+            this.SharedRunData.TriggerStart := false
+            this.SharedRunData.StackFail := false
+            this.TotalRunCount := this.SharedRunData.TotalRunsCount
+        }
+        if(IsObject(IC_InventoryView_Component) AND g_InventoryView != "") ; If InventoryView AddOn is available
+            g_InventoryView.ReadCombinedInventory(this.TotalRunCount)
+        this.LastResetCount := resetsCount
+        if (this.SlowRunTime < this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
+            this.SlowRunTime := this.PreviousRunTime
+        if (this.FastRunTime > this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
+            this.FastRunTime := this.PreviousRunTime
+        this.SbLastStacked := g_SF.Memory.ReadHasteStacks()
+        if ( this.StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
+            this.FailRunTime += this.PreviousRunTime
+        this.TotalFarmTime := (A_TickCount - this.ScriptStartTime)
+        this.TotalFarmTimeHrs := this.TotalFarmTime / 3600000
+        if(this.TotalRunCount > 0)
+            this.BossesPerHour := Round( ((xpGain := this.DoXPChecks()) / 5) / this.TotalFarmTimeHrs, 3) ; unmodified levels completed / 5 = boss levels completed
+        { ; (Opened / Bought / Dropped)
+            global ShiniesClassNN
+            g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
+        }
+        this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + gemsSpent
+        this.UpdateStartLoopStatsGUI(this.TotalFarmTime)
+        this.StackFail := 0
     }
     
     UpdateStartLoopStatsGUI()
