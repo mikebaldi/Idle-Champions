@@ -234,9 +234,9 @@ class SH_SharedFunctions
     }
 
     ; https://www.autohotkey.com/board/topic/30042-run-ahk-scripts-with-less-half-or-even-less-memory-usage/
-    EmptyMem(PID:="")
+    EmptyMem(pid:="")
     {
-        pid:=(pid="") ? DllCall("GetCurrentProcessId") : pid
+        pid := pid == "" ? DllCall("GetCurrentProcessId") : pid
         h:=DllCall("OpenProcess", "UInt", 0x001F0FFF, "Int", 0, "Int", pid)
         DllCall("SetProcessWorkingSetSize", "UInt", h, "Int", -1, "Int", -1)
         DllCall("CloseHandle", "Int", h)

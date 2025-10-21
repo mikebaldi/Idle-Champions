@@ -125,7 +125,7 @@ class IC_BrivGemFarm_Stats_Component
         posX += 240
         Gui, ICScriptHub:Add, Text, x%posX% y%posY% w160, 
         posX += 10
-        Gui, ICScriptHub:Add, Checkbox, x%posX% y%posY% vStatsCompactTimestamps hHwndTimestamps, Use Compact Timestamps
+        Gui, ICScriptHub:Add, Checkbox, x%posX% y%posY% vStatsCompactTimestamps, Use Compact Timestamps
         buttonFunc := ObjBindMethod(this, "SaveSettings")
         GuiControl,ICScriptHub: +g, StatsCompactTimestamps, % buttonFunc
     }
@@ -141,53 +141,65 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h330 vOnceRunGroupID, Updated Once Per Full Run:
         Gui, ICScriptHub:Font, w400
         
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%labelWidth%, Total Run `Count:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25 w%labelWidth% +Right, Total Run `Count:
         Gui, ICScriptHub:Add, Text, vTotalRunCountID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Total Run Time (hr):
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Total Run Time:
         Gui, ICScriptHub:Add, Text, vdtTotalTimeID x+2 w150,
 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Previous Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth% +Right, Previous Run Time:
         Gui, ICScriptHub:Add, Text, vPrevRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Fastest Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Fastest Run Time:
         Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Slowest Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Slowest Run Time:
         Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Avg. Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Avg. Run Time:
         Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Fail Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth% +Right, Fail Run Time:
         Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth%, Fail Run Time Total:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Fail Run Time Total:
         Gui, ICScriptHub:Add, Text, vTotalFailRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Failed Stacking Tally by Type:
         Gui, ICScriptHub:Add, Text, vFailedStackingID x+2 w120,
 
+        labelWidth -= 20
+        chestsWidth := 55
         Gui, ICScriptHub:Font, w700
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Chest Counts (Opened / Bought / Dropped):
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth%, Chest Counts:
+        Gui, ICScriptHub:Add, Text, x+2 w%chestsWidth% +Right, Opened
+        Gui, ICScriptHub:Add, Text, x+2 w%chestsWidth% +Right, Bought
+        Gui, ICScriptHub:Add, Text, vGoldsDroppedIDHeader x+2 w%chestsWidth% +Right, Dropped
         Gui, ICScriptHub:Font, w400
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+4 w250 h1 0x10 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Silver Chests:
-        Gui, ICScriptHub:Add, Text, vSilversGainedID x+2 w200, % 0 . " / " . 0 . " / " . 0
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Golds Chests:
-        Gui, ICScriptHub:Add, Text, vGoldsGainedID x+2 w200, % 0 . " / " . 0 . " / " . 0
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Shinies Found:
-        Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200, 0
+		
+        GuiControlGet, pos, ICScriptHub:Pos, GoldsDroppedIDHeader
+		hLineWidth := ((posX + posW) - g_LeftAlign) + 3
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+4 w%hLineWidth% h1 0x10 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Silver Chests:
+        Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, vSilversBoughtID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, vSilversDroppedID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Golds Chests:
+        Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, vGoldsBoughtID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, vGoldsDroppedID x+2 w%chestsWidth% +Right, 
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Shinies Found:
+        Gui, ICScriptHub:Add, Text, vShiniesID x+2 w200,
         ShiniesClassNN := GUIFunctions.GetToolTipTarget("ShiniesID")
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor1", 700)
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Bosses per hour:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w100 +Right, Bosses per hour:
         Gui, ICScriptHub:Add, Text, vbossesPhrID x+2 w65, ; % bossesPhr
 
 
         GUIFunctions.UseThemeTextColor("SpecialTextColor2", 700)
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10, Total Gems:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w100 +Right, Total Gems:
         Gui, ICScriptHub:Add, Text, vGemsTotalID x+2 w300, ; % GemsTotal
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Gems per hour:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w100 +Right, Gems per hour:
         Gui, ICScriptHub:Add, Text, vGemsPhrID x+2 w300, ; % GemsPhr
         
         GUIFunctions.UseThemeTextColor("WarningTextColor", 700)
         GuiControlGet, pos, ICScriptHub:Pos, bossesPhrID
         posX += 100
-        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w235,
+        Gui, ICScriptHub:Add, Text, vNordomWarningID x%posX% y%posY% w220,
                
         GUIFunctions.UseThemeTextColor("DefaultTextColor")
         GuiControlGet, pos, ICScriptHub:Pos, OnceRunGroupID
@@ -408,8 +420,12 @@ class IC_BrivGemFarm_Stats_Component
         {
             currentSilverChests := g_SF.Memory.ReadChestCountByID(1) ; Start + Purchased + Dropped - Opened
             currentGoldChests := g_SF.Memory.ReadChestCountByID(2)
-            GuiControl, ICScriptHub:, SilversGainedID, %  this.DecideScientific(this.SharedRunData.OpenedSilverChests) . " / " . this.DecideScientific(this.SharedRunData.PurchasedSilverChests) . " / " . this.DecideScientific(this.CalculateDroppedChests(currentSilverChests, 1))
-            GuiControl, ICScriptHub:, GoldsGainedID, % this.DecideScientific(this.SharedRunData.OpenedGoldChests) . " / " . this.DecideScientific(this.SharedRunData.PurchasedGoldChests) . " / " . this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
+            GuiControl, ICScriptHub:, SilversOpenedID, % this.DecideScientific(this.SharedRunData.OpenedSilverChests)
+            GuiControl, ICScriptHub:, SilversBoughtID, % this.DecideScientific(this.SharedRunData.PurchasedSilverChests)
+            GuiControl, ICScriptHub:, SilversDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentSilverChests, 1))
+            GuiControl, ICScriptHub:, GoldsOpenedID, % this.DecideScientific(this.SharedRunData.OpenedGoldChests)
+            GuiControl, ICScriptHub:, GoldsBoughtID, % this.DecideScientific(this.SharedRunData.PurchasedGoldChests)
+            GuiControl, ICScriptHub:, GoldsDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
         }
         if(this.TotalFarmTime == "")
@@ -616,6 +632,7 @@ class IC_BrivGemFarm_Stats_Component
             SharedRunData.ThisRunStart := 0
             SharedRunData.LastRunTime := 0
             SharedRunData.ScriptStartTime := 0
+            SharedRunData.GemsSpent := 0
         }
     }
 
@@ -636,8 +653,12 @@ class IC_BrivGemFarm_Stats_Component
         if(IsObject(this.SharedRunData))
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString(this.SharedRunData.StackFailStats.TALLY)
-            GuiControl, ICScriptHub:, SilversGainedID, % this.SharedRunData.OpenedSilverChests . " / " . this.SharedRunData.PurchasedSilverChests . " / " . this.CalculateDroppedChests(currentSilverChests, 1)
-            GuiControl, ICScriptHub:, GoldsGainedID, % this.SharedRunData.OpenedGoldChests . " / " . this.SharedRunData.PurchasedGoldChests . " / " . this.CalculateDroppedChests(currentGoldChests, 2)
+            GuiControl, ICScriptHub:, SilversOpenedID, % this.DecideScientific(this.SharedRunData.OpenedSilverChests)
+            GuiControl, ICScriptHub:, SilversBoughtID, % this.DecideScientific(this.SharedRunData.PurchasedSilverChests)
+            GuiControl, ICScriptHub:, SilversDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentSilverChests, 1))
+            GuiControl, ICScriptHub:, GoldsOpenedID, % this.DecideScientific(this.SharedRunData.OpenedGoldChests)
+            GuiControl, ICScriptHub:, GoldsBoughtID, % this.DecideScientific(this.SharedRunData.PurchasedGoldChests)
+            GuiControl, ICScriptHub:, GoldsDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
             GuiControl, ICScriptHub:, StatsPlayServerID, % this.SharedRunData.PlayServer
             GuiControl, ICScriptHub:, StatsLowestHasteID, % this.SharedRunData.LowestHasteStacks == 9999999 ? "" : this.SharedRunData.LowestHasteStacks
@@ -649,8 +670,12 @@ class IC_BrivGemFarm_Stats_Component
         else
         {
             GuiControl, ICScriptHub:, FailedStackingID, % ArrFnc.GetDecFormattedArrayString("")
-            GuiControl, ICScriptHub:, SilversGainedID, % "0 / 0 / 0"
-            GuiControl, ICScriptHub:, GoldsGainedID, % "0 / 0 / 0"
+            GuiControl, ICScriptHub:, SilversOpenedID, % "0"
+            GuiControl, ICScriptHub:, SilversBoughtID, % "0"
+            GuiControl, ICScriptHub:, SilversDroppedID, % "0"
+            GuiControl, ICScriptHub:, GoldsOpenedID, % "0"
+            GuiControl, ICScriptHub:, GoldsBoughtID, % "0"
+            GuiControl, ICScriptHub:, GoldsDroppedID, % "0"
             GuiControl, ICScriptHub:, ShiniesID, % 0
             GuiControl, ICScriptHub:, StatsPlayServerID, % ""
             GuiControl, ICScriptHub:, StatsLowestHasteID, % ""
