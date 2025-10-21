@@ -469,10 +469,14 @@ class IC_BrivGemFarm_Stats_Component
     DisplayXPWarning(isNordomFound, isMechanusFound)
     {
         preStrValue := ""
-        preStrValue := isMechanusFound ? "Mechanus" : ""
-        preStrValue := (isMechanusFound AND isNordomFound) ? "Mechanus/Nordom" : ""
-        preStrValue := isNordomFound ? "Nordom" : ""
-        GuiControl, ICScriptHub:, NordomWarningID, % (isMechanusFound OR isNordomFound ? preStrValue . " found." : "")
+        if (isMechanusFound AND isNordomFound)
+            preStrValue := "Mechanus/Nordom found."
+        else if (isMechanusFound)
+            preStrValue := "Mechanus found."
+        else if (isNordomFound)
+            preStrValue := "Nordom found."
+        if (preStrValue)
+            GuiControl, ICScriptHub:, NordomWarningID, % preStrValue
     }
 
     ; Calculate dropped chests according to chest ID (1 or 2) and current number held . dropped := current - starting - purchased + opened
