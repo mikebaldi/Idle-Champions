@@ -1,3 +1,17 @@
+October 21, 2025
+    Stats Addon:
+        Added a display for total committed memory usage of the script. (Not current use, but a good indication of when it is getting high.)
+        Added a button that clears current memory use (not reflected in display, check task manager.)
+        Made a number of optimizations to try to prevent stats from not updating. (Not 100% fixed yet)
+        Fixed GPH keeping gem counts from previous runs skewing gems/GPH.
+        Refactored code some more. (Go away tech debt.)
+        Added Emmote's chest display layout on the stats page. 
+        Fixed Mechanus display not showing correctly.
+        Fixed the connect button not working due to an unused/missing variable trying to be read.
+    Added a flag for modron formation to hopefully swap out faster after ellywait.
+    Updated the SetFormation method to better handle modron formation swaps.
+    Added a warning message to BGF Stack and Stop.
+
 October 19, 2025
     For Users:
         Updated stats window layout.
