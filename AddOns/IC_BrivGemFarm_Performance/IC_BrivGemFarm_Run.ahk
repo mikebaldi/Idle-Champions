@@ -47,6 +47,7 @@ global g_globalTempSettingsFiles := {}
 #include *i %A_LineFile%\..\IC_BrivGemFarm_Mods.ahk
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCallLocationOverride_Settings.json")
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\LastGUID_BrivGemFarm.json")
+g_ScriptHubComs.Init()
 
 ;check if first run
 If !IsObject( g_UserSettings )
