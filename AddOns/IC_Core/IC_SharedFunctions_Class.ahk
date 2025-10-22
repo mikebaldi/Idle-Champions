@@ -641,7 +641,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 this.OpenProcessAndSetPID(timeoutVal - ElapsedTime)
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime < timeoutVal)
-                this.SetLastActiveWindowWhileWaingForGameExe(timeoutVal - ElapsedTime)
+                this.SetLastActiveWindowWhileWaitingForGameExe(timeoutVal - ElapsedTime)
             Process, Priority, % this.PID, High
             this.ActivateLastWindow()
             this.Memory.OpenProcessReader()
@@ -715,7 +715,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ; Saves this.SavedActiveWindow as the last window and waits for the game exe to load its window.
-    SetLastActiveWindowWhileWaingForGameExe(timeoutLeft := 32000)
+    SetLastActiveWindowWhileWaitingForGameExe(timeoutLeft := 32000)
     {
         StartTime := A_TickCount
         ; Process exists, wait for the window:
@@ -807,7 +807,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     }
 
     ;Reopens Idle Champions if it is closed. Calls RecoverFromGameClose after opening IC. Returns true if window still exists.
-    SafetyCheck()
+    SafetyCheck(stackRestart := False)
     {
         static hasStartedSafetyCheck := False
         static safetyCheckStartTime := 0
@@ -831,18 +831,18 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             if(this.OpenIC() == -1)
             {
                 this.CloseIC("Failed to start Idle Champions")
-                this.SafetyCheck()
+                this.SafetyCheck(stackRestart)
             }
             if(this.Memory.ReadResetting() AND this.Memory.ReadCurrentZone() <= 1 AND this.Memory.ReadCurrentObjID() == "")
                 this.WorldMapRestart()
-            this.RecoverFromGameClose(this.GetRecoveryFormation())
-            this.BadSaveTest()
+            this.RecoverFromGameClose(stackRestart ? 2 : this.GetRecoveryFormation()) ; ~2516 ms
+            this.BadSaveTest() 
             if (hasCorrectPatron)
                 hasCorrectPatron := this.PatronTest() ; if needs restart, only do one time.
             else
                 hasCorrectPatron := True
             hasStartedSafetyCheck := False
-            return false
+            return false 
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
         else if ( this.Memory.ReadCurrentZone() == "" )
@@ -880,9 +880,12 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         return True
     }
     
+    ; Returns formation favorite number based on preferred jump zones.
     GetRecoveryFormation()
     {
-        return this.GameStartFormation
+        if (g_BrivUserSettings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 :  Mod(this.Memory.ReadCurrentZone(), 50)] == 0)
+            return 3
+        return 1   
     }
 
     ; Checks for rollbacks after a stack restart.
@@ -923,8 +926,6 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     RecoverFromGameClose(formationFavoriteNum := 2)
     {
         StartTime := A_TickCount
-        ElapsedTime := 0
-        counter := 0
         sleepTime := 67
         timeout := 10000
         isCurrentFormation := false
@@ -938,10 +939,19 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             spam := ["{e}"]
         else
             spam := ""
+        this.WaitForOfflineSettingsWipe(timeout, sleepTime, StartTime, spam) ; 0 ms
+        isCurrentFormation := this.WaitForRecoveryFormationSwap(timeout, sleepTime, StartTime, spam, formationFavoriteNum) ; 1578 ms
+        this.HandleRecoveryUnderAttack(timeout, sleepTime, spam, StartTime, ElapsedTime, formationFavoriteNum, isCurrentFormation) ; 938 ms
+        g_SharedData.LoopString := "Loading game finished."
+    }
+
+    WaitForOfflineSettingsWipe(timeout, sleepTime, startTime, spam)
+    {
+        counter := ElapsedTime := 0
         g_SharedData.LoopString := "Waiting for offline settings wipe..."
         while(this.Memory.ReadNumAttackingMonstersReached() >= 95 AND ElapsedTime < timeout )
         {
-            ElapsedTime := A_TickCount - StartTime
+            ElapsedTime := A_TickCount - startTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
                 this.DirectedInput(,, spam* )
@@ -950,35 +960,47 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 Sleep, 20
         }
-        g_SharedData.LoopString := "Waiting for formation swap..."
+    }
+
+    WaitForRecoveryFormationSwap(timeout, sleepTime, startTime, spam, formationFavoriteNum)
+    {
         ElapsedTime := counter := 0
-        while(!isCurrentFormation AND ElapsedTime < timeout AND !this.Memory.ReadNumAttackingMonstersReached())
+        this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum )
+        g_SharedData.LoopString := "Waiting for formation swap..."
+        while(!isCurrentFormation AND ElapsedTime < timeout AND (!this.Memory.ReadNumAttackingMonstersReached() AND formationFavoriteNum == 2))
         {
-            ElapsedTime := A_TickCount - StartTime
+            ElapsedTime := A_TickCount - startTime
             if(ElapsedTime > sleepTime * counter AND IsObject(spam))
             {
                 this.DirectedInput(,, spam* )
+                if(formationFavoriteNum != 2)
+                    this.ToggleAutoProgress( 1, false, true )
                 counter++
             }
             else
                 Sleep, 20
             ; reverted for now. swaps fail more at game restart and restarts don't happen often so stick with old method until (if) CNE fixes their bug.
-            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(formationFavoriteNum)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            isCurrentFormation := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
         }
+        return isCurrentFormation
+    }
+
+    HandleRecoveryUnderAttack(timeout, sleepTime, spam, startTime, ElapsedTime, formationFavoriteNum, isCurrentFormation) ;, lastLoopTimedOut
+    {
+        if (formationFavoriteNum == 2 AND this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum))
+            return
         g_SharedData.LoopString := "Under attack. Retreating to change formations..."
         while(!IsCurrentFormation AND (this.Memory.ReadNumAttackingMonstersReached() OR this.Memory.ReadNumRangedAttackingMonsters()) AND (ElapsedTime < (2 * timeout)))
         {
-            ElapsedTime := A_TickCount - StartTime
+            ElapsedTime := A_TickCount - startTime
             this.FallBackFromZone()
             this.DirectedInput(,, spam* ) ;not spammed, delayed by fallback call
-            this.ToggleAutoProgress(1, true)
-            if (lastLoopTimedOut)
-                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
-            else
-                isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
-            Sleep, 20
+            if(formationFavoriteNum != 2)
+                this.ToggleAutoProgress(1, true)
+            ; if (lastLoopTimedOut) ; use old way, else use new formation check method
+            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(formationFavoriteNum)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            Sleep, sleepTime
         }
-        g_SharedData.LoopString := "Loading game finished."
     }
 
     ;Returns true if the formation array passed is the same as the formation currently on the game field. Always false on empty formation reads. Requires full formation.
@@ -993,6 +1015,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             return false
         loop, % currentFormation.Count()
             if(testformation[A_Index] != currentFormation[A_Index])
+                return false
+        return true
+    }
+
+    ; Returns true if all champs in the formation are in the favorite formation. Does not need exact match.
+    IsCurrentFormationLazy(testformation := "", favorite := "")
+    {
+        if(!IsObject(testFormation))
+            return false
+        currentFormation := this.Memory.GetCurrentFormation()
+        if(!IsObject(currentFormation))
+            return false
+        currCount := currentFormation.Count()
+        if(currCount != testformation.Count())
+            return false
+        loop, %currCount%
+            if(currentFormation[A_Index] != -1 AND testformation[A_Index] != currentFormation[A_Index] AND (favorite == 2 AND testformation[A_Index] != (Tatyana := 97))) ; favorite 2 + tatyana = skip
                 return false
         return true
     }

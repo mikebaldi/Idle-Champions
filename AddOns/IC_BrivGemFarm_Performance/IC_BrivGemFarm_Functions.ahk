@@ -137,7 +137,7 @@ class IC_BrivGemFarm_Class
 
     GemFarmDoZone(formationModron := "")
     {
-        if ((!Mod( g_SF.Memory.ReadCurrentZone(), 5 )) AND (!Mod( g_SF.Memory.ReadHighestZone(), 5)))
+        if (!(Mod( g_SF.Memory.ReadCurrentZone(), 5)) AND !(Mod( g_SF.Memory.ReadHighestZone(), 5)))
             this.GemFarmDoTouchedBoss()
         if (this.DoKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron)) 
         { ; leveling completed, remove champs from keyspam.
@@ -392,7 +392,7 @@ class IC_BrivGemFarm_Class
                 Sleep, 124
                 ElapsedTime := A_TickCount - StartTime
             }
-            g_SF.SafetyCheck()
+            g_SF.SafetyCheck(stackRestart := True)
             stacks := this.GetNumStacksFarmed()
             ;check if save reverted back to below stacking conditions
             if (g_SF.Memory.ReadCurrentZone() < g_BrivUserSettings[ "MinStackZone" ])
