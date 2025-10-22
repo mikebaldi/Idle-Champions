@@ -272,6 +272,7 @@ class IC_BrivGemFarm_Stats_Component
         static hasteStackMessage := ""
         static LastTriggerStart := false
         static foundComs := True
+        static lastSBStacks := ""
 
         Critical, On
         ; ============== Read Coms ===================
@@ -281,9 +282,13 @@ class IC_BrivGemFarm_Stats_Component
             TriggerStart := LastTriggerStart, foundComs := False
         if(foundComs)
         {
-            if (InStr(this.SharedRunData.LastCloseReason, "Check Stack Settings") && this.PreviousLastGameCloseReason != this.SharedRunData.LastCloseReason)
+            sbStacks := g_SF.Memory.ReadSBStacks()
+            if (lastSBStacks == "")
+                lastSBStacks := sbStacks 
+            if (InStr(this.SharedRunData.LastCloseReason, "Check Stack Settings") && this.PreviousLastGameCloseReason != this.SharedRunData.LastCloseReason && lastSBStacks == sbStacks )
             {
                 g_BrivUserSettings[ "RestartStackTime" ] += 10
+                lastSBStacks := sbStacks
                 GuiControl, ICScriptHub:, NewRestartStackTime, % g_BrivUserSettings[ "RestartStackTime" ]
                 IC_BrivGemFarm_Component.Briv_Save_Clicked()
             }
