@@ -15,6 +15,8 @@ class BrivFunctions
     static StrategicStrideId := 2004
     static AccurateAcrobaticsId := 2062
     static ThunderStepId := 2131
+    static UnnaturalHasteId := 3452
+    static MetalbornId := 3455
     static BrivSkipConfigByFavorite := []
 
     class BrivSkipConfig ; IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig
@@ -58,6 +60,15 @@ class BrivFunctions
             return this.AvailableJumps.Length() == 2
         }
 
+        HighestAvailableJump
+        {
+            get
+            {
+                return this.AvailableJumps[this.AvailableJumps.Length()]
+            }
+        }
+    }
+
     ThunderStepMult
     {
         get
@@ -66,6 +77,23 @@ class BrivFunctions
         }
     }
 
+    ReadUnnaturalHastePurchased()
+    {
+        return g_SF.Memory.ReadHeroUpgradeIsPurchased(this.BrivId, this.UnnaturalHasteId)
+    }
+
+    ReadMetalbornPurchased()
+    {
+        return g_SF.Memory.ReadHeroUpgradeIsPurchased(this.BrivId, this.MetalbornId)
+    }
+
+    ReadSkipStacks()
+    {
+        size := g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.areaSkipHandler.skipStacks.size.Read()
+        ; Sanity check, should be 2 for v601
+        if (size > 10)
+            return ""
+        return g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.areaSkipHandler.skipStacks.Queue[size - 1].size.Read()
     }
 
     GetBrivLoot()
