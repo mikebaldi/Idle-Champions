@@ -38,9 +38,9 @@ class BrivFunctions
             this.Feats := feats
             for k, v in feats
             {
-                if (v == IC_BrivGemFarm_BrivFeatSwap_Functions.BrivFunctions.WastingHasteId)
+                if (v == IC_BrivGemFarm_Class.BrivFunctions.WastingHasteId)
                     this.4JFeat := true
-                else if (v == IC_BrivGemFarm_BrivFeatSwap_Functions.BrivFunctions.StrategicStrideId)
+                else if (v == IC_BrivGemFarm_Class.BrivFunctions.StrategicStrideId)
                     this.9JFeat := true
                 else if (v == IC_BrivGemFarm_Class.BrivFunctions.AccurateAcrobaticsId)
                     this.AAFeat := true
@@ -163,7 +163,7 @@ class BrivFunctions
             {
                 feats := this.GetHeroFeatsInFormationFavorite(favoriteFormationSlot, heroID)
                 for k, v in feats
-                    if (v == this.AccurateAcrobaticsFeatId)
+                    if (v == this.AccurateAcrobaticsId)
                         hasAccurateFeat := true
             }
             else
