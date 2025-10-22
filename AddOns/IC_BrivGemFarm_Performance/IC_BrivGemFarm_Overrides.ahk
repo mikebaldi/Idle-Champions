@@ -30,7 +30,7 @@ class IC_BrivSharedFunctions_Class
         g_BrivGemFarm.StackNormal(30000, targetStackModifier, forceStack := True) ; Give 30s max to try to gain some stacks before a forced reset.
         g_SharedData.LoopString := "ServerCall: Restarting adventure"
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
-        thunderStepMod := g_SF.BrivHasThunderStep() ? 1.2 : 1
+        thunderStepMod := g_SF.BrivHasThunderStep() ? IC_BrivGemFarm_Class.BrivFunctions.ThunderStepMult : 1
         this.CloseIC( reason )
         stacks := Floor(((this.sprint?this.sprint:0) + (this.steelbones?this.steelbones:0)) * thunderStepMod)
         if (stacks >= 190000)
