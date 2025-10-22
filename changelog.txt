@@ -4,6 +4,10 @@ October 22, 2025
     Updated offline time increment for failed stacking to only increment if no stacks were gained.
     Fixed another coms bug (stats).
     Fixed some restart and stacking issues caused by Tatyana being forced into the stack formation.
+    Fixed some typos.
+    Added IsCurrentFormationLazy to check for formations that aren't exact but match. (Missing champs)
+    Refactored some code.
+    Fixed some small bugs.
 
 October 21, 2025
     Note: BrivFeatSwap and GameSettingsFix will need to be updated to be compatible with this version.
