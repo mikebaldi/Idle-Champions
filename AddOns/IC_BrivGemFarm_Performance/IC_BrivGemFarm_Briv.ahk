@@ -10,20 +10,23 @@ class BrivFunctions
     static UnnaturalHasteBaseEffect := 25
     static WastingHastePercentOverride := 800
     static StrategicStridePercentOverride := 25600
+    static ThunderStepPercentIncrease := 20
     static WastingHasteId := 791
     static StrategicStrideId := 2004
-    static AccurateAcrobaticsFeatId := 2062
+    static AccurateAcrobaticsId := 2062
+    static ThunderStepId := 2131
     static BrivSkipConfigByFavorite := []
 
     class BrivSkipConfig ; IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig
     {
-        ; Cached properties
         SkipAmount := 0
         SkipChance := 0
         Feats := ""
+        ; Cached properties
         4JFeat := false
         9JFeat := false
         AAFeat := false
+        TSFeat := false
         AvailableJumps := ""
 
         __New(skipAmount, skipChance, feats)
@@ -37,8 +40,10 @@ class BrivFunctions
                     this.4JFeat := true
                 else if (v == IC_BrivGemFarm_Class.BrivFunctions.StrategicStrideId)
                     this.9JFeat := true
-                else if (v == IC_BrivGemFarm_Class.BrivFunctions.AccurateAcrobaticsFeatId)
+                else if (v == IC_BrivGemFarm_Class.BrivFunctions.AccurateAcrobaticsId)
                     this.AAFeat := true
+                else if (v == IC_BrivGemFarm_Class.BrivFunctions.ThunderStepId)
+                    this.TSFeat := true
             }
             if (skipChance == 1 || skipAmount == 0) ; Perfect jump or no Briv in formation
                 this.AvailableJumps := [skipAmount]
@@ -52,6 +57,15 @@ class BrivFunctions
         {
             return this.AvailableJumps.Length() == 2
         }
+
+    ThunderStepMult
+    {
+        get
+        {
+            return 1 + 0.01 * this.ThunderStepPercentIncrease
+        }
+    }
+
     }
 
     GetBrivLoot()
