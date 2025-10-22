@@ -33,11 +33,11 @@ class BrivFunctions
             this.Feats := feats
             for k, v in feats
             {
-                if (v == IC_BrivGemFarm_BrivFeatSwap_Functions.BrivFunctions.WastingHasteId)
+                if (v == IC_BrivGemFarm_Class.BrivFunctions.WastingHasteId)
                     this.4JFeat := true
-                else if (v == IC_BrivGemFarm_BrivFeatSwap_Functions.BrivFunctions.StrategicStrideId)
+                else if (v == IC_BrivGemFarm_Class.BrivFunctions.StrategicStrideId)
                     this.9JFeat := true
-                else if (v == IC_BrivGemFarm_BrivFeatSwap_Functions.BrivFunctions.AccurateAcrobaticsFeatId)
+                else if (v == IC_BrivGemFarm_Class.BrivFunctions.AccurateAcrobaticsFeatId)
                     this.AAFeat := true
             }
             if (skipChance == 1 || skipAmount == 0) ; Perfect jump or no Briv in formation
@@ -165,8 +165,8 @@ class BrivFunctions
 
     GetHighestBrivSkipAmount()
     {
-        BrivID := IC_BrivGemFarm_HybridTurboStacking_Functions.BRIV_ID
-        BrivJumpSlot := IC_BrivGemFarm_HybridTurboStacking_Functions.BrivJumpSlot
+        BrivID := this.BrivId
+        BrivJumpSlot := this.BrivJumpSlot
         gild := g_SF.Memory.ReadHeroLootGild(BrivID, BrivJumpSlot)
         ilvls := Floor(g_SF.Memory.ReadHeroLootEnchant(BrivID, BrivJumpSlot))
         rarity := g_SF.Memory.ReadHeroLootRarityValue(BrivID, BrivJumpSlot)
@@ -183,7 +183,7 @@ class BrivFunctions
         ; Move back one zone if the last zone before reset is a boss.
         if (Mod(lastZone, 5 ) == 0)
             lastZone -= 1
-        skipAmount := IC_BrivGemFarm_HybridTurboStacking_Functions.GetHighestBrivSkipAmount()
+        skipAmount := this.GetHighestBrivSkipAmount()
         return lastZone - skipAmount - 1
     }
 
