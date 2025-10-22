@@ -63,7 +63,7 @@
         currentArea := startArea := Min((this.Memory.ReadCurrentZone() / 5), g_SF.Memory.GetFavorExponentFor("Corellon")) + 1 ; total Thellora jump accumulated thus far.
         modronResetZone := g_SF.Memory.GetModronResetArea()
         jumps := 0
-        thunderStepMod := g_SF.BrivHasThunderStep() ? 1.2 : 1
+        thunderStepMod := g_SF.BrivHasThunderStep() ? IC_BrivGemFarm_Class.BrivFunctions.ThunderStepMult : 1
         brivMinMetalbornArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] ? g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] : 1
         while (currentArea < modronResetZone) ; skip using preferred jump zones.
         {
