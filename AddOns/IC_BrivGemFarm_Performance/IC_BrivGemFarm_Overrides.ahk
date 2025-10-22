@@ -88,6 +88,13 @@ class IC_BrivSharedFunctions_Class
         this.PatronID := this.PatronID == "" ?  0 : this.PatronID ; still no patron set? default to 0
         jsonObj.activePatronID := g_ServerCall.activePatronID := this.PatronID ;this.Memory.ReadPatronID() == "" ? g_ServerCall.activePatronID : this.Memory.ReadPatronID() ; 0 = no patron
         g_ServerCall.UpdateDummyData()
+        saveSettingsFnc := ObjBindMethod(this, "SaveServerSettings", jsonObj)
+        SetTimer, %saveSettingsFnc%, -1
+        
+    }
+
+    SaveServerSettings(jsonObj)
+    {
         base.WriteObjectToJSON(A_LineFile . "\..\ServerCall_Settings.json" , jsonObj)
     }
 
