@@ -976,6 +976,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
                 isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
             else
                 isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            Sleep, 20
         }
         g_SharedData.LoopString := "Loading game finished."
     }
