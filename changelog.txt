@@ -1,3 +1,11 @@
+
+
+October 23, 2025
+    Removed NoCtlKeypress setting.
+    Updated stop button to try and connect with already running gem farm if it exists and stop it
+    Added Emmote teasing/honoring.
+    Fixed getting stuck after 1 modron reset.
+
 October 22, 2025
     Updated test for matching party when returning from closing IC so it doesn't hang on waiting for formation swap.
     Fixed various bugs and inefficiencies relating to Fort Restart (and Stack Restart in general).
@@ -8,6 +16,10 @@ October 22, 2025
     Added IsCurrentFormationLazy to check for formations that aren't exact but match. (Missing champs)
     Refactored some code.
     Fixed some small bugs.
+    Optimized reset a little by making the servercall use a timer to save.
+    Fixed featswap not working due to a bad feat variable name.
+    Fixed BPH/GPH getting stuck on 0 at times.
+    Updated Memory Usage display on Stats.
 
 October 21, 2025
     Note: BrivFeatSwap and GameSettingsFix will need to be updated to be compatible with this version.
