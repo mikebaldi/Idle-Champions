@@ -361,8 +361,9 @@ class IC_BrivGemFarm_Stats_Component
 
     UpdateMemoryUsage()
     {
-         ;g_SF.GetProcessMemoryUsage() . "MB"
-        GuiControl, ICScriptHub:, SH_Memory_In_Use, % this.GetMemWorkingset()
+        memory := g_SF.GetProcessMemoryUsage() . "MB"
+        GuiControl, ICScriptHub:, SH_Memory_In_Use, % memory
+        memory := ""
     }
 
     UpdateStartLoopStatsReset(foundComs, resetsCount)
@@ -862,35 +863,5 @@ class IC_BrivGemFarm_Stats_Component
             }
         }
         return madeEdit
-    }
-
-    GetMemWorkingset()
-    {
-        memoryAmount := ""
-        cSharp =
-        (
-            using System;
-            using System.Diagnostics;
-
-            class ICMemCounter {
-                public string GetMem(int procID) {
-                    string prcName = Process.GetProcessById(procID).ProcessName;
-                    var counter = new PerformanceCounter("Process", "Working Set", prcName);
-                    return (counter.RawValue / 1048576).ToString() + "MB";
-                }
-            }
-        )
-
-        procID := DllCall("GetCurrentProcessId")
-        memObj := CLR_CreateObject( CLR_CompileC#( cSharp, "System.dll" ), "ICMemCounter")
-        try
-        {
-            memoryAmount := memObj.GetMem(procID)
-        }
-        catch except
-        {
-            throw except
-        }
-        return memoryAmount
     }
 }
