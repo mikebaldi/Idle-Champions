@@ -39,8 +39,11 @@ class IC_BrivGemFarm_Class
                 this.ModronResetCheck()
             else
                 this.GemFarmDoNonModronActions(CurrentZone)
-            if (g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
-                this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True)
+            ; g_SF.UpdateLog("LastResets = ", this.LastResetCount)
+            g_SF.UpdateLog("PreviousZone = ", PreviousZone)
+            g_SF.UpdateLog("CurrentZone = ", CurrentZone)
+            if ((g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart) AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
+                this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True), CurrentZone := g_SF.Memory.ReadCurrentZone() 
             if (g_SharedData.StackFail != 2)
                 g_SharedData.StackFail := Max(this.TestForSteelBonesStackFarming(), g_SharedData.StackFail)
             if (g_SharedData.StackFail == 2 OR g_SharedData.StackFail == 4 OR g_SharedData.StackFail == 6 ) ; OR g_SharedData.StackFail == 3
@@ -99,6 +102,7 @@ class IC_BrivGemFarm_Class
     {
         static lowestHasteStacks := 9999999
         static firstRun := True
+        g_SF.UpdateLog("GemFarmResetSetup = ", "RESET")
         g_PreviousZoneStartTime := A_TickCount
         g_SF.ToggleAutoProgress( 0, false, true )
         g_SharedData.StackFail := this.CheckForFailedConv()
