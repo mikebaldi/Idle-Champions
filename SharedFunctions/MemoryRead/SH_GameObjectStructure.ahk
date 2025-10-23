@@ -83,12 +83,12 @@ class GameObjectStructure
         if(key == "size")
         {
             debugRecursionDepth := 0
-            return this.CreateSizeObject()
+            return sizeObj := this.CreateSizeObject()
         }
         if (key == "__version") 
         {
             debugRecursionDepth := 0
-            return this.CreateVersionObject()
+            return sizeObj := this.CreateVersionObject()
         }
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
         if(this.ValueType == "Dict")
@@ -219,7 +219,7 @@ class GameObjectStructure
 
     GetDictionaryObject(key, index)
     {
-        GameObjectStructure.ReadIsLocked := True                                    ; Lock gameobject reads while a dictionary is being built
+        GameObjectStructure.ReadIsLocked := True                                            ; Lock gameobject reads while a dictionary is being built
         if(IsObject(key) AND key.Count() == 2)
         {
             index := key[2]
