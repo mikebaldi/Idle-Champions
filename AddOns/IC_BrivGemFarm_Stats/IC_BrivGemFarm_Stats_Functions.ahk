@@ -356,8 +356,8 @@ class IC_BrivGemFarm_Stats_Component
 
     UpdateMemoryUsage()
     {
-         ; this.GetMemWorkingset()
-        GuiControl, ICScriptHub:, SH_Memory_In_Use, % g_SF.GetProcessMemoryUsage() . "MB"
+         ;g_SF.GetProcessMemoryUsage() . "MB"
+        GuiControl, ICScriptHub:, SH_Memory_In_Use, % this.GetMemWorkingset()
     }
 
     UpdateStartLoopStatsReset(foundComs, resetsCount)
