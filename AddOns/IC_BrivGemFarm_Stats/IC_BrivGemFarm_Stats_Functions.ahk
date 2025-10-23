@@ -1,3 +1,5 @@
+#include %A_LineFile%\..\..\..\SharedFunctions\CLR.ahk
+
 class IC_BrivGemFarm_Stats_Component
 {
     static SettingsPath := A_LineFile . "\..\Stats_Settings.json"
@@ -334,7 +336,7 @@ class IC_BrivGemFarm_Stats_Component
         static foundComs := True
         Critical, On
         try ; test, set
-            foundComs := this.SharedRunData.StackFail, foundComs := True ; set flag
+            foundComs := this.SharedRunData.SharedDataTest ; set flag, var should always be true
         catch err
             foundComs := False
         this.StatsRunsCount += 1
@@ -354,6 +356,7 @@ class IC_BrivGemFarm_Stats_Component
 
     UpdateMemoryUsage()
     {
+         ; this.GetMemWorkingset()
         GuiControl, ICScriptHub:, SH_Memory_In_Use, % g_SF.GetProcessMemoryUsage() . "MB"
     }
 
@@ -854,5 +857,35 @@ class IC_BrivGemFarm_Stats_Component
             }
         }
         return madeEdit
+    }
+
+    GetMemWorkingset()
+    {
+        memoryAmount := ""
+        cSharp =
+        (
+            using System;
+            using System.Diagnostics;
+
+            class ICMemCounter {
+                public string GetMem(int procID) {
+                    string prcName = Process.GetProcessById(procID).ProcessName;
+                    var counter = new PerformanceCounter("Process", "Working Set", prcName);
+                    return (counter.RawValue / 1048576).ToString() + "MB";
+                }
+            }
+        )
+
+        procID := DllCall("GetCurrentProcessId")
+        memObj := CLR_CreateObject( CLR_CompileC#( cSharp, "System.dll" ), "ICMemCounter")
+        try
+        {
+            memoryAmount := memObj.GetMem(procID)
+        }
+        catch except
+        {
+            throw except
+        }
+        return memoryAmount
     }
 }

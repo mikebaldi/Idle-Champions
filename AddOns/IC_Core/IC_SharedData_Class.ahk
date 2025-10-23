@@ -25,6 +25,7 @@ class IC_SharedData_Class
     TotalRunsCount := 0
     LastRunTime := 0
     ScriptStartTime := 0
+    SharedDataTest := True
 
     Close()
     {
