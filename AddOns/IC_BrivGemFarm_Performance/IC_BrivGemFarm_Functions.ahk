@@ -39,9 +39,6 @@ class IC_BrivGemFarm_Class
                 this.ModronResetCheck()
             else
                 this.GemFarmDoNonModronActions(CurrentZone)
-            ; g_SF.UpdateLog("LastResets = ", this.LastResetCount)
-            g_SF.UpdateLog("PreviousZone = ", PreviousZone)
-            g_SF.UpdateLog("CurrentZone = ", CurrentZone)
             if ((g_SF.Memory.ReadResetsCount() > this.LastResetCount OR g_SharedData.TriggerStart) AND PreviousZone := 1) ; first loop or Modron has reset. Set previouszone to 1 (:= is intentional)
                 this.LastResetCount := this.GemFarmResetSetup(formationModron, doBasePartySetup := True), CurrentZone := g_SF.Memory.ReadCurrentZone() 
             if (g_SharedData.StackFail != 2)
