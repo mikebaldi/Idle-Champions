@@ -367,13 +367,22 @@ class IC_BrivGemFarm_Component
             SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
             SharedRunData.Close()
         }
-        catch, err
+        catch, err1
         {
-            ; When the Close() function is called "0x800706BE - The remote procedure call failed." is thrown even though the function successfully executes.
-            if(err.Message != "0x800706BE - The remote procedure call failed.")
-                this.UpdateStatus("Gem Farm not running")
-            else
-                this.UpdateStatus("Gem Farm Stopped")
+            try
+            {
+                Briv_Connect_Clicked()
+                SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
+                SharedData.Close()
+            }
+            catch, err2
+            {
+                ; When the Close() function is called "0x800706BE - The remote procedure call failed." is thrown even though the function successfully executes.
+                if(err2.Message != "0x800706BE - The remote procedure call failed.")
+                    this.UpdateStatus("Gem Farm not running")
+                else
+                    this.UpdateStatus("Gem Farm Stopped")
+            }
         }
     }
 
