@@ -390,18 +390,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     InitZone( spam )
     {
         Critical, On
-        ;this.DirectedInput(hold := 0,, "{RCtrl}") ;extra release for safety
-        if(g_UserSettings[ "NoCtrlKeypress" ])
-        {
-            this.DirectedInput(,release := 0, "{ClickDmg}") ;keysdown
-            this.DirectedInput(hold := 0,, "{ClickDmg}") ;keysup
-        }
-        else
-        {
-            ; ctrl level clickers
-            this.DirectedInput(,release := 0, ["{RCtrl}","{ClickDmg}"]*) ;keysdown
-            this.DirectedInput(hold := 0,, ["{ClickDmg}","{RCtrl}"]*) ;keysup
-        }
+        this.DirectedInput(,release := 0, "{ClickDmg}") ;keysdown
+        this.DirectedInput(hold := 0,, "{ClickDmg}") ;keysup
         ; turn Fkeys off/on again
         this.DirectedInput(hold := 0,, spam*) ;keysup
         this.DirectedInput(,release := 0, spam*) ;keysdown
