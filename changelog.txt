@@ -5,6 +5,7 @@ October 23, 2025
     Updated stop button to try and connect with already running gem farm if it exists and stop it
     Added Emmote teasing/honoring.
     Fixed getting stuck after 1 modron reset.
+    Fixed the second memory leak that was caused by trying to address the first memory leak.
 
 October 22, 2025
     Updated test for matching party when returning from closing IC so it doesn't hang on waiting for formation swap.
