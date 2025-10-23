@@ -99,7 +99,6 @@ class IC_BrivGemFarm_Class
     {
         static lowestHasteStacks := 9999999
         static firstRun := True
-        g_SF.UpdateLog("GemFarmResetSetup = ", "RESET")
         g_PreviousZoneStartTime := A_TickCount
         g_SF.ToggleAutoProgress( 0, false, true )
         g_SharedData.StackFail := this.CheckForFailedConv()
