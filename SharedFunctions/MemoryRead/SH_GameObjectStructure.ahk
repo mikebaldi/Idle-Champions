@@ -65,51 +65,30 @@ class GameObjectStructure
     ; When a key is not found for objects which have collections, use this function. 
     __Get(key, index := 0, startAtLastPos := False, byteSizeOverride := 0x0)
     {
-        static debugRecursionDepth := 0
         static notificationSet := False
         this.StartAtLastPos := startAtLastPos ;always default to false unless set otherwise 
-        debugRecursionDepth++
-        if (debugRecursionDepth > 6 and !notificationSet) ; Should be < 3
-        {
-            MsgBox, % "Infinite recursion detected on a gameObject using key = " . key . ". Crash likely incoming."
-            notificationSet := True
-        }
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
-        if(key == "")
-            return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
-        if(key == "_ArrayDimensions") ; Prevent infinite recursion.
-            return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
+        if(key == "" OR if key == "_ArrayDimensions")
+            return ""
         if(key == "size")
-        {
-            debugRecursionDepth := 0
             return sizeObj := this.CreateSizeObject()
-        }
         if (key == "__version") 
-        {
-            debugRecursionDepth := 0
             return sizeObj := this.CreateVersionObject()
-        }
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
         if(this.ValueType == "Dict")
-        {
-            debugRecursionDepth := 0
             return this.GetDictionaryObject(key, index)
-        }
         ; Special case for List/Stack/Queue collections in a gameobject.
         if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
         {
             resultObject := this.HandleListStackQueue(key)
             if (resultObject != "")
-            {
-                debugRecursionDepth := 0
                 return resultObject
-            }
         }
         if(this.ValueType == "HashSet")
         {
             if key is not integer ; Don't try to create key objects when keys are invalid
-                return debugRecursionDepth := "" ; reset recursion depth and ReadIsLocked
+                return "" ; ReadIsLocked
             offset := this.CalculateHashSetOffset(key) + 0
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
@@ -117,8 +96,7 @@ class GameObjectStructure
         else if key is number
             this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
         else
-            return debugRecursionDepth := "" ;reset recursion depth
-        debugRecursionDepth := 0
+            return ""
         GameObjectStructure.ReadIsLocked := False
         return this[key]
     }
@@ -640,7 +618,6 @@ class GameObjectStructure
 
     DoesCollectionNeedReset()
     {
-        
         wasLocked := GameObjectStructure.ReadIsLocked
         GameObjectStructure.ReadIsLocked := False                                           ; Disable lock before read
         needsReset := (this.LastDictVersion != this.__version.Read())
