@@ -5,6 +5,7 @@ class SH_SharedFunctions
 {
     Hwnd := 0
     PID := 0
+    Logger := {}
 
     ;Gets data from JSON file
     LoadObjectFromJSON( FileName )
@@ -242,6 +243,20 @@ class SH_SharedFunctions
         DllCall("CloseHandle", "Int", h)
     }
 
+    ; typedef struct _PROCESS_MEMORY_COUNTERS_EX {
+    ;   DWORD  cb;                          // offset 0
+    ;   DWORD  PageFaultCount;              // offset 4
+    ;   SIZE_T PeakWorkingSetSize;          // offset 8
+    ;   SIZE_T WorkingSetSize;              // offset 8 + A_PtrSize
+    ;   SIZE_T QuotaPeakPagedPoolUsage;     // offset 8 + A_PtrSize*2
+    ;   SIZE_T QuotaPagedPoolUsage;         // offset 8 + A_PtrSize*3
+    ;   SIZE_T QuotaPeakNonPagedPoolUsage;  // offset 8 + A_PtrSize*4
+    ;   SIZE_T QuotaNonPagedPoolUsage;      // offset 8 + A_PtrSize*5
+    ;   SIZE_T PagefileUsage;               // offset 8 + A_PtrSize*6
+    ;   SIZE_T PeakPagefileUsage;           // offset 8 + A_PtrSize*7
+    ;   SIZE_T PrivateUsage;                // offset 8 + A_PtrSize*8
+    ; } PROCESS_MEMORY_COUNTERS_EX;
+    ; Sizes to use for the return value next to PMC_EX to get different memory reads.
     GetProcessMemoryUsage(ProcessID := "")
     {
         if(ProcessID == "")
@@ -253,9 +268,34 @@ class SH_SharedFunctions
                 if !(DllCall("psapi\GetProcessMemoryInfo", "ptr", hProcess, "ptr", &PMC_EX, "uint", size))
                     return (ErrorLevel := 2) & 0, DllCall("CloseHandle", "ptr", hProcess)
             DllCall("CloseHandle", "ptr", hProcess)
-            return Round(NumGet(PMC_EX, 8 + A_PtrSize * 8, "uptr") / 1024**2, 2)
+            return Round(NumGet(PMC_EX, 8 + A_PtrSize, "uptr") / 1024**2, 2)
         }
         return (ErrorLevel := 1) & 0
     }
 
+    UpdateLog(var, msg, logAsObject := False)
+    {
+        static lastCallTime := 0
+        static delayTime := 10000
+        FormatTime, ts,, yyyy-MM-dd HH:mm:ss
+        FormatTime, ts2,, yyyy-MM-dd HH.mm.ss
+        header := ts . " [info] [" . var . "] "
+        logFile := A_LineFile . "\..\..\Logging\" . ts2 . " debug_log.json"
+        if (this.logger[var] == "")
+            this.logger[var] := {}
+        ; logger[var].push(header . msg)
+        if(logAsObject)
+            this.logger[var].push(header, msg)
+        else
+            this.logger.push(header . msg)
+        if(A_TickCount - lastCallTime > delayTime)
+            this.WriteObjectToJSON(logFile, this.logger)
+            , lastCallTime := A_TickCount, this.logger := {}
+    }
+    
+    Log1(level, msg) {
+    FormatTime, ts,, yyyy-MM-dd HH:mm:ss
+    logFile := A_ScriptDir "\debug_log.txt"
+    FileAppend, [%ts%] [%level%] %msg%`n, %logFile%
+    } 
 }

@@ -16,6 +16,7 @@ class GameObjectStructure
     _CollectionValType := ""
     BasePtr := {}
     LastDictVersion := ""
+    LastDictVersionByKey := {}
     StartAtLastPos := False
     LastDictIndex := {}
     DictionaryObject := {}
@@ -44,7 +45,7 @@ class GameObjectStructure
                                 , "UFloat": 0x4, "Double": 0x8, "Char": 0x4, "UTF-16" : 0x8, "Quad": 0x10 }
     ; Creates a new instance of GameObjectStructure
      __new(baseStructureOrFullOffsets, ValueType := "Int", appendedOffsets*)
-    {
+    {       
         this.ValueType := ValueType
         if(appendedOffsets[1]) ; Copy base and add offset
         {
@@ -70,62 +71,41 @@ class GameObjectStructure
         ; Properties are not found using HasKey().
         ; size attempts to find choose the offset for the size of the collection and return a GameObjectStructure that has that offset included.
         if(key == "" OR if key == "_ArrayDimensions")
-            return ""
-        if(key == "size")
-            return sizeObj := this.CreateSizeObject()
-        if (key == "__version") 
-            return sizeObj := this.CreateVersionObject()
+            return returnObj := this.ReturnGameObject("")
+        else if(key == "size")
+            return returnObj := this.ReturnGameObject(this.CreateSizeObject())
+        else if (key == "__version") 
+            return returnObj := this.ReturnGameObject(this.CreateVersionObject())
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
-        if(this.ValueType == "Dict")
-            return this.GetDictionaryObject(key, index)
+        if(this.ValueType == "Dict" OR this.ValueType == "SortedDict")
+            return returnObj := this.ReturnGameObject(this.GetDictionaryObject(key, index)) 
         ; Special case for List/Stack/Queue collections in a gameobject.
-        if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
-        {
-            resultObject := this.HandleListStackQueue(key)
-            if (resultObject != "")
-                return resultObject
+        else if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue") {
+            if ((resultObject := this.HandleListStackQueue(key)) != "")
+                return returnObj := this.ReturnGameObject(resultObject)
         }
-        if(this.ValueType == "HashSet")
-        {
+        else if (this.ValueType == "HashSet") {
             if key is not integer ; Don't try to create key objects when keys are invalid
-                return "" ; ReadIsLocked
-            offset := this.CalculateHashSetOffset(key) + 0
-            collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC
-            this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
+                return returnObj := this.ReturnGameObject("")
+            this.UpdateCollectionOffsets(key, _MemoryManager.Is64Bit ? 0x18 : 0xC, this.CalculateHashSetOffset(key) + 0)
+            return returnObj := this.ReturnGameObject(this[key])
         }
         else if key is number
+        {
             this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
-        else
-            return ""
-        GameObjectStructure.ReadIsLocked := False
-        return this[key]
+            return returnObj := this.ReturnGameObject(this[key])
+        }
+        return returnObj := this.ReturnGameObject("")
+        
     }
 
-    GetVersion()
-    {
+    GetVersion(){
         Return "v3.4.1, 2025-08-11"
     }
 
     ; Returns the full offsets of this object after BaseAddress.
-    GetOffsets()
-    {
+    GetOffsets(){
         return this.FullOffsets
-    }
-
-    ; Function makes copy of the current object and its lists but not a full deep copy.
-    QuickClone()
-    {
-        var := new GameObjectStructure(this.FullOffsets)
-        var.BasePtr := this.BasePtr
-        var.ValueType := this.ValueType
-        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
-        ; var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
-        var.Offset := this.Offset
-        var._CollectionKeyType := this._CollectionKeyType
-        var._CollectionValType := this._CollectionValType
-        if (this._ArrayDimensions)
-            var._ArrayDimensions := this._ArrayDimensions
-        return var
     }
 
     CreateSizeObject()
@@ -141,6 +121,8 @@ class GameObjectStructure
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x28 : 0x0)
         else if(this.ValueType == "Dict")
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x40 : 0x20)
+        else if(this.ValueType == "SortedDict")
+            sizeObject.FullOffsets.Push(0x20, 0x30) ; no 32 bit set yet
         else if(this.ValueType == "HashSet")
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x30 : 0x18)
         else 
@@ -164,6 +146,8 @@ class GameObjectStructure
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x28 : 0x0)
         else if(this.ValueType == "Dict")
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x4C : 0x0)
+        else if(this.ValueType == "SortedDict")
+            sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? (0x20, 0x3) : (0x10, 0x1B))
         else if(this.ValueType == "HashSet")
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x104 : 0x0)
         else ; Unsupported ValueType
@@ -179,8 +163,7 @@ class GameObjectStructure
             offset := this.CalculateOffset(key) + 0
             collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x10 : 0x8
             this.UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
-            GameObjectStructure.ReadIsLocked := False                                       ; Reset read lock before returning   
-            return this[key]
+            return returnObj := this.ReturnGameObject(this[key]) 
         }
         else if (key == "_items")
         {
@@ -188,76 +171,89 @@ class GameObjectStructure
             _items := this.StableClone()
             _items.FullOffsets.Push(collectionEntriesOffset)
             _items.ValueType := _MemoryManager.Is64Bit ? "Int64" : "UInt"
-            GameObjectStructure.ReadIsLocked := False                                       ; Reset read lock before returning   
-            return _items
+            return returnObj := this.ReturnGameObject(_items)
         }
-        GameObjectStructure.ReadIsLocked := False                                           ; Reset read lock before returning   
-        return ""
+        return returnObj := this.ReturnGameObject("")
     }
 
     GetDictionaryObject(key, index)
     {
         GameObjectStructure.ReadIsLocked := True                                            ; Lock gameobject reads while a dictionary is being built
         if(IsObject(key) AND key.Count() == 2)
-        {
-            index := key[2]
-            key := key[1]
-        }
+            key := key[1],  index := key[2]
         isUnstable := GameObjectStructure.SystemTypes[this._CollectionKeyType] == ""        ; Check if Key value is not a known type - Unstable is a dictionary of pointers that can change k,v pairs often.
         if(isUnstable AND this.DoesCollectionNeedReset())
             this.ResetCollection()
         if (key == "key")
         {
-            collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC                  ; Offset for the entries (key/value location) of the collection
-            offset := this.CalculateDictOffset(["key",index]) + 0                           ; Expected offset to the key for the <index>th entry.
-            tempObj := this.Clone()                                                         ; Deep copy of this object.
-            tempObj.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType]   ; Update value type if it is known
-            if (tempObj.ValueType == "")
-                tempObj.ValueType := _MemoryManager.Is64Bit ? "Int64" : "Int"               ; If there is no lookup value type then assume type is a pointer
-            offsetInsertLoc := tempObj.FullOffsets.Count() + 1,                             ; Current offsets count
-            tempObj.FullOffsets.Push(collectionEntriesOffset, offset)                       ; Add the offsets to this object so the .Read() will give the value of the key
-            this.UpdateChildrenWithFullOffsets(tempObj, offsetInsertLoc, [collectionEntriesOffset, offset])  ; Update all sub-objects with their missing collection/item offsets.
-            GameObjectStructure.ReadIsLocked := False                                       ; Reset read lock before returning
-            return tempObj                                                                  ; return temporary key object
+            offset := this.CalculateDictOffset(["key",index]) + 0                         ; Expected offset to the key for the <index>th entry.
+            keyReadObj := this.GetKeyObj(index)
+            offsetInsertLoc := keyReadObj.FullOffsets.Count() + 1,                          ; Current offsets count
+            this.UpdateChildrenWithFullOffsets(keyReadObj, offsetInsertLoc, [_MemoryManager.Is64Bit ? 0x18 : 0xC, offset])  ; Update all sub-objects with their missing collection/item offsets.
+            return returnObj := this.ReturnGameObject(keyReadObj)                                               ; return temporary key object
         }
         else if (key == "value")
         {
-            collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC                  ; Offset for the entries (key/value location) of the collection.
-            offset := this.CalculateDictOffset(["value",index]) + 0                         ; Expected offset to the key for the <index>th entry.
-            keyOffset := this.CalculateDictOffset(["key",index]) + 0                        ; Expected offset to the value for the <index>th entry.
-            keyReadObject := this.QuickClone()                                                  ; temp object for lookup
-            keyReadObject.FullOffsets.Push(collectionEntriesOffset, keyOffset)                  ; add offsets for key
-            keyReadObject.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType] ; Update key's value type if it is known
-            GameObjectStructure.ReadIsLocked := False                                           ; Disable lock before read
-            if (keyReadObject.ValueType == "")
-                key := keyReadObject.Read(_MemoryManager.Is64Bit ? "Int64" : "Int")         ; If there is no lookup value type then assume type is a pointer
-            else
-                key := keyReadObject.Read()                                                 ; Retrieve the value of the key
+            offset := this.CalculateDictOffset(["value",index]) + 0                           ; Expected offset to the key for the <index>th entry.
+            keyReadObj := this.GetKeyObj(index)
+            GameObjectStructure.ReadIsLocked := False                                       ; Disable lock before read
+            key := keyReadObj.Read()
             if(index == this.LastDictIndex[key])                                            ; Use previously created object if it is still being used.
-                return this.DictionaryObject[key]                                           ; Key value is not a known type which means the key is likely a pointer and subject to unpredictable changes. (Do not cache these dictionary lookups)
+                return this.DictionaryObject[key]                                           ; Return cached key
+            else
+                this.DictionaryObject[key] := ""                                            ; Clear cached key if it exists.
             GameObjectStructure.ReadIsLocked := True                                        ; Enable Lock before building entry
-            this.BuildDictionaryEntry(key, index, collectionEntriesOffset, offset) ; Build a dictionary entry for this key.
-            GameObjectStructure.ReadIsLocked := False                                       ; Reset read lock before returning            
-            return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
+            this.BuildDictionaryEntry(key, index, _MemoryManager.Is64Bit ? 0x18 : 0xC, offset)          ; Build a dictionary entry for this key.
+            return returnObj := this.ReturnGameObject(this.DictionaryObject[key])                               ; return the temporary value object with access to all objects it has access to.
         }
         else
         {
             ; TODO: Look into feasibility of using same dictionary hash function to look up keys. (Requires DLL call?) Current method is O(n) instead of O(1)
+            if(this.LastDictVersionByKey[key] != "" AND this.__version.Read() == this.LastDictVersionByKey[key] )                    ; Use previously created object if it is still being used.
+                return returnObj := this.ReturnGameObject(this.DictionaryObject[key]) 
             keyIndex := this.GetDictIndexOfKeyQuick(key)                                    ; Look up what index has the key entry equal to the key passed in.
             if(keyIndex < 0)                                                                ; Failed to find index, do not create an entry.
-                return ((GameObjectStructure.ReadIsLocked := False) ? "" : "")              ; Reset read lock before returning nothing
-            if(keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
-            {
-                GameObjectStructure.ReadIsLocked := False                                   ; Reset read lock before returning   
-                return this.DictionaryObject[key]
-            }
-            collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC                  ; Offset for the entries (key/value location) of the collection.
-            offset := this.CalculateDictOffset(["value",keyIndex]) + 0                      ; Expected offset to the value corresponding to the key.
-            this.BuildDictionaryEntry(key, keyIndex, collectionEntriesOffset, offset)       ; Build a dictionary entry for this key.
-            GameObjectStructure.ReadIsLocked := False                                       ; Reset read lock before returning   
-            return this.DictionaryObject[key]                                               ; return the temporary value object with access to all objects it has access to.
+                return returnObj := this.ReturnGameObject("")                               ; Reset read lock before returning nothing
+            if(keyIndex != "" AND keyIndex == this.LastDictIndex[key])                                         ; Use previously created object if it is still being used.
+                return returnObj := this.ReturnGameObject(this.DictionaryObject[key])       ; Return cached key
+            else
+                this.DictionaryObject[key] := ""  
         }
+        return returnObj := this.ReturnGameObject("")
+    }
+
+    GetKeyObj(index)
+    {
+        collectionEntriesOffset := _MemoryManager.Is64Bit ? 0x18 : 0xC                  ; Offset for the entries (key/value location) of the collection.
+        keyOffset := this.CalculateDictOffset(["key",index]) + 0                        ; Expected offset to the value for the <index>th entry.
+        keyReadObject := this.QuickClone()                                                  ; temp object for lookup
+        keyReadObject.FullOffsets.Push(collectionEntriesOffset, keyOffset)                  ; add offsets for key
+        keyReadObject.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType] ; Update key's value type if it is known
+        if (keyReadObject.ValueType == "")                                              ; Key value is not a known type which means the key is likely a pointer and subject to unpredictable changes. (Do not cache these dictionary lookups)
+            keyReadObject.ValueType := _MemoryManager.Is64Bit ? "Int64" : "Int"  
+        return keyReadObject
+    }
+
+    ReturnGameObject(object)
+    {
         GameObjectStructure.ReadIsLocked := False                                           ; Reset read lock before returning if needed
+        return object
+    }
+
+    ; Function makes copy of the current object and its lists but not a full deep copy.
+    QuickClone()
+    {
+        var := new GameObjectStructure(this.FullOffsets)
+        var.BasePtr := this.BasePtr.Clone()
+        var.ValueType := this.ValueType
+        ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
+        ; var.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.FullOffsets)
+        var.Offset := this.Offset
+        var._CollectionKeyType := this._CollectionKeyType
+        var._CollectionValType := this._CollectionValType
+        if (this._ArrayDimensions)
+            var._ArrayDimensions := this._ArrayDimensions
+        return var
     }
 
     ; Function makes a deep copy of the current object.
@@ -278,10 +274,10 @@ class GameObjectStructure
     }
 
     ; For cloning without copying dynamically added items to the clone. Ignores objects with IsAddedIndex = true
-    StableClone(key := "")
+    StableClone()
     {
         var := new GameObjectStructure(this.FullOffsets)
-        ; Iterate all the elements of the game object structure and clone time
+        ; Iterate all the elements of the game object structure and clone them
         for k,v in this
         {
             if(isObject(v) AND k =="DictionaryObject") ; Do not copy self referential dictionary objects
@@ -302,13 +298,15 @@ class GameObjectStructure
     ; Build a dictonary entry for the key.
     BuildDictionaryEntry(key, keyindex, collectionEntriesOffset, offset)
     {
-        this.DictionaryObject.Delete(key)                                              ; Delete key object before building new ones.
+        this.DictionaryObject[key] := ""                                               ; Delete key object before building new ones.
+        this.DictionaryObject.Delete(key)
         this.DictionaryObject[key] := this.Clone()                                     ; Deep copy of this object.
-        this.LastDictIndex[key] := keyIndex                                        ; Creating new index for key; remember this index.
+        this.LastDictIndex[key] := keyIndex                                            ; Creating new index for key; remember this index.
         this.DictionaryObject[key].IsAddedIndex := true                                ; Stable clones won't copy this object
         offsetInsertLoc := this.DictionaryObject[key].FullOffsets.Count() + 1,         ; Current offsets count.
         this.DictionaryObject[key].FullOffsets.Push(collectionEntriesOffset, offset)   ; Add the offsets to this object so the .Read() will give the value of the value.
         this.DictionaryObject[key].ValueType := GameObjectStructure.SystemTypes[this._CollectionValType] ? GameObjectStructure.SystemTypes[this._CollectionValType] : this.DictionaryObject[key].ValueType
+        this.LastDictVersionByKey[key] := this.__version.Read()
         ; DEBUG: Uncomment following line to enable a readable offset string when debugging GameObjectStructure Offsets
         ; this.DictionaryObject[key].FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(this.DictionaryObject[key].FullOffsets)
         ; this.DictionaryObject[key].GSOName := key                                     
@@ -318,6 +316,7 @@ class GameObjectStructure
     ; Creates a gameobject at key, updates its offsets, copies the other values in the object to key object, propagates changes down chain of objects under key. 
     UpdateCollectionOffsets(key, collectionEntriesOffset, offset)
     {
+        this[key] := ""
         this[key] := this.StableClone()
         this[key].IsAddedIndex := true
         if (this._ArrayDimensions)
@@ -355,10 +354,8 @@ class GameObjectStructure
                 ; v.FullOffsetsHexString := ArrFnc.GetHexFormattedArrayString(v.FullOffsets)
             }
             else if (k == "DictionaryObject")
-            {
                 for x,y in v
                     y.UpdateChildrenWithFullOffsets(y, insertLoc, offset)
-            }
         }
     }
 
@@ -379,7 +376,7 @@ class GameObjectStructure
             offsets.Push(_MemoryManager.Is64Bit ? 0x14 : 0xC)
             var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, valueType, offsets*)
         }
-        else if (valueType == "List" OR valueType == "Dict" OR valueType == "HashSet" OR valueType == "Stack"  OR valueType == "Queue") ; custom ValueTypes not in classMemory.ahk
+        else if (valueType == "List" OR valueType == "Dict" OR valueType == "SortedDict" OR valueType == "HashSet" OR valueType == "Stack"  OR valueType == "Queue") ; custom ValueTypes not in classMemory.ahk
         {
             var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }
@@ -536,42 +533,45 @@ class GameObjectStructure
     ; Iterates a dictionary collection looking for the matching key value
     GetDictIndexOfKeyQuick(key)
     {
-        startAtLastPos := this.StartAtLastPos
         wasLocked := GameObjectStructure.ReadIsLocked
-        GameObjectStructure.ReadIsLocked := False                                           ; Disable lock before read
+        GameObjectStructure.ReadIsLocked := False                                               ; Disable lock before read
         dictCount := this.size.Read()
         GameObjectStructure.ReadIsLocked := wasLocked                                           ; Reset read lock after read
-        ; skip attempts on unreasonable dictionary sizes.
-        if (dictCount < 0 OR dictCount > 32000)
+        if (dictCount < 0 OR dictCount > 32000)                                                 ; skip attempts on unreasonable dictionary sizes.
             return ""
         currIndex := Array()
         currIndex[1] := "Key"
         indexReadObject := new GameObjectStructure(this.FullOffsets)
         indexReadObject.BasePtr := this.BasePtr
         indexReadObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x18 : 0xC) ; Collection Items offset for Dictionaries
-        if key is not integer ; test if key is int or string or other?
-            indexReadObject.ValueType := "UTF-16" ; Read() will use default if no value set
+        indexReadObject.ValueType := GameObjectStructure.SystemTypes[this._CollectionKeyType] ? GameObjectStructure.SystemTypes[this._CollectionKeyType] : "Int64"
         loop, % dictCount
         {
             if (A_Index > 1)
                 indexReadObject.FullOffsets.Pop()                                               ; pop last index offset that was added in loop
-            if (startAtLastPos)
+            if (this.StartAtLastPos)
                 currIndex[2] := position := Mod(A_Index + GameObjectStructure.LastDictPos, dictCount + 1)  ; Continue lookup from last location searched. Useful for ordered dictionaries.
             else
                 currIndex[2] := position := A_Index - 1
-            indexReadObject.FullOffsets.Push(this.CalculateDictOffset(currIndex))               ; Index Offset
-            wasLocked := GameObjectStructure.ReadIsLocked
+            currIndexOffset := this.CalculateDictOffset(currIndex)                              ; Index offset
+            indexReadObject.FullOffsets.Push(currIndexOffset)
             GameObjectStructure.ReadIsLocked := False                                           ; Disable lock before read
             currKey := indexReadObject.Read()
-            GameObjectStructure.ReadIsLocked := wasLocked                                       ; Reset read lock after read
+            GameObjectStructure.ReadIsLocked := wasLocked                                       ; Reset read lock after read           
+            ; indexReadObject := ""
             if (currKey == key)
             {
-                this["key", position] ; Build relevant dictionary object fully.
-                GameObjectStructure.LastDictPos := position
+                indexReadObject := ""
+                valueOffset := this.CalculateDictOffset(["value",position]) + 0
+                this.BuildDictionaryEntry(key, position, _MemoryManager.Is64Bit ? 0x18 : 0xC, valueOffset)          ; fully Build Dictionary object.
+                ; this.UpdateChildrenWithFullOffsets(this,this.DictionaryObject[key].FullOffsets.Count(),[valueOffset])
+                ; this.DictionaryObject[key].FullOffsets[this.DictionaryObject[key].FullOffsets.Count()] := valueOffset ; store the value's offset rather than the key's offset.
+                this.LastDictVersionByKey[key] := this.__version.Read() 
+                GameObjectStructure.LastDictPos := position                                     ; Save last position used for this dict entry, save last place in dictionary reads for faster sequential dictionary lookups.
                 return position
             }
         }
-        GameObjectStructure.LastDictPos := 0
+        GameObjectStructure.LastDictPos := 0                
         return -1
     } 
 
@@ -645,7 +645,7 @@ class GameObjectStructure
             if(!IsObject(v) OR !ObjGetBase(v).__Class == "GameObjectStructure" OR k == "BasePtr")
                 continue
             if(v.IsAddedIndex)
-                this.Delete(k)
+                this[k] := "", this.Delete(k)
             else
                 this[k].ResetCollections()
         }
