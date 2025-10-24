@@ -287,9 +287,9 @@ class IC_MemoryFunctions_Class
 
     ReadChampLvlByID(ChampID:= 0){
         val := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].level.Read()
-        if !val
+        if (val == "")
             val := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].Level_k__BackingField.Read()
-        if !val
+        if (val == "")
             val := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)]._level.Read()
         return val
     }
@@ -300,6 +300,11 @@ class IC_MemoryFunctions_Class
 
     ReadChampNameByID(ChampID := 0){
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].def.name.Read()
+    }
+
+    ; Will not read if the box is off the screen.
+    ReadSelectedChampIDBySeat(seat){
+        return this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.def.ID.Read()
     }
 
     ;=============================
@@ -747,18 +752,14 @@ class IC_MemoryFunctions_Class
         formation := Array()
         loop, %size%
         {
-            heroID := this.GameManager.game.gameInstances[this.GameInstance].Controller.formation.slots[A_index - 1].hero.def.ID.Read()
-            formation.Push(heroID > 0 ? heroID : -1)
+            heroID := this.ReadChampIDBySlot(A_Index - 1)
+            formation.Push( heroID > 0 ? heroID : -1)
         }
         return formation
     }
 
     ReadBoughtLastUpgradeBySeat( seat := 1){
-        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel
-        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel.Count.Read()
-         ; TODO: Dig into why this hashset's .size calc isn't correct and needs these offsets instead. Is it something to do with extending hashset instead of being hashset?
-        upgradesGroup.FullOffsets.Push(0x20, 0x30)
-        upgradeGroupsSize := upgradesGroup.Read()
+        upgradesGroupSize := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel.size.Read() ; SortedDictionary
         purchasedSize :=  this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.PurchasedUpgrades.size.Read()
         if (purchasedSize > 0 AND upgradeGroupsSize > 0)
             return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
