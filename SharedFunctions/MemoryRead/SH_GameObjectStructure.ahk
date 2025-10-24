@@ -77,22 +77,26 @@ class GameObjectStructure
         else if (key == "__version") 
             return returnObj := this.ReturnGameObject(this.CreateVersionObject())
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
-        if(this.ValueType == "Dict")
+        if(this.ValueType == "Dict" OR this.ValueType == "SortedDict")
             return returnObj := this.ReturnGameObject(this.GetDictionaryObject(key, index)) 
         ; Special case for List/Stack/Queue collections in a gameobject.
-        else if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue")
+        else if(this.ValueType == "List" OR this.ValueType == "Stack" OR this.ValueType == "Queue") {
             if ((resultObject := this.HandleListStackQueue(key)) != "")
                 return returnObj := this.ReturnGameObject(resultObject)
+        }
         else if (this.ValueType == "HashSet") {
             if key is not integer ; Don't try to create key objects when keys are invalid
                 return returnObj := this.ReturnGameObject("")
             this.UpdateCollectionOffsets(key, _MemoryManager.Is64Bit ? 0x18 : 0xC, this.CalculateHashSetOffset(key) + 0)
+            return returnObj := this.ReturnGameObject(this[key])
         }
-        if key is number
+        else if key is number
+        {
             this.UpdateCollectionOffsets(key, "", (this.CalculateArrayOffset(key,, byteSizeOverride) + 0))
-        else
-            return returnObj := this.ReturnGameObject("")
-        return returnObj := this.ReturnGameObject(this[key])
+            return returnObj := this.ReturnGameObject(this[key])
+        }
+        return returnObj := this.ReturnGameObject("")
+        
     }
 
     GetVersion(){
@@ -117,6 +121,8 @@ class GameObjectStructure
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x28 : 0x0)
         else if(this.ValueType == "Dict")
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x40 : 0x20)
+        else if(this.ValueType == "SortedDict")
+            sizeObject.FullOffsets.Push(0x20, 0x30) ; no 32 bit set yet
         else if(this.ValueType == "HashSet")
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x30 : 0x18)
         else 
@@ -140,6 +146,8 @@ class GameObjectStructure
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x28 : 0x0)
         else if(this.ValueType == "Dict")
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x4C : 0x0)
+        else if(this.ValueType == "SortedDict")
+            sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? (0x20, 0x3) : (0x10, 0x1B))
         else if(this.ValueType == "HashSet")
             versionObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x104 : 0x0)
         else ; Unsupported ValueType
@@ -163,7 +171,7 @@ class GameObjectStructure
             _items := this.StableClone()
             _items.FullOffsets.Push(collectionEntriesOffset)
             _items.ValueType := _MemoryManager.Is64Bit ? "Int64" : "UInt"
-            this.ReturnGameObject(_items)
+            return returnObj := this.ReturnGameObject(_items)
         }
         return returnObj := this.ReturnGameObject("")
     }
@@ -368,7 +376,7 @@ class GameObjectStructure
             offsets.Push(_MemoryManager.Is64Bit ? 0x14 : 0xC)
             var := _MemoryManager.instance.readstring(baseAddress, bytes := 0, valueType, offsets*)
         }
-        else if (valueType == "List" OR valueType == "Dict" OR valueType == "HashSet" OR valueType == "Stack"  OR valueType == "Queue") ; custom ValueTypes not in classMemory.ahk
+        else if (valueType == "List" OR valueType == "Dict" OR valueType == "SortedDict" OR valueType == "HashSet" OR valueType == "Stack"  OR valueType == "Queue") ; custom ValueTypes not in classMemory.ahk
         {
             var := _MemoryManager.instance.read(baseAddress, "Int", (this.GetOffsets())*)
         }

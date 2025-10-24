@@ -71,7 +71,7 @@ this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.up
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.upgradesByUpgradeId.Def.defaultSpecGraphic := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.upgradesByUpgradeId.Def,"Int", [0x84])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.PurchasedUpgrades := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler,"HashSet", [0x40])
 this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.PurchasedUpgrades._CollectionKeyType := "System.Int32"
-this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.upgradeGroupsByLevel := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler,"Int", [0x28])
+this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler.upgradeGroupsByLevel := New GameObjectStructure(this.game.gameInstances.Controller.userData.HeroHandler.heroes.upgradeHandler,"SortedDict", [0x28])
 this.game.gameInstances.Controller.userData.inited := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Char", [0x2d0])
 this.game.gameInstances.Controller.userData.LootHandler := New GameObjectStructure(this.game.gameInstances.Controller.userData,"Int", [0x18])
 this.game.gameInstances.Controller.userData.LootHandler.LootByHeroID := New GameObjectStructure(this.game.gameInstances.Controller.userData.LootHandler,"Dict", [0x28])
@@ -298,7 +298,7 @@ this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler.upgradesByUpgradeId := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler,"Dict", [0x20])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler.upgradesByUpgradeId._CollectionKeyType := "System.Int32"
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler.upgradesByUpgradeId._CollectionValType := "CrusadersGame.GameScreen.HeroUpgrade"
-this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler.upgradeGroupsByLevel := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler,"Int", [0x28])
+this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler.upgradeGroupsByLevel := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.hero.upgradeHandler,"SortedDict", [0x28])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.levelUpInfoHandler.OverrideLevelUpAmount := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.activeBoxes.levelUpInfoHandler,"Int", [0x50])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat := New GameObjectStructure(this.game.gameInstances.Screen.uiController.bottomBar.heroPanel,"Dict", [0x3c8])
 this.game.gameInstances.Screen.uiController.bottomBar.heroPanel.heroBoxsBySeat._CollectionKeyType := "System.Int32"
