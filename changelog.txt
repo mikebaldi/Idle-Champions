@@ -1,4 +1,7 @@
-
+October 24, 2025
+    Updated stats to flex to larger fonts. (Emmote's edit)
+    Refactored Game Object, again. - Memory Leaks fixed?
+    Added memory read from LevelUp. 
 
 October 23, 2025
     Removed NoCtlKeypress setting.
