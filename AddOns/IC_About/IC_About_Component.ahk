@@ -240,14 +240,19 @@ class IC_About_Component
 
     GetMostRecentVersion(remoteURL)
     {
+        static skipVersionCheck := False
         if(this.ServerCaller == "")
             this.ServerCaller := new SH_ServerCalls()
-        if(InStr(remoteURL, "https://github.com"))
+        if(InStr(remoteURL, "https://github.com") AND !skipVersionCheck)
         {
             remoteURL := StrReplace(remoteURL, "https://github.com", "https://raw.githubusercontent.com")
             remoteURL := StrReplace(remoteURL, "/tree/", "/refs/heads/")
             remoteURL := remoteURL . "/Addon.json"
             addonInfo := this.ServerCaller.BasicServerCall(remoteURL) 
+            if (addonInfo.Extra != ""){
+                MsgBox, Error loading addon info. Continuing without checking for updates.
+                skipVersionCheck := True
+            }
             return addonInfo["Version"]
         }
         else

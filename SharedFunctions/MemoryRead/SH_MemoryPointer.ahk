@@ -75,7 +75,7 @@ class SH_MemoryPointer
         FileDelete, % A_LineFile . "\..\ObjectsLog.json"
         for k,v in this
         {
-            if(IsObject(v) AND ObjGetBase(v).__Class == "GameObjectStructure")
+            if(IsObject(v) AND ObjGetBase(v).__Class == "SH_MemoryPointer")
                 v.BuildNames(This.Base.Base.__Class . ".")
         }
     }
