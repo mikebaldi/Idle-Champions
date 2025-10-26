@@ -2,8 +2,22 @@
 class IC_SharedData_Class
 {
     ; Note stats vs States. Confusing, but intended.
+
+
+        
+    LoopString ; set as a property to be able to overwrite and log loopString in the future.
+    {
+        get
+        {
+            return this._loopString
+        }
+        set
+        {
+            this._loopString := val
+        }
+    }
+
     StackFailStats := new StackFailStates
-    LoopString := ""
     TotalBossesHit := 0
     BossesHitThisRun := 0
     SwapsMadeThisRun := 0
