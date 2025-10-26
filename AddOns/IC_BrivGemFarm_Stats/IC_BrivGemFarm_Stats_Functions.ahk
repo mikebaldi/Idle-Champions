@@ -167,7 +167,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vFastRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Slowest Run Time:
         Gui, ICScriptHub:Add, Text, vSlowRunTimeID x+2 w150,
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Avg. Run Time:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Average Run Time:
         Gui, ICScriptHub:Add, Text, vAvgRunTimeID x+2 w150,
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+10 w%labelWidth% +Right, Fail Run Time:
         Gui, ICScriptHub:Add, Text, vFailRunTimeID x+2 w150,
@@ -192,7 +192,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Add, Text, vSilversOpenedID x+2 w%chestsWidth% +Right, 
         Gui, ICScriptHub:Add, Text, vSilversBoughtID x+2 w%chestsWidth% +Right, 
         Gui, ICScriptHub:Add, Text, vSilversDroppedID x+2 w%chestsWidth% +Right, 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Golds Chests:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2 w%labelWidth% +Right, Gold Chests:
         Gui, ICScriptHub:Add, Text, vGoldsOpenedID x+2 w%chestsWidth% +Right, 
         Gui, ICScriptHub:Add, Text, vGoldsBoughtID x+2 w%chestsWidth% +Right, 
         Gui, ICScriptHub:Add, Text, vGoldsDroppedID x+2 w%chestsWidth% +Right, 
@@ -247,7 +247,7 @@ class IC_BrivGemFarm_Stats_Component
         Gui, ICScriptHub:Font, w700
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%g_DownAlign% w450 h140 vBrivGemFarmStatsID, BrivGemFarm Stats:
         Gui, ICScriptHub:Font, w400 
-        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, PlayServer:
+        Gui, ICScriptHub:Add, Text, x%g_LeftAlign% yp+25, Game Server:
         Gui, ICScriptHub:Add, Text, vStatsPlayServerID x+2 w200, 
         Gui, ICScriptHub:Add, Text, x%g_LeftAlign% y+2, Lowest Haste after Reset:
         Gui, ICScriptHub:Add, Text, vStatsLowestHasteID x+2 w200, 
@@ -578,7 +578,7 @@ class IC_BrivGemFarm_Stats_Component
             textColor := Format("{:#x}", GUIFunctions.CurrentTheme["HeaderTextColor"])
             GuiControl, ICScriptHub: +c%textColor%, LoopID,
             GuiControl, ICScriptHub:, LoopID, % SharedRunData.LoopString
-            GuiControl, ICScriptHub:, StatsPlayServerID, % SharedRunData.PlayServer
+            GuiControl, ICScriptHub:, StatsPlayServerID, % (SharedRunData.PlayServer == "ps22" && g_SF.Memory.ReadWebRoot() == "" ? "Unknown" : SharedRunData.PlayServer)
             if (SharedRunData.LowestHasteStacks  AND SharedRunData.LowestHasteStacks < this.LastLowestHasteStacks)
             {
                 this.LastLowestHasteStacks := SharedRunData.LowestHasteStacks
@@ -689,7 +689,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, GoldsBoughtID, % this.DecideScientific(this.SharedRunData.PurchasedGoldChests)
             GuiControl, ICScriptHub:, GoldsDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
-            GuiControl, ICScriptHub:, StatsPlayServerID, % this.SharedRunData.PlayServer
+            GuiControl, ICScriptHub:, StatsPlayServerID, % (this.SharedRunData.PlayServer == "ps22" && g_SF.Memory.ReadWebRoot() == "" ? "Unknown" : this.SharedRunData.PlayServer)
             GuiControl, ICScriptHub:, StatsLowestHasteID, % this.SharedRunData.LowestHasteStacks == 9999999 ? "" : this.SharedRunData.LowestHasteStacks
             GuiControl, ICScriptHub:, BossesHitThisRunID, % this.SharedRunData.BossesHitThisRun
             GuiControl, ICScriptHub:, TotalBossesHitID, % this.SharedRunData.TotalBossesHit
