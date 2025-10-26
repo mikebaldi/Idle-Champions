@@ -11,9 +11,10 @@ class IC_SharedData_Class
         {
             return this._loopString
         }
+
         set
         {
-            this._loopString := val
+            this._loopString := value
         }
     }
 
