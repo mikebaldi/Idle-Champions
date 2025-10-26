@@ -250,18 +250,21 @@ class BrivFunctions
 
     ; Predicts the number of Briv haste stacks after the next reset.
     ; After resetting, Briv's Steelborne stacks are added to the remaining Haste stacks.
-    PredictStacks(addSBStacks := true, refreshCache := false, forcedReset := False )
+    PredictStacks(addSBStacks := true, refreshCache := true, forcedReset := False )
     {
         static skipQ
         static skipE
+        static lastResetsCount := 0
 
         preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
         if (IsObject(IC_BrivGemFarm_LevelUp_Component) || IsObject(IC_BrivGemFarm_LevelUp_Class)) ; levelup addon controls briv leveling.
             brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] ; min zone for metalborn
         else
             brivMinlevelArea := 1
-        if (refreshCache || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
+        resetCount := g_SF.Memory.ReadResetsCount() ; For updating at least once each run.
+        if ((refreshCache || resetCount > lastResetsCount) || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
             skipQ := (this.GetBrivSkipValues(1))[1], skipE := (this.GetBrivSkipValues(3))[1]
+        lastResetCount := resetCount
         modronReset := g_SF.Memory.GetModronResetArea()
         sbStacks := g_SF.Memory.ReadSBStacks()
         currentZone := g_SF.Memory.ReadCurrentZone()
