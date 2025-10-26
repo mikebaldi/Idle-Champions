@@ -297,5 +297,22 @@ class SH_SharedFunctions
     FormatTime, ts,, yyyy-MM-dd HH:mm:ss
     logFile := A_ScriptDir "\debug_log.txt"
     FileAppend, [%ts%] [%level%] %msg%`n, %logFile%
-    } 
+    }
+}
+
+; Class used to test if time taken has been completed.
+class SH_SharedTimers
+{
+    StartTime := 0
+    ; Starts timer on first call. WIll return True on timed out and false when time is left.
+    IsTimeUp(timeout)
+    {
+        if(this.StartTime == 0)
+            this.StartTime := A_TickCount
+        this.ElapsedTime := A_TickCount - this.StartTime
+        if this.ElapsedTime < timeout
+            return False
+        this.StartTime := 0
+        return True
+    }
 }
