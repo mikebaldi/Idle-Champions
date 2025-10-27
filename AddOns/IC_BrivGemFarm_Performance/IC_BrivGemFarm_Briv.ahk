@@ -18,6 +18,7 @@ class BrivFunctions
     static UnnaturalHasteId := 3452
     static MetalbornId := 3455
     static MinHaste := 48
+    static MetalbornUpgradeLevel := 180
     static BrivSkipConfigByFavorite := []
 
     class BrivSkipConfig ; IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig
@@ -275,6 +276,12 @@ class BrivFunctions
             brivMinlevelArea := actualZone == -1 ? modronReset : actualZone
             if (currentZone < brivMinlevelArea && this.ReadUnnaturalHastePurchased())
                 brivMinlevelArea := currentZone
+            ; Check if upgrade actually exists
+            if (g_SF.Memory.ReadChampLvlByID(this.BrivId) >= this.MetalbornUpgradeLevel && !this.ReadMetalbornPurchased())
+                brivMetalbornArea := modronReset
+            else
+                brivMetalbornArea := brivMinlevelArea
+        }
         resetCount := g_SF.Memory.ReadResetsCount() ; For updating at least once each run.
         refreshConfig := refreshCache || resetCount > lastResetsCount
         skipQ := this.GetBrivSkipConfig(1, refreshConfig).HighestAvailableJump
