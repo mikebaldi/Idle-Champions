@@ -307,9 +307,7 @@ class IC_BrivGemFarm_Component
             GuiControl, ICScriptHub:Choose, ModronTabControl, Stats
             g_SF.ResetServerCall()
             for k,v in g_BrivFarmAddonStartFunctions
-            {
                 v.Call()
-            }
             GuidCreate := ComObjCreate("Scriptlet.TypeLib")
             g_BrivFarm.GemFarmGUID := guid := GuidCreate.Guid
             Run, %A_AhkPath% "%scriptLocation%" "%guid%"
@@ -403,6 +401,13 @@ class IC_BrivGemFarm_Component
         try
         {
             IC_BrivGemFarm_Component.StartComs()
+        }
+        catch ; one retry
+        {
+            try
+            {
+                IC_BrivGemFarm_Component.StartComs()
+            }
         }
         g_SF.Hwnd := WinExist("ahk_exe " . g_userSettings[ "ExeName"])
         g_SF.Memory.OpenProcessReader()

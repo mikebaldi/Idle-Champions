@@ -14,6 +14,7 @@ class IC_BrivGemFarm_Class
     LastResetCount := 0
     ThisRunStart := 0
     IsInModronFormation := True
+    BossKillAttempt := False
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -297,8 +298,8 @@ class IC_BrivGemFarm_Class
     StackFarmSetup()
     {
         g_SharedData.LoopString := "Switching to stack farm formation."
-        if (!g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
-            g_SF.FallBackFromBossZone() ; Boss kill Timeout
+        if (!this.BossKillAttempt AND !g_SF.KillCurrentBoss() ) ; Previously/Alternatively FallBackFromBossZone()
+            this.BossKillAttempt := True, g_SF.FallBackFromBossZone() ; Boss kill Timeout
         inputValues := "{w}" ; Stack farm formation hotkey
         g_SF.DirectedInput(,, inputValues )
         g_SF.WaitForTransition( inputValues )
@@ -345,6 +346,7 @@ class IC_BrivGemFarm_Class
         if (g_SF.ShouldDashWait())
             g_SF.DoDashWait( Max(g_SF.ModronResetZone - g_BrivUserSettings[ "DashWaitBuffer" ], 0) )
         g_SF.ToggleAutoProgress( 1 )
+        this.BossKillAttempt := False
     }
 
     /*  StackRestart - Stack Briv's SteelBones by switching to his formation and restarting the game.
@@ -565,7 +567,7 @@ class IC_BrivGemFarm_Class
         }
 
         g_PreviousZoneStartTime := A_TickCount ; modron reset - prev zone now 1 and new run starting.
-        if (g_SharedData.ScriptStartTime <= 0) ; ignore first run - will almost always be incomplete run. start on 2nd.
+        if (g_SharedData.ScriptStartTime == "" OR g_SharedData.ScriptStartTime <= 0) ; ignore first run - will almost always be incomplete run. start on 2nd.
             g_SharedData.ScriptStartTime := this.ThisRunStart := g_PreviousZoneStartTime
         else
             g_SharedData.LastRunTime := g_PreviousZoneStartTime - This.ThisRunStart
