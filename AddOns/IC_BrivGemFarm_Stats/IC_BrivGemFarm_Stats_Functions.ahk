@@ -40,6 +40,10 @@ class IC_BrivGemFarm_Stats_Component
     CompactTimestamps := false
     w700Height := 0
     w400Height := 0
+    SlowestRun := ""
+    SlowestTime := 0
+    FastestRun := ""
+    FastestTime := 0
     
     SharedRunData[]
     {
@@ -425,10 +429,20 @@ class IC_BrivGemFarm_Stats_Component
     
     UpdateStartLoopStatsGUI()
     {
+        if (this.SlowestTime == 0 || this.PreviousRunTime > this.SlowestTime)
+        {
+            this.SlowestRun := this.TotalRunCount
+            this.SlowestTime := this.PreviousRunTime
+        }
+        if (this.FastestTime == 0 || this.PreviousRunTime < this.FastestTime)
+        {
+            this.FastestRun := this.TotalRunCount
+            this.FastestTime := this.PreviousRunTime
+        }
         if (this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
         {
-            GuiControl, ICScriptHub:, FastRunTimeID, % this.FormatMsec(this.FastRunTime)
-            GuiControl, ICScriptHub:, SlowRunTimeID, % this.FormatMsec(this.SlowRunTime)
+            GuiControl, ICScriptHub:, FastRunTimeID, % this.FormatMsec(this.FastRunTime) . (this.FastestRun != "" ? (" [" . this.FastestRun . "]") : "")
+            GuiControl, ICScriptHub:, SlowRunTimeID, % this.FormatMsec(this.SlowRunTime) . (this.SlowestRun != "" ? (" [" . this.SlowestRun . "]") : "")
         }
         GuiControl, ICScriptHub:, PrevRunTimeID, % this.FormatMsec(this.PreviousRunTime)
         if ( this.StackFail )
@@ -743,6 +757,10 @@ class IC_BrivGemFarm_Stats_Component
         this.GemsTotal := 0
         this.LastLowestHasteRun := ""
         this.LastLowestHasteStacks := 9999999
+        this.SlowestRun := ""
+        this.SlowestTime := 0
+        this.FastestRun := ""
+        this.FastestTime := 0
     }
 
     ;===========================================
