@@ -336,11 +336,32 @@ class IC_BrivGemFarm_Component
 
     Briv_Run_Stop_Clicked()
     {
+        this.StopAddonFunctions()
+        this.StopMiniScriptFunctions()
+        g_BrivFarmComsObj.StopAll()
+        this.UpdateStatus("Closing Gem Farm")
+        try
+        {
+            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
+            SharedRunData.Close()
+        }
+        catch, err1
+        {
+            this.StopClickedOnErr()
+        }
+    }
+
+    StopAddonFunctions()
+    {
         for k,v in g_BrivFarmAddonStopFunctions
         {
             this.UpdateStatus("Stopping Addon Function: " . v)
             v.Call()
         }
+    }
+
+    StopMiniScriptFunctions()
+    {
         for k,v in g_Miniscripts
         {
             this.UpdateStatus("Stopping Miniscript: " . v)
@@ -358,31 +379,26 @@ class IC_BrivGemFarm_Component
                 SharedRunData.Close()
             }
         }
-        g_BrivFarmComsObj.StopAll()
-        this.UpdateStatus("Closing Gem Farm")
+    }
+
+    StopClickedOnErr()
+    {
         try
         {
-            SharedRunData := ComObjActive(g_BrivFarm.GemFarmGUID)
-            SharedRunData.Close()
+            Briv_Connect_Clicked()
+            SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
+            SharedData.Close()
         }
-        catch, err1
+        catch, err2
         {
-            try
-            {
-                Briv_Connect_Clicked()
-                SharedData := ComObjActive(g_BrivFarm.GemFarmGUID)
-                SharedData.Close()
-            }
-            catch, err2
-            {
-                ; When the Close() function is called "0x800706BE - The remote procedure call failed." is thrown even though the function successfully executes.
-                if(err2.Message != "0x800706BE - The remote procedure call failed.")
-                    this.UpdateStatus("Gem Farm not running")
-                else
-                    this.UpdateStatus("Gem Farm Stopped")
-            }
+            ; When the Close() function is called "0x800706BE - The remote procedure call failed." is thrown even though the function successfully executes.
+            if(err2.Message != "0x800706BE - The remote procedure call failed.")
+                this.UpdateStatus("Gem Farm not running")
+            else
+                this.UpdateStatus("Gem Farm Stopped")
         }
     }
+
 
     Briv_Connect_Clicked()
     {   
