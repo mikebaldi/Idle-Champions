@@ -17,6 +17,7 @@ class BrivFunctions
     static ThunderStepId := 2131
     static UnnaturalHasteId := 3452
     static MetalbornId := 3455
+    static MinHaste := 48
     static BrivSkipConfigByFavorite := []
 
     class BrivSkipConfig ; IC_BrivGemFarm_Class.BrivFunctions.BrivSkipConfig
@@ -272,8 +273,7 @@ class BrivFunctions
         ; Party has not progressed to the next zone yet but Briv stacks were consumed.
         if (highestZone - currentZone > 1)
             currentZone := highestZone
-        ; This assumes Briv has gained more than 48 stacks ever.
-        stacksAtReset := Max(48, this.CalcStacksLeftAtReset(preferred, currentZone, modronReset, sprintStacks, skipQ, skipE, brivMinlevelArea, brivMetalbornArea))
+        stacksAtReset := Max(this.MinHaste, this.CalcStacksLeftAtReset(preferred, currentZone, modronReset, sprintStacks, skipQ, skipE, brivMinlevelArea, brivMetalbornArea))
         if (addSBStacks)
             stacksAtReset += sbStacks
         return stacksAtReset
