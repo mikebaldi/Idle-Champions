@@ -40,6 +40,8 @@ class IC_BrivGemFarm_Stats_Component
     CompactTimestamps := false
     w700Height := 0
     w400Height := 0
+    SlowestRun := ""
+    FastestRun := ""
     
     SharedRunData[]
     {
@@ -404,9 +406,15 @@ class IC_BrivGemFarm_Stats_Component
             g_InventoryView.ReadCombinedInventory(this.TotalRunCount)
         this.LastResetCount := resetsCount
         if (this.SlowRunTime < this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
+        {
             this.SlowRunTime := this.PreviousRunTime
+            this.SlowestRun := this.TotalRunCount
+        }
         if (this.FastRunTime > this.PreviousRunTime AND this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
+        {
             this.FastRunTime := this.PreviousRunTime
+            this.FastestRun := this.TotalRunCount
+        }
         this.SbLastStacked := g_SF.Memory.ReadHasteStacks()
         if ( this.StackFail ) ; 1 = Did not make it to Stack Zone. 2 = Stacks did not convert. 3 = Game got stuck in adventure and restarted.
             this.FailRunTime += this.PreviousRunTime
@@ -427,8 +435,8 @@ class IC_BrivGemFarm_Stats_Component
     {
         if (this.TotalRunCount AND (!this.StackFail OR this.StackFail == 6))
         {
-            GuiControl, ICScriptHub:, FastRunTimeID, % this.FormatMsec(this.FastRunTime)
-            GuiControl, ICScriptHub:, SlowRunTimeID, % this.FormatMsec(this.SlowRunTime)
+            GuiControl, ICScriptHub:, FastRunTimeID, % this.FormatMsec(this.FastRunTime) . (this.FastestRun != "" ? (" [" . this.FastestRun . "]") : "")
+            GuiControl, ICScriptHub:, SlowRunTimeID, % this.FormatMsec(this.SlowRunTime) . (this.SlowestRun != "" ? (" [" . this.SlowestRun . "]") : "")
         }
         GuiControl, ICScriptHub:, PrevRunTimeID, % this.FormatMsec(this.PreviousRunTime)
         if ( this.StackFail )
@@ -743,6 +751,8 @@ class IC_BrivGemFarm_Stats_Component
         this.GemsTotal := 0
         this.LastLowestHasteRun := ""
         this.LastLowestHasteStacks := 9999999
+        this.SlowestRun := ""
+        this.FastestRun := ""
     }
 
     ;===========================================
