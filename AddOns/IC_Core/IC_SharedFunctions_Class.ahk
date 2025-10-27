@@ -60,7 +60,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     ; returns this class's version information (string)
     GetVersion()
     {
-        return "v3.0.6, 2025-09-01"
+        return "v3.0.7, 2025-10-26"
     }
 
     ;Takes input of first and second sets of eight byte int64s that make up a quad in memory. Obviously will not work if quad value exceeds double max.
@@ -108,7 +108,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         Returns: 1 on current boss zone cleared, 0 otherwise
 
     */
-    KillCurrentBoss( maxLoopTime := 25000 )
+    KillCurrentBoss( maxLoopTime := 25000 , loopString := "Killing boss before stacking.")
     {
         CurrentZone := this.Memory.ReadCurrentZone()
         if ( mod( CurrentZone, 5 ) )
@@ -117,7 +117,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ElapsedTime := 0
         counter := 0
         sleepTime := 60
-        g_SharedData.LoopString := "Killing boss before stacking."
+        g_SharedData.LoopString := loopString
         while ( !mod( this.Memory.ReadCurrentZone(), 5 ) AND ElapsedTime < maxLoopTime )
         {
             ElapsedTime := A_TickCount - StartTime

@@ -1,3 +1,16 @@
+October 26, 2025
+    About addon checks skip further checks if the first addon check fails.
+    Emmote Updates to stats: 
+        - Fixing "Golds Chests" typo.
+        - Changing "PlayServer" to "Game Server".
+        - Changing "Avg. Run Time" to "Average Run Time".
+        - Making "Game Server" show "Unknown" if it's falling back to the default ps22.
+    Added SharedTimers class.
+    Updated Loopstring to be a property.
+    Added Boss kill flag to prevent repeated boss kill attempts.
+    Force update Q/E skip values on reset.
+    Updated PredictStacks method.
+
 October 24, 2025
     Updated stats to flex to larger fonts. (Emmote's edit)
     Refactored Game Object, again. - Memory Leaks fixed?
