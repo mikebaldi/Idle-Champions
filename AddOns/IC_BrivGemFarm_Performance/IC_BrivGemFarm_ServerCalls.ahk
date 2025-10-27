@@ -36,15 +36,6 @@ class IC_BrivGemFarm_ServerCalls_Class extends IC_ServerCalls_Class
         this.LoadGemFarmConnection()
     }
 
-    ; Load global server call Settings into this class.
-    LoadSettings(settingsLoc := "")
-    {
-        settingsLoc := settingsLoc ? settingsLoc : A_LineFile . "\..\..\..\ServerCalls\Settings.json" ; main hub server settings.
-        this.Settings := this.LoadObjectFromJSON( settingsLoc )
-        if(IsObject(this.Settings))
-            this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
-    }
-
     ; Load script defined server call Settings into this class.
     LoadServerCallSettings()
     {

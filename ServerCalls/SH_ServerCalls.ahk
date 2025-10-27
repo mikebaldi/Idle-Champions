@@ -1,5 +1,5 @@
 #include %A_LineFile%\..\..\SharedFunctions\json.ahk
-
+#include %A_LineFile%\..\..\SharedFunctions\SH_SharedFunctions.ahk 
 class SH_ServerCalls
 {
     proxy := ""
@@ -7,6 +7,7 @@ class SH_ServerCalls
     __New()
     {
         this.LoadSettings()
+        return this
     }
 
     BasicServerCall( url, timeout := 60000 ) 
@@ -36,9 +37,11 @@ class SH_ServerCalls
         return response
     }
 
-    LoadSettings()
+    ; Load global server call Settings into this class.
+    LoadSettings(settingsLoc := "")
     {
-        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
+        settingsLoc := settingsLoc ? settingsLoc :  A_LineFile . "\..\Settings.json"
+        this.Settings := SH_SharedFunctions.LoadObjectFromJSON( settingsLoc )
         if(IsObject(this.Settings))
             this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
     }

@@ -332,7 +332,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
     #include *i %A_LineFile%\..\IC_ServerCalls_Class_Extra.ahk
 }
 
-class Byteglow_ServerCalls_Class
+class Byteglow_ServerCalls_Class extends SH_ServerCalls
 {
     webRoot := "https://ic.byteglow.com/api/"
     timeoutVal := 60000
@@ -376,12 +376,5 @@ class Byteglow_ServerCalls_Class
     {
         this.LoadSettings()
         return this
-    }
-
-    LoadSettings()
-    {
-        this.Settings := g_SF.LoadObjectFromJSON( A_LineFile . "\..\Settings.json")
-        if(IsObject(this.Settings))
-            this.proxy := this.settings["ProxyServer"] . ":" . this.settings["ProxyPort"]
     }
 }
