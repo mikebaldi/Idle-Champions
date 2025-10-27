@@ -256,18 +256,31 @@ class BrivFunctions
         static lastResetsCount := 0
 
         preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
+        modronReset := g_SF.Memory.GetModronResetArea()
+        currentZone := g_SF.Memory.ReadCurrentZone()
         if (IsObject(IC_BrivGemFarm_LevelUp_Component) || IsObject(IC_BrivGemFarm_LevelUp_Class)) ; levelup addon controls briv leveling.
-            brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ] ; min zone for metalborn
-        else
-            brivMinlevelArea := 1
+        {
+            if (IsObject(g_BrivGemFarm_LevelUp))
+            {
+                brivMinlevelArea := g_BrivGemFarm_LevelUp.Settings.BrivMinLevelArea
+                brivLevelingZones:= g_BrivGemFarm_LevelUp.Settings.BrivLevelingZones
+            }
+            else
+            {
+                brivMinlevelArea := g_BrivUserSettingsFromAddons[ "BGFLU_BrivMinLevelArea" ]
+                brivLevelingZones := g_BrivUserSettingsFromAddons[ "BGFLU_BrivLevelingZones" ]
+            }
+            ; Not always equal to brivMinlevelArea
+            actualZone := this.FindActualBrivMinLevelingZone(brivMinlevelArea, brivLevelingZones)
+            brivMinlevelArea := actualZone == -1 ? modronReset : actualZone
+            if (currentZone < brivMinlevelArea && this.ReadUnnaturalHastePurchased())
+                brivMinlevelArea := currentZone
         resetCount := g_SF.Memory.ReadResetsCount() ; For updating at least once each run.
         refreshConfig := refreshCache || resetCount > lastResetsCount
         skipQ := this.GetBrivSkipConfig(1, refreshConfig).HighestAvailableJump
         skipE := this.GetBrivSkipConfig(3, refreshConfig).HighestAvailableJump
         lastResetCount := resetCount
-        modronReset := g_SF.Memory.GetModronResetArea()
         sbStacks := g_SF.Memory.ReadSBStacks()
-        currentZone := g_SF.Memory.ReadCurrentZone()
         highestZone := g_SF.Memory.ReadHighestZone()
         sprintStacks := g_SF.Memory.ReadHasteStacks()
         ; Party has not progressed to the next zone yet but Briv stacks were consumed.
@@ -319,5 +332,37 @@ class BrivFunctions
     PredictStacksActive()
     {
         return !g_BrivUserSettings[ "IgnoreBrivHaste" ]
+    }
+
+    FindActualBrivMinLevelingZone(brivMinlevelArea := 1, brivLevelingZones := "")
+    {
+        if (brivLevelingZones)
+        {
+            firstArea := Mod(brivMinlevelArea, 50) == 0 ? 50 : Mod(brivMinlevelArea, 50)
+            brivLevelingZones := this.ConvertBitfieldToArray(brivLevelingZones)
+            repeatingNum := brivLevelingZones.Length()
+            Loop, % repeatingNum - firstArea + 1
+            {
+                area := firstArea + A_Index - 1
+                if (brivLevelingZones[area] == 1)
+                    return brivMinlevelArea + A_Index - 1
+            }
+            Loop, % firstArea - 1
+            {
+                if (brivLevelingZones[A_Index] == 1)
+                    return brivMinlevelArea + (repeatingNum - firstArea) + A_Index
+            }
+        }
+        return -1
+    }
+
+    ConvertBitfieldToArray(value)
+    {
+        if (IsObject(value))
+            return value
+        array := []
+        Loop, 50
+            array.Push((value & (2 ** (A_Index - 1))) != 0)
+        return array
     }
 }
