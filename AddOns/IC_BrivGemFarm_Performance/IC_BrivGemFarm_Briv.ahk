@@ -252,8 +252,6 @@ class BrivFunctions
     ; After resetting, Briv's Steelborne stacks are added to the remaining Haste stacks.
     PredictStacks(addSBStacks := true, refreshCache := true, forcedReset := False )
     {
-        static skipQ
-        static skipE
         static lastResetsCount := 0
 
         preferred := g_BrivUserSettings[ "PreferredBrivJumpZones" ]
@@ -262,8 +260,9 @@ class BrivFunctions
         else
             brivMinlevelArea := 1
         resetCount := g_SF.Memory.ReadResetsCount() ; For updating at least once each run.
-        if ((refreshCache || resetCount > lastResetsCount) || skipQ == "" || skipE == "" || skipQ == 0 && skipE == 0)
-            skipQ := (this.GetBrivSkipValues(1))[1], skipE := (this.GetBrivSkipValues(3))[1]
+        refreshConfig := refreshCache || resetCount > lastResetsCount
+        skipQ := this.GetBrivSkipConfig(1, refreshConfig).HighestAvailableJump
+        skipE := this.GetBrivSkipConfig(3, refreshConfig).HighestAvailableJump
         lastResetCount := resetCount
         modronReset := g_SF.Memory.GetModronResetArea()
         sbStacks := g_SF.Memory.ReadSBStacks()
