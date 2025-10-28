@@ -761,8 +761,8 @@ class IC_MemoryFunctions_Class
     ReadBoughtLastUpgradeBySeat( seat := 1){
         upgradesGroupSize := this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.upgradeGroupsByLevel.size.Read() ; SortedDictionary
         purchasedSize :=  this.GameManager.game.gameInstances[this.GameInstance].Screen.uiController.bottomBar.heroPanel.activeBoxes[seat - 1].hero.upgradeHandler.PurchasedUpgrades.size.Read()
-        if (purchasedSize > 0 AND upgradeGroupsSize > 0)
-            return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
+        if (purchasedSize > 0 AND upgradesGroupSize > 0)
+            return (purchasedSize + 1 >= upgradesGroupSize) AND (upgradesGroupSize - purchasedSize < 3) ;(so far has only been 1 below or = )
         return True ; assume true to prevent upgrade spam on bad reads.
     }
 
@@ -798,10 +798,6 @@ class IC_MemoryFunctions_Class
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Def.RequiredUpgradeID.Read()
     }
 
-    ReadHeroUpgradeID(champID := 1, upgradeID := 7){
-        return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Id.Read()
-    }
-
     ReadHeroUpgradeSpecializationName(champID := 1, upgradeID := 7){ ;upgradeID is "slot" ; battle master 
         return this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(ChampID)].upgradeHandler.upgradesByUpgradeId[upgradeID].Def.SpecializationName.Read()
     }
@@ -819,14 +815,36 @@ class IC_MemoryFunctions_Class
     }
 
     ReadBoughtLastUpgradeByChampID(champID := 1){
-        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.upgradeGroupsByLevel
+        upgradesGroup := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.upgradeGroupsByLevel
         upgradesGroup.FullOffsets.Push(0x20, 0x30)
         upgradeGroupsSize := upgradesGroup.Read()
-        purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].uiController.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
+        purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read()
         if (purchasedSize > 0 AND upgradeGroupsSize > 0)
             return (purchasedSize + 1 >= upgradeGroupsSize) AND (upgradeGroupsSize - purchasedSize < 3) ;(so far has only been 1 below or = )
         return True ; assume true to prevent upgrade spam on bad reads.
     }
+
+    DoesChampHavePurchasedWithoutUpgraded(champID)
+    {
+        champID := 165
+        purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size.Read()
+        unlockedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.UnlockedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size() 
+        return unlockedSize > purchasedSize + 1
+    }
+    ; GetHighestLevelRequiredForUpgradesByChampID(champID)
+    ; {
+    ;    purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size.Read()
+    ;     unlockedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.UnlockedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size()
+    ;     highestLevel := 0
+    ;     upgradesSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.handler.upgradesByUpgradeId.size.Read()
+    ;     loop %upgradesSize%
+    ;     {
+    ;         currLevel := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.handler.upgradesByUpgradeId.RequiredLevel.Read()
+    ;         if(currLevel != "" AND currLevel > highestLevel)
+    ;             highestLevel := currLevel
+    ;     }
+    ;     return highestLevel
+    ; }
 
     ;=========================
     ; Champion Loot

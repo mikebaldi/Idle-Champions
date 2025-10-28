@@ -390,17 +390,45 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     InitZone( spam )
     {
         Critical, On
-        this.DirectedInput(,release := 0, "{ClickDmg}") ;keysdown
-        this.DirectedInput(hold := 0,, "{ClickDmg}") ;keysup
-        ; turn Fkeys off/on again
-        this.DirectedInput(hold := 0,, spam*) ;keysup
-        this.DirectedInput(,release := 0, spam*) ;keysdown
-        ; try to progress
-        this.DirectedInput(,,"{Right}")
         this.ToggleAutoProgress(1)
         this.ModronResetZone := this.Memory.GetModronResetArea() ; once per zone in case user changes it mid run.
         g_PreviousZoneStartTime := A_TickCount
         Critical, Off
+    }
+
+    DoLevelingUntilNotEnoughGold(formationValue := "M")
+    {
+        sleepTime := 80 ; default 80
+        keyspamLength := 2 ; default keys not including clickdmg
+        
+        currKeySpam := []
+        if(formationvalue != "M")
+            keyspam := g_SF.GetFormationFKeys(this.Memory.GetFormationByFavorite(formationValue))
+        else
+            keyspam := this.keyspam
+        currKeySpam.Push(this.keyspam[this.keyspam.Length()]) ; add last key to currKeySpam to start while loop
+        while (currKeyspam.Length() > 0 AND currKeyspam.Length() <= 3)
+        {
+            currKeySpam := []
+            keyspamLength := Min(keyspam.Length(), 3)
+            index := 1
+            while(currKeyspam.Length() < keySpamLength)
+            {
+                ; extract fkey number, check champ in seat of number, check if it can afford to upgrade - if yes add to spam
+                if(this.CanAffordUpgrade(g_SF.Memory.ReadSelectedChampIDBySeat(SubStr(keyspam[index], 3, -1))))
+                    index := index + 1, currKeySpam.Push(keyspam[index - 1]) ; increment index but add index from before increment
+                else
+                    keyspam.RemoveAt(index)
+            }
+            if(currKeyspam.Length() > 0)
+            {
+                currKeySpam.Push("{ClickDmg}")
+                g_SF.DirectedInput(,,currKeySpam*)
+                Sleep, %sleepTime%
+            }
+            else
+                break
+        }
     }
 
     ;A test if stuck on current area. After 35s, toggles autoprogress every 5s. After 45s, attempts falling back up to 2 times. After 65s, restarts level.
@@ -1357,6 +1385,38 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             i++
         }
         return -1
+    }
+
+    ; Converts a symbol to the corresponding integer exponent.
+    ConvertNumberSymbolToInt(name)
+    {
+        static symbols := {"K":3, "M":6, "B":9, "t":12, "q":15, "Q":18, "s":21, "S":24
+                           , "o":27, "n":30, "d":33, "U":36, "D":39, "T":42, "Qt":45
+                           , "Qd":48, "Sd":51, "St":54, "O":57, "N":60, "v":63, "c":66}
+
+        return symbols[name]
+    }
+
+    ; Converts a number string in scientific notation or symbol notation
+    ; to an integer for comparison.
+    ; Returns an integer equal to 1000 * exponent plus 100 * significand.
+    ; This works only when the number format has less than 3 significant digits.
+    ConvertNumberStringToInt(numStr)
+    {
+        split := StrSplit(numStr, "e")
+        if split[2] is integer
+        {
+            significand := split[1]
+            exponent := split[2]
+        }
+        else
+        {
+            regex := "(.*\d)([a-zA-Z]+)"
+            RegExMatch(numStr, regex, out)
+            significand := out1
+            exponent := this.ConvertNumberSymbolToInt(out2)
+        }
+        return Round(exponent * 1000 + significand * 100)
     }
 
     #include *i %A_LineFile%\..\IC_SharedFunctions_Extra.ahk
