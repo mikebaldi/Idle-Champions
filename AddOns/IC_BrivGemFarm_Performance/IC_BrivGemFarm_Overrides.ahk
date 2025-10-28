@@ -32,7 +32,7 @@ class IC_BrivSharedFunctions_Class
         jsonObj := base.LoadObjectFromJSON(A_LineFile . "\..\ServerCall_Settings.json")
         thunderStepMod := g_SF.BrivHasThunderStep() ? IC_BrivGemFarm_Class.BrivFunctions.ThunderStepMult : 1
         this.CloseIC( reason )
-        stacks := Floor(((this.sprint?this.sprint:0) + (this.steelbones?this.steelbones:0)) * thunderStepMod)
+        stacks := Floor(this.sprint?this.sprint:0 + (this.steelbones?this.steelbones:0) * thunderStepMod)
         if (stacks >= 190000)
             g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
         ; Save stacks
