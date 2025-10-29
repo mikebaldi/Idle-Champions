@@ -1,3 +1,14 @@
+October 29, 2025
+    Added Emmote's stats updates.
+    Removed LoadSettings from servercall files that extend SH_ServerCalls.
+    Added ImpEGamer's updates to BrivGemFarm.
+    Fixed bug where stats were resetting when clicking stop.
+    Fixed Thunderstep calculation incorrectly including haste.
+    Added new memory reads and other base gem farm updates. (See commit 41d1e3d)
+    Fixed bug where wrong settings file was being used for recording stackzone successes.
+    Fixed bug where forced restart would not function because stacks were less than 50.
+    Fixed stacking getting stuck on stack normal due to cycle of stacking normal over and over.
+    
 October 26, 2025
     About addon checks skip further checks if the first addon check fails.
     Emmote Updates to stats: 

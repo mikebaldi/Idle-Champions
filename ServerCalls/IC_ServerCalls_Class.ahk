@@ -44,7 +44,7 @@ class IC_ServerCalls_Class extends SH_ServerCalls
 
     GetVersion()
     {
-        return "v2.4.4, 2025-10-15"
+        return "v2.4.5, 2025-10-29"
     }
 
     UpdateDummyData()
