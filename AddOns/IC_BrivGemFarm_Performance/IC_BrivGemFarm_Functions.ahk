@@ -108,7 +108,7 @@ class IC_BrivGemFarm_Class
         g_SF.keyspam := Array()
         g_SF.Memory.ActiveEffectKeyHandler.Refresh()
         ; Don't reset last stack success area if 3 or more runs have failed to stack.
-        this.LastStackSuccessArea := this.StackFailAreasTally[g_UserSettings [ "StackZone" ]] < this.MaxStackRestartFails ? g_UserSettings [ "StackZone" ] : this.LastStackSuccessArea
+        this.LastStackSuccessArea := this.StackFailAreasTally[g_BrivUserSettings[ "StackZone" ]] < this.MaxStackRestartFails ? g_BrivUserSettings[ "StackZone" ] : this.LastStackSuccessArea
         this.StackFailAreasThisRunTally := {}
         this.StackFailRetryAttempt := 0
         this.DoneLeveling := False
