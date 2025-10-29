@@ -15,6 +15,8 @@ class IC_BrivGemFarm_Class
     ThisRunStart := 0
     IsInModronFormation := True
     BossKillAttempt := False
+    previousSilverChestCount := 0
+    previousGoldChestCount := 0
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -118,7 +120,8 @@ class IC_BrivGemFarm_Class
         firstRun := False
         g_SharedData.PlayServer := StrSplit(StrSplit(g_ServerCall.webroot,".")[1], "/")[3]
         ; Do Chests after Reset
-        g_BrivGemFarm.DoChests(g_SF.Memory.ReadChestCountByID(1), g_SF.Memory.ReadChestCountByID(2), g_SF.Memory.ReadGems())
+        this.CheckAndDoChests()
+        
         if(doBasePartySetup)
         {
             g_SF.WaitForFirstGoldSetup()
@@ -740,6 +743,26 @@ class IC_BrivGemFarm_Class
         return ((returnString != "") ? "Chests - " . returnString : "")
     }
     
+    CheckAndDoChests()
+    {
+        memorySilvers := g_SF.Memory.ReadChestCountByID(1)
+        memoryGolds := g_SF.Memory.ReadChestCountByID(2)
+        ; Prevent opening non-existent chests by checking if the count is the same as last time.
+        ; - Chest counts only update in-game when opening via calls if some are dropped or bought.
+        ; - So if the count didn't change between calls - the count can't be trusted. Assume 0.
+        numSilverChests := memorySilvers
+        if (this.previousSilverChestCount == numSilverChests)
+            numSilverChests := 0
+        numGoldChests := memoryGolds
+        if (this.previousGoldChestCount == numGoldChests)
+            numGoldChests := 0
+            
+        this.previousSilverChestCount := memorySilvers
+        this.previousGoldChestCount := memoryGolds
+        
+        g_BrivGemFarm.DoChests(numSilverChests, numGoldChests, g_SF.Memory.ReadGems())
+    }
+    
     ; Sends calls for buying or opening chests and tracks chest metrics.
     DoChests(numSilverChests := "", numGoldChests := "", gems:= "")
     {
@@ -768,7 +791,7 @@ class IC_BrivGemFarm_Class
         
         ; after chests buy/open
         currentLoopString := this.GetChestDifferenceString(startingPurchasedSilverChests, startingPurchasedGoldChests, startingOpenedGoldChests, startingOpenedSilverChests)
-	    loopString := currentLoopString == "" ? loopString : currentLoopString
+        loopString := currentLoopString == "" ? loopString : currentLoopString
         ; g_SharedData.LoopString := loopString
     }
     
