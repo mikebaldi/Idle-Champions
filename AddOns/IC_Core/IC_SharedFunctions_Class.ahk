@@ -47,6 +47,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     TotalGems := 0
     TotalSilverChests := 0
     TotalGoldChests := 0
+    StackedBeforeRestart := False
 
     __new()
     {
