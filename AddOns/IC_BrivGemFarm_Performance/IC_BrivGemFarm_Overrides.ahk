@@ -36,7 +36,7 @@ class IC_BrivSharedFunctions_Class
         if (stacks >= 190000)
             g_SharedData.LoopString := "ServerCall: Restarting with >190k stacks, some stacks lost."
         ; Save stacks
-        if (stacks > 49) ; minimum is 49
+        if (stacks >= 48) ; minimum is 48
             g_ServerCall.CallPreventStackFail(stacks)
         else
             g_SharedData.LoopString := "ServerCall: Restarting adventure (no manual stack conv.)"
