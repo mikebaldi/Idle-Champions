@@ -376,7 +376,7 @@ class IC_BrivGemFarm_Stats_Component
             , this.LastResetCount := g_SF.Memory.ReadResetsCount()
         this.StackFail := Max(this.StackFail, foundComs ? this.SharedRunData.StackFail : 0)
         resetsCount := g_SF.Memory.ReadResetsCount()
-        if ( resetsCount > this.LastResetCount )
+        if ( resetsCount > this.LastResetCount OR resetsCount < this.LastResetCount - 2)
             this.UpdateStartLoopStatsReset(foundComs, resetsCount)            
         if (foundComs)
             this.LastTriggerStart := this.SharedRunData.TriggerStart
