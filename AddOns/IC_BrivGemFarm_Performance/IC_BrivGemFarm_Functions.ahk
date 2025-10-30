@@ -362,7 +362,7 @@ class IC_BrivGemFarm_Class
         StartTime := A_TickCount
         ElapsedTime := 0
         counter := 0
-        sleepTime := 100
+        sleepTime := 60
         g_SharedData.LoopString := "Setting stack farm formation."
         isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
         if (!isFormation2)
