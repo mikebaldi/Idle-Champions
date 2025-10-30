@@ -8,6 +8,7 @@ October 29, 2025
     Fixed bug where wrong settings file was being used for recording stackzone successes.
     Fixed bug where forced restart would not function because stacks were less than 50.
     Fixed stacking getting stuck on stack normal due to cycle of stacking normal over and over.
+    Fixed some un-updated variable locations.
     
 October 26, 2025
     About addon checks skip further checks if the first addon check fails.

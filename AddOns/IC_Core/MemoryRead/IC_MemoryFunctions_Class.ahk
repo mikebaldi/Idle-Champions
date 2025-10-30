@@ -826,7 +826,6 @@ class IC_MemoryFunctions_Class
 
     DoesChampHavePurchasedWithoutUpgraded(champID)
     {
-        champID := 165
         purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size.Read()
         unlockedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.UnlockedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size() 
         return unlockedSize > purchasedSize + 1
