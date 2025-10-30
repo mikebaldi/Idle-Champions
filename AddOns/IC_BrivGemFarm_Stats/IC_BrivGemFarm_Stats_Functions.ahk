@@ -427,7 +427,7 @@ class IC_BrivGemFarm_Stats_Component
             g_MouseToolTips[ShiniesClassNN] := this.GetShinyCountTooltip()
         }
         this.GemsTotal := ( g_SF.Memory.ReadGems() - this.GemStart ) + gemsSpent
-        this.UpdateStartLoopStatsGUI(this.TotalFarmTime)
+        this.UpdateStartLoopStatsGUI()
         if (foundComs)
             this.SharedRunData.StackFail := this.StackFail := 0
     }

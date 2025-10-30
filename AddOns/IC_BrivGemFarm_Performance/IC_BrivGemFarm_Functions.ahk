@@ -147,7 +147,7 @@ class IC_BrivGemFarm_Class
         if (this.DoKeySpam AND g_BrivUserSettings[ "Fkeys" ] AND g_SF.AreChampionsUpgraded(formationModron)) 
         { ; leveling completed, remove champs from keyspam.
             g_SF.DirectedInput(hold:=0,release:=1, this.keyspam) ;keysup
-            g_SF.keyspam := ["{ClickDmg}"]
+            ; g_SF.keyspam := ["{ClickDmg}"]
             this.DoKeySpam := false
         }
         g_SF.InitZone( this.keyspam )
@@ -208,6 +208,7 @@ class IC_BrivGemFarm_Class
             }
             if(currKeyspam.Length() > 0)
             {
+                ; TODO: Handle clicks without directed input w/ champs
                 currKeySpam.Push("{ClickDmg}")
                 g_SF.DirectedInput(,,currKeySpam*)
                 Sleep, %sleepTime%
