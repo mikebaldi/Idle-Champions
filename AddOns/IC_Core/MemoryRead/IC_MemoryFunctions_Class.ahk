@@ -824,6 +824,15 @@ class IC_MemoryFunctions_Class
         return True ; assume true to prevent upgrade spam on bad reads.
     }
 
+    ReadSkipStacks()
+    {
+        size := g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.areaSkipHandler.skipStacks.size.Read()
+        ; Sanity check, should be 2 for v601
+        if (size > 10)
+            return ""
+        return g_SF.Memory.GameManager.game.gameInstances[g_SF.Memory.GameInstance].Controller.areaSkipHandler.skipStacks.Queue[size - 1]._head.Read()
+    }
+
     DoesChampHavePurchasedWithoutUpgraded(champID)
     {
         purchasedSize := this.GameManager.game.gameInstances[this.GameInstance].Controller.userData.HeroHandler.heroes[this.GetHeroHandlerIndexByChampID(champID)].upgradeHandler.PurchasedUpgrades.size.Read() ;.handler.upgradesByUpgradeId.size.Read()

@@ -74,6 +74,8 @@ class GameObjectStructure
             return returnObj := this.ReturnGameObject("")
         else if(key == "size")
             return returnObj := this.ReturnGameObject(this.CreateSizeObject())
+        else if(key == "_head" AND this.ValueType == "Queue")
+            return returnObj := this.ReturnGameObject(this.CreateHeadObject())
         else if (key == "__version") 
             return returnObj := this.ReturnGameObject(this.CreateVersionObject())
         ; Special case for Dictionary collections in a gameobject. Store dictionary items with keys that have a system type to speed up future lookups. Do not store unstable keys.
@@ -131,6 +133,14 @@ class GameObjectStructure
             sizeObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x18 : 0xC)
         }
         return sizeObject
+    }
+
+    ; Create an object to read the head of a Queue.
+    CreateHeadObject()
+    {        
+        headObject := this.QuickClone()
+        headObject.FullOffsets.Push(_MemoryManager.Is64Bit ? 0x20 : 0x0)
+        return headObject
     }
 
     CreateVersionObject()

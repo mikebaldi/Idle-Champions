@@ -364,27 +364,24 @@ class IC_BrivGemFarm_Class
         counter := 0
         sleepTime := 100
         g_SharedData.LoopString := "Setting stack farm formation."
-        isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2))
+        isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
         if (!isFormation2)
-        {
-            g_SF.DirectedInput(,,inputValues)
-            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
-            if(!isFormation2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2)))
+            if(g_SF.IsCurrentFormation(stackFormation))
                 isFormation2 := True
-        }
         while (!isFormation2 AND ElapsedTime < 5000 )
         {
             ElapsedTime := A_TickCount - StartTime
             if (ElapsedTime > (sleepTime * counter++))
                 g_SF.DirectedInput(,,inputValues)
             ; Can't formation switch when under attack.
-            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
+            isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
+            if (!isFormation2)
+                if(g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2)))
+                    isFormation2 := True
             if (ElapsedTime > 1000 AND !isFormation2 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
                  ; not W formation or briv is benched
                 if (g_SF.Memory.ReadChampBenchedByID(ActiveEffectKeySharedFunctions.Briv.HeroID) OR !(g_SF.Memory.ReadMostRecentFormationFavorite() == 2))
                     g_SF.FallBackFromZone()
-            if(!isFormation2 AND g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2))) ; can get stuck trying to swap and failing.
-                isFormation2 := True
         }
         return
     }
@@ -627,6 +624,7 @@ class IC_BrivGemFarm_Class
             g_SharedData.LastRunTime := g_PreviousZoneStartTime - This.ThisRunStart
             , g_SharedData.TotalRunsCount += 1
         This.ThisRunStart := g_PreviousZoneStartTime
+        IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun := False
         this.IsInModronFormation := g_SharedData.TriggerStart := True
     }
 

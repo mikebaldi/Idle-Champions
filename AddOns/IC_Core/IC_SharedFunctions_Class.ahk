@@ -529,18 +529,18 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ;check to bench briv
         if (!brivBenched AND this.BenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,["{e}"]*)
+            this.DoSwitchFormation(3)
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ;check to unbench briv
         if (brivBenched AND this.UnBenchBrivConditions(this.Settings))
         {
-            this.DirectedInput(,,["{q}"]*)
+            this.DoSwitchFormation(1)
             g_SharedData.SwapsMadeThisRun++
             return
         }
-        if(forceCheck OR g_SharedData.TriggerStart)
+        if(!IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun OR forceCheck)
             isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
         else
             isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
@@ -548,14 +548,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         ; check to swap briv from favorite 2 to favorite 3 (W to E)
         if (!brivBenched AND isFormation2 AND isWalkZone)
         {
-            this.DirectedInput(,,["{e}"]*)
+            this.DoSwitchFormation(3)
             g_SharedData.SwapsMadeThisRun++
             return
         }
         ; check to swap briv from favorite 2 to favorite 1 (W to Q)
         else if (!brivBenched AND isFormation2 AND !isWalkZone)
         {
-            this.DirectedInput(,,["{q}"]*)
+            this.DoSwitchFormation(1)
             g_SharedData.SwapsMadeThisRun++
             return
         }
@@ -564,12 +564,23 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
         
               ; Q OR E depending on route.
             if (this.UnBenchBrivConditions(this.Settings))
-                this.DoSwitchFormation(1) 
+                this.DoSwitchFormation(1)
             else if (this.BenchBrivConditions(this.Settings))
                 this.DoSwitchFormation(3)
         }
         if(g_BrivGemFarm.IsInModronFormation AND !this.IsCurrentFormation(g_SF.Memory.GetActiveModronFormation()))
             g_BrivGemFarm.IsInModronFormation := False
+    }
+
+    DoSwitchFormation(favoriteNum)
+    {
+        if(favoriteNum == 1)
+            this.DirectedInput(,,["{q}"]*) 
+        else if(favoriteNum == 2)
+            this.DirectedInput(,,["{w}"]*) 
+        else if(favoriteNum == 3)
+            this.DirectedInput(,,["{e}"]*) 
+        IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun := True            
     }
 
     ; True/False on whether Briv should be benched based on game conditions. (typically swap to E formation)
@@ -861,6 +872,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 hasCorrectPatron := True
             hasStartedSafetyCheck := False
+            IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun := False
             return false 
         }
          ; game loaded but can't read zone? failed to load proper on last load? (Tests if game started without script starting it)
@@ -999,7 +1011,10 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else
                 Sleep, 20
             ; reverted for now. swaps fail more at game restart and restarts don't happen often so stick with old method until (if) CNE fixes their bug.
-            isCurrentFormation := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            ; isCurrentFormation := g_SF.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
+            ; if (!isCurrentFormation)
+            ;     isCurrentFormation := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum)
+            isCurrentFormation := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), formationFavoriteNum) ; just being safe for now.
         }
         return isCurrentFormation
     }

@@ -293,10 +293,25 @@ class SH_SharedFunctions
             , lastCallTime := A_TickCount, this.logger := {}
     }
     
-    Log1(level, msg) {
-    FormatTime, ts,, yyyy-MM-dd HH:mm:ss
-    logFile := A_ScriptDir "\debug_log.txt"
-    FileAppend, [%ts%] [%level%] %msg%`n, %logFile%
+    Log1(level, msg) 
+    {
+        FormatTime, ts,, yyyy-MM-dd HH:mm:ss
+        logFile := A_ScriptDir "\debug_log.txt"
+        FileAppend, [%ts%] [%level%] %msg%`n, %logFile%
+    }
+
+    Log2(level, msg, outputNow) 
+    {
+        static log2log := ""
+        FormatTime, ts,, yyyy-MM-dd HH:mm:ss
+        string = [%ts%] [%level%] %msg%`n
+        log2log .= string
+
+        if(!outputNow)
+            return
+        logFileLoc := A_ScriptDir "\debug_log.txt"
+        FileAppend, %log2log%, %logFileLoc%
+        log2log := ""
     }
 }
 
