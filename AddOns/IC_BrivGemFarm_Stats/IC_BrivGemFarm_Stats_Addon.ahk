@@ -1,9 +1,9 @@
 class IC_BrivGemFarm_Stats_SharedFunctions_Added_Class
 {
-    CloseIC()
+    CloseIC( string := "")
     {
+        base.CloseIC(string)
         g_SharedData.MonitorIsGameClosed()
-        base.CloseIC()
     }
 }
 
