@@ -6,6 +6,7 @@ g_TabControlWidth := Max(g_TabControlWidth, 485)
 global g_LeftAlign
 global g_DownAlign
 global g_BrivGemFarmStats := new IC_BrivGemFarm_Stats_Component
+g_BrivGemFarmStats.InjectAddon()
 
 GUIFunctions.AddTab("Stats")
 Gui, ICScriptHub:Tab, Stats

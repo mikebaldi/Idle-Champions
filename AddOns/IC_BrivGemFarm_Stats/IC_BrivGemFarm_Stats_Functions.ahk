@@ -57,7 +57,15 @@ class IC_BrivGemFarm_Stats_Component
             }
         }
     }
-
+	
+    ; Adds IC_BrivGemFarm_Stats_Addon.ahk to the startup of the Briv Gem Farm script.
+    InjectAddon(external := false)
+    {
+        splitStr := StrSplit(A_LineFile, "\")
+        addonDirLoc := splitStr[(splitStr.Count()-1)]
+        addonLoc := "#include *i %A_LineFile%\..\..\" . addonDirLoc . "\IC_BrivGemFarm_Stats_Addon.ahk`n"
+        FileAppend, %addonLoc%, %g_BrivFarmModLoc%
+    }
 
     ;======================
     ; GUI Building Functions
