@@ -19,7 +19,8 @@ class IC_BrivSharedFunctions_Class
         base.CloseIC(string)
         try
         {
-            g_ScriptHubComs.RunTimersOnModronResetEnd()
+            if(!InStr(string, "FORT"))
+                g_ScriptHubComs.RunTimersOnModronResetEnd()
         }
     }
 
