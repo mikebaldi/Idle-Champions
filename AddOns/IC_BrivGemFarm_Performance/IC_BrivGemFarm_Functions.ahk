@@ -94,6 +94,9 @@ class IC_BrivGemFarm_Class
         this.ThelloraRushZone := g_SF.Memory.GetFavorExponentFor("Corellon") + 1
         g_PreviousZoneStartTime := A_TickCount
         g_SharedData.StackFail := 0
+        if (g_SF.Memory.ReadNumAttackingMonstersReached() >= 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
+            g_SF.FallBackFromZone(2000)
+        g_SF.SetFormation(g_BrivUserSettings)
         return 0
     }
 
