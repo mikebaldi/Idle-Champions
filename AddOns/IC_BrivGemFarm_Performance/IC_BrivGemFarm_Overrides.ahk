@@ -210,7 +210,9 @@ class IC_BrivSharedFunctions_Added_Class extends IC_SharedFunctions_Class
     ; Wait for Thellora ?
     ShouldRushWait()
     {
-        if !(this.Memory.ReadCurrentZone() >= 0 AND this.Memory.ReadCurrentZone() <= 3)
+        if( "" == (currZone := this.Memory.ReadCurrentZone()))
+            return False
+        if !(currZone >= 0 AND currZone <= 3)
             return False
         rushStacks := ActiveEffectKeySharedFunctions.Thellora.ThelloraPlateausOfUnicornRunHandler.ReadRushStacks()
         if !(rushStacks > 0 AND rushStacks < 10000)

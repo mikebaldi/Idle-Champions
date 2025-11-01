@@ -27,13 +27,15 @@ class IC_BrivGemFarm_Stats_Overrides_Class
     }
 }
 
-class IC_BrivGemFarm_Stats_SharedData_Added_Class
+class IC_BrivGemFarm_Stats_Coms_Added_Class ; g_BrivFarmComsObj 
 {
     MonitorIsGameClosed()
     {
-        g_BrivGemFarmStats.MonitorIsGameClosed()
+        fncToCall := g_BrivFarmComsObj.OneTimeRunAtResetEndFunctions["MonitorIsGameClosed"]
+        timer := g_BrivFarmComsObj.OneTimeRunAtResetEndFunctionsTimes["MonitorIsGameClosed"]
+        SetTimer, %fncToCall%, %timer%
     }
 }
 
 SH_UpdateClass.UpdateClassFunctions(IC_BrivGemFarm_Component, IC_BrivGemFarm_Stats_Overrides_Class)
-SH_UpdateClass.AddClassFunctions(g_SharedData, IC_BrivGemFarm_Stats_SharedData_Added_Class)
+SH_UpdateClass.AddClassFunctions(IC_BrivGemFarm_Coms, IC_BrivGemFarm_Stats_Coms_Added_Class)

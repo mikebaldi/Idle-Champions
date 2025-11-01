@@ -48,6 +48,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     TotalSilverChests := 0
     TotalGoldChests := 0
     StackedBeforeRestart := False
+    FormationLock := False
 
     __new()
     {
@@ -541,7 +542,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             return
         }
         if(!IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun OR forceCheck)
-            isFormation2 := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(2))
+            isFormation2 := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(2), 2)
         else
             isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2
         isWalkZone := this.Settings["PreferredBrivJumpZones"][Mod( this.Memory.ReadCurrentZone(), 50) == 0 ? 50 : Mod( this.Memory.ReadCurrentZone(), 50)] == 0
@@ -568,7 +569,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             else if (this.BenchBrivConditions(this.Settings))
                 this.DoSwitchFormation(3)
         }
-        if(g_BrivGemFarm.IsInModronFormation AND !this.IsCurrentFormation(g_SF.Memory.GetActiveModronFormation()))
+        if(g_BrivGemFarm.IsInModronFormation AND !this.IsCurrentFormationLazy(g_SF.Memory.GetActiveModronFormation(), 2)) ; using 2 as stack formation ID to ignore taty being in modron.
             g_BrivGemFarm.IsInModronFormation := False
     }
 
@@ -1032,7 +1033,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             if(formationFavoriteNum != 2)
                 this.ToggleAutoProgress(1, true)
             ; if (lastLoopTimedOut) ; use old way, else use new formation check method
-            isCurrentFormation := this.IsCurrentFormation(this.Memory.GetFormationByFavorite(formationFavoriteNum)) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
+            isCurrentFormation := this.IsCurrentFormationLazy(this.Memory.GetFormationByFavorite(formationFavoriteNum), 2) ; this.Memory.ReadMostRecentFormationFavorite() == formationFavoriteNum
             Sleep, sleepTime
         }
     }

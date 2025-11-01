@@ -470,7 +470,7 @@ class IC_BrivGemFarm_Stats_Component
             GuiControl, ICScriptHub:, GoldsDroppedID, % this.DecideScientific(this.CalculateDroppedChests(currentGoldChests, 2))
             GuiControl, ICScriptHub:, ShiniesID, % this.SharedRunData.ShinyCount
         }
-        if(this.TotalFarmTime == "")
+        if(this.TotalFarmTime == "" OR g_SF.Memory.GetCoreXPByInstance(this.ActiveGameInstance) == "" )
             return
         GuiControl, ICScriptHub:, AvgRunTimeID, % this.FormatMsec(this.TotalFarmTime / this.TotalRunCount)
         GuiControl, ICScriptHub:, dtTotalTimeID, % this.FormatMsec(this.TotalFarmTime)

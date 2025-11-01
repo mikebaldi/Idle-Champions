@@ -17,6 +17,7 @@ class IC_BrivGemFarm_Class
     BossKillAttempt := False
     previousSilverChestCount := 0
     previousGoldChestCount := 0
+    DoneLeveling := False
 
     ;=====================================================
     ;Primary Functions for Briv Gem Farm
@@ -370,9 +371,10 @@ class IC_BrivGemFarm_Class
         counter := 0
         sleepTime := 60
         g_SharedData.LoopString := "Setting stack farm formation."
+        stackFormation := g_SF.Memory.GetFormationByFavorite(2)
         isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
         if (!isFormation2)
-            if(g_SF.IsCurrentFormation(stackFormation))
+            if(g_SF.IsCurrentFormationLazy(stackFormation, 2))
                 isFormation2 := True
         while (!isFormation2 AND ElapsedTime < 5000 )
         {
@@ -382,7 +384,7 @@ class IC_BrivGemFarm_Class
             ; Can't formation switch when under attack.
             isFormation2 := g_SF.Memory.ReadMostRecentFormationFavorite() == 2 AND IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun
             if (!isFormation2)
-                if(g_SF.IsCurrentFormation(g_SF.Memory.GetFormationByFavorite(2)))
+                if(g_SF.IsCurrentFormationLazy(stackFormation, 2))
                     isFormation2 := True
             if (ElapsedTime > 1000 AND !isFormation2 && g_SF.Memory.ReadNumAttackingMonstersReached() > 10 || g_SF.Memory.ReadNumRangedAttackingMonsters())
                  ; not W formation or briv is benched
