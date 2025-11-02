@@ -48,7 +48,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     TotalSilverChests := 0
     TotalGoldChests := 0
     StackedBeforeRestart := False
-    FormationLock := False
+    FormationLevelingLock := False
+    FormationSwitchLock := False
 
     __new()
     {
@@ -561,7 +562,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             return
         }
         ; Switch if still in modron formation.
-        else if (!g_SF.FormationLock AND g_BrivGemFarm.IsInModronFormation){
+        else if (!g_SF.FormationSwitchLock AND g_BrivGemFarm.IsInModronFormation){
         
               ; Q OR E depending on route.
             if (this.UnBenchBrivConditions(this.Settings))
