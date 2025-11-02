@@ -13,8 +13,9 @@ g_globalTempSettingsFiles.Push(A_LineFile . "\..\LastGUID_BrivGemFarmComponent.j
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCallLocationOverride_Settings.json") ; may break a server call on exit before normal function
 g_globalTempSettingsFiles.Push(A_LineFile . "\..\ServerCall_Settings.json")
 
-
 global g_BrivFarmLastRunMiniscripts := g_SF.LoadObjectFromJSON(A_LineFile . "\..\LastGUID_Miniscripts.json")
+GUIFunctions.AddButton(g_PlayButton,"Briv_Run_Clicked","BrivGemFarmPlayButtonTopBar")
+GUIFunctions.AddButton(g_StopButton, "Briv_Run_Stop_Clicked" ,"BrivGemFarmStopButtonTopBar")
 GUIFunctions.AddTab("Briv Gem Farm")
 Gui, ICScriptHub:Tab, Briv Gem Farm
 

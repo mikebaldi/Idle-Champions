@@ -108,10 +108,7 @@ class IC_BrivGemFarm_Stats_Component
     AddCurrentRunGroup()
     {
         global
-        if(IsObject(IC_BrivGemFarm_Component))
-            GuiControlGet, pos, ICScriptHub:Pos, BrivGemFarmStatsPlayButton
-        else
-            GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
+        GuiControlGet, pos, ICScriptHub:Pos, Reset_Briv_Farm_Stats_Button
         posY := posY + 30
         Gui, ICScriptHub:Font, w700
         Gui, ICScriptHub:Add, GroupBox, x%posX% y%posY% w450 h140 vCurrentRunGroupID, Current `Run:
