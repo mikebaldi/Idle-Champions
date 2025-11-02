@@ -674,7 +674,8 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
             ElapsedTime := A_TickCount - StartTime
             if(ElapsedTime < timeoutVal)
                 this.SetLastActiveWindowWhileWaitingForGameExe(timeoutVal - ElapsedTime)
-            Process, Priority, % this.PID, High
+            ; Process, Priority, % this.PID, High
+            Process, Priority, % this.PID, Realtime
             this.ActivateLastWindow()
             this.Memory.OpenProcessReader()
             ElapsedTime := A_TickCount - StartTime

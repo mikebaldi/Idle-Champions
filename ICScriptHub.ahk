@@ -140,6 +140,8 @@ Launch_Clicked()
     }
     Process, Exist, % g_UserSettings[ "ExeName"]
     g_SF.PID := ErrorLevel
+    ; Process, Priority, % g_SF.PID, High
+    Process, Priority, % g_SF.PID, Realtime
 }
 
 Launch_Macro_Clicked()

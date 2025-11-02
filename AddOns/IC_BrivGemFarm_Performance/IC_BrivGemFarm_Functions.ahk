@@ -75,7 +75,8 @@ class IC_BrivGemFarm_Class
         existingProcessID := g_UserSettings[ "ExeName"]
         Process, Exist, %existingProcessID%
         g_SF.PID := ErrorLevel
-        Process, Priority, % g_SF.PID, High
+        ; Process, Priority, % g_SF.PID, High
+        Process, Priority, % g_SF.PID, Realtime
         g_SF.Memory.OpenProcessReader()
         if ((g_SF.CurrentAdventure := g_SF.VerifyAdventureLoaded()) < 0)
             return -2
