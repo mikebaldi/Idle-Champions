@@ -285,15 +285,14 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
     {
         if !this.Memory.ReadTransitioning()
             return
-        StartTime := A_TickCount
-        ElapsedTime := 0
         counter := 0
         sleepTime := 32
+        timeoutTimer := new SH_SharedTimer()
         g_SharedData.LoopString := "Waiting for Transition..."
-        while ( this.Memory.ReadTransitioning() == 1 and ElapsedTime < maxLoopTime )
+        while ( this.Memory.ReadTransitioning() == 1 and !timeoutTimer.IsTimeUp(maxLoopTime))
         {
             ElapsedTime := A_TickCount - StartTime
-            if( ElapsedTime > (counter * sleepTime)) ; input limiter..
+            if (!timeoutTimer.IsTimeUp(counter * sleepTime)) ; input limiter..
             {
                 if(IsObject(spam))
                     this.DirectedInput(,, spam* )
