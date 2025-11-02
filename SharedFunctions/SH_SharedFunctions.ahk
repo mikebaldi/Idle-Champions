@@ -315,7 +315,6 @@ class SH_SharedFunctions
     }
 }
 
-global g_UTimer := new SH_SharedTimers ;universal timer
 ; Class used to test if time taken has been completed. Not recommended for use with functions called from SetTimer.
 class SH_SharedTimers
 {
