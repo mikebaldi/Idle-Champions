@@ -51,6 +51,7 @@ global g_MacroButton := A_LineFile . "\..\Images\macro-100x100.png"
 global g_MouseTooltips := {}
 global g_Miniscripts := {}
 global g_globalTempSettingsFiles := {}
+global g_AreAddonsFinishedLoading := False
 
 ;Load themes
 GUIFunctions.LoadTheme()
@@ -223,6 +224,7 @@ if(IsObject(AddonManagement))
     AddonManagement.BuildToolTips()
 
 Gui, ICScriptHub:Show, NA, % "IC Script Hub" . (g_UserSettings[ "WindowTitle" ] ? (" - " .  g_UserSettings[ "WindowTitle" ]) : "")
+g_AreAddonsFinishedLoading := True
 
 StopMiniscripts()
 {
