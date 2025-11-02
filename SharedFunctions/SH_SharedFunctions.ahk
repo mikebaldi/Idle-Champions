@@ -320,6 +320,12 @@ global g_UTimer := new SH_SharedTimers ;universal timer
 class SH_SharedTimers
 {
     StartTime := 0
+
+    __New()
+    {
+        this.StartTime := 0
+    }
+    
     ; Starts timer on first call. WIll return True on timed out and false when time is left. timeout of 0 resets timer.
     IsTimeUp(timeout)
     {
