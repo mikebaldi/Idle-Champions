@@ -67,7 +67,7 @@ class IC_BrivGemFarm_Class
     ;=====================================================
     ;Primary Gem Farm loop functions
     ;=====================================================
-    ; setup steps to take to set up gem farm before starting the primary loop.
+    ; setup steps to take to set up gem farm before starting the primary loop. Returns 0 on normal, negative on error.
     GemFarmPreLoopSetup(includeBrivFormation3 := False)
     {
         g_SharedData.TriggerStart := true
