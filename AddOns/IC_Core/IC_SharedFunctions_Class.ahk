@@ -281,7 +281,7 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
 
         Returns: nothing
     */
-    WaitForTransition( spam := "", maxLoopTime := 5000 )
+    WaitForTransition( spam := "", maxLoopTime := 3500 )
     {
         if !this.Memory.ReadTransitioning()
             return
