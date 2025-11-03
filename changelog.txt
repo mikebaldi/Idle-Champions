@@ -1,3 +1,26 @@
+November 3, 2025
+    Updated how formation checks are done, especially around stacking formations.
+    Compromise between speed and accuracy.
+    Added DoSwitchFormation to SharedFunctions.
+    Added Queue _head read in gameObject.
+    Moved ReadSkipStacks() to MemoryFunctions.
+    Updated Steam v636 Imports.
+    Fixed BPH/GPH not displaying after a FORT restart.
+    Updated stats addon to restart updating when game is closed by the script.
+    Added exta null check to TestForSteelBonesStackFarming.
+    Updated getting formation save with empty slots to be cached separately.
+    Added fallback on farm start if under attack.
+    Fixed some cases where formation checking was too strict.
+    Added some more sanity checks.
+    Fixed call using wrong comobject to call.
+    Added formation and level lock variables.
+    Added commenting.
+    Added global timer class/function (IsTimerUp()).
+    Added donation locations to repo(s).
+    Defaulted game process priority to realtime. (Only works when using admin for script.)
+    Added Play/Stop buttons to top bar instead of stats window.
+    Added critical to DoSwitchFormation.
+
 October 29, 2025
     Added Emmote's stats updates.
     Removed LoadSettings from servercall files that extend SH_ServerCalls.
