@@ -575,13 +575,15 @@ class IC_SharedFunctions_Class extends SH_SharedFunctions
 
     DoSwitchFormation(favoriteNum)
     {
+        Critical, On
         if(favoriteNum == 1)
             this.DirectedInput(,,["{q}"]*) 
         else if(favoriteNum == 2)
             this.DirectedInput(,,["{w}"]*) 
         else if(favoriteNum == 3)
             this.DirectedInput(,,["{e}"]*) 
-        IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun := True            
+        IC_BrivGemFarm_Class.BrivFunctions.HasSwappedFavoritesThisRun := True
+        Critical, Off
     }
 
     ; True/False on whether Briv should be benched based on game conditions. (typically swap to E formation)
