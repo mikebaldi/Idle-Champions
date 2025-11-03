@@ -270,3 +270,5 @@ MiniScriptWarning()
 ; Refresh GUI after all addons loaded.
 GuiControl, ICScriptHub:Move, ModronTabControl, % "w" . g_TabControlWidth . " h" . g_TabControlHeight
 Gui, ICScriptHub:show, % "w" . g_TabControlWidth+5 . " h" . g_TabControlHeight . " NA"
+
+MsgBox, Official Script Hub Has Moved! Find it at: http://www.github.com/antilectual/Idle-Champions/
